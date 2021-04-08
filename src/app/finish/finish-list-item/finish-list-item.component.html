@@ -1,0 +1,31 @@
+<ion-item-sliding #slide>
+
+  <ion-item-options side="start" (ionSwipe)="lapSwipe(slide)">
+    <ion-item-option (click)="lap.emit()" expandable>
+      Lap
+    </ion-item-option>
+  </ion-item-options>
+
+  <ion-item>
+    <ion-label>
+      <h2>{{comp.boatClass}} - <sailnumber [num]="comp.sailnumber"></sailnumber>
+      </h2>
+      <p>{{comp.helm}}</p>
+    </ion-label>
+
+    <ion-button slot=end>
+      <ionic-context-menu icon="ellipsis-vertical-sharp">
+        <ionic-context-menu-item (click)="top.emit()">Top</ionic-context-menu-item>
+        <ionic-context-menu-item (click)="approaching.emit()">Approching</ionic-context-menu-item>
+        <ionic-context-menu-item (click)="lap.emit()">Lap</ionic-context-menu-item>
+        <ionic-context-menu-item (click)="finish.emit()">Finish</ionic-context-menu-item>
+      </ionic-context-menu>
+    </ion-button>
+  </ion-item>
+
+  <ion-item-options side="end" (ionSwipe)="finishSwipe(slide)">
+    <ion-item-option  (click)="finish.emit()" color="tertiary" expandable>
+      Finish
+    </ion-item-option>
+  </ion-item-options>
+</ion-item-sliding>

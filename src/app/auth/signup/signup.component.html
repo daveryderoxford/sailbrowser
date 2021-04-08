@@ -1,0 +1,31 @@
+<ion-header>
+  <app-toolbar-back title="Signup"></app-toolbar-back>
+</ion-header>
+
+<ion-content>
+  <div class=error>{{error}}</div>
+
+  <form [formGroup]="signupForm" (ngSubmit)="signup()" errorTailor>
+
+    <ion-item>
+      <ion-input formControlName="email" type="email" placeholder="Email"></ion-input>
+    </ion-item>
+
+    <ion-item>
+      <ion-input formControlName="password" type="password" placeholder="Password"></ion-input>
+    </ion-item>
+
+    <ion-item>
+      <ion-input formControlName="confirmPassword" type="password" placeholder="Confirm Password"></ion-input>
+      <!--  <mat-hint *ngIf="signupForm.errors?.passwordMissMatch" class=error>Passwords do not match</mat-hint> -->
+    </ion-item>
+
+    <ion-item>
+      <ion-button [disabled]="signupForm.invalid" color=primary type="submit" aria-label="Signup">Sign
+        up</ion-button>
+      <a routerLink="/auth/login">Already have user name</a>
+    </ion-item>
+
+  </form>
+
+</ion-content>>

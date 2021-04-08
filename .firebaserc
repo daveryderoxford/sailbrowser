@@ -1,0 +1,14 @@
+{
+  "targets": {
+    "sailbrowser": {
+      "hosting": {
+        "app": [
+          "sailbrowser"
+        ]
+      }
+    }
+  },
+  "projects": {
+    "default": "sailbrowser-efef0"
+  }
+}

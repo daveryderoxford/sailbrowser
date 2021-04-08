@@ -1,0 +1,62 @@
+<ion-header>
+  <app-toolbar-edit [saveDisabled]="form.invalid || !form.dirty" (save)="save()" (cancel)="cancel()">
+    <ion-title *ngIf='boat'>Edit Boat </ion-title>
+    <ion-title *ngIf='!boat'>Add Boat </ion-title>
+  </app-toolbar-edit>
+</ion-header>
+
+<ion-content>
+
+  <form [formGroup]="form" errorTailor>
+
+    <ion-item>
+      <ion-label position="floating">Class</ion-label>
+      <ion-input formControlName="sailingClass" type="text" required></ion-input>
+    </ion-item>
+
+    <ion-item>
+      <ion-label position="floating">Name</ion-label>
+      <ion-input formControlName="name" type="text" required></ion-input>
+    </ion-item>
+
+    <ion-item>
+      <ion-label position="floating">Sail number</ion-label>
+      <ion-input formControlName="sailNumber" type="number" required></ion-input>
+    </ion-item>
+
+    <ion-item>
+      <ion-label position="floating">Type</ion-label>
+      <ion-select formControlName="type" interface="popover" required>
+        <ion-select-option *ngFor="let bt of boatTypes" [value]="bt.type">{{bt.label}}</ion-select-option>
+      </ion-select>
+    </ion-item>
+
+    <ion-item>
+      <ion-label position="floating">Helm</ion-label>
+      <ion-input type="text" formControlName="helm"></ion-input>
+    </ion-item>
+
+    <ion-item>
+      <ion-label position="floating">Crew</ion-label>
+      <ion-input type="text" formControlName="crew"></ion-input>
+    </ion-item>
+
+    <ion-item>
+      <ion-label position="floating">Owner</ion-label>
+      <ion-input type="text" formControlName='owner'></ion-input>
+    </ion-item>
+
+    <ion-item-divider light>Handicaps</ion-item-divider>
+
+    <ion-item *ngFor='let algorithm of handicapAlgorithms | keyvalue; let i = index'>
+      <ion-label>{{algorithm.value.label}}</ion-label>
+   <!--    <ion-input type=number name='handicap{{i}}' [value]='boat.handicaps[i].value'> </ion-input>  -->
+    </ion-item>
+
+    <ion-item *ngIf='this.boat'>
+      <app-deletebutton message='Delete Boat' (deleteConfirmed)='delete()'></app-deletebutton>
+    </ion-item>
+
+  </form>
+
+</ion-content>

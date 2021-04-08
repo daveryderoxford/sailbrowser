@@ -1,0 +1,38 @@
+
+<ion-header>
+<app-toolbar-back title="Login"></app-toolbar-back>
+</ion-header>
+
+<ion-content>
+
+  <div class=error>{{error}}</div>
+
+  <form [formGroup]="loginForm" (ngSubmit)="loginFormSubmit()" errorTailor>
+
+    <ion-item>
+      <ion-label>Email</ion-label>
+      <ion-input formControlName="email" type="email"></ion-input>
+    </ion-item>
+
+    <ion-item>
+      <ion-label>Password</ion-label>
+      <ion-input formControlName="password" type="password"></ion-input>
+    </ion-item>
+
+    <ion-item>
+      <ion-button color=primary type="submit">Sign In</ion-button>
+    </ion-item>
+
+    <ion-item lines='none'>
+      <a slot='start' routerLink="/auth/recover">Forgot password?</a>
+      <a slot='end' routerLink="/auth/signup">Create account?</a>
+    </ion-item>
+
+  </form>
+
+  <ion-item lines='none'>
+    <ion-button slot='start' color=primary (click)="signInWith('Google')">Google</ion-button>
+    <ion-button slot='end' color=primary (click)="signInWith('Facebook')">Facebook</ion-button>
+  </ion-item>
+
+</ion-content>

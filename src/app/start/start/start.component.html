@@ -1,0 +1,101 @@
+<ion-header>
+  <app-toolbar-menu title="Start">
+    <ion-button>
+      Entries
+    </ion-button>
+  </app-toolbar-menu>
+</ion-header>
+
+<ion-content>
+
+<ion-grid>
+  <ion-row size=4 class="ion-align-items-center">
+    <ion-col>
+      <ion-button shape=round size=large  fill=solid [hidden]="isRunning" (click)="startSequenceClicked()">Start</ion-button>
+      <ion-button shape=round size=large color=danger fill=solid [hidden]="!isRunning" (click)="stopSequenceClicked()">Stop</ion-button>
+    </ion-col>
+
+    <ion-col>
+      <!-- Recall button -->
+      <div>
+      <ion-button fill=outline [hidden]="!isRunning" (click)="recallClicked()">
+        Recall
+      </ion-button>
+
+      <!-- Postpone button -->
+      <ion-button fill=outline [hidden]="!isRunning" (click)="postponeClicked()">
+        Postpone
+      </ion-button>
+    </div>
+    </ion-col>
+    </ion-row>
+
+    </ion-grid>
+
+  <ion-list>
+
+    <ion-item>
+      <div class="row padding">
+        <h3>Next Gun &nbsp;&nbsp;{{nextStart | date:'HH:mm:ss'}}</h3><br>
+        <h3>Next Start&nbsp;&nbsp;{{nextFlag | date:'HH:mm:ss'}}</h3><br>
+        <h3>Time&nbsp;&nbsp;{{realTime$ | async}}</h3>
+      </div>
+    </ion-item>
+
+    <ion-item>
+
+      <div class="row padding">
+        <table>
+          <tr>
+            <th>Time</th>
+            <th class="startlistTable">Class up <ion-icon name="arrow-up-outline"></ion-icon></th>
+            <th class="startlistTable">Class down <ion-icon name="arrow-down-outline"></ion-icon></th>
+            <th class="startlistTable">Prep Up <ion-icon name="arrow-up-outline"></ion-icon></th>
+            <th class="startlistTable">Prep Down <ion-icon name="arrow-down-outline"></ion-icon></th>
+          </tr>
+
+          <tr>
+            <td>11:55</td>
+            <td class="startlistTable"><img src="./assets/flags/1.png" width=40px height=40px/><br>Fast Handicap</td>
+            <td class="startlistTable"></td>
+            <td class="startlistTable"></td>
+            <td class="startlistTable"></td>
+          </tr>
+
+          <tr>
+            <td>11:56</td>
+            <td class="startlistTable"></td>
+            <td class="startlistTable"></td>
+            <td class="startlistTable"><img src="./assets/flags/c.png" width=40px height=40px/></td>
+            <td class="startlistTable"></td>
+          </tr>
+
+          <tr class="startlistTable">
+            <td class="startlistTable">11:59<br>Contender</td>
+            <td class="startlistTable"></td>
+            <td class="startlistTable"></td>
+            <td class="startlistTable"></td>
+            <td class="startlistTable"><img src="./assets/flags/p.png" width=40px height=40px/></td>
+          </tr>
+
+          <tr class="startlistTable">
+            <td class="startlistTable">12:00</td>
+            <td class="startlistTable"></td>
+            <td class="startlistTable"><img src="./assets/flags/p.png" width=40px height=40px/><br>Contender</td>
+            <td class="startlistTable"></td>
+            <td class="startlistTable"></td>
+          </tr>
+
+        </table>
+      </div>
+    </ion-item>
+
+  </ion-list>
+
+</ion-content>
+
+<ion-footer>
+  <ion-buttons>
+    <ion-button>Help</ion-button>
+  </ion-buttons>
+</ion-footer>

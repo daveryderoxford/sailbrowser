@@ -1,0 +1,22 @@
+<ion-header>
+  <app-toolbar-menu title="Series">
+    <ion-button (click)="add()">
+      Add
+    </ion-button>
+  </app-toolbar-menu>
+</ion-header>
+
+<ion-content>
+  <ion-segment>
+    <ion-segment-button (click)="sortBy('time')">Time</ion-segment-button>
+    <ion-segment-button (click)="sortBy('fleet')">Fleet</ion-segment-button>
+  </ion-segment>
+  <ng-container *ngIf="series$ | async as series;">
+    <ng-template #loading>Loading...</ng-template>
+    <ion-list>
+      <ion-item button *ngFor="let s of series" (click)="seriesClicked(s)">
+        {{s.name}} {{s.fleet}} {{s.startDate | date}}
+      </ion-item>
+    </ion-list>
+  </ng-container>
+</ion-content>
