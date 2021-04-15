@@ -21,6 +21,8 @@ export const raceStates = new Map<string, RaceStateData>([
 export interface  Race  {
   id: string;
   seriesId: string;           /** ID of series the race is part of */
+  name: string;
+  fleetId: string;
   scheduledStart: string;      /** Date the race was scheduled in ISO format */
   actualStart: string;    /** Time the race was actually started */
   startType: RaceStartType;   /** Line start of pursuit */

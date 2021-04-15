@@ -1,12 +1,14 @@
-import { Component, OnInit } from '@angular/core';
+import { Component } from '@angular/core';
 import { Router } from '@angular/router';
 import { AlertController, PopoverController } from '@ionic/angular';
+import { ClubsQuery } from 'app/clubs/@store/clubs.query';
+import { Fleet } from 'app/model/fleet';
 import { Race } from 'app/model/race';
 import { Observable } from 'rxjs';
-import { filter, startWith } from 'rxjs/operators';
-import { RaceSeries } from '../store/race-series.model';
-import { RaceSeriesQuery } from '../store/race-series.query';
-import { RaceSeriesService } from '../store/race-series.service';
+import { filter } from 'rxjs/operators';
+import { RaceSeries } from '../@store/race-series.model';
+import { RaceSeriesQuery } from '../@store/race-series.query';
+import { RaceSeriesService } from '../@store/race-series.service';
 
 @Component({
   selector: 'app-series',
@@ -16,9 +18,11 @@ import { RaceSeriesService } from '../store/race-series.service';
 export class SeriesComponent {
 
   series$!: Observable<RaceSeries | undefined>;
+  fleets: Fleet[] = [];
 
   constructor(private service: RaceSeriesService,
     private query: RaceSeriesQuery,
+    private clubsQuery: ClubsQuery,
     public popoverController: PopoverController,
     private router: Router,
     private alertCntl: AlertController) {
@@ -32,6 +36,8 @@ export class SeriesComponent {
     this.series$ = this.query.selectActive().pipe(
       filter(val => val !== undefined)
     );
+
+    this.fleets = this.clubsQuery.fleets;
   }
 
   editSeriesDetails() {

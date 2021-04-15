@@ -8,7 +8,7 @@ const routes: Routes = [
    { path: 'boats', loadChildren: () => import('./boats/boats.module').then(m => m.BoatsModule) },
    { path: 'auth', loadChildren: () => import('./auth/auth.module').then(m => m.AuthModule) },
    { path: 'start', loadChildren: () => import('./start/start.module').then(m => m.StartModule) },
-   { path: 'results', loadChildren: () => import('./results/results.module').then(m => m.ResultsModule) },
+   { path: 'results-entry', loadChildren: () => import('./results/results.module').then(m => m.ResultsModule) },
    { path: 'finish', loadChildren: () => import('./finish/finish.module').then(m => m.FinishModule) },
    { path: 'entries', loadChildren: () => import('./entries/entries.module').then(m => m.EntriesModule) },
    { path: 'races', loadChildren: () => import('./race-series/race-series.module').then(m => m.RaceSeriesModule) },

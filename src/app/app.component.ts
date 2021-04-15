@@ -2,11 +2,10 @@ import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { Observable } from 'rxjs';
 import { AuthQuery, AuthService } from './auth';
-import { Club } from './clubs/store/club.model';
-import { ClubsQuery } from './clubs/store/clubs.query';
-import { ClubsService } from './clubs/store/clubs.service';
+import { Club } from './clubs/@store/club.model';
+import { ClubsQuery } from './clubs/@store/clubs.query';
+import { ClubsService } from './clubs/@store/clubs.service';
 // const { SplashScreen } = Plugins;
-
 
 @Component({
   selector: 'app-root',
@@ -20,14 +19,14 @@ export class AppComponent implements OnInit {
 
 
   public raceOfficerPages = [
-    { title: 'Pre Start', url: '/home', icon: 'home' },
+    { title: 'Pre Start', url: '/entries', icon: 'home' },
     { title: 'Start', url: '/start', icon: 'flag' },
     { title: 'Finish', url: '/finish', icon: 'stopwatch' },
-    { title: 'Results Entry', '/results-entry': '', icon: 'calculator' },
+    { title: 'Results Entry', url: '/results-entry', icon: 'calculator' },
   ];
 
   public infoPages = [
-    { title: 'Calander', url: '', icon: 'calendar' },
+    { title: 'Calander', url: '/race-calender', icon: 'calendar' },
     { title: 'Results', url: '/results', icon: 'copy' },
   ];
 
@@ -67,7 +66,7 @@ export class AppComponent implements OnInit {
   }
 
   public logout() {
-    this.auth.onSignout();
+    this.auth.signOut();
   }
 
   public changeClub() {

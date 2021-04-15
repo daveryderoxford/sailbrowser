@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { AngularFireAuth } from '@angular/fire/auth';
-import { AuthService } from '../store/auth.service';
+import { AuthService } from '../@store/auth.service';
 
 @Component({
   selector: 'app-recover',

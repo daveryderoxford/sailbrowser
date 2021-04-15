@@ -20,7 +20,7 @@ import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 })
 export class ToolbarEditComponent implements OnInit {
 
-  @Input() saveDisabled = true;
+  @Input() saveDisabled = false;
   @Output() cancel = new EventEmitter();
   @Output() save = new EventEmitter();
 

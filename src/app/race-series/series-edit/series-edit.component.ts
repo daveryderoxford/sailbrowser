@@ -1,13 +1,13 @@
 import { Component } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
-import { Club } from 'app/clubs/store/club.model';
-import { ClubsQuery } from 'app/clubs/store/clubs.query';
+import { Club } from 'app/clubs/@store/club.model';
+import { ClubsQuery } from 'app/clubs/@store/clubs.query';
 import { assertExists } from 'app/utilities/misc';
 import { Observable } from 'rxjs';
-import { createSeries, RaceSeries } from '../store/race-series.model';
-import { RaceSeriesQuery } from '../store/race-series.query';
-import { RaceSeriesService } from '../store/race-series.service';
+import { createSeries, RaceSeries } from '../@store/race-series.model';
+import { RaceSeriesQuery } from '../@store/race-series.query';
+import { RaceSeriesService } from '../@store/race-series.service';
 
 @Component({
   selector: 'app-series-edit',
@@ -28,7 +28,7 @@ export class SeriesEditComponent {
 
         this.form = this.formBuilder.group({
           name: ['', Validators.required],
-          fleet: ['', Validators.required]
+          fleetId: ['', Validators.required]
         });
     }
 
@@ -78,13 +78,16 @@ export class SeriesEditComponent {
 
       this.service.remove(this.activeObject.id);
       this.form.reset();
-      this.navigateBack();
+      this.router.navigate(['/races/series/list']);
     }
 
     navigateBack() {
-      this.router.navigate(['/races/series/display']);
+      if ( this.activeObject) {
+        this.router.navigate(['/races/series/display']);
+      } else {
+        this.router.navigate(['/races/series/list']);
+      }
     }
-
   }
 
 

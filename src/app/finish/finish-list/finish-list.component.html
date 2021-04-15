@@ -3,10 +3,10 @@
   </app-toolbar-menu>
 </ion-header>
 
-<ion-segment>
-  <ion-segment-button>Fleet</ion-segment-button>
-  <ion-segment-button>Expected</ion-segment-button>
-  <ion-segment-button>Finished</ion-segment-button>
+<ion-segment (ionChange)="viewChanged($event)" value="fleet">
+  <ion-segment-button value="fleet">Fleet</ion-segment-button>
+  <ion-segment-button value="expected">Expected</ion-segment-button>
+  <ion-segment-button value="finished">Finished</ion-segment-button>
 </ion-segment>
 
 <ion-content>

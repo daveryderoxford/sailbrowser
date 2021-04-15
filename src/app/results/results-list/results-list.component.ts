@@ -4,7 +4,7 @@ import { Race } from 'app/model/race';
 @Component({
   selector: 'app-results-list',
   templateUrl: './results-list.component.html',
-  styleUrls: ['./results-list.component.css']
+  styleUrls: ['./results-list.component.scss']
 })
 export class ResultsListComponent implements OnInit {
 

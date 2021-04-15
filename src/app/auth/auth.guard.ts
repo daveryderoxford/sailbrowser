@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { ActivatedRouteSnapshot, Router, RouterStateSnapshot } from '@angular/router';
 import { Observable } from 'rxjs';
 import { take, tap } from 'rxjs/operators';
-import { AuthQuery } from './store/auth.query';
+import { AuthQuery } from './@store/auth.query';
 
 @Injectable({ providedIn: 'root' })
 export class AuthGuard {

@@ -77,7 +77,8 @@
         "serve": {
           "builder": "@angular-devkit/build-angular:dev-server",
           "options": {
-            "browserTarget": "app:build"
+            "browserTarget": "app:build",
+            "aot": true
           },
           "configurations": {
             "production": {
@@ -192,6 +193,9 @@
       "styleext": "scss"
     },
     "@ionic/angular-toolkit:page": {
+      "styleext": "scss"
+    },
+    "@schematics/angular:component": {
       "styleext": "scss"
     }
   }

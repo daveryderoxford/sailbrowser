@@ -15,7 +15,7 @@
     <ng-template #loading>Loading...</ng-template>
     <ion-list>
       <ion-item button *ngFor="let s of series" (click)="seriesClicked(s)">
-        {{s.name}} {{s.fleet}} {{s.startDate | date}}
+        {{s.name}} {{s.fleetId | fleetName: fleets}} {{s.startDate | date}}
       </ion-item>
     </ion-list>
   </ng-container>

@@ -1,0 +1,22 @@
+<ion-header>
+  <app-toolbar-edit [saveDisabled]="form.invalid || !form.dirty" (save)="save()" (cancel)="cancel()">
+    <ion-title>Copy Series</ion-title>
+  </app-toolbar-edit>
+</ion-header>
+
+<ion-content>
+
+  <form [formGroup]="form" errorTailor>
+    <ion-list>
+      <ion-item>
+
+      <ion-label>Fleet</ion-label>
+      <ion-select formControlName="fleet" interface="popover" required>
+        <ion-select-option *ngFor="let fleet of fleets" [value]="fleet.id">{{fleet.name}} </ion-select-option>
+      </ion-select>
+
+    </ion-item>
+
+    </ion-list>
+  </form>
+</ion-content>

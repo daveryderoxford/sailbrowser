@@ -16,11 +16,9 @@ import { anchorIonicErrorComponent, IonicControlErrorComponent } from './shared/
 import { AkitaNgDevtools } from '@datorama/akita-ngdevtools';
 import { AngularFirestoreModule } from '@angular/fire/firestore';
 import { ServiceWorkerModule } from '@angular/service-worker';
-import { RaceDayRacesComponent } from './race-day/race-day-races/race-day-races.component';
-
 
 @NgModule({
-  declarations: [AppComponent, HomeComponent, RaceDayRacesComponent],
+  declarations: [AppComponent, HomeComponent],
   entryComponents: [],
   imports: [
     BrowserModule,

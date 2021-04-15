@@ -5,7 +5,7 @@ import { RaceCompetitor } from 'app/model/race-competitor';
 @Component({
   selector: 'app-finish-list-item',
   templateUrl: './finish-list-item.component.html',
-  styleUrls: ['./finish-list-item.component.css'],
+  styleUrls: ['./finish-list-item.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class FinishListItemComponent implements OnInit {

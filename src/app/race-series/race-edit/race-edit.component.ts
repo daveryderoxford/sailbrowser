@@ -1,19 +1,19 @@
 import { Component } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
-import { ClubsQuery } from 'app/clubs/store/clubs.query';
+import { ClubsQuery } from 'app/clubs/@store/clubs.query';
 import { Race, raceStates } from 'app/model/race';
 import { assertExists } from 'app/utilities/misc';
 import { add, set } from 'date-fns';
-import { createRace, RaceSeries } from '../store/race-series.model';
-import { RaceSeriesQuery } from '../store/race-series.query';
-import { RaceSeriesService } from '../store/race-series.service';
+import { createRace, RaceSeries } from '../@store/race-series.model';
+import { RaceSeriesQuery } from '../@store/race-series.query';
+import { RaceSeriesService } from '../@store/race-series.service';
 
 
 @Component({
   selector: 'app-race-edit',
   templateUrl: './race-edit.component.html',
-  styleUrls: ['./race-edit.component.css']
+  styleUrls: ['./race-edit.component.scss']
 })
 export class RaceEditComponent {
 

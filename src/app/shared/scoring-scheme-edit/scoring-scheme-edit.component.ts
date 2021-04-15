@@ -4,7 +4,7 @@ import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 @Component({
   selector: 'app-scoring-scheme-edit',
   templateUrl: './scoring-scheme-edit.component.html',
-  styleUrls: ['./scoring-scheme-edit.component.css']
+  styleUrls: ['./scoring-scheme-edit.component.scss']
 })
 export class ScoringSchemeEditComponent implements OnInit {
   public formGroup1!: FormGroup;

@@ -16,8 +16,8 @@
 
     <ion-item>
       <ion-label>Fleet</ion-label>
-      <ion-select formControlName="fleet" interface="popover" required>
-        <ion-select-option *ngFor="let fleet of (club$ | async)?.fleets" [value]="fleet.name">{{fleet.name}}</ion-select-option>
+      <ion-select formControlName="fleetId" interface="popover" required>
+        <ion-select-option *ngFor="let fleet of (club$ | async)?.fleets" [value]="fleet.id">{{fleet.name}}</ion-select-option>
       </ion-select>
     </ion-item>
 

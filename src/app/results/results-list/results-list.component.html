@@ -5,9 +5,9 @@
 </ion-header>
 
 <ion-content>
-  <ion-segment>
-    <ion-segment-button *ngFor="race of races">
-
+  <ion-segment scrollable>
+    <ion-segment-button  *ngFor="let race of races" value="race.id">
+       {{race}}
     </ion-segment-button>
    </ion-segment>
 </ion-content>

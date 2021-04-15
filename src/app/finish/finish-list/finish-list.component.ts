@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { FormControl } from '@angular/forms';
 import { createRaceCompetitor, RaceCompetitor } from 'app/model/race-competitor';
 
 
@@ -14,13 +15,15 @@ const comp = createRaceCompetitor({
 @Component({
   selector: 'app-finish-list',
   templateUrl: './finish-list.component.html',
-  styleUrls: ['./finish-list.component.css']
+  styleUrls: ['./finish-list.component.scss']
 })
 export class FinishListComponent implements OnInit {
 
   competitors = Array(10).fill(comp);
 
-  constructor() { }
+  constructor() {
+
+  }
 
   ngOnInit(): void {
   }
@@ -39,6 +42,11 @@ export class FinishListComponent implements OnInit {
 
   approaching() {
     console.log('approaching');
+  }
+
+  viewChanged(ev: any) {
+    const option = ev.detail.value;
+    console.log(option);
   }
 
 }
