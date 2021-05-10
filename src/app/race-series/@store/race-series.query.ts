@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
 import { QueryConfig, QueryEntity } from '@datorama/akita';
+import { ClubsQuery } from 'app/clubs/@store/clubs.query';
 import { Race } from 'app/model/race';
 import { compareAsc } from 'date-fns';
 import { Observable } from 'rxjs';
@@ -20,10 +21,11 @@ const sortBy = (a: RaceSeries, b: RaceSeries, state: RaceSeriesState) => {
 export class RaceSeriesQuery extends QueryEntity<RaceSeriesState> {
 
   races$: Observable<Race[]> = this.selectAll().pipe(
-    map(() => this.getRaces())
+    map(() => this.getAllRaces())
   );
 
-  constructor(protected store: RaceSeriesStore) {
+  constructor(protected store: RaceSeriesStore,
+    protected clubQuery: ClubsQuery) {
     super(store);
   }
 
@@ -35,11 +37,25 @@ export class RaceSeriesQuery extends QueryEntity<RaceSeriesState> {
     return this.store.getValue().activeRaceId;
   }
 
-  getRaces(): Race[] {
+  getAllRaces(): Race[] {
     const ret: Race[] = [];
     for (let series of this.getAll()) {
       ret.push(...series.races)
     }
+    ret.sort((a, b) => this.sortRaces(a, b))
     return ret
+  }
+
+  private sortRaces(a: Race, b: Race) {
+    const adate = new Date(a.scheduledStart);
+    const bdate = new Date(b.scheduledStart);
+    const ret = compareAsc(adate, bdate);
+    if (ret !== 0) {
+      return ret
+    } else {
+      const index1 = this.clubQuery.fleets.findIndex(f => f.id === a.fleetId);
+      const index2 = this.clubQuery.fleets.findIndex(f => f.id === b.fleetId);
+      return index1 - index2;
+    }
   }
 }

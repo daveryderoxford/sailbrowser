@@ -11,7 +11,7 @@ export class ClubsService extends CollectionService<ClubsState> {
     super(store);
 
     // Just use default club for now
-    console.log(' clubs.service Just using atest club for now automatically set active');
+    console.log(' clubs.service Just using test club for now automatically set active');
     const club = testClub();
     this.upsert(club);
     this.store?.add(club);

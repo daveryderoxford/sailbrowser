@@ -1,6 +1,6 @@
 import { ChangeDetectionStrategy, Component, ElementRef, EventEmitter, Input, OnInit, Output, ViewChild, ViewEncapsulation } from '@angular/core';
 import { IonItemOption, IonItemSliding } from '@ionic/angular';
-import { RaceCompetitor } from 'app/model/race-competitor';
+import { RaceResult } from 'app/competitor/@store/competitor.model';
 
 @Component({
   selector: 'app-finish-list-item',
@@ -14,11 +14,12 @@ export class FinishListItemComponent implements OnInit {
 
   constructor() { }
 
-  @Input() comp!: RaceCompetitor;
+  @Input() comp!: RaceResult;
   @Output() finish = new EventEmitter();
   @Output() lap = new EventEmitter();
   @Output() approaching = new EventEmitter();
   @Output() top = new EventEmitter();
+  @Output() retired = new EventEmitter();
 
   ngOnInit(): void {
   }

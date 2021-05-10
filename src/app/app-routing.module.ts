@@ -12,6 +12,7 @@ const routes: Routes = [
    { path: 'finish', loadChildren: () => import('./finish/finish.module').then(m => m.FinishModule) },
    { path: 'entries', loadChildren: () => import('./entries/entries.module').then(m => m.EntriesModule) },
    { path: 'races', loadChildren: () => import('./race-series/race-series.module').then(m => m.RaceSeriesModule) },
+   { path: 'race-day', loadChildren: () => import('./race-day/race-day.module').then(m => m.RaceDayModule) },
 ];
 @NgModule({
    imports: [

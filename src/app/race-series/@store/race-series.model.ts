@@ -43,7 +43,7 @@ export function createRace(params: Partial<Race>): Race {
     seriesId: '',
     scheduledStart: '',
     actualStart: '',
-    startType: 'Conventional',
+    type: 'Conventional',
     status: 'Future',
     isDiscardable: true,
     startNumber: 0,

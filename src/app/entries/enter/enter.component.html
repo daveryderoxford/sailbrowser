@@ -1,0 +1,49 @@
+<ion-header>
+  <app-toolbar-menu title="Enter">
+
+  </app-toolbar-menu>
+
+  <ion-toolbar color=dark>
+    <ion-buttons>
+      <ion-button>Previous</ion-button>
+    </ion-buttons>
+    <ion-buttons slot="end">
+      <ion-button>Next</ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+
+</ion-header>
+
+<ion-content>
+
+  <ion-stepper #stepper (selectIndexChange)="selectChange($event)">
+
+    <ion-step label="Races" description="Select races to enter">
+      <app-select-races filter='Today' (selectedRaces)=selectRaces($event)></app-select-races>
+      <ion-button ionicStepperNext>Next</ion-button>
+    </ion-step>
+
+    <ion-step label="Boat" description="Select boat">
+      <ion-button ionicStepperPrevious>Previous</ion-button>
+      <ion-button ionicStepperNext>Next</ion-button>
+    </ion-step>
+
+    <ion-step label="Confirm" description="Confirm entry">
+      <ion-button ionicStepperPrevious>Previous</ion-button>
+      <ion-button>Done</ion-button>
+    </ion-step>
+
+  </ion-stepper>
+
+</ion-content>
+
+<ion-footer>
+  <ion-toolbar>
+    <ion-buttons>
+      <ion-button>Previous</ion-button>
+    </ion-buttons>
+    <ion-buttons slot="end">
+      <ion-button>Next</ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-footer>

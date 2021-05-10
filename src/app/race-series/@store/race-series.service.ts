@@ -6,7 +6,6 @@ import { Race } from 'app/model/race';
 import { compareAsc } from 'date-fns';
 import { tap } from 'rxjs/operators';
 import { RaceSeries } from './race-series.model';
-import { RaceSeriesQuery } from './race-series.query';
 import { RaceSeriesState, RaceSeriesStore } from './race-series.store';
 
 @Injectable({ providedIn: 'root' })
@@ -14,8 +13,7 @@ import { RaceSeriesState, RaceSeriesStore } from './race-series.store';
 export class RaceSeriesService extends CollectionService<RaceSeriesState> {
 
   constructor(store: RaceSeriesStore,
-    private clubQuery: ClubsQuery,
-    private seriesQuery: RaceSeriesQuery) {
+    private clubQuery: ClubsQuery) {
     super(store);
 
     // When the club changes clear the boats store and resync it.
@@ -23,8 +21,9 @@ export class RaceSeriesService extends CollectionService<RaceSeriesState> {
       tap(() => {
         this.store?.reset();
         this.syncCollection().subscribe();
+        console.log('RaceSeriesService: Sync collection');
       }
-    ));
+      )).subscribe();
   }
 
   get path() {
@@ -37,7 +36,7 @@ export class RaceSeriesService extends CollectionService<RaceSeriesState> {
     this.store?.setActive(id);
   }
 
-  /** Sets the active race on the */
+  /** Sets the active race */
   setActiveRace(race: Race | null) {
     const id = race ? race.id : null;
     this.store?.update({ activeRace: race, activeRaceId: id });
@@ -45,13 +44,15 @@ export class RaceSeriesService extends CollectionService<RaceSeriesState> {
 
   private _updateRaces(seriesId: string, races: Race[]) {
 
-    // Sort Races into order based on start/end time.
+    // Sort Races for series into order based on start/end time
     races.sort((a, b) => {
       const adate = new Date(a.scheduledStart);
       const bdate = new Date(b.scheduledStart);
-      return compareAsc(adate, bdate);
+      let result = compareAsc(adate, bdate);
+      return result;
     });
 
+    // Set start/end of series.
     let startDate = '';
     let endDate = '';
     if (races.length > 0) {
@@ -91,8 +92,8 @@ export class RaceSeriesService extends CollectionService<RaceSeriesState> {
   }
 
   /** Update a races for a series */
-  updateRace(series: RaceSeries, updatedId: string, updated: Partial<Race>) {
-    const races = series.races.map(original => (updatedId === original.id) ? { ...original, ...updated } : original);
+  updateRace(series: RaceSeries, updatedId: string, updates: Partial<Race>) {
+    const races = series.races.map(original => (updatedId === original.id) ? { ...original, ...updates } : original);
     this._updateRaces(series.id, races);
   }
 

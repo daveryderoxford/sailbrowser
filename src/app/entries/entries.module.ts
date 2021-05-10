@@ -2,15 +2,15 @@ import { NgModule } from '@angular/core';
 
 import { EntriesRoutingModule } from './entries-routing.module';
 import { SharedModule } from '../shared/shared.module';
-import { SelectRacesComponent } from './select-races/select-races.component';
-import { SelectCompetitorComponent } from './select-competitor/select-competitor.component';
-
+import { EnterComponent } from './enter/enter.component';
+import { RaceSeriesModule } from 'app/race-series/race-series.module';
 
 @NgModule({
-  declarations: [SelectRacesComponent, SelectCompetitorComponent],
+  declarations: [EnterComponent],
   imports: [
     SharedModule,
-    EntriesRoutingModule
+    EntriesRoutingModule,
+    RaceSeriesModule
   ]
 })
 export class EntriesModule { }

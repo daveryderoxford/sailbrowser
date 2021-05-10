@@ -26,8 +26,7 @@ export class RaceEditComponent {
   constructor(private formBuilder: FormBuilder,
     private router: Router,
     private service: RaceSeriesService,
-    private query: RaceSeriesQuery,
-    private clubsQuery: ClubsQuery) {
+    private query: RaceSeriesQuery) {
 
     this.form = this.formBuilder.group({
       scheduledStart: ['', Validators.required],

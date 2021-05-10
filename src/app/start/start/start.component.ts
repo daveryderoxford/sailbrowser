@@ -1,17 +1,9 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { AlertController } from '@ionic/angular';
-import { interval, Observable, of } from 'rxjs';
-import { map } from 'rxjs/operators';
-import { SequenceState, StartTimerService } from '../starttime.service';
-
-export interface FlagRow {
-  time: Date;
-  fleetStart: string;
-  classUp: string;
-  classDown: string;
-  prepUp: boolean;
-  prepDown: boolean;
-}
+import { interval, Subscription } from 'rxjs';
+import { StartQuery } from '../@store/start.query';
+import { StartService } from '../@store/start.service';
+import { StartState, StartStatus } from '../@store/start.store';
 
 @Component({
   selector: 'app-start',
@@ -19,30 +11,52 @@ export interface FlagRow {
   styleUrls: ['./start.component.scss']
 })
 
-export class StartComponent implements OnInit {
-  state!: SequenceState;
-  flagrows: FlagRow[] = [];
-  nextStart: Date = new Date();
-  nextFlag!: Date;
-  isRunning = false;
-  isPostponed = false;
-  realTime$: Observable<string>;
+export class StartComponent implements OnInit, OnDestroy {
 
-  constructor(private alertCntl: AlertController, private startTimer: StartTimerService) {
-    this.realTime$ = interval(1000).pipe(
-      map( () => new Date().toLocaleTimeString())
-    );
-  }
+  sub1: Subscription;
+  sub2: Subscription;
 
-  ngOnInit() {
-    this.startTimer.countDownToNextStart().subscribe((update) => {
-      this.isRunning = (update.state === SequenceState.running);
-      this.state = update.state;
+  realTime: Date | undefined = undefined;
+  nextFlagTime: Date | undefined = undefined;
+  nextRaceStartTime: Date | undefined = undefined;
+
+  state: StartState | undefined;
+  isRunning: boolean = false;
+
+  constructor(private alertCntl: AlertController,
+    private startService: StartService,
+    startQuery: StartQuery) {
+
+    this.sub1 = interval(1000).subscribe(count => {
+      this.realTime = new Date();
+
+      if (this.state && this.realTime && this.isRunning)  {
+        this.nextFlagTime = new Date(this.state.flagTimes[0].time.getTime() - this.realTime.getTime());
+        const racetime = new Date(this.state.races[0].actualStart);
+        this.nextRaceStartTime = new Date(racetime.getTime() - this.realTime.getTime());
+      } else {
+        this.nextFlagTime = undefined;
+        this.nextRaceStartTime = undefined;
+      }
+
+    });
+
+    this.sub2 = startQuery.select().subscribe(state => {
+      this.state = state;
+      this.isRunning = (state.state === StartStatus.running);
     });
   }
 
+  ngOnInit() {
+
+  }
+
+  ionViewWillEnter() {
+
+  }
+
   startSequenceClicked() {
-    this.startTimer.runStartSequence();
+    this.startService.runStartSequence('NextMinute');
   }
 
   async stopSequenceClicked() {
@@ -53,7 +67,7 @@ export class StartComponent implements OnInit {
           text: 'Stop',
           handler: () => {
             console.log('Stop start sequence');
-            this.startTimer.stopStartSequence();
+            this.startService.stopStartSequence();
           }
         },
         {
@@ -75,12 +89,12 @@ export class StartComponent implements OnInit {
           text: 'Indefinite',
           role: 'destructive',
           handler: () => {
-            this.startTimer.postponeStart(0);
+            this.startService.postponeStart(0);
           }
         }, {
           text: '1 hour',
           handler: () => {
-            this.startTimer.postponeStart(60);
+            this.startService.postponeStart(60);
           }
         }, {
           text: 'Cancel',
@@ -95,7 +109,7 @@ export class StartComponent implements OnInit {
   }
 
   async recallClicked() {
-    if (this.state === SequenceState.running) {
+    if (this.isRunning) {
 
       const actionSheet = await this.alertCntl.create({
         header: 'Confirm General Recall',
@@ -104,13 +118,13 @@ export class StartComponent implements OnInit {
             text: 'Start same fleet again',
             role: 'destructive',
             handler: () => {
-              this.startTimer.generalRecall(false);
+              this.startService.generalRecall(false);
             }
           }, {
             text: 'Send Fleet to End',
             role: 'destructive',
             handler: () => {
-              this.startTimer.generalRecall(true);
+              this.startService.generalRecall(true);
             }
           }, {
             text: 'Cancel',
@@ -125,9 +139,9 @@ export class StartComponent implements OnInit {
     }
   }
 
-  /** Update the flag rows when a start timer expires */
-  calculateFlagRows() {
-
+  ngOnDestroy() {
+    this.sub1.unsubscribe();
+    this.sub2.unsubscribe();
   }
 }
 

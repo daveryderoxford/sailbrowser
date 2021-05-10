@@ -11,6 +11,7 @@ import { ToolbarMenuComponent } from './toolbar-menu.component';
 import { ScoringSchemeEditComponent } from './scoring-scheme-edit/scoring-scheme-edit.component';
 import { IonicContextMenuModule } from './ionic-context-menu/ionic-context-menu.module.ts';
 import { SharedPipesModule } from './pipes/shared-pipes.module';
+import IonicStepperModule from './stepper/ionic-stepper.module';
 
 @NgModule({
   declarations: [
@@ -27,6 +28,7 @@ import { SharedPipesModule } from './pipes/shared-pipes.module';
     IonicModule,
     IonicContextMenuModule,
     SharedPipesModule,
+    IonicStepperModule,
   ],
   exports: [
     CommonModule,
@@ -35,6 +37,7 @@ import { SharedPipesModule } from './pipes/shared-pipes.module';
     IonicControlErrorComponent,
     ReactiveFormsModule,
     SharedPipesModule,
+    IonicStepperModule,
     ToolbarMenuComponent,
     SailNumberComponent,
     DeletebuttonComponent,

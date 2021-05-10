@@ -1,0 +1,28 @@
+<ion-header>
+  <app-toolbar-menu title=Starts>
+
+  </app-toolbar-menu>
+</ion-header>
+<ion-content>
+  <ion-list>
+    <ng-container *ngFor="let rd of (raceDay$ | async); index as i">
+
+      <ion-item-divider color=secondary>
+        <ion-label>
+         <h2> Start {{i}} </h2>
+        </ion-label>
+        <ion-button slot="end" fill=clear *ngIf="rd.start.state ==='Future'" (click)="runStart(rd.races)">
+          Run start
+        </ion-button>
+        <span *ngIf="rd.start.state ==='Completed'">Completed</span>
+      </ion-item-divider>
+
+      <ion-item *ngFor="let race of rd.races">
+        <ion-label>
+          <h3>{{race.fleetId | fleetName: fleets}} - {{race.name}}</h3>
+        </ion-label>
+      </ion-item>
+
+    </ng-container>
+  </ion-list>
+</ion-content>

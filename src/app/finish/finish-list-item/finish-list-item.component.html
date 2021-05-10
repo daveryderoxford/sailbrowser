@@ -7,8 +7,8 @@
   </ion-item-options>
 
   <ion-item>
-    <ion-label>
-      <h2>{{comp.boatClass}} - <sailnumber [num]="comp.sailnumber"></sailnumber>
+    <ion-label *ngIf="comp">
+      <h2>{{comp.boatClass}} - <sailnumber [num]="comp.sailNumber"></sailnumber>
       </h2>
       <p>{{comp.helm}}</p>
     </ion-label>
@@ -18,6 +18,8 @@
         <ionic-context-menu-item (click)="approaching.emit()">Approching</ionic-context-menu-item>
         <ionic-context-menu-item (click)="lap.emit()">Lap</ionic-context-menu-item>
         <ionic-context-menu-item (click)="finish.emit()">Finish</ionic-context-menu-item>
+        <ionic-context-menu-item (click)="retired.emit()">Retired</ionic-context-menu-item>
+
       </ionic-context-menu>
   </ion-item>
 

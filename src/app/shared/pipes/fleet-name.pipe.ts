@@ -8,9 +8,9 @@ import { Fleet } from 'app/model/fleet';
 })
 export class FleetNamePipe implements PipeTransform {
 
-  transform(id: string, fleets: Fleet[]): string | undefined {
-    return fleets.find( fleet => id === fleet.id )?.name;
-  }
+  transform(id: string | undefined, fleets: Fleet[]): string | undefined {
+    const fleet = fleets.find( fleet => id === fleet.id);
+    return fleet ? fleet.name: '';  }
 }
 
 @Pipe({
@@ -19,7 +19,10 @@ export class FleetNamePipe implements PipeTransform {
 })
 export class FleetShortNamePipe implements PipeTransform {
 
-  transform(id: string, fleets: Fleet[]): string | undefined {
-    return fleets.find( fleet => id === fleet.id )?.shortName;
+  transform(id: string | undefined, fleets: Fleet[]): string {
+    const fleet = fleets.find( fleet => id === fleet.id);
+    return fleet ? fleet.shortName: '';
   }
 }
+
+

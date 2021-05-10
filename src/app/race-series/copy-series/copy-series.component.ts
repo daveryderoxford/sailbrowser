@@ -58,7 +58,7 @@ export class CopySeriesComponent implements OnInit {
     for (let race of this.baseSeries.races) {
       newRaces.push( createRace({
         scheduledStart: race.scheduledStart,
-        startType: race.startType,
+        type: race.type,
         status: race.status,
         isDiscardable: race.isDiscardable,
         startNumber: race.startNumber

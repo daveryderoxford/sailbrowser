@@ -1,48 +1,81 @@
 import { Injectable } from '@angular/core';
-import { CollectionConfig, CollectionService } from 'akita-ng-fire';
-import { Club } from 'app/clubs/@store/club.model';
+import { CollectionService } from 'akita-ng-fire';
+import { ClubsQuery } from 'app/clubs/@store/clubs.query';
 import { Race } from 'app/model/race';
-import { RaceSeries } from 'app/race-series/@store/race-series.model';
 import { RaceSeriesQuery } from 'app/race-series/@store/race-series.query';
 import { RaceSeriesService } from 'app/race-series/@store/race-series.service';
-import { add } from 'date-fns';
-import { RaceDayStore, RaceDayState } from './race-day.store';
-
-// Sort based on the order of fleets for the club
-function sort( r: Race, s: RaceSeries, c: Club) {
-
-}
+import { differenceInMinutes, isSameDay } from 'date-fns';
+import { Subscription } from 'rxjs';
+import { tap } from 'rxjs/operators';
+import { createRaceDayStart, makeRaceDayKey, RaceDay, Start } from './race-day.model';
+import { RaceDayState, RaceDayStore } from './race-day.store';
 
 @Injectable({ providedIn: 'root' })
-@CollectionConfig({ path: 'race-days' })
 export class RaceDayService extends CollectionService<RaceDayState> {
+
+  sub: Subscription | undefined = undefined;
 
   constructor(store: RaceDayStore,
     private raceSeriesService: RaceSeriesService,
-    private raceSeriesQuery: RaceSeriesQuery) {
+    private raceSeriesQuery: RaceSeriesQuery,
+    private clubQuery: ClubsQuery) {
     super(store);
+
+    this.clubQuery.selectActiveId().pipe(
+      tap(() => {
+        this.store?.reset();
+      }
+      ));
   }
 
-  create( day: Date) {
-    // Load series for day
+  get path() {
+    const clubId = this.clubQuery.getActiveId();
+    return `clubs/${clubId}/race-days`;
+  }
 
-    this.raceSeriesService.syncPeriod(day, add(day, {days: 1}));
+  /** Set the active race daay to the current day
+   * If the raceday does not exist then initilaise with
+   * scheduled races for the current day
+   */
+  async setActive() {
+    const date = new Date();
+    const key = makeRaceDayKey(date);
 
-    // Find races on specified day
-    let allRaces: Race[] = [];
-    const series = this.raceSeriesQuery.getAll();
+    const ref = this.collection.doc(key);
+    const snapshot = await ref.get().toPromise();
 
-    for (let s of series) {
-      const races = s.races.filter( race => race.scheduledStart === day.toISOString());
-      allRaces.push(...races);
+    if (!snapshot.exists) {
+      const raceDay = this._createNew(date);
+      await this.add(raceDay);
     }
 
-    // Allocate races to starts.  Allocated to same start if scheduled data time
-
-
-
-
-
+    if (this.sub) {
+      this.sub.unsubscribe();
+    }
+    this.sub = this.syncActive({id: key}).subscribe();
   }
 
+  /** Create new RaceDay populating with races for the day */
+  private _createNew(day: Date): RaceDay {
+
+    // Find races on specified day
+    const races = this.raceSeriesQuery.getAllRaces().filter(race => isSameDay(new Date(race.scheduledStart), day));
+    const starts: Start[] = [];
+
+    // Allocate races to starts. Allocated to same start if scheduled data time is less then 10 minutes
+    starts.push(createRaceDayStart({}));
+    let previousRace: Race | undefined = undefined;
+    for (const race of races) {
+      if (previousRace) {
+        const previousStart = new Date(previousRace.scheduledStart);
+        const start = new Date(race.scheduledStart);
+        if (differenceInMinutes(start, previousStart) > 11) {
+          starts.push(createRaceDayStart({}));
+        }
+      }
+      starts[starts.length-1].raceIds.push(race.id);
+      previousRace = race;
+    }
+    return { id: makeRaceDayKey(day), date: day.toISOString(), starts: starts }
+  }
 }

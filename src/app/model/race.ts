@@ -7,7 +7,7 @@ interface RaceStateData {
   description: string;
 }
 
-export type RaceStartType = 'Conventional' | 'Pursuit';
+export type RaceType = 'Conventional' | 'Pursuit';
 
 export const raceStates = new Map<string, RaceStateData>([
   ['Future', {label: 'Future', description: '' }],
@@ -23,9 +23,9 @@ export interface  Race  {
   seriesId: string;           /** ID of series the race is part of */
   name: string;
   fleetId: string;
-  scheduledStart: string;      /** Date the race was scheduled in ISO format */
-  actualStart: string;    /** Time the race was actually started */
-  startType: RaceStartType;   /** Line start of pursuit */
+  scheduledStart: string;     /** Date the race was scheduled in ISO format */
+  actualStart: string;        /** Time the race was actually started */
+  type: RaceType;             /** Line start of pursuit */
   status: RaceState;          /** Status of the race.  Identifies if the race is running and if results have been published */
   isDiscardable: boolean;     /** Can the race be discarded */
   startNumber: number;        /** Start order number  */

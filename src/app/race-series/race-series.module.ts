@@ -6,6 +6,7 @@ import { RaceEditComponent } from './race-edit/race-edit.component';
 import { SeriesEditComponent } from './series-edit/series-edit.component';
 import { SeriesListComponent } from './series-list/series-list.component';
 import { CopySeriesComponent } from './copy-series/copy-series.component';
+import { SelectRacesComponent } from './select-races/select-races.component';
 
 @NgModule({
   declarations: [
@@ -13,11 +14,15 @@ import { CopySeriesComponent } from './copy-series/copy-series.component';
     RaceEditComponent,
     SeriesEditComponent,
     SeriesListComponent,
-    CopySeriesComponent
+    CopySeriesComponent,
+    SelectRacesComponent
   ],
   imports: [
     SharedModule,
     RaceSeriesRoutingModule,
+  ],
+  exports: [
+    SelectRacesComponent
   ]
 })
 export class RaceSeriesModule { }

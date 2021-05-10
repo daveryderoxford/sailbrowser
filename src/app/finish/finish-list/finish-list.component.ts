@@ -1,15 +1,14 @@
 import { Component, OnInit } from '@angular/core';
-import { FormControl } from '@angular/forms';
-import { createRaceCompetitor, RaceCompetitor } from 'app/model/race-competitor';
+import { createRaceResult, RaceResult } from 'app/competitor/@store/competitor.model';
 
 
-const comp = createRaceCompetitor({
+const comp = createRaceResult({
   boatClass: 'Fireball',
   helm: 'Dave Ryder',
-  sailnumber: 14755,
+  sailNumber: 14755,
   crew: 'Michelle Ryder',
   handicap: 957,
-}) as RaceCompetitor;
+}) as RaceResult;
 
 
 @Component({
@@ -42,6 +41,10 @@ export class FinishListComponent implements OnInit {
 
   approaching() {
     console.log('approaching');
+  }
+
+  retired() {
+    console.log('retired');
   }
 
   viewChanged(ev: any) {

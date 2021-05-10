@@ -1,20 +1,20 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { SelectCompetitorComponent } from './select-competitor.component';
+import { EnterComponent } from './enter.component';
 
-describe('SelectCompetitorComponent', () => {
-  let component: SelectCompetitorComponent;
-  let fixture: ComponentFixture<SelectCompetitorComponent>;
+xdescribe('EnterComponent', () => {
+  let component: EnterComponent;
+  let fixture: ComponentFixture<EnterComponent>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ SelectCompetitorComponent ]
+      declarations: [ EnterComponent ]
     })
     .compileComponents();
   });
 
   beforeEach(() => {
-    fixture = TestBed.createComponent(SelectCompetitorComponent);
+    fixture = TestBed.createComponent(EnterComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

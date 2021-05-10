@@ -11,10 +11,14 @@
 
 <ion-content>
   <ion-list>
-    <app-finish-list-item *ngFor="let comp of competitors"
-          [comp]="comp" (lap)="lap()" (finish)="finish()"
-          (approaching)="approaching()" (top)="top()">
 
+    <app-finish-list-item *ngFor="let comp of competitors"
+          [comp]="comp" (lap)="lap()"
+          (finish)="finish()"
+          (approaching)="approaching()"
+          (top)="top()"
+          (retired)="retired()">
     </app-finish-list-item>
+
   </ion-list>
 </ion-content>

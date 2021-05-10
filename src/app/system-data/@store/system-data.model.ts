@@ -1,12 +1,6 @@
 import { BoatClass } from "app/model/boat-class";
 
 export interface SystemData {
-  id: number | string;
-  boatclasses: BoatClass[];
+  boatClasses: BoatClass[];
 }
 
-export function createSystemData(params: Partial<SystemData>) {
-  return {
-
-  } as SystemData;
-}

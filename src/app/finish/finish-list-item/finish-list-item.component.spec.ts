@@ -2,7 +2,7 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { FinishListItemComponent } from './finish-list-item.component';
 
-describe('FinishListItemComponent', () => {
+xdescribe('FinishListItemComponent', () => {
   let component: FinishListItemComponent;
   let fixture: ComponentFixture<FinishListItemComponent>;
 

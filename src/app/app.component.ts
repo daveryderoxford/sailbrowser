@@ -20,6 +20,7 @@ export class AppComponent implements OnInit {
 
   public raceOfficerPages = [
     { title: 'Pre Start', url: '/entries', icon: 'home' },
+    { title: 'Race Day', url: '/race-day', icon: 'home' },
     { title: 'Start', url: '/start', icon: 'flag' },
     { title: 'Finish', url: '/finish', icon: 'stopwatch' },
     { title: 'Results Entry', url: '/results-entry', icon: 'calculator' },
