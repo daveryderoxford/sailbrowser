@@ -33,6 +33,7 @@ export class RaceEditComponent {
       startType: ['', Validators.required],
       status: ['', Validators.required],
       isDiscardable: ['', Validators.required],
+      isAverageLap: ['', Validators.required],
       startNumber: ['', Validators.required],
     });
   }

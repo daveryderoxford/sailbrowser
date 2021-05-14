@@ -3,7 +3,6 @@ import { CollectionService } from 'akita-ng-fire';
 import { ClubsQuery } from 'app/clubs/@store/clubs.query';
 import { Race } from 'app/model/race';
 import { RaceSeriesQuery } from 'app/race-series/@store/race-series.query';
-import { RaceSeriesService } from 'app/race-series/@store/race-series.service';
 import { differenceInMinutes, isSameDay } from 'date-fns';
 import { Subscription } from 'rxjs';
 import { tap } from 'rxjs/operators';
@@ -15,8 +14,10 @@ export class RaceDayService extends CollectionService<RaceDayState> {
 
   sub: Subscription | undefined = undefined;
 
+  /** Time in munites between races to group themm in a start */
+  START_GROUPING_INTERVAL = 10;
+
   constructor(store: RaceDayStore,
-    private raceSeriesService: RaceSeriesService,
     private raceSeriesQuery: RaceSeriesQuery,
     private clubQuery: ClubsQuery) {
     super(store);
@@ -37,7 +38,7 @@ export class RaceDayService extends CollectionService<RaceDayState> {
    * If the raceday does not exist then initilaise with
    * scheduled races for the current day
    */
-  async setActive() {
+  async setTodayActive() {
     const date = new Date();
     const key = makeRaceDayKey(date);
 
@@ -69,7 +70,7 @@ export class RaceDayService extends CollectionService<RaceDayState> {
       if (previousRace) {
         const previousStart = new Date(previousRace.scheduledStart);
         const start = new Date(race.scheduledStart);
-        if (differenceInMinutes(start, previousStart) > 11) {
+        if (differenceInMinutes(start, previousStart) > this.START_GROUPING_INTERVAL+1) {
           starts.push(createRaceDayStart({}));
         }
       }

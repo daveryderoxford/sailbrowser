@@ -1,3 +1,4 @@
+
 # APPENDIX A SCORING See rule 90.3.
 
 ## A1 NUMBER OF RACES
@@ -65,17 +66,22 @@ If the protest committee decides to give redress by adjusting a boat’s score f
 
 These scoring abbreviations shall be used for recording the circumstances described:
 
-Code Description Regatta (short) series Long series
+Code Description;                                            Regatta (short) series;       Long series
 DNC; Did not start; did not come to the starting area
-DNS; Did not start (other than DNC and OCS); Boats to start + 1 Boats in series + 1
-OCS; Did not start; on the course side of the starting line at her starting signal and failed to start, or broke rule 30.; 1 Boats to start + 1
-ZFP; 20% penalty under rule 30.2; Corrected time +20%; Corrected time+20%;
-UFD; Disqualification under rule 30.3; Boats to start + 1
-BFD; Disqualification under rule 30.4; SCP Scoring Penalty applied
-DNF; Did not finish; Boats to start + 1
+DNS; Did not start (other than DNC and OCS);                 Boats to start + 1;          Boats in series + 1
+OCS; Did not start; on the course side of the starting line at her starting signal and failed to start, or broke rule 30.; 1 Boats to start + 1; Boats to start + 1
+ZFP; 20% penalty under rule 30.2;                            Corrected time +20%;        Corrected time+20%;
+UFD; Disqualification under rule 30.3;                       Boats to start + 1;         Boats to start + 1;         
+BFD; Disqualification under rule 30.4;                       Boats to start + 1;         Boats to start + 1; 
+SCP Scoring Penalty applied
+DNF; Did not finish;                                         Boats to start + 1;          Boats to start + 1;
 RET; Retired; Boats to start + 1
-DSQ; Disqualification; Boats to start + 1
-DNE; Disqualification that is not excludable; Boats to start + 1
-RDG; Redress given Avg of all races; Avg; of all racees before
-Position at incident
+DSQ; Disqualification;                                       Boats to start + 1;         
+DNE; Disqualification that is not excludable;                Boats to start + 1;
+RDG; Redress given 
+   Avg of all races; 
+   Avg; of all racees before
+   Position at incident
 DPI Discretionary penalty imposed
+
+# Sailwave scoring guide https://www.sailwave.com/download/sailwave/2019_CORK_Results_Management_Manual_V10_Sept2019.pdf

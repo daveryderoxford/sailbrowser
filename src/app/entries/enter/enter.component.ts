@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { Boat } from 'app/boats';
 import { Club } from 'app/clubs/@store/club.model';
 import { ClubsQuery } from 'app/clubs/@store/clubs.query';
-import { createRaceResult, createSeriesCometitor as createSeriesCompetitor, SeriesCompetitor } from 'app/competitor/@store/competitor.model';
+import { createRaceResult, createSeriesCometitor as createSeriesCompetitor, RaceResult, SeriesCompetitor } from 'app/competitor/@store/competitor.model';
 import { CompetitorQuery } from 'app/competitor/@store/competitor.query';
 import { CompetitorService } from 'app/competitor/@store/competitor.service';
 import { boatClassHandicap } from 'app/model/boat-class';
@@ -22,14 +22,14 @@ export class EnterComponent implements OnInit {
   dirty = false;
   club!: Club;
   races: Race[] = [];
-  boat: Boat| undefined = undefined;
+  boat: Boat | undefined = undefined;
   competitors: SeriesCompetitor[] = [];
 
   constructor(private clubQuery: ClubsQuery,
-              private systemDataQuery: SystemDataQuery,
-              private seriesQuery: RaceSeriesQuery,
-              private competitorQuery: CompetitorQuery,
-              private competitorService: CompetitorService)  { }
+    private systemDataQuery: SystemDataQuery,
+    private seriesQuery: RaceSeriesQuery,
+    private competitorQuery: CompetitorQuery,
+    private competitorService: CompetitorService) { }
 
   ngOnInit(): void {
   }
@@ -56,30 +56,33 @@ export class EnterComponent implements OnInit {
     // Look for competitor in the race series.  Get Race competitors for the series.
     // If found then add series competitor to race.
     // if not the create a new series competitor
+    this.competitors = [];
+
     for (let race of this.races) {
-     const series = this.seriesQuery.getEntity(race.seriesId) as RaceSeries;
+      const series = this.seriesQuery.getEntity(race.seriesId) as RaceSeries;
 
-     const comp = await this.competitorService.find(race.seriesId, this.boat.id);
-     if (!comp) {
-       const comp = createSeriesCompetitor({
-         seriesId: race.seriesId,
-         raceId: race.id,
-         boatId: boat.id,
-         helm: boat.helm,
-         crew: boat.crew,
-         boatClass: boat.sailingClass,
-         sailnumber: boat.sailNumber,
-         handicap: this.getHandicap(boat, this.getRatingScheme(series.fleetId)),
-         results: []
-       });
-     }
-     this.competitors.push(comp);
+      const comp = await this.competitorService.find(race.seriesId, this.boat.id);
+      if (!comp) {
+        const comp = createSeriesCompetitor({
+          seriesId: race.seriesId,
+          raceId: race.id,
+          boatId: boat.id,
+          helm: boat.helm,
+          crew: boat.crew,
+          boatClass: boat.sailingClass,
+          sailnumber: boat.sailNumber,
+          handicap: this.getHandicap(boat, this.getRatingScheme(series.fleetId)),
+        });
+      }
+      this.competitors.push(comp);
 
-     let entry = createRaceResult({
-      raceId: comp.raceId,
-      seriesCompetitorId: comp.seriesId,
-      handicap: comp.handicap
-    });
+      let entry = createRaceResult({
+        raceId: comp.raceId,
+        seriesCompetitorId: comp.seriesId,
+        handicap: comp.handicap
+      }) as RaceResult;
+
+      comp.results.push(entry);
 
     }
   }
@@ -91,7 +94,7 @@ export class EnterComponent implements OnInit {
   getHandicap(boat: Boat, scheme: RatingSystem): number {
 
     // Handicap from boat
-    let handicap = boat.handicaps.find( hcap => hcap.scheme === scheme);
+    let handicap = boat.handicaps.find(hcap => hcap.scheme === scheme);
 
     // Handicap from club
     if (!handicap) {
@@ -107,8 +110,8 @@ export class EnterComponent implements OnInit {
     return handicap.value;
   }
 
-  /** Confirm the series entries */
-  confirmEntries() {
+  /** Save the entries */
+  saveEntries() {
     this.competitorService.upsert(this.competitors);
   }
 

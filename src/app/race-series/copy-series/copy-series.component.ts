@@ -1,4 +1,4 @@
-import { Component, OnInit, SimpleChanges } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { ClubsQuery } from 'app/clubs/@store/clubs.query';
@@ -61,6 +61,7 @@ export class CopySeriesComponent implements OnInit {
         type: race.type,
         status: race.status,
         isDiscardable: race.isDiscardable,
+        isAverageLap = race.isAverageLap,
         startNumber: race.startNumber
       }));
     }

@@ -46,6 +46,7 @@ export function createRace(params: Partial<Race>): Race {
     type: 'Conventional',
     status: 'Future',
     isDiscardable: true,
+    isAverageLap: true,
     startNumber: 0,
     ...params
   };

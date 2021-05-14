@@ -28,5 +28,6 @@ export interface  Race  {
   type: RaceType;             /** Line start of pursuit */
   status: RaceState;          /** Status of the race.  Identifies if the race is running and if results have been published */
   isDiscardable: boolean;     /** Can the race be discarded */
+  isAverageLap: boolean;      /** is the average lap time used in calculating handicap results */
   startNumber: number;        /** Start order number  */
 }

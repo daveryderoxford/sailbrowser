@@ -26,11 +26,14 @@ export class StartListComponent {
   }
 
   ionViewWillEnter() {
-    this.raceDayService.setActive()
+    this.raceDayService.setTodayActive()
     this.fleets = this.clubQuery.fleets;
   }
 
   runStart(races: Race[]) {
+    if (races.length === 0) {
+      return;
+    }
     const sequence = this.clubQuery.getActive()?.defaultFlagStartSequence!;
     this.startService.resetSequence(races, sequence);
     this.router.navigate(['/start'])

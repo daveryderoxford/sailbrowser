@@ -41,14 +41,14 @@ export interface RaceResult {
   /** Results data */
   position: number;        /** The computed position.  This will be updated as part of the results calculation algorithm in ISO format */
   points: number;          /** Number of points scored for the race */
-  finishTime: number;      /** The final fnish time used in calculated the results.  If no time is avalaible this will be set to zero in milliseconds */
+  finishTime: string;      /** The final fnish time used in calculated the results.  If no time is avalaible this will be set to zero in milliseconds */
   elapsedTime: number;     /** Time taken for the competior toi comple the race before any handicap calculations have been applied */
   correctedTime: number;   /** Corrected time set after taking into account handicap and any time penalties in milliseconds */
   resultCode: ResultCode;  /** Result code OCS DNS etc */
   isDiscarded: boolean;    /** Is the result discarded */
   isDiscardable: boolean;  /** Can the result be discarded - Can either be a result of the race being non-discarable or DNE penalty*/
-  laps: number;
-  timeRecordIds: string[]; /** Array of lap times and finish time records */
+  laps: number;            /** Number of laps - Potentially manually set so not necessarly consistent with lap times */
+  lapTimes: string[];      /** Array of lap times */
 }
 
 export function createRaceResult(params: Partial<RaceResult>) {
@@ -65,7 +65,7 @@ export function createRaceResult(params: Partial<RaceResult>) {
     /** Results data */
     position: 0,
     points: 0,
-    finishTime: 0,
+    finishTime: '',
     elapsedTime: 0,
     correctedTime: 0,
     resultCode: 'NotFinished',

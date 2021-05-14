@@ -20,7 +20,7 @@ export class StartService {
   constructor(private startStore: StartStore,
     private seriesService: RaceSeriesService,
     private seriesQuery: RaceSeriesQuery) {
-    this.timer = interval(1000);
+    this.timer = interval(1000);   // One second timer
   }
 
   /** Handler for one second timer */
@@ -80,8 +80,8 @@ export class StartService {
   public runStartSequence(option: 'Now' | 'NextMinute' | 'ScheduledTime') {
     // Need to call beep in button click handler so Safari will play audio as
     // it only plays audio in response to user input.
-
     this._beep();
+
     this.timerSubscription = this.timer.subscribe((count) => this._timerUpdated(count));
 
     this.startStore.update(s => {
@@ -133,10 +133,10 @@ export class StartService {
 
     }
 
-    console.log( 'Flags \n' )
-    flags.forEach( r => console.log( r.time + ' classdown: ' + r.classFlagDown?.fleetId + '  ' +
-                                     'classup: ' + r.classFlagUp?.fleetId +   '   ' +
-                                     'prep: ' + r.prep + '\n'));
+  // console.log( 'Flags \n' )
+  //  flags.forEach( r => console.log( r.time + ' classdown: ' + r.classFlagDown?.fleetId + '  ' +
+  //                                   'classup: ' + r.classFlagUp?.fleetId +   '   ' +
+  //                                   'prep: ' + r.prep + '\n'));
     return flags;
   }
 
@@ -157,7 +157,7 @@ export class StartService {
       return r;
     });
 
-    updated.forEach( r => console.log( r.fleetId + '  ' + r.actualStart + '\n'))
+  //  updated.forEach( r => console.log( r.fleetId + '  ' + r.actualStart + '\n'))
 
     return updated
   }
