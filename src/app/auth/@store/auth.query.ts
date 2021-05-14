@@ -8,12 +8,12 @@ import { AuthStore, AuthState } from './auth.store';
 @Injectable({ providedIn: 'root' })
 export class AuthQuery extends Query<AuthState> {
 
+  profile$ = this.select('profile');
+  isLoggedIn$ = this.profile$.pipe(map(value => !!value?.email));
+
   constructor(protected store: AuthStore) {
     super(store);
   }
 
-  profile$ = this.select('profile');
-
-  isLoggedIn$ = this.profile$.pipe(map(value => !!value?.email));
 
 }

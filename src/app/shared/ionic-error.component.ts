@@ -12,6 +12,7 @@ export function anchorIonicErrorComponent(hostElement: Element, errorElement: El
 }
 
 @Component({
+  // eslint-disable-next-line @angular-eslint/component-selector
   selector: 'custom-control-error',
   template: `
     <ion-item lines='none' class='ion-text-wrap' [class.hide-control]='hideError'>

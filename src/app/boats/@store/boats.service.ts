@@ -39,7 +39,7 @@ export class BoatsService extends CollectionService<BoatsState> {
   /** Ensure that the collectino is sychronised.
    *  there is no need to unsibscribe from the collection.
    *  When a new club is connected then it will unsubscribe and
-    */
+   */
   ensureCollection() {
     if (!this.sub) {
       this.sub = this.syncCollection(queryFn).subscribe();

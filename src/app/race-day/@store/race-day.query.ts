@@ -1,3 +1,4 @@
+/* eslint-disable object-shorthand */
 import { Injectable } from '@angular/core';
 import { QueryEntity } from '@datorama/akita';
 import { Race } from 'app/model/race';
@@ -14,7 +15,9 @@ export interface RaceDayWithRaces  {
 
 function mapSeries(raceDay: RaceDay | undefined, races: Race[]): RaceDayWithRaces[] {
   const s: any = [];
-  if (!raceDay) { return [] };
+  if (!raceDay) {
+    return [];
+  }
   for (const start of raceDay.starts) {
     const startRaces = start.raceIds.map(id => races.find(r => r.id === id));
     s.push( {start: start, races: startRaces} );
@@ -27,13 +30,13 @@ export class RaceDayQuery extends QueryEntity<RaceDayState> {
 
   raceDay$ = this.selectActive();
 
+  raceDayWithRaces$ = combineLatest([this.raceDay$, this.raceSeriesQuery.races$]).pipe(
+    map(([raceDay, races]) => mapSeries(raceDay, races))
+  );
+
   constructor(protected store: RaceDayStore,
     private raceSeriesQuery: RaceSeriesQuery) {
     super(store);
   }
-
-  raceDayWithRaces$ = combineLatest([this.raceDay$, this.raceSeriesQuery.races$]).pipe(
-    map(([raceDay, races]) => mapSeries(raceDay, races))
-  );
 
 }

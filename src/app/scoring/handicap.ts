@@ -36,7 +36,7 @@ export interface Handicap {
 function calculateResultTimes(res: RaceResult,
                               scheme: RatingSystem,
                               isAverageLap: boolean,
-                              startTime: string): { corrected: number, elapsed: number } {
+                              startTime: string): { corrected: number; elapsed: number } {
 
   let result = 0;
   let elapsed = 0;
@@ -59,7 +59,7 @@ function calculateResultTimes(res: RaceResult,
       result = elapsed / res.handicap;
     }
   }
-  return { corrected: result, elapsed: elapsed };
+  return { corrected: result, elapsed };
 }
 
 /** calculate the number of competitots in series thta have  */
@@ -94,7 +94,7 @@ function sortByElapsedTime(a: RaceResult, b: RaceResult): number {
 function assignPointsForFinishers(results: RaceResult[]) {
   let position = 1;
   let count = 1;
-  let lasttime = undefined;
+  let lasttime;
   for (const res of results) {
     if (lasttime !== res.elapsedTime)
     {

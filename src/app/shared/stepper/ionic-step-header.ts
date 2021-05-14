@@ -2,6 +2,7 @@ import { Component, Input } from '@angular/core';
 import { IonicStepStatus } from './ionic-step';
 
 @Component({
+  // eslint-disable-next-line @angular-eslint/component-selector
   selector: 'ion-step-header',
   template: `
 <div class="ionic-step-header-icon"
@@ -19,6 +20,7 @@ import { IonicStepStatus } from './ionic-step';
   </div>
 </div>
   `,
+  // eslint-disable-next-line @angular-eslint/no-host-metadata-property
   host: {
     '[class.ionic-step-header-status-error]': 'isError'
   },

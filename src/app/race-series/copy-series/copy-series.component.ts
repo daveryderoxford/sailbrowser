@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
+import { Club } from 'app/clubs/@store/club.model';
 import { ClubsQuery } from 'app/clubs/@store/clubs.query';
 import { Fleet } from 'app/model/fleet';
 import { Race } from 'app/model/race';
@@ -36,7 +37,7 @@ export class CopySeriesComponent implements OnInit {
 
   ionViewWillEnter() {
     this.fleets = this.clubsQuery.fleets;
-    this.baseSeries = this.query.getActive()!;
+    this.baseSeries = this.query.getActive() as RaceSeries;
   }
 
   canDeactivate(): boolean {
@@ -55,7 +56,7 @@ export class CopySeriesComponent implements OnInit {
 
     // Add races to new series
     const newRaces: Race[] = [];
-    for (let race of this.baseSeries.races) {
+    for (const race of this.baseSeries.races) {
       newRaces.push( createRace({
         scheduledStart: race.scheduledStart,
         type: race.type,
@@ -78,7 +79,7 @@ export class CopySeriesComponent implements OnInit {
   }
 
   navigateBack() {
-    this.router.navigate(['/races/series/display'])
+    this.router.navigate(['/races/series/display']);
   }
 
 }

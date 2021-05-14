@@ -1,7 +1,7 @@
 
 /**
-* A simple class that can be used to define a key/value pair of objects.
-*/
+ * A simple class that can be used to define a key/value pair of objects.
+ */
 export class KeyValuePair<T, U> {
   public key: T;
   public value: U | any; /** TODO should be undefiend but it foes not seem to work */
@@ -31,9 +31,9 @@ export class EnumUtils {
 export class InstanceLoader {
   static getInstance<T>(context: any,
     className: string, ...args: any[]): T {
-    let instance: any = Object.create(context[className].prototype);
+    const instance: any = Object.create(context[className].prototype);
     instance.constructor.apply(instance, args);
-    return <T>instance;
+    return instance as T;
   }
 }
 

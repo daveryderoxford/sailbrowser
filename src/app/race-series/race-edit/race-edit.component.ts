@@ -30,7 +30,7 @@ export class RaceEditComponent {
 
     this.form = this.formBuilder.group({
       scheduledStart: ['', Validators.required],
-      startType: ['', Validators.required],
+      type: ['', Validators.required],
       status: ['', Validators.required],
       isDiscardable: ['', Validators.required],
       isAverageLap: ['', Validators.required],

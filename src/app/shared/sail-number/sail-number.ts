@@ -4,7 +4,7 @@ import { ChangeDetectionStrategy, Component, Input, OnChanges, OnInit, SimpleCha
 Standard header component containing menu icon.
 */
 @Component({
-  selector: 'sailnumber',
+  selector: 'app-sailnumber',
   templateUrl: 'sail-number.html',
   styleUrls: ['sail-number.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -16,7 +16,7 @@ export class SailNumberComponent implements OnInit {
 
   public s1 = '';
   public s2 = '';
-  public shortNumber: boolean = false;
+  public shortNumber = false;
 
   constructor() {
   }

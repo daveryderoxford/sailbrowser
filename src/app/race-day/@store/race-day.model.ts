@@ -14,7 +14,7 @@ export interface RaceDay {
 }
 
 export function makeRaceDayKey( date: Date): string {
-    return( startOfDay( date).toISOString() )
+    return( startOfDay( date).toISOString() );
 }
 
 export function createRaceDayStart( start: Partial<Start>): Start {
@@ -22,7 +22,7 @@ export function createRaceDayStart( start: Partial<Start>): Start {
     raceIds: [],
     state: 'Future',
     ...start
-  }
+  };
 }
 
 export function createRaceDay(params: Partial<RaceDay>) {

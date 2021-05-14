@@ -17,7 +17,7 @@ import {
   AnimationTriggerMetadata,
 } from '@angular/animations';
 
-export const IonicStepperAnimations: {
+export const ionicStepperAnimations: {
   readonly horizontalStepTransition: AnimationTriggerMetadata;
   readonly verticalStepTransition: AnimationTriggerMetadata;
 } = {

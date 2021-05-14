@@ -10,11 +10,9 @@ export interface User {
   boats: Boat[];
 }
 
-export function createProfile(profile: Partial<Profile>): Profile {
-  return {
+export const createProfile = (profile: Partial<Profile>): Profile => ({
     displayName: '',
     email: '',
     boats: [],
     ...profile
-  };
-}
+  });

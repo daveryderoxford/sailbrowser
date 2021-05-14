@@ -32,11 +32,10 @@ function filterBoats(boats: Boat[], filter: string): Boat[] {
 })
 export class BoatSelectComponent implements OnInit {
 
-  boats$: Observable<Boat[]> = of([]);
-
-  filter = new FormControl('');
-
   @Output() selected = new EventEmitter<Boat>();
+
+  boats$: Observable<Boat[]> = of([]);
+  filter = new FormControl('');
 
   constructor(private service: BoatsService,
     private query: BoatsQuery) {

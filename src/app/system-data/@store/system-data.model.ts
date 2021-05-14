@@ -1,4 +1,4 @@
-import { BoatClass } from "app/model/boat-class";
+import { BoatClass } from 'app/model/boat-class';
 
 export interface SystemData {
   boatClasses: BoatClass[];

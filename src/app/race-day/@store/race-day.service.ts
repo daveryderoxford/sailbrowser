@@ -15,6 +15,7 @@ export class RaceDayService extends CollectionService<RaceDayState> {
   sub: Subscription | undefined = undefined;
 
   /** Time in munites between races to group themm in a start */
+  // eslint-disable-next-line @typescript-eslint/naming-convention
   START_GROUPING_INTERVAL = 10;
 
   constructor(store: RaceDayStore,
@@ -65,7 +66,7 @@ export class RaceDayService extends CollectionService<RaceDayState> {
 
     // Allocate races to starts. Allocated to same start if scheduled data time is less then 10 minutes
     starts.push(createRaceDayStart({}));
-    let previousRace: Race | undefined = undefined;
+    let previousRace: Race | undefined;
     for (const race of races) {
       if (previousRace) {
         const previousStart = new Date(previousRace.scheduledStart);
@@ -77,6 +78,6 @@ export class RaceDayService extends CollectionService<RaceDayState> {
       starts[ starts.length-1 ].raceIds.push(race.id);
       previousRace = race;
     }
-    return { id: makeRaceDayKey(day), date: day.toISOString(), starts: starts };
+    return { id: makeRaceDayKey(day), date: day.toISOString(), starts };
   }
 }

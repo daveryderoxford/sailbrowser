@@ -1,3 +1,4 @@
+/* eslint-disable object-shorthand */
 import { Injectable } from '@angular/core';
 import { guid } from '@datorama/akita';
 import { CollectionConfig, CollectionService } from 'akita-ng-fire';
@@ -42,32 +43,6 @@ export class RaceSeriesService extends CollectionService<RaceSeriesState> {
     this.store?.update({ activeRace: race, activeRaceId: id });
   }
 
-  private _updateRaces(seriesId: string, races: Race[]) {
-
-    // Sort Races for series into order based on start/end time
-    races.sort((a, b) => {
-      const adate = new Date(a.scheduledStart);
-      const bdate = new Date(b.scheduledStart);
-      const result = compareAsc(adate, bdate);
-      return result;
-    });
-
-    // Set start/end of series.
-    let startDate = '';
-    let endDate = '';
-    if (races.length > 0) {
-      startDate = races[0].scheduledStart;
-      endDate = races[races.length - 1].scheduledStart;
-    }
-
-    const update = {
-      races: races,
-      startDate: startDate,
-      endDate: endDate
-    };
-    this.update(seriesId, update);
-  }
-
   /**  Adds a race to a series */
   addRace(series: RaceSeries, race: Partial<Race>) {
 
@@ -106,5 +81,31 @@ export class RaceSeriesService extends CollectionService<RaceSeriesState> {
   /** Maintain all series within a period in sychronication */
   syncPeriod(start: Date, end: Date) {
     this.syncCollection(ref => ref.where('startDate', '<=', start).where('endDate', '>=', end));
+  }
+
+  private _updateRaces(seriesId: string, races: Race[]) {
+
+    // Sort Races for series into order based on start/end time
+    races.sort((a, b) => {
+      const adate = new Date(a.scheduledStart);
+      const bdate = new Date(b.scheduledStart);
+      const result = compareAsc(adate, bdate);
+      return result;
+    });
+
+    // Set start/end of series.
+    let startDate = '';
+    let endDate = '';
+    if (races.length > 0) {
+      startDate = races[0].scheduledStart;
+      endDate = races[races.length - 1].scheduledStart;
+    }
+
+    const update = {
+      races: races,
+      startDate: startDate,
+      endDate: endDate
+    };
+    this.update(seriesId, update);
   }
 }

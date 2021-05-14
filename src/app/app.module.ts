@@ -31,7 +31,9 @@ import { SharedModule } from './shared/shared.module';
     SharedModule,
     environment.production ? [] : AkitaNgDevtools.forRoot(),
     ErrorTailorModule.forRoot({
+      // eslint-disable-next-line object-shorthand
       errors: {
+        // eslint-disable-next-line prefer-arrow/prefer-arrow-functions
         useFactory() {
           return {
             required: 'This field is required',
@@ -41,9 +43,7 @@ import { SharedModule } from './shared/shared.module';
         },
         deps: []
       },
-      blurPredicate: (element: Element) => {
-        return element.tagName === 'ION-INPUT' || element.tagName === 'ION-SELECT';
-      },
+      blurPredicate: (element: Element) => element.tagName === 'ION-INPUT' || element.tagName === 'ION-SELECT',
       controlErrorComponent: IonicControlErrorComponent,
       controlErrorComponentAnchorFn: anchorIonicErrorComponent
     }),

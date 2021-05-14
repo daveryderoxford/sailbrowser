@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { Boat } from 'app/boats';
 import { Club } from 'app/clubs/@store/club.model';
 import { ClubsQuery } from 'app/clubs/@store/clubs.query';
-import { createRaceResult, createSeriesCometitor as createSeriesCompetitor, RaceResult, SeriesCompetitor } from 'app/competitor/@store/competitor.model';
+import { createRaceResult, createSeriesCompetitor, RaceResult, SeriesCompetitor } from 'app/competitor/@store/competitor.model';
 import { CompetitorQuery } from 'app/competitor/@store/competitor.query';
 import { CompetitorService } from 'app/competitor/@store/competitor.service';
 import { boatClassHandicap } from 'app/model/boat-class';
@@ -58,12 +58,12 @@ export class EnterComponent implements OnInit {
     // if not the create a new series competitor
     this.competitors = [];
 
-    for (let race of this.races) {
+    for (const race of this.races) {
       const series = this.seriesQuery.getEntity(race.seriesId) as RaceSeries;
 
-      const comp = await this.competitorService.find(race.seriesId, this.boat.id);
+      let comp = await this.competitorService.find(race.seriesId, this.boat.id);
       if (!comp) {
-        const comp = createSeriesCompetitor({
+        comp = createSeriesCompetitor({
           seriesId: race.seriesId,
           raceId: race.id,
           boatId: boat.id,
@@ -76,7 +76,7 @@ export class EnterComponent implements OnInit {
       }
       this.competitors.push(comp);
 
-      let entry = createRaceResult({
+      const entry = createRaceResult({
         raceId: comp.raceId,
         seriesCompetitorId: comp.seriesId,
         handicap: comp.handicap
@@ -98,15 +98,15 @@ export class EnterComponent implements OnInit {
 
     // Handicap from club
     if (!handicap) {
-      handicap = boatClassHandicap(this.club.boatClasses, boat.sailingClass, scheme)
+      handicap = boatClassHandicap(this.club.boatClasses, boat.sailingClass, scheme);
     }
 
     // Default from system data
     if (!handicap) {
-      handicap = boatClassHandicap(this.systemDataQuery.boatClasses, boat.sailingClass, scheme)
+      handicap = boatClassHandicap(this.systemDataQuery.boatClasses, boat.sailingClass, scheme);
     }
 
-    if (!handicap || !handicap.value) return 0
+    if (!handicap || !handicap.value) {return 0;}
     return handicap.value;
   }
 

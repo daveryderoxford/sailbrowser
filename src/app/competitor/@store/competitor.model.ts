@@ -1,3 +1,4 @@
+/* eslint-disable max-len */
 import { ResultCode } from 'app/model/result-code';
 
 export interface SeriesCompetitor {
@@ -13,8 +14,7 @@ export interface SeriesCompetitor {
   results: RaceResult[];       /** Results for races */
 }
 
-export function createSeriesCometitor(params: Partial<SeriesCompetitor>) {
-  return {
+export const createSeriesCompetitor = (params: Partial<SeriesCompetitor>) => ({
     id: '',
     raceId: '',
     seriesId: '',
@@ -26,8 +26,7 @@ export function createSeriesCometitor(params: Partial<SeriesCompetitor>) {
     handicap: 0,
     results: [],
     ...params
-  };
-}
+  });
 
 export interface RaceResult {
   id: string;

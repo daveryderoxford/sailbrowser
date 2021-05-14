@@ -4,7 +4,7 @@
   <ion-item button detail="false" *ngFor="let boat of boats$ | async" (click)="itemTapped($event, boat)">
 
     <ion-label>
-      <h2>{{boat.sailingClass}} - <sailnumber [num]='boat.sailNumber'></sailnumber> - {{boat.name}}</h2>
+      <h2>{{boat.sailingClass}} - <app-sailnumber [num]='boat.sailNumber'></app-sailnumber> - {{boat.name}}</h2>
       <p>{{boat.helm}} <span [hidden]='!boat.crew'> / </span> {{boat.crew}}</p>
       <ion-text color="secondary">
         <p>{{boat.type | boatType}}</p>

@@ -1,8 +1,9 @@
+/* eslint-disable max-len */
 /** Results codes as derived from the ISAF with additional codes of OOD */
 export type ResultCode =
   'NotFinished' | 'OK' | 'OOD' | 'DNC' | 'DNF' | 'RET' | 'DSQ' | 'DNS' | 'OCS' | 'XPA' | 'ZFP' | 'UFD' | 'BFD' | 'SCP' | 'DNE' | 'RDG' | 'DPI';
 
-export type ResultCodeScoring = 'NA' | 'BoatsInSeries' | 'BoatstoStart'
+export type ResultCodeScoring = 'NA' | 'BoatsInSeries' | 'BoatstoStart';
 
 export interface ResultCodeData {
   label: string;

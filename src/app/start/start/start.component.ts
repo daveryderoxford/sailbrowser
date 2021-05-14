@@ -21,7 +21,7 @@ export class StartComponent implements OnInit, OnDestroy {
   nextRaceStartTime: Date | undefined = undefined;
 
   state: StartState | undefined;
-  isRunning: boolean = false;
+  isRunning = false;
 
   constructor(private alertCntl: AlertController,
     private startService: StartService,

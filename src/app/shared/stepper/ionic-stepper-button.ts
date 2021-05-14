@@ -3,24 +3,28 @@ import { IonicStepperComponent } from './ionic-stepper';
 
 /** Button that moves to the next step in a stepper workflow. */
 @Directive({
+  // eslint-disable-next-line @angular-eslint/directive-selector
   selector: '[ionicStepperNext]',
+  // eslint-disable-next-line @angular-eslint/no-host-metadata-property
   host: {
     '(click)': '_stepper.nextStep()',
   }
 })
-export class IonicStepperNext {
+export class IonicStepperNextDirective {
 
   constructor(public _stepper: IonicStepperComponent) { }
 }
 
 /** Button that moves to the previous step in a stepper workflow. */
 @Directive({
+  // eslint-disable-next-line @angular-eslint/directive-selector
   selector: '[ionicStepperPrevious]',
+  // eslint-disable-next-line @angular-eslint/no-host-metadata-property
   host: {
     '(click)': '_stepper.previousStep()',
   }
 })
-export class IonicStepperPrevious {
+export class IonicStepperPreviousDirective {
 
   constructor(public _stepper: IonicStepperComponent) { }
 }

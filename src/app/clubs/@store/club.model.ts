@@ -5,9 +5,9 @@ import { SeriesScoringData } from 'app/scoring/series-scoring';
 import { StartFlagSequence } from 'app/start/@store/start.store';
 
 export enum ClubStatus {
-  New,
-  Active,
-  Archived
+  new,
+  active,
+  archived
 }
 
 export interface Club {
@@ -31,7 +31,7 @@ export function testClub(): Club {
     name: 'Test Club',
     contactEmail: 'dave@theryderclan.co.uk',
     icon: '',
-    status: ClubStatus.Active,
+    status: ClubStatus.active,
     fleets: [
       { id: 'FHC', shortName: 'Fast HCap', name: 'Fast Handicap', handicapScheme: 'RYA_PY', classFlag: 'a'},
       { id: 'MHC', shortName: 'Med HCap', name: 'Medium Handicap', handicapScheme: 'RYA_PY', classFlag: 'b' },
@@ -57,11 +57,12 @@ export function testClub(): Club {
   }) as Club;
 }
 
+// eslint-disable-next-line prefer-arrow/prefer-arrow-functions
 export function createClub(params: Partial<Club>): Partial<Club> {
   return {
     id: '',
     name: '',
-    status: ClubStatus.New,
+    status: ClubStatus.new,
     contactEmail: '',
     icon: '',
     fleets: [],

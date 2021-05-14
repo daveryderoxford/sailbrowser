@@ -97,7 +97,7 @@ const defaultData: SystemData = {
     { name: 'Sprint 15', handicaps: [{ scheme: 'RYA_PY', value: 926 }], type: 'Cat' },
     { name: 'Sprint 15 Sport', handicaps: [{ scheme: 'RYA_PY', value: 904 }], type: 'Cat' },
   ]
-}
+};
 
 @Injectable({ providedIn: 'root' })
 export class SystemDataService {
@@ -118,6 +118,4 @@ export class SystemDataService {
       );
     });
   }
-
-
 }

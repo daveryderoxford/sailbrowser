@@ -39,7 +39,7 @@ export class RaceSeriesQuery extends QueryEntity<RaceSeriesState> {
 
   getAllRaces(): Race[] {
     const ret: Race[] = [];
-    for (let series of this.getAll()) {
+    for (const series of this.getAll()) {
       ret.push(...series.races);
     }
     ret.sort((a, b) => this.sortRaces(a, b));

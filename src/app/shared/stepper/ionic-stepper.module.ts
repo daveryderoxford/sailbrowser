@@ -2,7 +2,7 @@ import { NgModule } from '@angular/core';
 import { IonicStepperComponent } from './ionic-stepper';
 import { IonicStepComponent } from './ionic-step';
 import { IonicStepHeaderComponent } from './ionic-step-header';
-import { IonicStepperNext, IonicStepperPrevious } from './ionic-stepper-button';
+import { IonicStepperNextDirective, IonicStepperPreviousDirective } from './ionic-stepper-button';
 import { IonicModule } from '@ionic/angular';
 import { CommonModule } from '@angular/common';
 
@@ -10,8 +10,8 @@ const COMPONENTS = [
   IonicStepperComponent,
   IonicStepComponent,
   IonicStepHeaderComponent,
-  IonicStepperNext,
-  IonicStepperPrevious
+  IonicStepperNextDirective,
+  IonicStepperPreviousDirective
 ];
 
 @NgModule({

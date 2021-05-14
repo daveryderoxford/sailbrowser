@@ -17,13 +17,13 @@
  static generateGuid(): string {
 
          // Will hold the GUID string as we build it.
-         var guid: string;
+         let guid: string;
 
          // Used to hold the generated hex digit as they are generated.
-         var hexDigit: string;
+         let hexDigit: string;
 
          // Used to keep track of our location in the generated string.
-         var j: number;
+         let j: number;
 
      // Start out with an empty string.
      guid = '';

@@ -1,5 +1,6 @@
 import { Component } from '@angular/core';
 import { Router } from '@angular/router';
+import { Club } from 'app/clubs/@store/club.model';
 import { ClubsQuery } from 'app/clubs/@store/clubs.query';
 import { Fleet } from 'app/model/fleet';
 import { Race } from 'app/model/race';
@@ -34,7 +35,8 @@ export class StartListComponent {
     if (races.length === 0) {
       return;
     }
-    const sequence = this.clubQuery.getActive()?.defaultFlagStartSequence!;
+    const club = this.clubQuery.getActive() as Club;
+    const sequence = club.defaultFlagStartSequence;
     this.startService.resetSequence(races, sequence);
     this.router.navigate(['/start']);
   }

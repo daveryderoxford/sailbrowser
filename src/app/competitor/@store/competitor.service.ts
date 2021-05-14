@@ -32,7 +32,7 @@ export class CompetitorService extends CollectionService<CompetitorState> {
       const queryFn = (ref: any) => ref.where('seriesId', '== ', seriesId)
                                         .where('boatId', '==', boatId);
 
-      return this.syncCollection(this.path, queryFn)
+      return this.syncCollection(this.path, queryFn);
   }
 
   async find( seriesId: string, boatId: string): Promise<SeriesCompetitor> {

@@ -12,7 +12,7 @@ export enum StartStatus {
 }
 
 export interface StartFlagSequence {
-  interval: number,
+  interval: number;
   classUp: number;
   prepUp: number;
   classDown: number;
@@ -55,7 +55,7 @@ export function createStartFlagTiming(params: Partial<StartFlagTiming>): StartFl
     prep: '',
     recall: '',
     ...params
-  }
+  };
 }
 
 @Injectable({ providedIn: 'root' })

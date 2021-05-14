@@ -1,4 +1,3 @@
-import { IndexOutOfBoundException } from '@angular-devkit/schematics/src/utility/update-buffer';
 import { ChangeDetectionStrategy, Component, Input, OnChanges, OnInit, SimpleChanges } from '@angular/core';
 import { ClubsQuery } from 'app/clubs/@store/clubs.query';
 import { Fleet } from 'app/model/fleet';
@@ -12,13 +11,13 @@ import { StartFlagTiming } from '../@store/start.store';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class StartgridComponent implements OnInit, OnChanges {
-  fleets: Fleet[] = [];
-  displayedFlags: StartFlagTiming[] = [];
-
   @Input() flags: StartFlagTiming[] | undefined = [];
   @Input() races: Race[] | undefined = [];
 
-  constructor(private clubsQuery:ClubsQuery) {}
+  fleets: Fleet[] = [];
+  displayedFlags: StartFlagTiming[] = [];
+
+  constructor(private clubsQuery: ClubsQuery) {}
 
   ngOnInit(): void {
     this.fleets = this.clubsQuery.fleets;
@@ -33,7 +32,7 @@ export class StartgridComponent implements OnInit, OnChanges {
   }
 
   getFleet(race: Race | undefined): Fleet {
-    const fleet = this.fleets.find( fleet => race?.fleetId === fleet.id) as Fleet;
+    const fleet = this.fleets.find( f => race?.fleetId === f.id) as Fleet;
     console.log('fleet: ' + JSON.stringify(fleet));
     return fleet;
   }

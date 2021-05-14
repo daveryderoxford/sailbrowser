@@ -1,4 +1,5 @@
 import {
+  AfterViewChecked,
   ChangeDetectionStrategy,
   ChangeDetectorRef,
   Component,
@@ -12,11 +13,12 @@ import {
   Renderer2
 } from '@angular/core';
 import { IonicStepComponent } from './ionic-step';
-import { IonicStepperAnimations } from './ionic-stepper-animations';
+import { ionicStepperAnimations } from './ionic-stepper-animations';
 
 export type StepContentPositionState = ('next' | 'previous' | 'current');
 
 @Component({
+  // eslint-disable-next-line @angular-eslint/component-selector
   selector: 'ion-stepper',
   template: `
 <div *ngIf="mode === 'horizontal'" class="ionic-stepper-horizontal-container">
@@ -68,21 +70,24 @@ export type StepContentPositionState = ('next' | 'previous' | 'current');
 </div>
   `,
   changeDetection: ChangeDetectionStrategy.OnPush,
+  // eslint-disable-next-line @angular-eslint/no-host-metadata-property
   host: {
-    'class': 'ionic-stepper'
+    class: 'ionic-stepper'
   },
   animations: [
-    IonicStepperAnimations.verticalStepTransition,
-    IonicStepperAnimations.horizontalStepTransition,
+    ionicStepperAnimations.verticalStepTransition,
+    ionicStepperAnimations.horizontalStepTransition,
   ],
   styleUrls: ['./ionic-stepper.scss']
 })
-export class IonicStepperComponent implements OnInit {
-  disabled!: boolean;
-  _selectedIndex = 0;
+export class IonicStepperComponent implements OnInit, AfterViewChecked {
   @ContentChildren(IonicStepComponent) _steps!: QueryList<IonicStepComponent>;
 
   @Input() mode: ('horizontal' | 'vertical') = 'horizontal';
+  @Output() selectIndexChange: EventEmitter<number> = new EventEmitter<number>();
+
+  disabled!: boolean;
+  _selectedIndex = 0;
 
   @Input()
   get selectedIndex(): number {
@@ -93,8 +98,6 @@ export class IonicStepperComponent implements OnInit {
     this._selectedIndex = index;
     this.selectIndexChange.emit(this._selectedIndex);
   }
-
-  @Output() selectIndexChange: EventEmitter<number> = new EventEmitter<number>();
 
   constructor(private _hostRef: ElementRef, private render: Renderer2, private _changeDetectorRef: ChangeDetectorRef) {
   }

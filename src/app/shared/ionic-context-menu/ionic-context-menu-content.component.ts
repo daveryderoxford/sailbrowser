@@ -1,6 +1,7 @@
 import { Component, Input, TemplateRef } from '@angular/core';
 
 @Component({
+  // eslint-disable-next-line @angular-eslint/component-selector
   selector: 'ionic-context-menu-content',
   template: `
   <ng-template #defaultTemplate>

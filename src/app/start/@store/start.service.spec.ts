@@ -38,11 +38,11 @@ let raceSeriesService: RaceSeriesService;
 let raceSeriesQuery: RaceSeriesQuery;
 
 beforeAll(() => {
-  jasmine.clock().install;
+  jasmine.clock().install();
 });
 
 afterAll(() => {
-  jasmine.clock().uninstall;
+  jasmine.clock().uninstall();
 });
 
 beforeEach(() => {

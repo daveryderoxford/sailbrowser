@@ -25,13 +25,14 @@ export type RacesFilter = 'Today' | 'All';
   styleUrls: ['./select-races.component.scss']
 })
 export class SelectRacesComponent implements OnInit {
+
+  @Input() filter = '';
+  @Output() selectedRaces = new EventEmitter<Race[]>();
+
   races$: Observable<Race[]>;
   filter$ = new BehaviorSubject<RacesFilter>('Today');
   selected: Race[] = [];
   fleets: Fleet[] = [];
-
-  @Input() filter = '';
-  @Output() selectedRaces = new EventEmitter<Race[]>();
 
   constructor(query: RaceSeriesQuery, private clubsQuery: ClubsQuery) {
     this.races$ = combineLatest([query.races$.pipe(startWith([])), this.filter$]).pipe(

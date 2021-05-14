@@ -54,6 +54,7 @@ export class StringUtilities {
         }
 
         // http://stackoverflow.com/questions/196972/convert-string-to-title-case-with-javascript
+        // eslint-disable-next-line prefer-arrow/prefer-arrow-functions
         return str.replace(/\w\S*/g, function(txt: string) { return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase(); });
     }
 
@@ -82,13 +83,14 @@ export class StringUtilities {
     }
     /**
      * Format an integer number as a fixed width string padded with a specified character  .
+     *
      * @param n integer number to pad
      * @param width to pad to
      * @param z - character to use for padding
      */
     static pad(n: number, width: number, z: string): string {
         z = z || '0';
-        let s = n.toString() + '';
+        const s = n.toString() + '';
         return s.length >= width ? s : new Array(width - s.length + 1).join(z) + s;
     }
 

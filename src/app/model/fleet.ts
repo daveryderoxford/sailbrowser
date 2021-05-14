@@ -18,5 +18,5 @@ export function createFleet(params: Partial<Fleet>): Partial<Fleet> {
     handicapScheme: 'RYA_PY',
     classFlag: '',
     ...params
-  }
+  };
 }
