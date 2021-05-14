@@ -7,6 +7,8 @@ import { ClubsState, ClubsStore } from './clubs.store';
 @Injectable({ providedIn: 'root' })
 export class ClubsQuery extends QueryEntity<ClubsState> {
 
+  boatClasses: BoatClass[] = this.getActive()!.boatClasses;
+
   constructor(protected store: ClubsStore) {
     super(store);
   }
@@ -17,6 +19,5 @@ export class ClubsQuery extends QueryEntity<ClubsState> {
     return this.fleets.find( fleet => id === fleet.id);
   }
 
-  boatClasses: BoatClass[] = this.getActive()!.boatClasses
 
 }

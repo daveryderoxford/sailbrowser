@@ -10,7 +10,6 @@ export class RaceDayStore extends EntityStore<RaceDayState> {
 
   constructor() {
     super();
-    
   }
 
 }

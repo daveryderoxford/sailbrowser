@@ -34,10 +34,10 @@ export class StartService {
       let status = s.state;
 
       const now = new Date();
-      const secondstoNewFlag = differenceInSeconds(s.flagTimes[0].time, now)
+      const secondstoNewFlag = differenceInSeconds(s.flagTimes[0].time, now);
 
       const raceStart = new Date(s.races[0].actualStart);
-      const secondstoStart = differenceInSeconds(raceStart, now)
+      const secondstoStart = differenceInSeconds(raceStart, now);
 
       /** Beep at set times before the start */
       if (this._beepTimes.indexOf(secondstoNewFlag) !== -1) {
@@ -49,13 +49,13 @@ export class StartService {
       }
 
       if (secondstoStart <= 0) {
-        //* update persistent race status
+        // update persistent race status
         const series = assertExists(this.seriesQuery.getEntity(races[0].seriesId));
         this.seriesService.updateRace(series, races[0].id, { status: 'InProgress', actualStart: now.toISOString() });
         startedRaces.push(races[0]);
         races.shift();
 
-        /** end of start sequence */
+        // end of start sequence
         if (races.length === 0) {
           status = StartStatus.finished;
           this.timerSubscription.unsubscribe();
@@ -66,14 +66,14 @@ export class StartService {
                 races: races,
                 startedRaces: startedRaces,
                 status: status
-              }
+              };
     });
   }
 
   /** completely reset the start sequence, specifiying a new set of races */
   resetSequence(races: Race[], sequence: StartFlagSequence) {
     this.startStore.reset();
-    this.startStore.update({ races: races, sequence: sequence})
+    this.startStore.update({ races: races, sequence: sequence});
   }
 
   /** Start/stop running the start service */
@@ -100,7 +100,7 @@ export class StartService {
 
       const flags = this._calculateFlags(races, s.sequence);
 
-      return { firstStartTime: firstStartTime, state: StartStatus.running, races: races, flagTimes: flags }
+      return { firstStartTime: firstStartTime, state: StartStatus.running, races: races, flagTimes: flags };
     });
   }
 
@@ -159,7 +159,7 @@ export class StartService {
 
   //  updated.forEach( r => console.log( r.fleetId + '  ' + r.actualStart + '\n'))
 
-    return updated
+    return updated;
   }
 
   public stopStartSequence() {
@@ -168,7 +168,8 @@ export class StartService {
   }
 
   /** Recall the last race start - optionally move the class to the end of the start sequence
-      The timer continues running during this period */
+   *  The timer continues running during this period
+   */
   public generalRecall(moveToEnd: boolean) {
     this.startStore.update(s => {
       let races = [...s.races];
@@ -195,8 +196,9 @@ export class StartService {
     });
   }
 
-  /** Postpone start sequence for a specified number of minutes
- start sequence will be re-started once a specific time has ellapsed or endPostponement method is called */
+ /** Postpone start sequence for a specified number of minutes
+  * start sequence will be re-started once a specific time has ellapsed or endPostponement method is called
+  */
   public postponeStart(minutes: number) {
     this.startStore.update({ state: StartStatus.postponed });
     /* TODO Update start times based on Postponement time if it is set */

@@ -16,10 +16,10 @@ export class LoginComponent implements OnInit {
   returnUrl = '';
 
   constructor(private route: ActivatedRoute,
-    private router: Router,
-    private formBuilder: FormBuilder,
-    private service: AuthService,
-    private clubQuery: ClubsQuery) {
+              private router: Router,
+              private formBuilder: FormBuilder,
+              private service: AuthService,
+              private clubQuery: ClubsQuery) {
 
     this.loginForm = this.formBuilder.group({
       email: ['', [Validators.required, Validators.email]],
@@ -68,19 +68,6 @@ export class LoginComponent implements OnInit {
       this.loading = false;
     }
   }
-
-  /** Sign in with redirect for PWA and popup for browser.
-   * Sign in with popup avoids re-loading the application on the browser.
-   * TODO Review which method is better for mobile devices where popups are not handled as well
-
-  private async _thirdPartySignIn(provider): Promise<firebase.auth.UserCredential> {
-     if (Utils.isInStandaloneMode()) {
-        this.service.auth.signInWithRedirect(provider);
-        return await this.service.auth.getRedirectResult();
-     } else {
-        return await this.service.auth.signInWithPopup(provider);
-     }
-  }  */
 
   private _handleSigninError(err: any) {
     console.log('LoginComponent: Error loging in.  Error code:' + + err.code + '  ' + err.message);

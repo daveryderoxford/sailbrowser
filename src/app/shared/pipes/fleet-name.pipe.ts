@@ -9,7 +9,7 @@ import { Fleet } from 'app/model/fleet';
 export class FleetNamePipe implements PipeTransform {
 
   transform(id: string | undefined, fleets: Fleet[]): string | undefined {
-    const fleet = fleets.find( fleet => id === fleet.id);
+    const fleet = fleets.find( f => id === f.id);
     return fleet ? fleet.name: '';  }
 }
 
@@ -20,7 +20,7 @@ export class FleetNamePipe implements PipeTransform {
 export class FleetShortNamePipe implements PipeTransform {
 
   transform(id: string | undefined, fleets: Fleet[]): string {
-    const fleet = fleets.find( fleet => id === fleet.id);
+    const fleet = fleets.find( f => id === f.id );
     return fleet ? fleet.shortName: '';
   }
 }

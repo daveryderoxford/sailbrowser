@@ -33,7 +33,10 @@ export interface Handicap {
 }
 
 /** Calculates the corrected time taking into account any time penalty */
-function calculateResultTimes(res: RaceResult, scheme: RatingSystem, isAverageLap: boolean, startTime: string): { corrected: number, elapsed: number } {
+function calculateResultTimes(res: RaceResult,
+                              scheme: RatingSystem,
+                              isAverageLap: boolean,
+                              startTime: string): { corrected: number, elapsed: number } {
 
   let result = 0;
   let elapsed = 0;
@@ -61,7 +64,7 @@ function calculateResultTimes(res: RaceResult, scheme: RatingSystem, isAverageLa
 
 /** calculate the number of competitots in series thta have  */
 function numberInSeries(): number {
-  return 0
+  return 0;
 }
 
 /**  */
@@ -77,17 +80,17 @@ function sortByElapsedTime(a: RaceResult, b: RaceResult): number {
   if (a.resultCode === 'OK' && b.resultCode === 'OK') {
     return a.elapsedTime - b.elapsedTime;
   } else if (a.resultCode === 'OK' && b.resultCode !== 'OK') {
-    return 1
+    return 1;
   } else if (a.resultCode !== 'OK' && b.resultCode === 'OK') {
     return -1;
   } else { // a and b both not OK - keep sort order
-    return 0
+    return 0;
   }
 }
 
 /** Assign posiiton and point for finishers
  * competitors with the same ellapsed time will have the same position and points.
-*/
+ */
 function assignPointsForFinishers(results: RaceResult[]) {
   let position = 1;
   let count = 1;
@@ -113,7 +116,7 @@ function assignPointsForNonFinishers(results: RaceResult[]) {
 export function calculateRacePositions(results: RaceResult[], race: Race, fleet: Fleet): RaceResult[] {
   // Get the fleet of the races for the handicap scheme
 
-  let updatedResults = results.map(res => {
+  const updatedResults = results.map(res => {
 
     const times = calculateResultTimes(res, fleet.handicapScheme, race.isAverageLap, race.actualStart);
 

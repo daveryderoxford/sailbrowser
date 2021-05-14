@@ -14,10 +14,10 @@ export interface RaceDayWithRaces  {
 
 function mapSeries(raceDay: RaceDay | undefined, races: Race[]): RaceDayWithRaces[] {
   const s: any = [];
-  if (!raceDay) return [];
+  if (!raceDay) { return [] };
   for (const start of raceDay.starts) {
-    let startRaces = start.raceIds.map(id => races.find(r => r.id === id));
-    s.push({start: start, races: startRaces});
+    const startRaces = start.raceIds.map(id => races.find(r => r.id === id));
+    s.push( {start: start, races: startRaces} );
   }
   return (s);
 }
@@ -34,6 +34,6 @@ export class RaceDayQuery extends QueryEntity<RaceDayState> {
 
   raceDayWithRaces$ = combineLatest([this.raceDay$, this.raceSeriesQuery.races$]).pipe(
     map(([raceDay, races]) => mapSeries(raceDay, races))
-  )
+  );
 
 }

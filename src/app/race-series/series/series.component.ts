@@ -58,7 +58,7 @@ export class SeriesComponent {
           handler: () => {
             console.log('Series: Deleting series');
             this.service.remove(series.id);
-            this.router.navigate(['/races'])
+            this.router.navigate(['/races']);
           }
         },
         {

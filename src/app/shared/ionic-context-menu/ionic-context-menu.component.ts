@@ -20,10 +20,10 @@ import { IonicContextMenuContentComponent } from './ionic-context-menu-content.c
 })
 export class IonicContextMenuComponent {
   popover!: HTMLIonPopoverElement;
-  @Input() icon: string = 'ellipsis-vertical-sharp';
+  @Input() icon = 'ellipsis-vertical-sharp';
   @Input() color?: any;
   @Input() fill: 'clear' | 'outline' | 'solid' | 'default' = 'clear';
-  @Input() mode?: "ios" | "md";
+  @Input() mode?: 'ios' | 'md';
   @Input() shape?: 'round';
   @Input() size: 'small' | 'default' | 'large' = 'default';
   @Input() strong = false;

@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Store, StoreConfig } from '@datorama/akita';
-import { Race } from "app/model/race";
+import { Race } from 'app/model/race';
 
 export enum StartStatus {
   notstarted, // start sequence has not been started

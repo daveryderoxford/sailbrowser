@@ -20,7 +20,7 @@ function filterBoats(boats: Boat[], filter: string): Boat[] {
       boat.crew.toLowerCase().indexOf(f) > -1 ||
       boat.owner.toLowerCase().indexOf(f) > -1 ||
       boat.sailingClass.toLowerCase().indexOf(f) > -1;
-      return res;
+    return res;
   });
 }
 
@@ -40,7 +40,7 @@ export class BoatSelectComponent implements OnInit {
 
   constructor(private service: BoatsService,
     private query: BoatsQuery) {
-      this.service.ensureCollection();
+    this.service.ensureCollection();
   }
 
   ngOnInit() {
@@ -50,7 +50,7 @@ export class BoatSelectComponent implements OnInit {
 
     this.boats$ = combineLatest([this.query.selectAll(), filter$]).pipe(
       debounce(() => interval(250)),
-      map( ([boats, filter]) => filterBoats(boats, filter))
+      map(([boats, filter]) => filterBoats(boats, filter))
     );
   }
 

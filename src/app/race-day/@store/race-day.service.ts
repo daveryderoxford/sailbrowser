@@ -70,13 +70,13 @@ export class RaceDayService extends CollectionService<RaceDayState> {
       if (previousRace) {
         const previousStart = new Date(previousRace.scheduledStart);
         const start = new Date(race.scheduledStart);
-        if (differenceInMinutes(start, previousStart) > this.START_GROUPING_INTERVAL+1) {
+        if ( differenceInMinutes(start, previousStart) > this.START_GROUPING_INTERVAL+1 ) {
           starts.push(createRaceDayStart({}));
         }
       }
-      starts[starts.length-1].raceIds.push(race.id);
+      starts[ starts.length-1 ].raceIds.push(race.id);
       previousRace = race;
     }
-    return { id: makeRaceDayKey(day), date: day.toISOString(), starts: starts }
+    return { id: makeRaceDayKey(day), date: day.toISOString(), starts: starts };
   }
 }

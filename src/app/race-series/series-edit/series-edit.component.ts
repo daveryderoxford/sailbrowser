@@ -50,7 +50,7 @@ export class SeriesEditComponent {
       const club = this.clubsQuery.getActive() as Club;
 
       const series: Partial<RaceSeries> = {
-        scoringScheme: club.defaultScoringScheme
+        scoringScheme: club.defaultScoringScheme;
       }
       return createSeries(series);
     }

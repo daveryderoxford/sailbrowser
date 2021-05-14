@@ -3,9 +3,9 @@ import { DocumentChangeAction } from '@angular/fire/firestore';
 import { CollectionConfig, CollectionService } from 'akita-ng-fire';
 import { ClubsQuery } from 'app/clubs/@store/clubs.query';
 import { Observable } from 'rxjs';
-import { map, switchMap, tap } from 'rxjs/operators';
+import { tap } from 'rxjs/operators';
 import { SeriesCompetitor } from './competitor.model';
-import { CompetitorStore, CompetitorState } from './competitor.store';
+import { CompetitorState, CompetitorStore } from './competitor.store';
 
 @Injectable({ providedIn: 'root' })
 @CollectionConfig({ path: 'clubs/${clubId}/competitors/' })

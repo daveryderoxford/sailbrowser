@@ -15,7 +15,7 @@ function setRaceDenormalisedData( series: RaceSeries): RaceSeries {
     return race;
   });
 
-  return { ...series, races: races}
+  return { ...series, races: races };
 }
 
 export interface RaceSeriesState extends EntityState<RaceSeries, string>, ActiveState<string>, ActiveRace {}

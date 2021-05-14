@@ -88,7 +88,7 @@ export class RaceEditComponent {
 
     this.service.removeRace(this.series, this.activeObject.id);
     this.form.reset();
-    this.navigateBack()
+    this.navigateBack();
   }
 
   navigateBack() {

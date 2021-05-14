@@ -1,4 +1,4 @@
-import { ResultCode } from "app/model/result-code";
+import { ResultCode } from 'app/model/result-code';
 
 export interface SeriesCompetitor {
   id: string;
@@ -10,7 +10,7 @@ export interface SeriesCompetitor {
   boatClass: string;           /** This will be used to match the class name in the classes */
   sailnumber: number;          /** Sail number */
   handicap: number;            /** Handicap value  (for handicap) */
-  results: RaceResult[]        /** Results for races */
+  results: RaceResult[];       /** Results for races */
 }
 
 export function createSeriesCometitor(params: Partial<SeriesCompetitor>) {
@@ -26,7 +26,7 @@ export function createSeriesCometitor(params: Partial<SeriesCompetitor>) {
     handicap: 0,
     results: [],
     ...params
-  }
+  };
 }
 
 export interface RaceResult {
@@ -38,7 +38,7 @@ export interface RaceResult {
   boatClass: string;           /** This will be used to match the class name in the classes */
   sailNumber: number;          /** Sail number */
   handicap: number;            /** Handicap value. */
-  /** Results data */
+  /* Results data */
   position: number;        /** The computed position.  This will be updated as part of the results calculation algorithm in ISO format */
   points: number;          /** Number of points scored for the race */
   finishTime: string;      /** The final fnish time used in calculated the results.  If no time is avalaible this will be set to zero in milliseconds */

@@ -51,7 +51,7 @@ export class CopySeriesComponent implements OnInit {
       scoringScheme: cloneDeep(this.baseSeries.scoringScheme),
     });
 
-     newSeries.id = await this.service.add(newSeries)
+     newSeries.id = await this.service.add(newSeries);
 
     // Add races to new series
     const newRaces: Race[] = [];
@@ -61,7 +61,7 @@ export class CopySeriesComponent implements OnInit {
         type: race.type,
         status: race.status,
         isDiscardable: race.isDiscardable,
-        isAverageLap = race.isAverageLap,
+        isAverageLap: race.isAverageLap,
         startNumber: race.startNumber
       }));
     }

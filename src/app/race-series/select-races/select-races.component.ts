@@ -11,9 +11,9 @@ import { map, startWith } from 'rxjs/operators';
 
 function filterRaces(races: Race[], filter: RacesFilter) {
   if (filter === 'Today') {
-    return races.filter(race => isToday(new Date(race.scheduledStart)))
+    return races.filter(race => isToday(new Date(race.scheduledStart)));
   } else {
-    return races
+    return races;
   }
 }
 
@@ -30,8 +30,8 @@ export class SelectRacesComponent implements OnInit {
   selected: Race[] = [];
   fleets: Fleet[] = [];
 
-  @Input() filter: string = '';
-  @Output() selectedRaces = new EventEmitter<Race[]>()
+  @Input() filter = '';
+  @Output() selectedRaces = new EventEmitter<Race[]>();
 
   constructor(query: RaceSeriesQuery, private clubsQuery: ClubsQuery) {
     this.races$ = combineLatest([query.races$.pipe(startWith([])), this.filter$]).pipe(
@@ -50,10 +50,10 @@ export class SelectRacesComponent implements OnInit {
   checkboxClick(race: Race, e: any) {
     const checked = e.detail.checked;
     if (checked) {
-      this.selected.push(race)
+      this.selected.push(race);
     } else {
-      remove(this.selected, r => r === race)
+      remove(this.selected, r => r === race);
     }
-    this.selectedRaces.emit(this.selected)
+    this.selectedRaces.emit(this.selected);
   }
 }

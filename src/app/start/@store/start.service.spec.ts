@@ -16,18 +16,20 @@ const races = [
 ];
 
 const isafSequence: StartFlagSequence = {
+  interval: 4,
   classUp: 5,
   prepUp: 4,
   prepDown: 1,
   classDown: 0
-}
+};
 
 const twoMinSequence: StartFlagSequence = {
+  interval: 2,
   classUp: 4,
   prepUp: 2,
   prepDown: 0,
   classDown: 0
-}
+};
 
 let startService: StartService;
 let startStore: StartStore;
@@ -81,13 +83,13 @@ describe('StartService', () => {
   });
 
   it('should set the start times for races correctly', () => {
-    //Set time to 30 seconds
+    // Set time to 30 seconds
 
     // Add using isaf seqience
     startService.resetSequence(races, isafSequence);
 
     // Check that actual start times are correct based on sequence
-   
+
 
     // Check that flags are as expected
 

@@ -22,11 +22,11 @@ export class StartListComponent {
     raceDayQuery: RaceDayQuery,
     private startService: StartService,
     private clubQuery: ClubsQuery) {
-      this.raceDay$ = raceDayQuery.raceDayWithRaces$
+      this.raceDay$ = raceDayQuery.raceDayWithRaces$;
   }
 
   ionViewWillEnter() {
-    this.raceDayService.setTodayActive()
+    this.raceDayService.setTodayActive();
     this.fleets = this.clubQuery.fleets;
   }
 
@@ -36,6 +36,6 @@ export class StartListComponent {
     }
     const sequence = this.clubQuery.getActive()?.defaultFlagStartSequence!;
     this.startService.resetSequence(races, sequence);
-    this.router.navigate(['/start'])
+    this.router.navigate(['/start']);
   }
 }

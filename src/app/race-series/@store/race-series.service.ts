@@ -48,7 +48,7 @@ export class RaceSeriesService extends CollectionService<RaceSeriesState> {
     races.sort((a, b) => {
       const adate = new Date(a.scheduledStart);
       const bdate = new Date(b.scheduledStart);
-      let result = compareAsc(adate, bdate);
+      const result = compareAsc(adate, bdate);
       return result;
     });
 
@@ -84,7 +84,7 @@ export class RaceSeriesService extends CollectionService<RaceSeriesState> {
   addRaces(series: RaceSeries, races: Race[]) {
 
     races.forEach(race => {
-      race.id = guid()
+      race.id = guid();
       race.seriesId = series.id;
     });
 
