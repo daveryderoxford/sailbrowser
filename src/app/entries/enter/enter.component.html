@@ -24,13 +24,18 @@
     </ion-step>
 
     <ion-step label="Boat" description="Select boat">
+      <app-boat-select (selected)="selectBoat($event)"></app-boat-select>
+
       <ion-button ionicStepperPrevious>Previous</ion-button>
       <ion-button ionicStepperNext>Next</ion-button>
     </ion-step>
 
     <ion-step label="Confirm" description="Confirm entry">
+       <ion-list *ngFor="let comp of competitors">
+         <app-confirm-entry [competitor]="comp"></app-confirm-entry>
+       </ion-list>
       <ion-button ionicStepperPrevious>Previous</ion-button>
-      <ion-button>Done</ion-button>
+      <ion-button (click)=saveEntries()>Done</ion-button>
     </ion-step>
 
   </ion-stepper>
