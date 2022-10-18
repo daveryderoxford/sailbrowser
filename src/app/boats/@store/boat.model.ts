@@ -1,4 +1,4 @@
-import { Handicap } from 'app/scoring/handicap';
+import { Handicap } from 'app/scoring/scoring';
 
 export type BoatType = 'SingleHander' | 'DoubleHander' | 'Cat' | 'DayBoat' | 'Yacht' | 'Windsurfer' | 'Kiteboard' | 'ModelYacht' | 'Other';
 

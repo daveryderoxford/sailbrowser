@@ -2,7 +2,6 @@ import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { ClubsQuery } from 'app/clubs/@store/clubs.query';
 import { Fleet } from 'app/model/fleet';
 import { Race } from 'app/model/race';
-import { RaceSeries } from 'app/race-series/@store/race-series.model';
 import { RaceSeriesQuery } from 'app/race-series/@store/race-series.query';
 import { isToday } from 'date-fns';
 import { remove } from 'lodash-es';
@@ -27,11 +26,11 @@ export type RacesFilter = 'Today' | 'All';
 export class SelectRacesComponent implements OnInit {
 
   @Input() filter = '';
-  @Output() selectedRaces = new EventEmitter<Race[]>();
+  @Input() races: Race[] = [];
+  @Output() raceSelected = new EventEmitter<Race[]>();
 
   races$: Observable<Race[]>;
   filter$ = new BehaviorSubject<RacesFilter>('Today');
-  selected: Race[] = [];
   fleets: Fleet[] = [];
 
   constructor(query: RaceSeriesQuery, private clubsQuery: ClubsQuery) {
@@ -51,10 +50,15 @@ export class SelectRacesComponent implements OnInit {
   checkboxClick(race: Race, e: any) {
     const checked = e.detail.checked;
     if (checked) {
-      this.selected.push(race);
+      this.races.push(race);
     } else {
-      remove(this.selected, r => r === race);
+      remove(this.races, r => r === race);
     }
-    this.selectedRaces.emit(this.selected);
-  }
+    this.raceSelected.emit(this.races);
+}
+
+isSelected(race: Race) {
+  return this.races.some( r => r.id = race.id);
+ }
+
 }

@@ -1,21 +1,15 @@
 <ion-list>
-  <ion-item-divider mode="md">
-    <ion-label>
-      Basic Item Divider
-    </ion-label>
-  </ion-item-divider>
   <ion-item *ngFor="let race of races$ | async">
     <ion-label>
         <h3>{{race.fleetId | fleetName: fleets}} - {{race.name}}</h3>
         <p>{{race.scheduledStart | date:'dd-MMM-yyyy  hh:ss'}}</p>
     </ion-label>
 
-    <ion-checkbox color="primary" slot="start" (ionChange)="checkboxClick(race, $event)"></ion-checkbox>
+    <ion-checkbox color="primary" slot="start" [checked]="isSelected(race)" (ionChange)="checkboxClick(race, $event)"></ion-checkbox>
   </ion-item>
   <ion-item>
-    <ion-button (click)=displayAll()>
-      ...All Races
+    <ion-button slot="end" (click)=displayAll()>
+      ...More Races
     </ion-button>
   </ion-item>
 </ion-list>
-

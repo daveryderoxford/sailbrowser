@@ -1,6 +1,9 @@
 <ion-header>
   <app-toolbar-menu title=Starts>
-
+    <ionic-context-menu icon="ellipsis-vertical-sharp">
+      <ionic-context-menu-item icon="copy" (click)="addStart()">Add Start</ionic-context-menu-item>
+      <ionic-context-menu-item icon="add" (click)="addRace()">Add Race</ionic-context-menu-item>
+    </ionic-context-menu>
   </app-toolbar-menu>
 </ion-header>
 <ion-content>

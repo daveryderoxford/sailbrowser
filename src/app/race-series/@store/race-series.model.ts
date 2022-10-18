@@ -1,6 +1,6 @@
 import { guid } from '@datorama/akita';
 import { Race } from 'app/model/race';
-import { SeriesScoringData } from 'app/scoring/series-scoring';
+import { SeriesScoringData } from 'app/scoring/scoring';
 
 export interface RaceSeries {
   id: string;

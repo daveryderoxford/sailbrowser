@@ -5,6 +5,8 @@ import { AuthQuery, AuthService } from './auth';
 import { Club } from './clubs/@store/club.model';
 import { ClubsQuery } from './clubs/@store/clubs.query';
 import { ClubsService } from './clubs/@store/clubs.service';
+import { RaceSeriesService } from './race-series/@store/race-series.service';
+import { SystemDataService } from './system-data/@store/system-data.service';
 // const { SplashScreen } = Plugins;
 
 @Component({
@@ -44,6 +46,8 @@ export class AppComponent implements OnInit {
               public authQuery: AuthQuery,
               private clubsService: ClubsService,
               private clubsQuery: ClubsQuery,
+              private systemData: SystemDataService,
+              private raceSeriesService: RaceSeriesService,
               private router: Router) {
     this.initializeApp();
     this.isAuthorised$ = this.authQuery.isLoggedIn$;

@@ -35,7 +35,7 @@ export class RaceDayService extends CollectionService<RaceDayState> {
     return `clubs/${clubId}/race-days`;
   }
 
-  /** Set the active race daay to the current day
+  /** Set the active race day to the current day
    * If the raceday does not exist then initilaise with
    * scheduled races for the current day
    */
@@ -53,6 +53,7 @@ export class RaceDayService extends CollectionService<RaceDayState> {
 
     if (this.sub) {
       this.sub.unsubscribe();
+      this.sub = undefined;
     }
     this.sub = this.syncActive({id: key}).subscribe();
   }
@@ -78,6 +79,6 @@ export class RaceDayService extends CollectionService<RaceDayState> {
       starts[ starts.length-1 ].raceIds.push(race.id);
       previousRace = race;
     }
-    return { id: makeRaceDayKey(day), date: day.toISOString(), starts };
+    return { id: makeRaceDayKey(day), date: day.toISOString(), starts: starts };
   }
 }

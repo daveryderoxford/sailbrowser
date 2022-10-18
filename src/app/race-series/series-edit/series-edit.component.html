@@ -1,11 +1,12 @@
 <ion-header>
   <app-toolbar-edit [saveDisabled]="form.invalid || !form.dirty" (save)="save()" (cancel)="cancel()">
-    <ion-title *ngIf='activeObject'>Edit Series </ion-title>
-    <ion-title *ngIf='!activeObject'>Add Series </ion-title>
+    <ion-title *ngIf='activeObject'>Edit Series</ion-title>
+    <ion-title *ngIf='!activeObject'>Add Series</ion-title>
   </app-toolbar-edit>
 </ion-header>
 
 <ion-content>
+  <ion-grid fixed="true">
 
   <form [formGroup]="form" errorTailor>
 
@@ -30,6 +31,7 @@
 
     </ion-item-group>
   </form>
+  </ion-grid>
 
 </ion-content>
 

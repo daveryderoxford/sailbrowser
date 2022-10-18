@@ -1,20 +1,20 @@
-import { Component, Input, OnInit } from '@angular/core';
-import { RaceResult, SeriesCompetitor } from 'app/competitor/@store/competitor.model';
+import { Component, Input } from '@angular/core';
+import { Competitor } from 'app/competitor/@store/competitor.model';
+import { Fleet } from 'app/model/fleet';
+import { Race } from 'app/model/race';
 
 @Component({
   selector: 'app-confirm-entry',
   templateUrl: './confirm-entry.component.html',
   styleUrls: ['./confirm-entry.component.scss']
 })
-export class ConfirmEntryComponent implements OnInit {
+export class ConfirmEntryComponent  {
 
-  @Input() competitor!: SeriesCompetitor;
-  @Input() raceResult!: RaceResult;
+  @Input() competitor!: Competitor;
+  @Input() fleet!: Fleet;
+  @Input() race!: Race ;
 
   constructor() { }
-
-  ngOnInit(): void {
-  }
 
   editComp() {
 

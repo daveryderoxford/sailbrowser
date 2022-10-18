@@ -1,54 +1,58 @@
 <ion-header>
-  <app-toolbar-edit [saveDisabled]="disableSaveButton()"  (save)="save()" (cancel)="cancel()">
+  <app-toolbar-edit [saveDisabled]="disableSaveButton()" (save)="save()" (cancel)="cancel()">
     <ion-title *ngIf='activeObject'>Edit Race </ion-title>
     <ion-title *ngIf='!activeObject'>Add Race </ion-title>
   </app-toolbar-edit>
 </ion-header>
 
 <ion-content>
-
-  <form [formGroup]="form" errorTailor>
-
-    <ion-item>
-      <ion-label>Scheduled start</ion-label>
-      <ion-datetime formControlName="scheduledStart" displayFormat="DD-MMM-YYYY HH:mm"> </ion-datetime>
-    </ion-item>
-
-    <ion-item>
-      <ion-label>Start type</ion-label>
-      <ion-select formControlName="type" interface="popover" required>
-        <ion-select-option>Conventional</ion-select-option>
-        <ion-select-option>Pursuit</ion-select-option>
-      </ion-select>
-    </ion-item>
-
-    <ion-item>
-      <ion-label>Is disccardable</ion-label>
-      <ion-checkbox formControlName="isDiscardable" slot="end"></ion-checkbox>
-    </ion-item>
+  <ion-grid fixed="true">
 
 
-    <ion-item>
-      <ion-label>Is average lap</ion-label>
-      <ion-checkbox formControlName="isAverageLap" slot="end"></ion-checkbox>
-    </ion-item>
+    <form [formGroup]="form" errorTailor>
 
-    <ion-item>
-      <ion-label>Start number</ion-label>
-      <ion-input formControlName="startNumber" type=number></ion-input>
-    </ion-item>
+      <ion-item>
+        <ion-label>Scheduled start</ion-label>
+        <ion-datetime formControlName="scheduledStart" displayFormat="DD-MMM-YYYY HH:mm"> </ion-datetime>
+      </ion-item>
 
-    <ion-item>
-      <ion-label>Status</ion-label>
-      <ion-select formControlName="status" interface="popover" required>
-        <ion-select-option *ngFor="let state of states | keyvalue" [value]="state.key">{{state.value.label}} </ion-select-option>
-      </ion-select>
-    </ion-item>
+      <ion-item>
+        <ion-label>Start type</ion-label>
+        <ion-select formControlName="type" interface="popover" required>
+          <ion-select-option>Conventional</ion-select-option>
+          <ion-select-option>Pursuit</ion-select-option>
+        </ion-select>
+      </ion-item>
 
-    <ion-item *ngIf='this.activeObject'>
-      <app-deletebutton message='Delete Race' (deleteConfirmed)='delete()'></app-deletebutton>
-    </ion-item>
+      <ion-item>
+        <ion-label>Is disccardable</ion-label>
+        <ion-checkbox formControlName="isDiscardable" slot="end"></ion-checkbox>
+      </ion-item>
 
-  </form>
+
+      <ion-item>
+        <ion-label>Is average lap</ion-label>
+        <ion-checkbox formControlName="isAverageLap" slot="end"></ion-checkbox>
+      </ion-item>
+
+      <ion-item>
+        <ion-label>Start number</ion-label>
+        <ion-input formControlName="startNumber" type=number></ion-input>
+      </ion-item>
+
+      <ion-item>
+        <ion-label>Status</ion-label>
+        <ion-select formControlName="status" interface="popover" required>
+          <ion-select-option *ngFor="let state of states | keyvalue" [value]="state.key">{{state.value.label}}
+          </ion-select-option>
+        </ion-select>
+      </ion-item>
+
+      <ion-item *ngIf='this.activeObject'>
+        <app-deletebutton message='Delete Race' (deleteConfirmed)='delete()'></app-deletebutton>
+      </ion-item>
+
+    </form>
+  </ion-grid>
 
 </ion-content>

@@ -105,8 +105,11 @@ export class SystemDataService {
   constructor(private af: AngularFirestore,
     private store: SystemDataStore) {
 
+      this.store.update(defaultData);
+
+
     // Read system data on startup
-    const ref = this.af.doc<SystemData>('system_data');
+ /*   const ref = this.af.doc<SystemData>('system_data');
 
     ref.set(defaultData).then(() => {
 
@@ -116,6 +119,6 @@ export class SystemDataService {
           this.store.update(data);
         })
       );
-    });
+    }); */
   }
 }

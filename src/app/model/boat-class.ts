@@ -1,6 +1,6 @@
 /** A class of boat eg Fireball, Topper etc */
 
-import { Handicap, RatingSystem } from 'app/scoring/handicap';
+import { Handicap, RatingSystem } from 'app/scoring/scoring';
 
 export interface BoatClass {
    name: string;

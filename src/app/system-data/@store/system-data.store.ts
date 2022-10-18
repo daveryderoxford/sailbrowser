@@ -7,7 +7,7 @@ import { SystemData } from './system-data.model';
 export class SystemDataStore extends Store<SystemData> {
 
   constructor() {
-    super({});
+    super({ boatClasses: [] });
   }
 
 }

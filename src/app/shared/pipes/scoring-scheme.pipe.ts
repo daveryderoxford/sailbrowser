@@ -1,5 +1,5 @@
 import { Pipe, PipeTransform } from '@angular/core';
-import { SeriesScoringScheme } from 'app/scoring/series-scoring';
+import { SeriesScoringScheme } from 'app/scoring/scoring';
 
 @Pipe({
   name: 'scoringScheme'

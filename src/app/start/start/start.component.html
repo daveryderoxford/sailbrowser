@@ -7,61 +7,63 @@
 </ion-header>
 
 <ion-content>
+  <ion-grid fixed="true">
 
-  <!-- Buttons -->
-  <ion-grid>
-    <ion-row size=4 class="ion-align-items-center">
-      <ion-col>
-        <ion-button shape=round size=large fill=solid [hidden]="isRunning" (click)="startSequenceClicked()">Start
-        </ion-button>
-        <ion-button shape=round size=large color=danger fill=solid [hidden]="!isRunning"
-          (click)="stopSequenceClicked()">Stop</ion-button>
-      </ion-col>
-
-      <ion-col>
-        <!-- Recall button -->
-        <div [hidden]="!isRunning">
-          <ion-button fill=outline (click)="recallClicked()">
-            Recall
+    <!-- Buttons -->
+    <ion-grid>
+      <ion-row size=4 class="ion-align-items-center">
+        <ion-col>
+          <ion-button shape=round size=large fill=solid [hidden]="isRunning" (click)="startSequenceClicked()">Start
           </ion-button>
+          <ion-button shape=round size=large color=danger fill=solid [hidden]="!isRunning"
+            (click)="stopSequenceClicked()">Stop</ion-button>
+        </ion-col>
 
-          <!-- Postpone button -->
-          <ion-button fill=outline (click)="postponeClicked()">
-            Postpone
-          </ion-button>
-        </div>
-      </ion-col>
-    </ion-row>
+        <ion-col>
+          <!-- Recall button -->
+          <div [hidden]="!isRunning">
+            <ion-button fill=outline (click)="recallClicked()">
+              Recall
+            </ion-button>
 
+            <!-- Postpone button -->
+            <ion-button fill=outline (click)="postponeClicked()">
+              Postpone
+            </ion-button>
+          </div>
+        </ion-col>
+      </ion-row>
+
+    </ion-grid>
+
+    <ng-container *ngIf=isRunning>
+
+      <!-- Flag/Start time -->
+      <ion-grid>
+        <ion-row>
+          <ion-col>
+            <div class="ion-text-start">
+              Next Gun &nbsp;&nbsp;{{ nextFlagTime | date:'mm:ss'}}
+            </div>
+          </ion-col>
+
+          <ion-col>
+            <div class="ion-text-end">
+              Next Start&nbsp;&nbsp;{{ nextRaceStartTime | date:'mm:ss'}}
+            </div>
+          </ion-col>
+        </ion-row>
+      </ion-grid>
+
+      <!-- Flag -->
+      <ion-list>
+        <ion-item>
+          <app-startgrid [flags]="state?.flagTimes"></app-startgrid>
+        </ion-item>
+      </ion-list>
+
+    </ng-container>
   </ion-grid>
-
-  <ng-container *ngIf=isRunning>
-
-  <!-- Flag/Start time -->
-  <ion-grid>
-    <ion-row>
-      <ion-col>
-        <div class="ion-text-start">
-          Next Gun &nbsp;&nbsp;{{ nextFlagTime | date:'mm:ss'}}
-        </div>
-      </ion-col>
-
-      <ion-col>
-        <div class="ion-text-end">
-          Next Start&nbsp;&nbsp;{{ nextRaceStartTime | date:'mm:ss'}}
-        </div>
-      </ion-col>
-    </ion-row>
-  </ion-grid>
-
-<!-- Flag -->
-  <ion-list>
-    <ion-item>
-      <app-startgrid [flags]="state?.flagTimes"></app-startgrid>
-    </ion-item>
-  </ion-list>
-
-</ng-container>
 
 </ion-content>
 

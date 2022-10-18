@@ -7,19 +7,22 @@
 </ion-header>
 
 <ion-content>
-  <ion-segment>
-    <ion-segment-button (click)="sortBy('time')">Time</ion-segment-button>
-    <ion-segment-button (click)="sortBy('fleet')">Fleet</ion-segment-button>
-  </ion-segment>
-  <ng-container *ngIf="series$ | async as series;">
-    <ng-template #loading>Loading...</ng-template>
-    <ion-list>
-      <ion-item button *ngFor="let s of series" (click)="seriesClicked(s)">
-        <ion-label>
-          <h2>{{s.name}} {{s.fleetId | fleetName: fleets}} </h2>
-          <p *ngIf="s.races.length>0">{{s.startDate | date}} to {{ s.endDate | date}}</p>
-        </ion-label>
-      </ion-item>
-    </ion-list>
-  </ng-container>
+  <ion-grid fixed="true">
+
+    <ion-segment>
+      <ion-segment-button (click)="sortBy('time')">Time</ion-segment-button>
+      <ion-segment-button (click)="sortBy('fleet')">Fleet</ion-segment-button>
+    </ion-segment>
+    <ng-container *ngIf="series$ | async as series;">
+      <ng-template #loading>Loading...</ng-template>
+      <ion-list>
+        <ion-item button *ngFor="let s of series" (click)="seriesClicked(s)">
+          <ion-label>
+            <h2>{{s.name}} {{s.fleetId | fleetName: fleets}} </h2>
+            <p *ngIf="s.races.length>0">{{s.startDate | date}} to {{ s.endDate | date}}</p>
+          </ion-label>
+        </ion-item>
+      </ion-list>
+    </ng-container>
+  </ion-grid>
 </ion-content>

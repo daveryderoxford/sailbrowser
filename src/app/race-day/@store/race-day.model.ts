@@ -1,5 +1,3 @@
-import { Race } from 'app/model/race';
-import { RaceSeries } from 'app/race-series/@store/race-series.model';
 import { startOfDay } from 'date-fns';
 
 export interface Start {
@@ -17,11 +15,11 @@ export function makeRaceDayKey( date: Date): string {
     return( startOfDay( date).toISOString() );
 }
 
-export function createRaceDayStart( start: Partial<Start>): Start {
+export function createRaceDayStart( params: Partial<Start>): Start {
   return {
     raceIds: [],
     state: 'Future',
-    ...start
+    ...params
   };
 }
 

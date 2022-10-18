@@ -1,6 +1,5 @@
 <ion-header>
-  <app-toolbar-menu title="Finish">
-  </app-toolbar-menu>
+  <app-toolbar-menu title="Finish"> </app-toolbar-menu>
 </ion-header>
 
 <ion-segment (ionChange)="viewChanged($event)" value="fleet">
@@ -10,15 +9,37 @@
 </ion-segment>
 
 <ion-content>
-  <ion-list>
 
-    <app-finish-list-item *ngFor="let comp of competitors"
-          [comp]="comp" (lap)="lap()"
-          (finish)="finish()"
-          (approaching)="approaching()"
-          (top)="top()"
-          (retired)="retired()">
-    </app-finish-list-item>
+  <!-- Racing -->
+  <ion-grid fixed="true">
 
-  </ion-list>
+    <ng-container *ngIf="segment !== 'finished'; else finished">
+
+      <ion-list>
+        <!-- Approaching -->
+        <ion-item-divider>Approaching</ion-item-divider>
+        <app-finish-list-item *ngFor="let result of approaching" [result]="result" (lap)="lap($event)"
+          (finish)="finish($event)" (approaching)="addApproaching($event)" (top)="top($event)"
+          (retired)="retired($event)">
+        </app-finish-list-item>
+
+        <!-- All -->
+        <ion-item-divider>All</ion-item-divider>
+        <app-finish-list-item *ngFor="let result of racing$ | async" [result]="result" (lap)="lap($event)"
+          (finish)="finish($event)" (approaching)="addApproaching($event)" (top)="top($event)"
+          (retired)="retired($event)" (didNotStart)="didNotStart($event)">
+        </app-finish-list-item>
+      </ion-list>
+    </ng-container>
+
+    <!-- Finished -->
+    <ng-template #finished>
+      <ion-list>
+        <app-finish-list-item-finished *ngFor="let result of finished$ | async" [result]="result"
+          (stillRacing)="stillRacing($event)">
+        </app-finish-list-item-finished>
+      </ion-list>
+    </ng-template>
+
+  </ion-grid>
 </ion-content>

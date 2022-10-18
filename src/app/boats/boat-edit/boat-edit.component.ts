@@ -4,7 +4,7 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { BoatsQuery, BoatsService, boatTypes } from 'app/boats/index';
 import { Boat, createBoat } from 'app/boats/index';
-import { ratingSystems } from 'app/scoring/handicap';
+import { ratingSystems } from 'app/scoring/scoring';
 import { assertExists } from 'app/utilities/misc';
 
 @Component({

@@ -1,8 +1,12 @@
 import { Injectable } from '@angular/core';
-import { EntityState, EntityStore, StoreConfig, ActiveState } from '@datorama/akita';
-import { SeriesCompetitor } from './competitor.model';
+import { EntityState, EntityStore, StoreConfig, MultiActiveState } from '@datorama/akita';
+import { Competitor } from './competitor.model';
 
-export interface CompetitorState extends EntityState<SeriesCompetitor, string>, ActiveState<string> {}
+export interface ActiveRaces {
+  activeRaces: string[];
+}
+
+export interface CompetitorState extends EntityState<Competitor, string>, MultiActiveState<string>, ActiveRaces {}
 
 @Injectable({ providedIn: 'root' })
 @StoreConfig({ name: 'competitor' })

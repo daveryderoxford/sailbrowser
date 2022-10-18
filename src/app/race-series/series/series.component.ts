@@ -90,6 +90,4 @@ export class SeriesComponent {
     this.service.setActiveRace(race);
     this.router.navigate(['races/race/copy']);
   }
-
-
 }

@@ -1,7 +1,7 @@
 import { BoatClass } from 'app/model/boat-class';
 import { Fleet } from 'app/model/fleet';
-import { RatingSystem } from 'app/scoring/handicap';
-import { SeriesScoringData } from 'app/scoring/series-scoring';
+import { RatingSystem } from 'app/scoring/scoring';
+import { SeriesScoringData } from 'app/scoring/scoring';
 import { StartFlagSequence } from 'app/start/@store/start.store';
 
 export enum ClubStatus {

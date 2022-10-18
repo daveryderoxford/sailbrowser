@@ -2,30 +2,34 @@
   <app-toolbar-back title="Signup"></app-toolbar-back>
 </ion-header>
 
-<ion-content>
-  <div class=error>{{error}}</div>
+<ion-content class="vertical-center" color="light">
 
-  <form [formGroup]="signupForm" (ngSubmit)="signup()" errorTailor>
+  <app-narrow-form title="Signup">
 
-    <ion-item>
-      <ion-input formControlName="email" type="email" placeholder="Email"></ion-input>
-    </ion-item>
+    <div class=error>{{error}}</div>
 
-    <ion-item>
-      <ion-input formControlName="password" type="password" placeholder="Password"></ion-input>
-    </ion-item>
+    <form [formGroup]="signupForm" (ngSubmit)="signup()" errorTailor>
 
-    <ion-item>
-      <ion-input formControlName="confirmPassword" type="password" placeholder="Confirm Password"></ion-input>
-      <!--  <mat-hint *ngIf="signupForm.errors?.passwordMissMatch" class=error>Passwords do not match</mat-hint> -->
-    </ion-item>
+      <ion-item>
+        <ion-input formControlName="email" type="email" placeholder="Email"></ion-input>
+      </ion-item>
 
-    <ion-item>
-      <ion-button [disabled]="signupForm.invalid" color=primary type="submit" aria-label="Signup">Sign
-        up</ion-button>
-      <a routerLink="/auth/login">Already have user name</a>
-    </ion-item>
+      <ion-item>
+        <ion-input formControlName="password" type="password" placeholder="Password"></ion-input>
+      </ion-item>
 
-  </form>
+      <ion-item>
+        <ion-input formControlName="confirmPassword" type="password" placeholder="Confirm Password"></ion-input>
+        <!--  <mat-hint *ngIf="signupForm.errors?.passwordMissMatch" class=error>Passwords do not match</mat-hint> -->
+      </ion-item>
+
+
+      <ion-button [disabled]="signupForm.invalid" color=primary type="submit" class="spacebutton" expand="block" aria-label="Signup">Sign up</ion-button>
+
+      <ion-button fill="clear" strong="true" slot='start' expand="block" class="spacebutton" routerLink="/auth/login">Already have user name</ion-button>
+
+    </form>
+
+  </app-narrow-form>
 
 </ion-content>>

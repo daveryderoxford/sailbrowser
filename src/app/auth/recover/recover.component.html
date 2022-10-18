@@ -2,21 +2,25 @@
   <app-toolbar-back title="Recovery Email"></app-toolbar-back>
 </ion-header>
 
-<ion-content>
+<ion-content class="vertical-center" color="light">
 
-  <div class=error>{{error}}</div>
+  <app-narrow-form title="Recovery Email">
 
-  <form [formGroup]="recoverForm" errorTailor (ngSubmit)="recover()">
+    <div class=error>{{error}}</div>
 
-    <ion-item>
-      <ion-input formControlName="email" type="email" placeholder="Email"></ion-input>
-    </ion-item>
+    <form [formGroup]="recoverForm" errorTailor (ngSubmit)="recover()">
 
-    <ion-item>
-      <ion-button [disabled]="recoverForm.invalid" color=primary type="submit" aria-label="login">Recover</ion-button>
-      <a routerLink="/auth/login">Remembered your password?</a>
-    </ion-item>
+      <ion-item>
+        <ion-input formControlName="email" type="email" placeholder="Email"></ion-input>
+      </ion-item>
 
-  </form>
+        <ion-button [disabled]="recoverForm.invalid" color=primary type="submit" expand="block" class="spacebutton" aria-label="recover">Recover</ion-button>
+
+      <ion-button fill="clear" strong="true" routerLink="/auth/login"  expand="block" class="spacebutton">Remembered your password?</ion-button>
+
+
+    </form>
+
+  </app-narrow-form>
 
 </ion-content>

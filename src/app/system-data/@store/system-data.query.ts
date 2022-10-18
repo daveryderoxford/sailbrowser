@@ -1,6 +1,5 @@
 import { Injectable } from '@angular/core';
-import { Query, QueryEntity } from '@datorama/akita';
-import { RatingSystem } from 'app/scoring/handicap';
+import { Query } from '@datorama/akita';
 import { SystemData } from './system-data.model';
 import { SystemDataStore } from './system-data.store';
 

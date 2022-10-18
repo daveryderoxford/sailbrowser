@@ -5,11 +5,16 @@
 </ion-header>
 
 <ion-content>
-  <ion-segment scrollable>
-    <ion-segment-button  *ngFor="let race of races" value="race.id">
-       {{race}}
-    </ion-segment-button>
-   </ion-segment>
+  <ion-grid fixed="true">
+
+    <ion-segment scrollable>
+      <ion-segment-button *ngFor="let race of races$ | async" value="race.id">
+        {{race.name}}
+      </ion-segment-button>
+    </ion-segment>
+
+    <ion-list *ngFor="result of results$ | async">
+
+    </ion-list>
+  </ion-grid>
 </ion-content>
-
-

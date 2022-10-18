@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
+import { Platform } from '@ionic/angular';
 import { ClubsQuery } from 'app/clubs/@store/clubs.query';
 import { AuthService } from '../index';
 
@@ -15,7 +16,8 @@ export class LoginComponent implements OnInit {
   loading = false;
   returnUrl = '';
 
-  constructor(private route: ActivatedRoute,
+  constructor( public platform: Platform,
+               private route: ActivatedRoute,
               private router: Router,
               private formBuilder: FormBuilder,
               private service: AuthService,

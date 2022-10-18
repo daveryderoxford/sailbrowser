@@ -27,34 +27,27 @@
 
 
 // Custom additions
-//Breakpoints
+.vertical-center {
+  display: flex;
+  align-items: center;
+}
 
-$grid-breakpoints: (
- xs: 0, // Phone (0px - 575px)
- sm: 576px, // Phablet (576px - 767px)
- md: 768px, // Tablet vertical (768px - 991px)
- lg: 992px // Tablet horizontal, Desktop (992px and above)
-);
+ion-content {
+  --background: var(--ion-color-light);
+}
 
-$grid-max-widths: (
- lg: 992px
-);
+ion-grid {
+  --ion-grid-width-xs:              100%;
+  --ion-grid-width-sm:              540px;
+  --ion-grid-width-md:              540px;
+  --ion-grid-width-lg:              540px;
+  --ion-grid-width-xl:              540px;
+  }
 
 // Desktop
-
 ion-header .toolbar {
   margin: auto;
  }
 
- @media (min-width: map-get($grid-breakpoints, lg)) {
-  ion-navbar.toolbar,
-  ion-header .toolbar[fixed],
-  ion-footer .toolbar[fixed],
-  ion-tabs .tabbar {
-    margin: 0;
-    padding-right: calc((100% - #{map-get($grid-max-widths, lg)}) / 2);
-    padding-left: calc((100% - #{map-get($grid-max-widths, lg)}) / 2);
-  }
- }
 
 

@@ -14,12 +14,12 @@ function filterBoats(boats: Boat[], filter: string): Boat[] {
 
   return boats.filter((boat) => {
     const res =
-      boat.name.toLowerCase().indexOf(f) > -1 ||
       boat.sailNumber.toString().indexOf(f) > -1 ||
+      boat.sailingClass.toLowerCase().indexOf(f) > -1 ||
+      boat.name.toLowerCase().indexOf(f) > -1 ||
       boat.helm.toLowerCase().indexOf(f) > -1 ||
       boat.crew.toLowerCase().indexOf(f) > -1 ||
-      boat.owner.toLowerCase().indexOf(f) > -1 ||
-      boat.sailingClass.toLowerCase().indexOf(f) > -1;
+      boat.owner.toLowerCase().indexOf(f) > -1;
     return res;
   });
 }

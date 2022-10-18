@@ -5,7 +5,7 @@ import { CollectionConfig, CollectionService } from 'akita-ng-fire';
 import { ClubsQuery } from 'app/clubs/@store/clubs.query';
 import { Race } from 'app/model/race';
 import { compareAsc } from 'date-fns';
-import { tap } from 'rxjs/operators';
+import { switchMap, tap } from 'rxjs/operators';
 import { RaceSeries } from './race-series.model';
 import { RaceSeriesState, RaceSeriesStore } from './race-series.store';
 
@@ -17,14 +17,14 @@ export class RaceSeriesService extends CollectionService<RaceSeriesState> {
     private clubQuery: ClubsQuery) {
     super(store);
 
-    // When the club changes clear the boats store and resync it.
+    // When the club changes clear the boats store and resync series/races.
     this.clubQuery.selectActiveId().pipe(
       tap(() => {
         this.store?.reset();
-        this.syncCollection().subscribe();
         console.log('RaceSeriesService: Sync collection');
-      }
-      )).subscribe();
+      }),
+      switchMap(() => this.syncCollection())
+    ).subscribe();
   }
 
   get path() {

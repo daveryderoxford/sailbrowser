@@ -1,15 +1,10 @@
 import { Component, OnInit } from '@angular/core';
-import { createRaceResult, RaceResult } from 'app/competitor/@store/competitor.model';
-
-
-const comp = createRaceResult({
-  boatClass: 'Fireball',
-  helm: 'Dave Ryder',
-  sailNumber: 14755,
-  crew: 'Michelle Ryder',
-  handicap: 957,
-}) as RaceResult;
-
+import { CompetitorService } from 'app/competitor/@store/competitor.service';
+import { Result } from 'app/competitor/@store/result.model';
+import { ResultQuery } from 'app/competitor/@store/result.query';
+import { ResultService } from 'app/competitor/@store/result.service';
+import { FleetNamePipe } from 'app/shared/pipes/fleet-name.pipe';
+import { Observable } from 'rxjs';
 
 @Component({
   selector: 'app-finish-list',
@@ -18,38 +13,89 @@ const comp = createRaceResult({
 })
 export class FinishListComponent implements OnInit {
 
-  competitors = Array(10).fill(comp);
+  racing$: Observable<Result[]>;
+  finished$: Observable<Result[]>;
+  approaching: Result[] = [];
 
-  constructor() {
+  segment = 'fleet';
 
+  constructor(private resultService: ResultService,
+                resultsQuery: ResultQuery) {
+                this.racing$ = resultsQuery.racing$;
+                this.finished$ = resultsQuery.finished$;
   }
 
   ngOnInit(): void {
   }
 
-  lap() {
-    console.log('lap');
+  log( action: string, result: Result) {
+    console.log( action + ': '  + result.id + ' ' + result.helm );
   }
 
-  finish() {
-    console.log('finish');
+  lap(result: Result) {
+    this.resultService.addLap(result.id, result.laps, result.lapTimes);
+    this.removeApproaching(result);
+    this.log('lap', result);
   }
 
-  top() {
-    console.log('top');
+  finish(result: Result) {
+    const finishtime = new Date().toISOString();
+    this.resultService.update(result.id, {resultCode: 'OK', finishTime: finishtime} );
+    this.removeApproaching(result);
+    this.log('finish', result);
   }
 
-  approaching() {
-    console.log('approaching');
+  top(result: Result) {
+    this.approaching = [result, ...this.approaching];
+    this.log('top', result);
   }
 
-  retired() {
-    console.log('retired');
+  addApproaching(result: Result) {
+    this.approaching = [...this.approaching, result];
+    this.log('approaching', result);
+  }
+
+  removeApproaching(result: Result) {
+    this.approaching = this.approaching.filter( res => res.id !== result.id);
+  }
+
+  retired(result: Result) {
+    this.resultService.update(result.id, {resultCode: 'RET'} );
+    this.removeApproaching(result);
+  }
+
+  didNotStart(result: Result) {
+    this.resultService.update(result.id, {resultCode: 'DNS'} );
+    this.removeApproaching(result);
+  }
+
+  stillRacing(result: Result) {
+    this.resultService.update(result.id, {resultCode: 'NotFinished', finishTime: ''} );
   }
 
   viewChanged(ev: any) {
     const option = ev.detail.value;
-    console.log(option);
+    this.segment = option;
+    if (this.segment !== 'finished') {
+       this.resultService.setUISortOrder(option);
+    }
+  }
+
+  /** Private calculated the extected time competitors will cross the line.
+   * At the start, this is based on start time and handicap.
+   * Once a lap is completed it is based on avarage time of previous laps plus last start time.
+   * Assume default lap time.
+   */
+  calculatedExpctedTime(result: Result) {
+
+    if (result.laps === 0) {
+
+    } else {
+
+
+    }
+
+
   }
 
 }

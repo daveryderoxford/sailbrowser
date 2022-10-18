@@ -5,50 +5,39 @@
 
   <ion-toolbar color=dark>
     <ion-buttons>
-      <ion-button>Previous</ion-button>
+      <ion-button *ngIf="(stepper.selectedIndex !== raceStep)" (click)=previous()>Previous</ion-button>
     </ion-buttons>
     <ion-buttons slot="end">
-      <ion-button>Next</ion-button>
+      <ion-button *ngIf="(stepper.selectedIndex !== confirmStep)" [disabled]=disabled() (click)=next()>Next</ion-button>
+      <ion-button *ngIf="(stepper.selectedIndex === confirmStep)" (click)=saveEntries()>Confirm Entry</ion-button>
     </ion-buttons>
   </ion-toolbar>
 
 </ion-header>
 
 <ion-content>
+  <ion-grid fixed="true">
 
-  <ion-stepper #stepper (selectIndexChange)="selectChange($event)">
+    <ion-stepper #stepper>
 
-    <ion-step label="Races" description="Select races to enter">
-      <app-select-races filter='Today' (selectedRaces)=selectRaces($event)></app-select-races>
-      <ion-button ionicStepperNext>Next</ion-button>
-    </ion-step>
+      <ion-step label="Races" description="Select races to enter">
+        <app-select-races filter='Today' (raceSelected)=selectRaces($event)></app-select-races>
+      </ion-step>
 
-    <ion-step label="Boat" description="Select boat">
-      <app-boat-select (selected)="selectBoat($event)"></app-boat-select>
+      <ion-step label="Boat" description="Select boat">
+        <app-boat-select (selected)="boat = $event"></app-boat-select>
+      </ion-step>
 
-      <ion-button ionicStepperPrevious>Previous</ion-button>
-      <ion-button ionicStepperNext>Next</ion-button>
-    </ion-step>
+      <ion-step label="Confirm" description="Confirm entry">
 
-    <ion-step label="Confirm" description="Confirm entry">
-       <ion-list *ngFor="let comp of competitors">
-         <app-confirm-entry [competitor]="comp"></app-confirm-entry>
-       </ion-list>
-      <ion-button ionicStepperPrevious>Previous</ion-button>
-      <ion-button (click)=saveEntries()>Done</ion-button>
-    </ion-step>
+        <ion-list *ngFor="let comp of competitors; index as i">
+          <app-confirm-entry [competitor]="comp" [race]="races[i]" [fleet]="getFleet(races[i].fleetId)">
+          </app-confirm-entry>
+        </ion-list>
 
-  </ion-stepper>
+      </ion-step>
+
+    </ion-stepper>
+  </ion-grid>
 
 </ion-content>
-
-<ion-footer>
-  <ion-toolbar>
-    <ion-buttons>
-      <ion-button>Previous</ion-button>
-    </ion-buttons>
-    <ion-buttons slot="end">
-      <ion-button>Next</ion-button>
-    </ion-buttons>
-  </ion-toolbar>
-</ion-footer>

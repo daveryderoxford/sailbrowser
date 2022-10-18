@@ -14,8 +14,10 @@ import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { BoatsModule } from './boats/boats.module';
 import { HomeComponent } from './home/homescreen/home.component';
+import { RaceSeriesService } from './race-series/@store/race-series.service';
 import { anchorIonicErrorComponent, IonicControlErrorComponent } from './shared/ionic-error.component';
 import { SharedModule } from './shared/shared.module';
+import { SystemDataService } from './system-data/@store/system-data.service';
 
 @NgModule({
   declarations: [AppComponent, HomeComponent],
@@ -48,15 +50,6 @@ import { SharedModule } from './shared/shared.module';
       controlErrorComponentAnchorFn: anchorIonicErrorComponent
     }),
     ServiceWorkerModule.register('ngsw-worker.js', { enabled: environment.production }),
-    ErrorTailorModule.forRoot({
-      errors: {
-        useValue: {
-          required: error => 'This field is required'
-        }
-      },
-      controlErrorComponent: IonicControlErrorComponent,
-      controlErrorComponentAnchorFn: anchorIonicErrorComponent
-    }),
   ],
   providers: [
     { provide: RouteReuseStrategy, useClass: IonicRouteStrategy },

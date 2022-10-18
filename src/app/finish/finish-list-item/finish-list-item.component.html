@@ -1,30 +1,33 @@
 <ion-item-sliding #slide>
 
   <ion-item-options side="start" (ionSwipe)="lapSwipe(slide)">
-    <ion-item-option (click)="lap.emit()" expandable>
+    <ion-item-option (click)="lap.emit(result)" expandable>
       Lap
     </ion-item-option>
   </ion-item-options>
 
   <ion-item>
-    <ion-label *ngIf="comp">
-      <h2>{{comp.boatClass}} - <app-sailnumber [num]="comp.sailNumber"></app-sailnumber>
+
+    <ion-label *ngIf="result">
+      <h2>{{result.boatClass}} - <app-sailnumber [num]="result.sailNumber"></app-sailnumber>
       </h2>
-      <p>{{comp.helm}}</p>
+      <p>{{result.helm}}</p>
     </ion-label>
 
-      <ionic-context-menu>
-        <ionic-context-menu-item (click)="top.emit()">Top</ionic-context-menu-item>
-        <ionic-context-menu-item (click)="approaching.emit()">Approching</ionic-context-menu-item>
-        <ionic-context-menu-item (click)="lap.emit()">Lap</ionic-context-menu-item>
-        <ionic-context-menu-item (click)="finish.emit()">Finish</ionic-context-menu-item>
-        <ionic-context-menu-item (click)="retired.emit()">Retired</ionic-context-menu-item>
+    <ionic-context-menu>
+      <ionic-context-menu-item (click)="top.emit(result)">Top</ionic-context-menu-item>
+      <ionic-context-menu-item (click)="approaching.emit(result)">Approching</ionic-context-menu-item>
+      <ionic-context-menu-item (click)="lap.emit(result)">Lap</ionic-context-menu-item>
+      <ionic-context-menu-item (click)="finish.emit(result)">Finish</ionic-context-menu-item>
+      <ionic-context-menu-item (click)="retired.emit(result)">Retired</ionic-context-menu-item>
+      <ionic-context-menu-item (click)="didNotStart.emit(result)">Did Not Start</ionic-context-menu-item>
 
-      </ionic-context-menu>
+    </ionic-context-menu>
+
   </ion-item>
 
   <ion-item-options side="end" (ionSwipe)="finishSwipe(slide)">
-    <ion-item-option  (click)="finish.emit()" color="tertiary" expandable>
+    <ion-item-option (click)="finish.emit(result)" color="tertiary" expandable>
       Finish
     </ion-item-option>
   </ion-item-options>

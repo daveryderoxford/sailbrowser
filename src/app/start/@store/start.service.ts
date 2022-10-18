@@ -1,4 +1,6 @@
 import { Injectable } from '@angular/core';
+import { ResultQuery } from 'app/competitor/@store/result.query';
+import { ResultService } from 'app/competitor/@store/result.service';
 import { Race } from 'app/model/race';
 import { RaceSeriesQuery } from 'app/race-series/@store/race-series.query';
 import { RaceSeriesService } from 'app/race-series/@store/race-series.service';
@@ -20,7 +22,9 @@ export class StartService {
 
   constructor(private startStore: StartStore,
     private seriesService: RaceSeriesService,
-    private seriesQuery: RaceSeriesQuery) {
+    private seriesQuery: RaceSeriesQuery,
+    private resultsQuery: ResultQuery,
+    private resultsService: ResultService) {
     this.timer = interval(1000);   // One second timer
   }
 
@@ -60,7 +64,6 @@ export class StartService {
                flagTimes: flags };
     });
   }
-
 
   public stopStartSequence() {
     this.timerSubscription.unsubscribe();
@@ -112,7 +115,7 @@ export class StartService {
   }
 
   /** Handler for one second timer */
-  private _timerUpdated(count: number) {
+   private _timerUpdated(count: number) {
 
     this.startStore.update(s => {
 
@@ -139,7 +142,12 @@ export class StartService {
       if (secondstoStart <= 0) {
         // update persistent race status
         const series = assertExists(this.seriesQuery.getEntity(races[0].seriesId));
-        this.seriesService.updateRace(series, races[0].id, { status: 'InProgress', actualStart: now.toISOString() });
+        this.seriesService.updateRace(series, races[0].id, { status: 'InProgress', actualStart: raceStart.toISOString() });
+        // Update results with relivant start time
+        const results = this.resultsQuery.activeResults();
+        const ids = results.map( result => result.id);
+        this.resultsService.update(ids, { startTime: raceStart.toISOString()});
+
         startedRaces.push(races[0]);
         races.shift();
 

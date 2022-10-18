@@ -1,6 +1,6 @@
 /** Fleet */
 
-import { RatingSystem } from 'app/scoring/handicap';
+import { RatingSystem } from 'app/scoring/scoring';
 
 export interface Fleet {
    id: string; /** Immutable key to the fleet */

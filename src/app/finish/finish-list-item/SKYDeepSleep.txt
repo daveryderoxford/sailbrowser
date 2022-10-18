@@ -1,0 +1,87 @@
+SKY deep sleep
+
+RDK deep sleep
+  - close file system
+  - close sockets
+Nothing should be using external network
+
+UPnP -
+
+RESUME - NEED TO KNOW CURENT IP ADDRESS - SENDS REQUEST TO DHCP SERVER
+    State RFC Init reboot rather than init - try to reuse IP ADDRESS - Net server manager
+
+    UPnP - On resume (brian sequenec diagram)
+
+
+0.5W mode all gos 2W mode Ethernet/Wifi remains up (WiFi can be disabled).  DIAL one IP address advertises.  One one can register for wake on LAN.
+Their 0.5W is the same as us. (problem deep->light)
+
+Brian has sequence diagram  https://www.stb.bskyb.com/confluence/display/~bch03/Deep+Sleep+resume+-+Network
+
+
+Neet the EPG etc to wait for network to be avaalible.  See
+EPG wait for
+1.  Interfaces are up. (Required for case nto connected at all)  EPG display offline screen (RDK requiers user input at this point.
+                        On MR  ) /as/network/status updates.
+                        EPG needs to handle /as/network/status -
+
+            Network manager given notification to all components that it is not connected (no 5)
+2.  IP address to be obtained
+
+Refreshing DHCP address is required.
+
+They need to clarify with RDK OnDefault interface changed then
+
+NEED TO DEFINE NETWORK CONNECTION STATE MODEL ON STARTUP.
+
+NEED TO UNDERSTAND Q NETWORH CONNECTIVITY ON STARTUP.  On MR
+
+KEY AS knows it has got a network address.
+
+VGDRM would need to be aware of
+NETWORK aware componnets on resume need to wait for IP address to be acquired before starting up.
+--------------------------------------------------------------------------------------------------
+ON RESUME IP ADDRESS NOT USED UNTIL NETWORK IS AVALIABLE.
+
+
+
+FUSION MR ONLY MESH _ IN MESH CASE differtn ballgame - having valid IP addresss still vialif
+NGI-HELPER kicked off 5 onwards should be the same.
+
+DMS Just block until IP address recieved. -----  other stuff needs to block.
+
+Wait for network needed in sequences.
+
+pppcm - querylu close socikes and reopen.
+proper client close ppc connection.
+verifier with ppc connection.
+Not using VGV exceopt to VGDRM liceneve handling.
+No card status/ppv.
+
+Browser catalog
+
+PPC can fail - does not mean that VGV proxy cant talk to Gatemela
+  SW downlaod EMM'sleep
+  Doing purchase etc
+
+DRM-A does to need mire than SAC4.
+
+--------------------------------------------------
+JAMES - IF USING
+
+Realist timesclae later next year 2nd half.
+VGV team - not using following functionalities. What would be.  No functionality from VGV.
+
+
+
+
+
+
+
+
+
+
+
+
+
+

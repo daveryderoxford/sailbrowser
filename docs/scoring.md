@@ -1,6 +1,11 @@
 
 # APPENDIX A SCORING See rule 90.3.
 
+## 90.3. Scoring
+The race committee shall score a race or series as provided in Appendix A using the Low Point System, unless the notice of race or sailing instructions specify some other system. A race shall be scored if it is not abandoned and if one boat sails the course in compliance with rule 28 and finishes within the time limit, if any, even if she retires after finishing or is disqualified.
+When a scoring system provides for excluding one or more race scores, any score that is a Disqualification Not Excludable (DNE) shall be included in the boat's series score.
+When the race committee determines from its own records or observations that it has scored a boat incorrectly, it shall correct the error and make the corrected scores available to competitors. 
+
 ## A1 NUMBER OF RACES
 
 The number of races scheduled and the number required to be completed to constitute a series shall be stated in the notice of race or sailing instructions.
@@ -70,7 +75,7 @@ Code Description;                                            Regatta (short) ser
 DNC; Did not start; did not come to the starting area
 DNS; Did not start (other than DNC and OCS);                 Boats to start + 1;          Boats in series + 1
 OCS; Did not start; on the course side of the starting line at her starting signal and failed to start, or broke rule 30.; 1 Boats to start + 1; Boats to start + 1
-ZFP; 20% penalty under rule 30.2;                            Corrected time +20%;        Corrected time+20%;
+ZFP; 20% penalty under rule 30.2;                            Position +20%;              Position+20%;
 UFD; Disqualification under rule 30.3;                       Boats to start + 1;         Boats to start + 1;         
 BFD; Disqualification under rule 30.4;                       Boats to start + 1;         Boats to start + 1; 
 SCP Scoring Penalty applied
@@ -83,5 +88,24 @@ RDG; Redress given
    Avg; of all racees before
    Position at incident
 DPI Discretionary penalty imposed
+
+
+# STARTING PENALTIES
+##  30.1. I Flag Rule
+If flag I has been displayed, and any part of a boat's hull, crew or equipment is on the course side of the starting line or one of its extensions during the last minute before her starting signal, she shall sail across an extension to the pre-start side before starting.
+
+##  30.2. Z Flag Rule
+If flag Z has been displayed, no part of a boat’s hull, crew or equipment shall be in the triangle formed by the ends of the starting line and the first mark during the last minute before her starting signal. If a boat breaks this rule and is identified, she shall receive, without a hearing, a 20% Scoring Penalty calculated as stated in rule 44.3(c). She shall be penalized even if the race is restarted or re-sailed, but not if it is postponed or abandoned before the starting signal. If she is similarly identified during a subsequent attempt to start the same race, she shall receive an additional 20% Scoring Penalty.
+
+##  30.3. U Flag Rule
+If flag U has been displayed, no part of a boat’s hull, crew or equipment shall be in the triangle formed by the ends of the starting line and the first mark during the last minute before her starting signal. If a boat breaks this rule and is identified, she shall be disqualified without a hearing, but not if the race is restarted or resailed.
+
+## 30.4. Black Flag Rule
+If a black flag has been displayed, no part of a boat’s hull, crew or equipment shall be in the triangle formed by the ends of the starting line and the first mark during the last minute before her starting signal. If a boat breaks this rule and is identified, she shall be disqualified without a hearing, even if the race is restarted or resailed, but not if it is postponed or abandoned before the starting signal. If a general recall is signaled or the race is abandoned after the starting signal, the race committee shall display her sail number before the next warning signal for that race, and if the race is restarted or resailed she shall not sail in it. If she does so, her disqualification shall not be excluded in calculating her series score.
+
+# 44.3. Scoring Penalty (Z Flag)
+The race score for a boat that takes a Scoring Penalty shall be the score she would have received without that penalty, made worse by the number of places stated in the sailing instructions. 
+When the sailing instructions do not state the number of places, the penalty shall be 20% of the score for Did Not Finish, rounded to the nearest whole number (0.5 rounded upward). The scores of other boats shall not be changed; therefore, two boats may receive the same score. However, the penalty shall not cause the boat’s score to be worse than the score for Did Not Finish.
+
 
 # Sailwave scoring guide https://www.sailwave.com/download/sailwave/2019_CORK_Results_Management_Manual_V10_Sept2019.pdf
