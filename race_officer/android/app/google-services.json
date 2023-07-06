@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "500477680330",
+    "project_id": "sailbrowser-efef0",
+    "storage_bucket": "sailbrowser-efef0.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:500477680330:android:ac6112129f62ddab67b233",
+        "android_client_info": {
+          "package_name": "com.example.sailbrowser_flutter"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "500477680330-rgv6pt75643aj63plr7u69ti9ceq0nop.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCMKqvoX6Prslr9Na6kqRvebaOlxs_sBl8"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "500477680330-rgv6pt75643aj63plr7u69ti9ceq0nop.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
