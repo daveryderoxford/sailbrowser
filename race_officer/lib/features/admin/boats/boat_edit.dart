@@ -39,23 +39,22 @@ class _EditBoatState extends ConsumerState<EditBoat> with UiLoggy {
     final boatService = ref.read(boatsProvider);
 
     if (form.isValid) {
-      final values = _formKey.currentState!.value;
+      final formData = _formKey.currentState!.value;
 
       bool success;
 
-      final u = Boat.fromJson(values);
-
       if (boat == null) {
+        final u = Boat.fromJson(formData);
         success = await boatService.add(u);
       } else {
         final update = boat!.copyWith(
-          sailingClass: values['sailingClass'],
-          sailNumber: values['sailNumber'],
-          type: values['type'],
-          name: values['name'],
-          owner: values['owner'],
-          helm: values['helm'],
-          crew: values['crew'],
+          sailingClass: formData['sailingClass'],
+          type: BoatType.values.byName(formData['type']),
+          sailNumber: formData['sailNumber'],
+          name: formData['name'],
+          owner: formData['owner'],
+          helm: formData['helm'],
+          crew: formData['crew'],
         );
 
         success = await boatService.update(update, update.id);
@@ -91,7 +90,6 @@ class _EditBoatState extends ConsumerState<EditBoat> with UiLoggy {
                 onPressed: _submit,
                 child: const Text(
                   'Save',
-                  style: TextStyle(fontSize: 18, color: Colors.white),
                 ),
               ),
             ],
@@ -144,7 +142,7 @@ class _EditBoatState extends ConsumerState<EditBoat> with UiLoggy {
       FormBuilderTextField(
         name: 'sailNumber',
         decoration: const InputDecoration(labelText: 'Sail number'),
-        valueTransformer: (text) => text != null ? num.tryParse(text) : null,
+        valueTransformer: (text) =>text != null ? num.tryParse(text) : null,
         validator: FormBuilderValidators.compose([
           FormBuilderValidators.required(),
           FormBuilderValidators.numeric(),
@@ -157,7 +155,7 @@ class _EditBoatState extends ConsumerState<EditBoat> with UiLoggy {
         textInputAction: TextInputAction.next,
         textAlign: TextAlign.start,
       ),
-      FormBuilderDropdown<BoatType>(
+      FormBuilderDropdown<String>(
         name: 'type',
         decoration: const InputDecoration(
           labelText: 'Type',
@@ -165,13 +163,10 @@ class _EditBoatState extends ConsumerState<EditBoat> with UiLoggy {
         validator: FormBuilderValidators.required(),
         items: BoatType.values
             .map((type) => DropdownMenuItem(
-                  alignment: AlignmentDirectional.center,
-                  value: type,
+                  value: type.name,
                   child: Text(type.name),
                 ))
             .toList(),
-        initialValue: boat?.type,
-        //   valueTransformer: (val) => val?.name,
       ),
       FormBuilderTextField(
         name: 'name',
