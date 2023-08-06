@@ -6,17 +6,19 @@ import 'package:flutter/foundation.dart';
 part 'boat.freezed.dart';
 part 'boat.g.dart';
 
-
 enum BoatType {
-  SingleHander,
-  DoubleHander,
-  Cat,
-  DayBoat,
-  Yacht,
-  Windsurfer,
-  Kiteboard,
-  ModelYacht,
-  Other
+  SingleHande('Single hander'),
+  DoubleHander('Double hander'),
+  Cat('Cat'),
+  DayBoat('Day boat'),
+  Yacht('Yacht'),
+  Windsurfer('Windsurfer'),
+  Kiteboard('Kite board'),
+  ModelYacht('Model yacht'),
+  Other('Other');
+
+  final String displayName;
+  const BoatType(this.displayName);
 }
 
 @freezed
@@ -25,7 +27,7 @@ class Boat with _$Boat {
   static const String UNSET_ID = "Unset";
 
   const factory Boat({
-    @Default("UNSET_ID") String id,
+    @Default(Boat.UNSET_ID) String id,
     required int sailNumber,
     required String sailingClass,
     required BoatType type,
@@ -39,4 +41,3 @@ class Boat with _$Boat {
 
   factory Boat.fromJson(Map<String, Object?> json) => _$BoatFromJson(json);
 }
-

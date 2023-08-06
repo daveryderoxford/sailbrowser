@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:sailbrowser_flutter/common_widgets/stream_listview.dart';
+import 'package:sailbrowser_flutter/features/admin/boats/boat_list_item.dart';
 import 'package:sailbrowser_flutter/features/admin/boats/boats_service.dart';
+import 'package:sailbrowser_flutter/models/boat.dart';
 
 import 'boat_edit.dart';
-import 'boat_list.dart';
 
 class BoatsScreen extends ConsumerWidget {
   const BoatsScreen({super.key});
@@ -15,21 +17,9 @@ class BoatsScreen extends ConsumerWidget {
       appBar: AppBar(
             title: const Text('Boats'),
       ),
-      body: Center(
-        child: StreamBuilder(
-          stream: database.allBoats$,
-          builder: (context, snapshot) {
-            if (!snapshot.hasData) {
-              return const Center(child: CircularProgressIndicator());
-            }
-            if (snapshot.error != null) {
-              return const Center(
-                  child: Text(
-                      'Some error occurred')); // Show an error just in case(no internet etc)
-            }
-            return BoatList(snapshot.data!);
-          },
-        ),
+      body: StreamListView<Boat>(
+        itemStream: database.allBoats$,
+        itemBuilder: (context, boat) => BoatListItem(boat),
       ),
       floatingActionButton: FloatingActionButton(
         child: const Icon(Icons.add),
@@ -37,7 +27,7 @@ class BoatsScreen extends ConsumerWidget {
           Navigator.push(
             context,
             MaterialPageRoute(
-                builder: (context) => const EditBoat(isFromEdit: false, id: '',)),
+                builder: (context) => const EditBoat(id: '',)),
           );
         },
       ),

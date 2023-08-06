@@ -9,7 +9,7 @@ part of 'boat.dart';
 // **************************************************************************
 
 _$_Boat _$$_BoatFromJson(Map<String, dynamic> json) => _$_Boat(
-      id: json['id'] as String? ?? "UNSET_ID",
+      id: json['id'] as String? ?? Boat.UNSET_ID,
       sailNumber: json['sailNumber'] as int,
       sailingClass: json['sailingClass'] as String,
       type: $enumDecode(_$BoatTypeEnumMap, json['type']),
@@ -31,7 +31,7 @@ Map<String, dynamic> _$$_BoatToJson(_$_Boat instance) => <String, dynamic>{
     };
 
 const _$BoatTypeEnumMap = {
-  BoatType.SingleHander: 'SingleHander',
+  BoatType.SingleHande: 'SingleHande',
   BoatType.DoubleHander: 'DoubleHander',
   BoatType.Cat: 'Cat',
   BoatType.DayBoat: 'DayBoat',
