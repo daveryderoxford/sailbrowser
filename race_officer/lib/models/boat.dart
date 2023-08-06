@@ -7,7 +7,7 @@ part 'boat.freezed.dart';
 part 'boat.g.dart';
 
 enum BoatType {
-  SingleHande('Single hander'),
+  SingleHander('Single hander'),
   DoubleHander('Double hander'),
   Cat('Cat'),
   DayBoat('Day boat'),

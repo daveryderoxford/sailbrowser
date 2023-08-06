@@ -31,7 +31,7 @@ Map<String, dynamic> _$$_BoatToJson(_$_Boat instance) => <String, dynamic>{
     };
 
 const _$BoatTypeEnumMap = {
-  BoatType.SingleHande: 'SingleHande',
+  BoatType.SingleHander: 'SingleHander',
   BoatType.DoubleHander: 'DoubleHander',
   BoatType.Cat: 'Cat',
   BoatType.DayBoat: 'DayBoat',
