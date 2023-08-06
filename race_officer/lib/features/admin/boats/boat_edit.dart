@@ -4,19 +4,19 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:form_builder_validators/form_builder_validators.dart';
 import 'package:go_router/go_router.dart';
 import 'package:loggy/loggy.dart';
+import 'package:sailbrowser_flutter/common_widgets/responsive_center.dart';
+import 'package:sailbrowser_flutter/common_widgets/will_pop_form.dart';
+import 'package:sailbrowser_flutter/models/boat.dart';
 
-import '../../../common_widgets/responsive_center.dart';
-import '../../../common_widgets/will_pop_form.dart';
-import '../../../models/boat.dart';
+
 import 'boats_service.dart';
 
 class EditBoat extends ConsumerStatefulWidget {
-  final bool isFromEdit;
   final String id;
   final Boat? boat;
 
   const EditBoat(
-      {required this.isFromEdit, this.boat, required this.id, super.key});
+      {this.boat, required this.id, super.key});
 
   @override
   ConsumerState<EditBoat> createState() => _EditBoatState();
@@ -120,7 +120,6 @@ class _EditBoatState extends ConsumerState<EditBoat> with UiLoggy {
         _formKey.currentState!.save();
         debugPrint(_formKey.currentState!.value.toString());
       },
-      autovalidateMode: AutovalidateMode.always,
       initialValue: boat != null ? boat!.toJson() : {},
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -133,15 +132,17 @@ class _EditBoatState extends ConsumerState<EditBoat> with UiLoggy {
     return [
       FormBuilderTextField(
         name: 'sailingClass',
+        autovalidateMode: AutovalidateMode.onUserInteraction,
         decoration: const InputDecoration(
           labelText: 'Class',
-          helperText: "a hint",
+          helperText: "Sailing class eg Fireball",
         ),
         validator: FormBuilderValidators.required(),
       ),
       FormBuilderTextField(
         name: 'sailNumber',
         decoration: const InputDecoration(labelText: 'Sail number'),
+        autovalidateMode: AutovalidateMode.onUserInteraction,
         valueTransformer: (text) =>text != null ? num.tryParse(text) : null,
         validator: FormBuilderValidators.compose([
           FormBuilderValidators.required(),
@@ -157,6 +158,7 @@ class _EditBoatState extends ConsumerState<EditBoat> with UiLoggy {
       ),
       FormBuilderDropdown<String>(
         name: 'type',
+        autovalidateMode: AutovalidateMode.onUserInteraction,
         decoration: const InputDecoration(
           labelText: 'Type',
         ),
@@ -164,7 +166,7 @@ class _EditBoatState extends ConsumerState<EditBoat> with UiLoggy {
         items: BoatType.values
             .map((type) => DropdownMenuItem(
                   value: type.name,
-                  child: Text(type.name),
+                  child: Text(type.displayName),
                 ))
             .toList(),
       ),

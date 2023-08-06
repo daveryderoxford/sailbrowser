@@ -2,7 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:sailbrowser_flutter/app_shell/app_shell.dart';
-import 'package:sailbrowser_flutter/features/admin/boats/boat_page.dart';
+import 'package:sailbrowser_flutter/features/admin/boats/boat_screen.dart';
+import 'package:sailbrowser_flutter/features/admin/race-series/presentation/race_series_detail.dart';
+import 'package:sailbrowser_flutter/features/admin/race-series/presentation/race_series_screen.dart';
+import 'package:sailbrowser_flutter/features/admin/race-series/race_series.dart';
 import 'package:sailbrowser_flutter/features/entry/entry_screen.dart';
 import '../features/admin/admin_screen.dart';
 import '../features/finish/finish_screen.dart';
@@ -36,6 +39,8 @@ enum AppRoute {
   admin,
   profile,
   boats,
+  series,
+  seriesDetail,
 }
 
 @riverpod
@@ -169,16 +174,32 @@ adminRoutes() {
     GoRoute(
         path: '/admin',
         name: AppRoute.admin.name,
-        pageBuilder: (context, state) => const NoTransitionPage(
+        pageBuilder: (context, state) => NoTransitionPage(
               child: AdminScreen(),
             ),
         routes: [
           GoRoute(
-              path: 'boats',
-              name: AppRoute.boats.name,
-              pageBuilder: (context, state) => const NoTransitionPage(
-                    child: BoatsScreen(),
-                  ))
-        ])
+            path: 'boats',
+            name: AppRoute.boats.name,
+            pageBuilder: (context, state) => const NoTransitionPage(
+              child: BoatsScreen(),
+            ),
+          ),
+          GoRoute(
+            path: 'series',
+            name: AppRoute.series.name,
+            pageBuilder: (context, state) => const NoTransitionPage(
+              child: RaceSeriesScreen(),
+            ),
+          ),
+          GoRoute(
+            path: 'series_detail',
+            name: AppRoute.seriesDetail.name,
+            builder: (context, state) {
+              final series = state.extra as RaceSeries;
+              return RaceSeriesDetailScreen(series);
+            },
+          ),
+        ]),
   ];
 }

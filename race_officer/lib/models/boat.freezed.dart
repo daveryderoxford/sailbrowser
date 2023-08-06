@@ -185,7 +185,7 @@ class __$$_BoatCopyWithImpl<$Res> extends _$BoatCopyWithImpl<$Res, _$_Boat>
 @JsonSerializable()
 class _$_Boat extends _Boat with DiagnosticableTreeMixin {
   const _$_Boat(
-      {this.id = "UNSET_ID",
+      {this.id = Boat.UNSET_ID,
       required this.sailNumber,
       required this.sailingClass,
       required this.type,

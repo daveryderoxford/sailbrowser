@@ -20,7 +20,6 @@ class FirebaseConfig with UiLoggy {
       final app = await Firebase.initializeApp(
           options: DefaultFirebaseOptions.currentPlatform);
 
-      // await FirebaseAuth.instance.useAuthEmulator('localhost', 9099);
       loggy.info("Firebase app: ${app.toString()}");
 
       // Enable Firestore persistance for web.  Enabled on ios/aidroid by default
