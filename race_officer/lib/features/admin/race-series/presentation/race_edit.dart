@@ -5,6 +5,7 @@ import 'package:form_builder_validators/form_builder_validators.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 import 'package:loggy/loggy.dart';
+import 'package:sailbrowser_flutter/common_widgets/delete_button.dart';
 import 'package:sailbrowser_flutter/common_widgets/responsive_center.dart';
 import 'package:sailbrowser_flutter/common_widgets/will_pop_form.dart';
 
@@ -27,36 +28,52 @@ class _EditRaceSeriesState extends ConsumerState<EditRace> with UiLoggy {
   final _formKey = GlobalKey<FormBuilderState>();
 
   Race? race;
+  RaceSeries? series;
 
   @override
   void initState() {
     super.initState();
     race = widget.race;
+    series = widget.series;
   }
 
   Future<void> _submit() async {
     final form = _formKey.currentState!;
 
-    final boatService = ref.read(seriesProvider);
+    final raceSeriesService = ref.read(seriesRepositoryProvider);
 
     if (form.isValid) {
       final formData = _formKey.currentState!.value;
 
       bool success;
 
-   /*   if (race == null) {
-        final update = Race(
-            name: formData['name'],
-            fleetId: formData['fleetId'],
-            seriesId: series.id,
-            startDate: DateTime(1970, 0, 0),
-            endDate: DateTime(1970, 0, 0));
-        success = await boatService.add(update);
-      } else {
-        final update = series!
-            .copyWith(name: formData['name'], fleetId: formData['fleetId']);
+      final DateTime startDate = formData['scheduledStartDate'];
+      final DateTime startTime = formData['scheduledStartTime'];
+      final duration =
+          Duration(hours: startTime.hour, minutes: startTime.minute);
+      final DateTime startDateTime = startDate.add(duration);
 
-        success = await boatService.update(update, update.id);
+      if (race == null) {
+        final update = Race(
+          fleetId: series!.fleetId,
+          seriesId: series!.id,
+          actualStart: DateTime(1970, 1, 1),
+          scheduledStart: startDateTime,
+          type: formData['type'],
+          isDiscardable: formData['isDiscardable'],
+          isAverageLap: formData['isAverageLap'],
+        );
+
+        success = await raceSeriesService.addRace(series!, update);
+      } else {
+        final update = race!.copyWith(
+            type: formData['type'],
+            isDiscardable: formData['isDiscardable'],
+            isAverageLap: formData['isAverageLap'],
+            scheduledStart: startDateTime);
+
+        success =
+            await raceSeriesService.updateRace(series!, update.id, update);
       }
       if (success) {
         // ignore: use_build_context_synchronously
@@ -72,8 +89,14 @@ class _EditRaceSeriesState extends ConsumerState<EditRace> with UiLoggy {
           ),
         );
         loggy.error('Error encountered saving race');
-      } */
+      }
     }
+  }
+
+  _deleteRace() {
+    final raceSeriesService = ref.read(seriesRepositoryProvider);
+    raceSeriesService.removeRace(series!, race!.id);
+    context.pop();
   }
 
   @override
@@ -82,11 +105,9 @@ class _EditRaceSeriesState extends ConsumerState<EditRace> with UiLoggy {
         formKey: _formKey,
         child: Scaffold(
           appBar: AppBar(
-            title: Text(
-                widget.race == null ? 'New Race' : 'Edit Race Details'),
+            title: Text(widget.race == null ? 'New Race' : 'Edit Race Details'),
             actions: <Widget>[
               TextButton(
-                //      onPressed: state.isLoading ? null : _submit,
                 onPressed: _submit,
                 child: const Text(
                   'Save',
@@ -104,9 +125,18 @@ class _EditRaceSeriesState extends ConsumerState<EditRace> with UiLoggy {
         maxContentWidth: 600,
         padding: const EdgeInsets.all(16.0),
         child: Card(
-          child: Padding(
-            padding: const EdgeInsets.all(16.0),
-            child: _buildForm(),
+          child: Column(
+            children: [
+              Padding(
+                padding: const EdgeInsets.all(16.0),
+                child: _buildForm(),
+              ),
+              DeleteButton(
+                itemName: 'race',
+                visible: race != null,
+                onDelete: _deleteRace,
+              ),
+            ],
           ),
         ),
       ),
@@ -128,45 +158,32 @@ class _EditRaceSeriesState extends ConsumerState<EditRace> with UiLoggy {
     );
   }
 
-/*
-    @Default(RaceSeries.unsetId) String id,
-    required String name,
-    required String fleetId, // from series 
-    required String seriesId, // from series 
-
-     @TimestampSerializer() required DateTime scheduledStart,  // Separate as date and time
-     @TimestampSerializer()  required DateTime actualStart,
-
-     @Default(RaceType.conventional) RaceType type,  // specified 
-    @Default(RaceStatus.future) RaceStatus status,  // specified
-    @Default(true) bool isDiscardable,  // specified 
-    @Default(true) bool isAverageLap, // sepeciifed */
-
   List<Widget> _buildFormChildren() {
+    final initialDate =
+        race == null ? _defaultDate(series!.races) : race!.scheduledStart;
+
     return [
       FormBuilderDateTimePicker(
         name: "scheduledStartDate",
         initialEntryMode: DatePickerEntryMode.calendar,
-        initialDate: race == null ? DateTime.now() : race!.scheduledStart,
-        initialTime: const TimeOfDay(hour: 0, minute: 0),
+        initialValue: initialDate,
         inputType: InputType.date,
         format: DateFormat("MM-dd-yyyy"),
         autovalidateMode: AutovalidateMode.onUserInteraction,
         decoration: const InputDecoration(labelText: "Scheduled date"),
       ),
-
       FormBuilderDateTimePicker(
         name: "scheduledStartTime",
         autovalidateMode: AutovalidateMode.onUserInteraction,
         initialEntryMode: DatePickerEntryMode.calendar,
-        initialTime: race == null ? const TimeOfDay(hour: 0, minute: 0) : TimeOfDay(hour: race!.scheduledStart.hour, minute: race!.scheduledStart.minute),
+        initialValue: initialDate,
         inputType: InputType.time,
         format: DateFormat("hh:mm"),
-        decoration: const InputDecoration(labelText: "Scheduled date"),
-      ), 
-      FormBuilderDropdown<String>(
+        decoration: const InputDecoration(labelText: "Scheduled time"),
+      ),
+      FormBuilderDropdown<RaceType>(
         name: 'type',
-        initialValue: race == null ? RaceType.conventional.name : race?.type.name,
+        initialValue: race == null ? RaceType.conventional : race?.type,
         decoration: const InputDecoration(
           labelText: 'Type',
         ),
@@ -174,11 +191,31 @@ class _EditRaceSeriesState extends ConsumerState<EditRace> with UiLoggy {
         autovalidateMode: AutovalidateMode.onUserInteraction,
         items: RaceType.values
             .map((type) => DropdownMenuItem(
-                  value: type.name,
+                  value: type,
                   child: Text(type.displayName),
                 ))
             .toList(),
       ),
+      FormBuilderCheckbox(
+        name: "isDiscardable",
+        initialValue: race != null ? race!.isDiscardable : true,
+        title: const Text("Is discardable"),
+      ),
+      FormBuilderCheckbox(
+        name: "isAverageLap",
+        initialValue: race != null ? race!.isAverageLap : true,
+        title: const Text("Is avarage lap"),
+      ),
     ];
+  }
+
+  static DateTime _defaultDate(List<Race> races) {
+    if (races.isEmpty) {
+      final now = DateTime.now();
+      return DateTime(now.year, now.month, now.day, 10, 30);
+    } else {
+      final d = races.last.scheduledStart;
+      return d.add(const Duration(days: 7));
+    }
   }
 }

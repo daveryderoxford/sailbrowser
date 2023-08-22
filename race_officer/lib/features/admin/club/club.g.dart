@@ -1,7 +1,5 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
-// ignore_for_file: non_constant_identifier_names
-
 part of 'club.dart';
 
 // **************************************************************************
@@ -26,8 +24,8 @@ Map<String, dynamic> _$$_ClubToJson(_$_Club instance) => <String, dynamic>{
       'id': instance.id,
       'name': instance.name,
       'status': _$ClubStatusEnumMap[instance.status]!,
-      'fleets': instance.fleets,
-      'boatClasses': instance.boatClasses,
+      'fleets': instance.fleets.map((e) => e.toJson()).toList(),
+      'boatClasses': instance.boatClasses.map((e) => e.toJson()).toList(),
     };
 
 const _$ClubStatusEnumMap = {

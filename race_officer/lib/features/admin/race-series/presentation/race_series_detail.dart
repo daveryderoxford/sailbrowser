@@ -1,19 +1,34 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:intl/intl.dart';
 import 'package:sailbrowser_flutter/features/admin/club/clubs_service.dart';
 import 'package:sailbrowser_flutter/features/admin/fleet/fleet.dart';
+import 'package:sailbrowser_flutter/features/admin/race-series/presentation/race_edit.dart';
+import 'package:sailbrowser_flutter/features/admin/race-series/presentation/series_edit.dart';
 
 import '../race_series.dart';
+import '../race_series_service.dart';
 
 class RaceSeriesDetailScreen extends ConsumerWidget {
-  final RaceSeries series;
+  final String seriesId;
+  late RaceSeries series;
 
-  const RaceSeriesDetailScreen(this.series, {super.key});
+  RaceSeriesDetailScreen(this.seriesId, {super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final club = ref.read(currentClubProvider).current;
-    // final database = ref.watch(seriesProvider);
+
+    final allSeries = ref.watch(allSeriesProvider);
+
+    allSeries.when(
+        data: (allSeries) =>
+            series = allSeries.firstWhere((s) => s.id == seriesId),
+        error: (obj, stack) {
+          return const Center(child: Text('Some error occurred'));
+        },
+        loading: () => const Center(child: CircularProgressIndicator()));
+
     return Scaffold(
       appBar: AppBar(title: const Text('Series Detail'), actions: [
         IconButton(
@@ -30,7 +45,8 @@ class RaceSeriesDetailScreen extends ConsumerWidget {
       body: Column(
         children: [
           _seriesCard(context, club!.fleets),
-          _racesCard(context),
+          _racesHeader(context),
+          _racesList(series.races)
         ],
       ),
     );
@@ -38,86 +54,114 @@ class RaceSeriesDetailScreen extends ConsumerWidget {
 
   Widget _seriesCard(BuildContext context, List<Fleet> fleets) {
     final fleetName = fleets.firstWhere((f) => f.id == series.fleetId).name;
+    final dateFmt = DateFormat('dd MMM yyyy').format;
+    final seriesDuration =
+        '${dateFmt(series.startDate)} to ${dateFmt(series.endDate)}';
+
     return Card(
       color: Theme.of(context).colorScheme.surfaceVariant,
       child: Container(
-        padding: const EdgeInsets.all(16.0),
+        padding: const EdgeInsets.all(8.0),
         alignment: Alignment.centerLeft,
-        child: Row(
-          children: [
+        child: ListTile(
+          title: Row(children: [
             Text(fleetName),
-            const SizedBox(width: 35),
+            const SizedBox(width: 20),
             Text(series.name),
-            const Spacer(),
-            IconButton(
-              onPressed: () => {debugPrint('Display edit screen screen')},
-              icon: const Icon(Icons.edit_attributes_outlined),
-            ),
-          ],
+          ]),
+          subtitle: Text(seriesDuration),
+          trailing: IconButton(
+            onPressed: () => {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) =>
+                      EditSeries(series: series, id: series.id),
+                ),
+              )
+            },
+            icon: const Icon(Icons.edit),
+          ),
         ),
       ),
     );
   }
 
-  Widget _racesList(List<Race> races) {
-
-      
-
-      return ListView.separated(
-        itemCount: races.length,
-        separatorBuilder: (BuildContext context, int index) => const Divider(),
-        itemBuilder: (BuildContext context, int index) {
-
-        final race = races[index];
-        final avgLap = race.isAverageLap ? 'Average lap' : '';
-     //   final date = race.scheduledStart;
-     //   final startTime = race.scheduledStart;
-        final status = 'Status: ${race.status.name}';
-        final type = race.type.name;
-
-        return ListTile(
-            title: Row(
-              children: [
-              Text(race.name),
-               const Text('Scheduled start:'),
-               Text(type),
-               Text(status),
-            ],
+  Widget _racesHeader(BuildContext context) {
+    return  ListTile(
+            title: const Center(child: Text(textScaleFactor: 1.3,"Races") ),
+            trailing:  IconButton(
+              icon: const Icon(Icons.add_circle_outline_outlined),
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) =>
+                        EditRace(race: null, series: series, id: 'not_set'),
+                  ),
+                );
+              },
             ),
-            subtitle: Text(avgLap),
-            trailing: IconButton(
-              onPressed: () => {debugPrint('Display race edit screen screen')},
-              icon: const Icon(Icons.edit_attributes_outlined),
-            ),
-        );
-        }    
-      );
+          );
   }
 
-  Widget _racesCard(BuildContext context) {
-    return Card(
-      child: Column(
-        children: [
-          Row(
-            children: [
-              const Text('Races'),
-              const Spacer(),
-              OutlinedButton(
-                onPressed: () {
-                  // TODO
-                  debugPrint('Display add race screen');
-                },
-                child: const Text('Add'),
-              ),
-            ],
-          ),
-          if (series.races.isEmpty) ...[
-            const Center(child: Text('No races to display')),
-          ] else ...[
-            _racesList(series.races),
-          ],
-        ],
-      ),
-    );
+  Widget _racesList(List<Race> races) {
+    if (races.isEmpty) {
+      return const Center(child: Text(textScaleFactor: 1.2,'No races to display'));
+    } else {
+      return Expanded(
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 8.0),
+          child: ListView.separated(
+              itemCount: races.length,
+              separatorBuilder: (BuildContext context, int index) =>
+                  const Divider(),
+              itemBuilder: (BuildContext context, int index) {
+                final race = races[index];
+                final avgLap = race.isAverageLap ? 'Average lap' : '';
+                final date =
+                    DateFormat("d MMM yy").format(race.scheduledStart);
+                final startTime =
+                    'Start:  ${DateFormat.Hm().format(race.scheduledStart)}';
+                final status = race.status.displayName;
+                final type = race.type != RaceType.conventional ? race.type.displayName : "";
+
+                return ListTile(
+                  isThreeLine: true,
+                  title: Row(
+                    children: [
+                      Text(race.name),
+                      const SizedBox(width: 20),
+                      Text(date),
+                      const SizedBox(width: 20),
+                      Text(startTime)
+                    ],
+                  ),
+                  subtitle: Row(
+                    children: [
+                      Text(type),
+                      const SizedBox(width: 20),
+                      Text(status),
+                      const SizedBox(width: 20),
+                      Text(avgLap),
+                    ],
+                  ),
+                  trailing: IconButton(
+                    onPressed: () => {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) =>
+                              EditRace(race: race, series: series, id: race.id),
+                        ),
+                      )
+                    },
+                    icon: const Icon(Icons.edit),
+                  ),
+                );
+              }),
+        ),
+      );
+    }
   }
 }

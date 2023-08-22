@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:form_builder_validators/form_builder_validators.dart';
 import 'package:go_router/go_router.dart';
 import 'package:loggy/loggy.dart';
+import 'package:sailbrowser_flutter/common_widgets/delete_button.dart';
 import 'package:sailbrowser_flutter/common_widgets/responsive_center.dart';
 import 'package:sailbrowser_flutter/common_widgets/will_pop_form.dart';
 import 'package:sailbrowser_flutter/features/admin/club/clubs_service.dart';
@@ -35,7 +36,7 @@ class _EditRaceSeriesState extends ConsumerState<EditSeries> with UiLoggy {
   Future<void> _submit() async {
     final form = _formKey.currentState!;
 
-    final boatService = ref.read(seriesProvider);
+    final boatService = ref.read(seriesRepositoryProvider);
 
     if (form.isValid) {
       final formData = _formKey.currentState!.value;
@@ -46,8 +47,8 @@ class _EditRaceSeriesState extends ConsumerState<EditSeries> with UiLoggy {
         final update = RaceSeries(
             name: formData['name'],
             fleetId: formData['fleetId'],
-            startDate: DateTime(1970, 0, 0),
-            endDate: DateTime(1970, 0, 0));
+            startDate: DateTime(1970, 1, 1),
+            endDate: DateTime(1970, 1, 1));
         success = await boatService.add(update);
       } else {
         final update = series!
@@ -73,13 +74,20 @@ class _EditRaceSeriesState extends ConsumerState<EditSeries> with UiLoggy {
     }
   }
 
+  _deleteSeries() {
+    final raceSeriesService = ref.read(seriesRepositoryProvider);
+    raceSeriesService.remove(series!.id);
+    context.pop();
+  }
+
   @override
   Widget build(BuildContext context) {
     return WillPopForm(
         formKey: _formKey,
         child: Scaffold(
           appBar: AppBar(
-            title: Text(widget.series == null ? 'New Series' : 'Edit Series Details'),
+            title: Text(
+                widget.series == null ? 'New Series' : 'Edit Series Details'),
             actions: <Widget>[
               TextButton(
                 //      onPressed: state.isLoading ? null : _submit,
@@ -100,9 +108,18 @@ class _EditRaceSeriesState extends ConsumerState<EditSeries> with UiLoggy {
         maxContentWidth: 600,
         padding: const EdgeInsets.all(16.0),
         child: Card(
-          child: Padding(
-            padding: const EdgeInsets.all(16.0),
-            child: _buildForm(),
+          child: Column(
+            children: [
+              Padding(
+                padding: const EdgeInsets.all(16.0),
+                child: _buildForm(),
+              ),
+              DeleteButton(
+                itemName: 'race',
+                visible: series != null,
+                onDelete: _deleteSeries,
+              ),
+            ],
           ),
         ),
       ),

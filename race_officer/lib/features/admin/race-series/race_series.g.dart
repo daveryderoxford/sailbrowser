@@ -1,7 +1,5 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
-// ignore_for_file: non_constant_identifier_names
-
 part of 'race_series.dart';
 
 // **************************************************************************
@@ -28,12 +26,12 @@ Map<String, dynamic> _$$_RaceSeriesToJson(_$_RaceSeries instance) =>
       'fleetId': instance.fleetId,
       'startDate': const TimestampSerializer().toJson(instance.startDate),
       'endDate': const TimestampSerializer().toJson(instance.endDate),
-      'races': instance.races,
+      'races': instance.races.map((e) => e.toJson()).toList(),
     };
 
 _$_Race _$$_RaceFromJson(Map<String, dynamic> json) => _$_Race(
       id: json['id'] as String? ?? RaceSeries.unsetId,
-      name: json['name'] as String,
+      name: json['name'] as String? ?? "",
       fleetId: json['fleetId'] as String,
       seriesId: json['seriesId'] as String,
       scheduledStart:
@@ -45,7 +43,7 @@ _$_Race _$$_RaceFromJson(Map<String, dynamic> json) => _$_Race(
           RaceStatus.future,
       isDiscardable: json['isDiscardable'] as bool? ?? true,
       isAverageLap: json['isAverageLap'] as bool? ?? true,
-      startNumber: json['startNumber'] as int,
+      startNumber: json['startNumber'] as int? ?? 0,
     );
 
 Map<String, dynamic> _$$_RaceToJson(_$_Race instance) => <String, dynamic>{

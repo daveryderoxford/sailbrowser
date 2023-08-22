@@ -4,10 +4,10 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:form_builder_validators/form_builder_validators.dart';
 import 'package:go_router/go_router.dart';
 import 'package:loggy/loggy.dart';
+import 'package:sailbrowser_flutter/common_widgets/delete_button.dart';
 import 'package:sailbrowser_flutter/common_widgets/responsive_center.dart';
 import 'package:sailbrowser_flutter/common_widgets/will_pop_form.dart';
 import 'package:sailbrowser_flutter/models/boat.dart';
-
 
 import 'boats_service.dart';
 
@@ -15,8 +15,7 @@ class EditBoat extends ConsumerStatefulWidget {
   final String id;
   final Boat? boat;
 
-  const EditBoat(
-      {this.boat, required this.id, super.key});
+  const EditBoat({this.boat, required this.id, super.key});
 
   @override
   ConsumerState<EditBoat> createState() => _EditBoatState();
@@ -63,18 +62,24 @@ class _EditBoatState extends ConsumerState<EditBoat> with UiLoggy {
         // ignore: use_build_context_synchronously
         context.pop();
       } else {
-          SnackBar(
-            content: const Text('Error encountered saving boat'),
-            action: SnackBarAction(
-              label: 'Discard changes',
-              onPressed: () {
+        SnackBar(
+          content: const Text('Error encountered saving boat'),
+          action: SnackBarAction(
+            label: 'Discard changes',
+            onPressed: () {
               context.pop();
-              },
-            ),
-          );
+            },
+          ),
+        );
         loggy.error('Error encountered saving boat');
       }
     }
+  }
+
+  _deleteBoat() {
+    final boatService = ref.read(boatsProvider);
+    boatService.remove(boat!.id);
+    context.pop();
   }
 
   @override
@@ -104,9 +109,18 @@ class _EditBoatState extends ConsumerState<EditBoat> with UiLoggy {
         maxContentWidth: 600,
         padding: const EdgeInsets.all(16.0),
         child: Card(
-          child: Padding(
-            padding: const EdgeInsets.all(16.0),
-            child: _buildForm(),
+          child: Column(
+            children: [
+              Padding(
+                padding: const EdgeInsets.all(16.0),
+                child: _buildForm(),
+              ),
+              DeleteButton(
+                itemName: 'boat',
+                visible: boat != null,
+                onDelete: _deleteBoat,
+              ),
+            ],
           ),
         ),
       ),
@@ -143,7 +157,7 @@ class _EditBoatState extends ConsumerState<EditBoat> with UiLoggy {
         name: 'sailNumber',
         decoration: const InputDecoration(labelText: 'Sail number'),
         autovalidateMode: AutovalidateMode.onUserInteraction,
-        valueTransformer: (text) =>text != null ? num.tryParse(text) : null,
+        valueTransformer: (text) => text != null ? num.tryParse(text) : null,
         validator: FormBuilderValidators.compose([
           FormBuilderValidators.required(),
           FormBuilderValidators.numeric(),

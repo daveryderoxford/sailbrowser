@@ -5,7 +5,6 @@ import 'package:sailbrowser_flutter/app_shell/app_shell.dart';
 import 'package:sailbrowser_flutter/features/admin/boats/boat_screen.dart';
 import 'package:sailbrowser_flutter/features/admin/race-series/presentation/race_series_detail.dart';
 import 'package:sailbrowser_flutter/features/admin/race-series/presentation/race_series_screen.dart';
-import 'package:sailbrowser_flutter/features/admin/race-series/race_series.dart';
 import 'package:sailbrowser_flutter/features/entry/entry_screen.dart';
 import '../features/admin/admin_screen.dart';
 import '../features/finish/finish_screen.dart';
@@ -196,8 +195,8 @@ adminRoutes() {
             path: 'series_detail',
             name: AppRoute.seriesDetail.name,
             builder: (context, state) {
-              final series = state.extra as RaceSeries;
-              return RaceSeriesDetailScreen(series);
+              final id = state.extra as String;
+              return RaceSeriesDetailScreen(id);
             },
           ),
         ]),

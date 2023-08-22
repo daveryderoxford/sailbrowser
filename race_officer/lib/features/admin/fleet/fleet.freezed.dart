@@ -23,6 +23,8 @@ mixin _$Fleet {
   String get id => throw _privateConstructorUsedError;
   String get shortName => throw _privateConstructorUsedError;
   String get name => throw _privateConstructorUsedError;
+  dynamic get handicapScheme => throw _privateConstructorUsedError;
+  String get classFlag => throw _privateConstructorUsedError;
 
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
   @JsonKey(ignore: true)
@@ -34,7 +36,12 @@ abstract class $FleetCopyWith<$Res> {
   factory $FleetCopyWith(Fleet value, $Res Function(Fleet) then) =
       _$FleetCopyWithImpl<$Res, Fleet>;
   @useResult
-  $Res call({String id, String shortName, String name});
+  $Res call(
+      {String id,
+      String shortName,
+      String name,
+      dynamic handicapScheme,
+      String classFlag});
 }
 
 /// @nodoc
@@ -53,6 +60,8 @@ class _$FleetCopyWithImpl<$Res, $Val extends Fleet>
     Object? id = null,
     Object? shortName = null,
     Object? name = null,
+    Object? handicapScheme = freezed,
+    Object? classFlag = null,
   }) {
     return _then(_value.copyWith(
       id: null == id
@@ -67,6 +76,14 @@ class _$FleetCopyWithImpl<$Res, $Val extends Fleet>
           ? _value.name
           : name // ignore: cast_nullable_to_non_nullable
               as String,
+      handicapScheme: freezed == handicapScheme
+          ? _value.handicapScheme
+          : handicapScheme // ignore: cast_nullable_to_non_nullable
+              as dynamic,
+      classFlag: null == classFlag
+          ? _value.classFlag
+          : classFlag // ignore: cast_nullable_to_non_nullable
+              as String,
     ) as $Val);
   }
 }
@@ -77,7 +94,12 @@ abstract class _$$_FleetCopyWith<$Res> implements $FleetCopyWith<$Res> {
       __$$_FleetCopyWithImpl<$Res>;
   @override
   @useResult
-  $Res call({String id, String shortName, String name});
+  $Res call(
+      {String id,
+      String shortName,
+      String name,
+      dynamic handicapScheme,
+      String classFlag});
 }
 
 /// @nodoc
@@ -92,6 +114,8 @@ class __$$_FleetCopyWithImpl<$Res> extends _$FleetCopyWithImpl<$Res, _$_Fleet>
     Object? id = null,
     Object? shortName = null,
     Object? name = null,
+    Object? handicapScheme = freezed,
+    Object? classFlag = null,
   }) {
     return _then(_$_Fleet(
       id: null == id
@@ -106,6 +130,12 @@ class __$$_FleetCopyWithImpl<$Res> extends _$FleetCopyWithImpl<$Res, _$_Fleet>
           ? _value.name
           : name // ignore: cast_nullable_to_non_nullable
               as String,
+      handicapScheme:
+          freezed == handicapScheme ? _value.handicapScheme! : handicapScheme,
+      classFlag: null == classFlag
+          ? _value.classFlag
+          : classFlag // ignore: cast_nullable_to_non_nullable
+              as String,
     ));
   }
 }
@@ -114,7 +144,11 @@ class __$$_FleetCopyWithImpl<$Res> extends _$FleetCopyWithImpl<$Res, _$_Fleet>
 @JsonSerializable()
 class _$_Fleet extends _Fleet {
   const _$_Fleet(
-      {this.id = Fleet.unsetId, required this.shortName, required this.name})
+      {this.id = Fleet.unsetId,
+      required this.shortName,
+      required this.name,
+      this.handicapScheme = HandicapScheme.py,
+      this.classFlag = ""})
       : super._();
 
   factory _$_Fleet.fromJson(Map<String, dynamic> json) =>
@@ -127,10 +161,16 @@ class _$_Fleet extends _Fleet {
   final String shortName;
   @override
   final String name;
+  @override
+  @JsonKey()
+  final dynamic handicapScheme;
+  @override
+  @JsonKey()
+  final String classFlag;
 
   @override
   String toString() {
-    return 'Fleet(id: $id, shortName: $shortName, name: $name)';
+    return 'Fleet(id: $id, shortName: $shortName, name: $name, handicapScheme: $handicapScheme, classFlag: $classFlag)';
   }
 
   @override
@@ -141,12 +181,17 @@ class _$_Fleet extends _Fleet {
             (identical(other.id, id) || other.id == id) &&
             (identical(other.shortName, shortName) ||
                 other.shortName == shortName) &&
-            (identical(other.name, name) || other.name == name));
+            (identical(other.name, name) || other.name == name) &&
+            const DeepCollectionEquality()
+                .equals(other.handicapScheme, handicapScheme) &&
+            (identical(other.classFlag, classFlag) ||
+                other.classFlag == classFlag));
   }
 
   @JsonKey(ignore: true)
   @override
-  int get hashCode => Object.hash(runtimeType, id, shortName, name);
+  int get hashCode => Object.hash(runtimeType, id, shortName, name,
+      const DeepCollectionEquality().hash(handicapScheme), classFlag);
 
   @JsonKey(ignore: true)
   @override
@@ -166,7 +211,9 @@ abstract class _Fleet extends Fleet {
   const factory _Fleet(
       {final String id,
       required final String shortName,
-      required final String name}) = _$_Fleet;
+      required final String name,
+      final dynamic handicapScheme,
+      final String classFlag}) = _$_Fleet;
   const _Fleet._() : super._();
 
   factory _Fleet.fromJson(Map<String, dynamic> json) = _$_Fleet.fromJson;
@@ -177,6 +224,10 @@ abstract class _Fleet extends Fleet {
   String get shortName;
   @override
   String get name;
+  @override
+  dynamic get handicapScheme;
+  @override
+  String get classFlag;
   @override
   @JsonKey(ignore: true)
   _$$_FleetCopyWith<_$_Fleet> get copyWith =>

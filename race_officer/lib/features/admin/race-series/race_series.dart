@@ -50,7 +50,7 @@ class Race with _$Race {
 
   const factory Race({
     @Default(RaceSeries.unsetId) String id,
-    required String name,
+    @Default("") String name,
     required String fleetId,
     required String seriesId,
     @TimestampSerializer() required DateTime scheduledStart,
@@ -59,7 +59,7 @@ class Race with _$Race {
     @Default(RaceStatus.future) RaceStatus status,
     @Default(true) bool isDiscardable,
     @Default(true) bool isAverageLap,
-    required int startNumber,
+    @Default(0) int startNumber,
   }) = _Race;
 
   const Race._();

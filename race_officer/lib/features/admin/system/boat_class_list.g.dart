@@ -1,7 +1,5 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
-// ignore_for_file: non_constant_identifier_names
-
 part of 'boat_class_list.dart';
 
 // **************************************************************************
@@ -23,7 +21,7 @@ Map<String, dynamic> _$$_BoatClassListToJson(_$_BoatClassList instance) =>
     <String, dynamic>{
       'name': instance.name,
       'handicapScheme': _$HandicapSchemeEnumMap[instance.handicapScheme]!,
-      'boats': instance.boats,
+      'boats': instance.boats.map((e) => e.toJson()).toList(),
     };
 
 const _$HandicapSchemeEnumMap = {

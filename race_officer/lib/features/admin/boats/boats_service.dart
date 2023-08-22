@@ -26,8 +26,10 @@ class BoatService with UiLoggy {
           fromFirestore: (snapshot, _) => Boat.fromJson(snapshot.data()!),
           toFirestore: (Boat boat, _) => boat.toJson());
 
-  late final Stream<List<Boat>> allBoats$ = _boatsCollection.snapshots().map(
+  late final Stream<List<Boat>> allBoats$ = _boatsCollection.snapshots()
+  .map(
     (snap) {
+      loggy.info('snapshot size: smap ${snap.size}   Number of changes ${snap.docChanges.length}');
       final boats = snap.docs.map<Boat>((doc) => doc.data() as Boat).toList();
       boats.sort((a, b) => _boatsSort(a, b));
       loggy.info('Boats updateed}');
@@ -35,7 +37,9 @@ class BoatService with UiLoggy {
     },
   ).shareReplay();
 
-  BoatService(this.clubId);
+  BoatService(this.clubId) {
+     loggy.info('Creating Boat service');
+  }
 
   Future<bool> add(Boat boat) async {
     try {
@@ -71,3 +75,10 @@ class BoatService with UiLoggy {
 
 final boatsProvider =
     Provider((ref) => BoatService(ref.watch(currentClubProvider).current!.id));
+
+final allBoatProvider =
+    StreamProvider( (ref)  {
+      final bs = ref.read(boatsProvider);
+      return bs.allBoats$;
+    });
+

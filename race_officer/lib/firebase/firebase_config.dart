@@ -47,7 +47,7 @@ class FirebaseConfig with UiLoggy {
   }
 
   useEmulators() async {
- //   await FirebaseAuth.instance.useAuthEmulator('localhost', 9099);
+    await FirebaseAuth.instance.useAuthEmulator('localhost', 9099);
     FirebaseFirestore.instance.useFirestoreEmulator('localhost', 8080);
     loggy.info('Using Firebase emulators');
   }

@@ -1,9 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:sailbrowser_flutter/common_widgets/stream_listview.dart';
 import 'package:sailbrowser_flutter/features/admin/boats/boat_list_item.dart';
 import 'package:sailbrowser_flutter/features/admin/boats/boats_service.dart';
-import 'package:sailbrowser_flutter/models/boat.dart';
 
 import 'boat_edit.dart';
 
@@ -12,22 +10,30 @@ class BoatsScreen extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final database = ref.watch(boatsProvider);
+    final allBoats = ref.watch(allBoatProvider);
     return Scaffold(
       appBar: AppBar(
-            title: const Text('Boats'),
+        title: const Text('Boats'),
       ),
-      body: StreamListView<Boat>(
-        itemStream: database.allBoats$,
-        itemBuilder: (context, boat) => BoatListItem(boat),
-      ),
+      body: allBoats.when(
+          loading: () => const CircularProgressIndicator(),
+          error: (error, stackTrace) => Text(error.toString()),
+          data: (boats) {
+            // Display all the messages in a scrollable list view.
+            return ListView.builder(
+              itemCount: boats.length,
+              itemBuilder: (context, index) => BoatListItem(boats[index]),
+            );
+          }),
       floatingActionButton: FloatingActionButton(
         child: const Icon(Icons.add),
         onPressed: () {
           Navigator.push(
             context,
             MaterialPageRoute(
-                builder: (context) => const EditBoat(id: '',)),
+                builder: (context) => const EditBoat(
+                      id: '',
+                    )),
           );
         },
       ),

@@ -21,29 +21,29 @@ class WillPopForm extends StatelessWidget {
 
   Future<bool?> buildDialog<bool>(BuildContext context) async {
     return showDialog<bool>(
-        context: context,
-        builder: (BuildContext context) {
-          return AlertDialog(
-            title: const Text('Unsaved modifications'),
-            content: const Text(
-                'There are unsaved modifications. /n Press Discard to discard changes or cancel to continue to edit'),
-            actions: <Widget>[
-              TextButton(
-                style: TextButton.styleFrom(
-                  textStyle: Theme.of(context).textTheme.labelLarge,
-                ),
-                onPressed: () => Navigator.pop(context, false),
-                child: const Text('Cancel'),
-              ),
-              TextButton(
-                style: TextButton.styleFrom(
-                  textStyle: Theme.of(context).textTheme.labelLarge,
-                ),
-                onPressed: () => Navigator.pop(context, true),
-                child: const Text('Discard Changes'),
-              ),
-            ],
-          );
-        });
+    context: context,
+    builder: (BuildContext context) {
+      return AlertDialog(
+        title: const Text('Unsaved modifications'),
+        content: const Text(
+            'There are unsaved modifications. /n Press Discard to discard changes or cancel to continue to edit'),
+        actions: <Widget>[
+          TextButton(
+            style: TextButton.styleFrom(
+              textStyle: Theme.of(context).textTheme.labelLarge,
+            ),
+            onPressed: () => Navigator.pop(context, false),
+            child: const Text('Cancel'),
+          ),
+          TextButton(
+            style: TextButton.styleFrom(
+              textStyle: Theme.of(context).textTheme.labelLarge,
+            ),
+            onPressed: () => Navigator.pop(context, true),
+            child: const Text('Discard Changes'),
+          ),
+        ],
+      );
+    });
   }
 }

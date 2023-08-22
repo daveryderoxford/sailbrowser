@@ -485,7 +485,7 @@ class __$$_RaceCopyWithImpl<$Res> extends _$RaceCopyWithImpl<$Res, _$_Race>
 class _$_Race extends _Race {
   const _$_Race(
       {this.id = RaceSeries.unsetId,
-      required this.name,
+      this.name = "",
       required this.fleetId,
       required this.seriesId,
       @TimestampSerializer() required this.scheduledStart,
@@ -494,7 +494,7 @@ class _$_Race extends _Race {
       this.status = RaceStatus.future,
       this.isDiscardable = true,
       this.isAverageLap = true,
-      required this.startNumber})
+      this.startNumber = 0})
       : super._();
 
   factory _$_Race.fromJson(Map<String, dynamic> json) => _$$_RaceFromJson(json);
@@ -503,6 +503,7 @@ class _$_Race extends _Race {
   @JsonKey()
   final String id;
   @override
+  @JsonKey()
   final String name;
   @override
   final String fleetId;
@@ -527,6 +528,7 @@ class _$_Race extends _Race {
   @JsonKey()
   final bool isAverageLap;
   @override
+  @JsonKey()
   final int startNumber;
 
   @override
@@ -591,7 +593,7 @@ class _$_Race extends _Race {
 abstract class _Race extends Race {
   const factory _Race(
       {final String id,
-      required final String name,
+      final String name,
       required final String fleetId,
       required final String seriesId,
       @TimestampSerializer() required final DateTime scheduledStart,
@@ -600,7 +602,7 @@ abstract class _Race extends Race {
       final RaceStatus status,
       final bool isDiscardable,
       final bool isAverageLap,
-      required final int startNumber}) = _$_Race;
+      final int startNumber}) = _$_Race;
   const _Race._() : super._();
 
   factory _Race.fromJson(Map<String, dynamic> json) = _$_Race.fromJson;

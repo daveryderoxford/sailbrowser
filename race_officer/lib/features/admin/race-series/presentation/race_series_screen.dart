@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:sailbrowser_flutter/common_widgets/stream_listview.dart';
 
-import '../race_series.dart';
 import '../race_series_service.dart';
 import 'series_edit.dart';
 import 'race_series_list_item.dart';
@@ -12,15 +10,22 @@ class RaceSeriesScreen extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final database = ref.watch(seriesProvider);
+    final allSeries = ref.watch(allSeriesProvider);
     return Scaffold(
       appBar: AppBar(
         title: const Text('Series'),
       ),
-      body: StreamListView<RaceSeries>(
-        itemStream: database.allRaceSeriess$,
-        itemBuilder: (context, series) => RaceSeriesListItem(series),
-      ),
+      body: allSeries.when(
+          loading: () => const CircularProgressIndicator(),
+          error: (error, stackTrace) => Text(error.toString()),
+          data: (series) {
+            // Display all the messages in a scrollable list view.
+            return ListView.builder(
+              itemCount: series.length,
+              itemBuilder: (context, index) =>
+                  RaceSeriesListItem(series[index]),
+            );
+          }),
       floatingActionButton: FloatingActionButton(
         child: const Icon(Icons.add),
         onPressed: () {

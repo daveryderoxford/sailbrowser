@@ -7,7 +7,7 @@ import '../race_series.dart';
 class RaceSeriesListItem extends StatelessWidget {
   final RaceSeries series;
 
-  final DateFormat formatter = DateFormat('dd MMM yyyy');
+  final DateFormat formatter = DateFormat('dd MMM yy');
 
   RaceSeriesListItem(this.series, {super.key});
 
@@ -18,10 +18,15 @@ class RaceSeriesListItem extends StatelessWidget {
         Text(series.name),
         const SizedBox(width: 25),
         Text(series.fleetId),
-        const SizedBox(width: 25),
-        Text('${series.races.length} races'),
       ]),
-      subtitle: Text('Start date: ${formatter.format(series.startDate)}   End date:  ${formatter.format(series.endDate)}'),
+      subtitle: Row(
+        children: [
+          Text('${series.races.length} races'),
+          const SizedBox(width: 25),
+          Text(
+              '${formatter.format(series.startDate)} to ${formatter.format(series.endDate)}'),
+        ],
+      ),
       trailing: IconButton(
         icon: const Icon(Icons.edit_outlined),
         onPressed: () {
@@ -30,7 +35,7 @@ class RaceSeriesListItem extends StatelessWidget {
             context,
             MaterialPageRoute(
               builder: (context) => RaceSeriesDetailScreen(
-                series,
+                series.id,
               ),
             ),
           );

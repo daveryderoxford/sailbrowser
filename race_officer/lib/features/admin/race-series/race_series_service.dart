@@ -1,4 +1,5 @@
 import 'package:flutter/foundation.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:loggy/loggy.dart';
@@ -8,7 +9,7 @@ import 'package:sailbrowser_flutter/features/admin/club/clubs_service.dart';
 import 'race_series.dart';
 
 class RaceSeriesService with UiLoggy {
-  static final defaultDate = DateTime(1970, 0, 0);
+  static final defaultDate = DateTime(1970, 1, 1);
 
   static int sortRaces(Race a, b) {
     int ret = a.scheduledStart.compareTo(b.scheduledStart);
@@ -87,7 +88,7 @@ class RaceSeriesService with UiLoggy {
   /// Adds a race to a series
   Future<bool> addRace(RaceSeries series, Race race) {
     Race updatedRace;
-    if (race.id == '') {
+    if (race.id == 'Unset') {
       updatedRace =
           race.copyWith(id: UniqueKey().toString(), seriesId: series.id);
     } else {
@@ -109,33 +110,45 @@ class RaceSeriesService with UiLoggy {
   }
 
   /// Update a races for a series
-  updateRace(RaceSeries series, String updatedId, Race race) {
+  Future<bool> updateRace(RaceSeries series, String updatedId, Race race) {
     final races = series.races
         .map((original) => (updatedId == original.id) ? race : original)
         .toList();
-    _updateRaces(series, races);
+    return _updateRaces(series, races);
   }
 
   /// Remove a race for a series
-  removeRace(RaceSeries series, String deletedId) {
+  Future<bool> removeRace(RaceSeries series, String deletedId) {
     final races = series.races.where((race) => race.id != deletedId).toList();
-    _updateRaces(series, races);
+    return _updateRaces(series, races);
   }
 
   Future<bool> _updateRaces(RaceSeries series, List<Race> races) {
     // Sort Races for series into order based on start/end time
     races.sort((Race a, b) => a.scheduledStart.compareTo(b.scheduledStart));
 
+    // Set race name based on time ordering
+    final updatedRaces = races.map( (race) {
+       int index = races.indexOf(race);
+       return race.copyWith(name: 'Race ${index.toString()}');
+    } ).toList();
+ 
+    // Set start/end time of series
     final startDate = races.isNotEmpty ? races[0].scheduledStart : defaultDate;
     final endDate =
         races.isNotEmpty ? races[races.length - 1].scheduledStart : defaultDate;
 
     final update =
-        series.copyWith(races: races, startDate: startDate, endDate: endDate);
+        series.copyWith(races: updatedRaces, startDate: startDate, endDate: endDate);
 
     return this.update(update, update.id);
   }
 }
 
-final seriesProvider = Provider(
+final seriesRepositoryProvider = Provider(
     (ref) => RaceSeriesService(ref.watch(currentClubProvider).current!.id));
+
+final allSeriesProvider = StreamProvider( (ref) {
+  final db = ref.read(seriesRepositoryProvider);
+  return db.allRaceSeriess$;
+});

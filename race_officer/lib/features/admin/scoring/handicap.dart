@@ -6,9 +6,12 @@ part 'handicap.freezed.dart';
 part 'handicap.g.dart';
 
 enum HandicapScheme {
-   py,
-   nhc,
-   irc,
+   py('PY'),
+   nhc('NHC'),
+   irc('IRC');
+
+  final String displayName;
+  const HandicapScheme(this.displayName);
 }
 
 @freezed
