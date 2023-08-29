@@ -9,8 +9,7 @@ part of 'boat_class_list.dart';
 _$_BoatClassList _$$_BoatClassListFromJson(Map<String, dynamic> json) =>
     _$_BoatClassList(
       name: json['name'] as String,
-      handicapScheme:
-          $enumDecode(_$HandicapSchemeEnumMap, json['handicapScheme']),
+      handicapScheme: json['handicapScheme'],
       boats: (json['boats'] as List<dynamic>?)
               ?.map((e) => BoatClass.fromJson(e as Map<String, dynamic>))
               .toList() ??
@@ -20,12 +19,6 @@ _$_BoatClassList _$$_BoatClassListFromJson(Map<String, dynamic> json) =>
 Map<String, dynamic> _$$_BoatClassListToJson(_$_BoatClassList instance) =>
     <String, dynamic>{
       'name': instance.name,
-      'handicapScheme': _$HandicapSchemeEnumMap[instance.handicapScheme]!,
+      'handicapScheme': instance.handicapScheme,
       'boats': instance.boats.map((e) => e.toJson()).toList(),
     };
-
-const _$HandicapSchemeEnumMap = {
-  HandicapScheme.py: 'py',
-  HandicapScheme.nhc: 'nhc',
-  HandicapScheme.irc: 'irc',
-};

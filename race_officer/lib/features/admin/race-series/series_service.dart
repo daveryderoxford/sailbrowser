@@ -1,15 +1,14 @@
-import 'package:flutter/foundation.dart';
-import 'package:flutter/material.dart';
+
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:loggy/loggy.dart';
 import 'package:rxdart/rxdart.dart';
 import 'package:sailbrowser_flutter/features/admin/club/clubs_service.dart';
 
-import 'race_series.dart';
+import 'series.dart';
 
 class RaceSeriesService with UiLoggy {
-  static final defaultDate = DateTime(1970, 1, 1);
+  static final defaultDate = DateTime.fromMicrosecondsSinceEpoch(0);
 
   static int sortRaces(Race a, b) {
     int ret = a.scheduledStart.compareTo(b.scheduledStart);
@@ -23,8 +22,22 @@ class RaceSeriesService with UiLoggy {
     }
   }
 
-  static int seriesSort(RaceSeries a, b) {
-    int ret = a.startDate.compareTo(b.startDate);
+  // Series sorter - series are sorted in order of: 
+  //  * Series with no races first - null start date
+  //  * In order od first race start
+  //  * In otrder of the fleet id
+
+  static int seriesSort(Series a, b) {
+
+    if (a.startDate == null) {
+      return b.startDate == null ? 1 : 0;
+    }
+
+    if (b.startDate == null) {
+      return -1;
+    }
+
+    int ret = a.startDate!.compareTo(b.startDate!);
     if (ret != 0) {
       return ret;
     } else {
@@ -37,15 +50,15 @@ class RaceSeriesService with UiLoggy {
 
   late final CollectionReference _series = _firestore
       .collection('/clubs/$clubId/series/')
-      .withConverter<RaceSeries>(
-        fromFirestore: (snapshot, _) => RaceSeries.fromJson(snapshot.data()!),
-        toFirestore: (RaceSeries series, _) => series.toJson(),
+      .withConverter<Series>(
+        fromFirestore: (snapshot, _) => Series.fromJson(snapshot.data()!),
+        toFirestore: (Series series, _) => series.toJson(),
       );
 
-  late final Stream<List<RaceSeries>> allRaceSeriess$ = _series.snapshots().map(
+  late final Stream<List<Series>> allRaceSeriess$ = _series.snapshots().map(
     (snap) {
       final series =
-          snap.docs.map<RaceSeries>((doc) => doc.data() as RaceSeries).toList();
+          snap.docs.map<Series>((doc) => doc.data() as Series).toList();
       series.sort((a, b) => seriesSort(a, b));
       return series;
     },
@@ -53,10 +66,12 @@ class RaceSeriesService with UiLoggy {
 
   RaceSeriesService(this.clubId);
 
-  Future<bool> add(RaceSeries series) async {
+  Future<bool> add(Series series) async {
     try {
-      final update = series.copyWith(id: _series.doc().id);
-      await _series.doc(update.id).set(update);
+      final updatedRaces =  _updateRaceDetails(series, [...series.races]);
+      final complateUpdate = updatedRaces.copyWith(id: _series.doc().id);
+
+      await _series.doc(complateUpdate.id).set(complateUpdate);
       return true;
     } catch (e) {
       loggy.error(e.toString());
@@ -75,9 +90,12 @@ class RaceSeriesService with UiLoggy {
   }
 
 // Edit a series
-  Future<bool> update(RaceSeries series, String id) async {
+  Future<bool> update(Series series, String id) async {
+
+    final upDatedSeries = _updateRaceDetails(series, [...series.races]);
+
     try {
-      await _series.doc(id).update(series.toJson());
+      await _series.doc(id).update(upDatedSeries.toJson());
       return true;
     } catch (e) {
       loggy.error(e.toString());
@@ -85,70 +103,64 @@ class RaceSeriesService with UiLoggy {
     }
   }
 
-  /// Adds a race to a series
-  Future<bool> addRace(RaceSeries series, Race race) {
-    Race updatedRace;
-    if (race.id == 'Unset') {
-      updatedRace =
-          race.copyWith(id: UniqueKey().toString(), seriesId: series.id);
-    } else {
-      updatedRace = race.copyWith(seriesId: series.id);
-    }
+  /// Adds a new race to a series. 
+  Future<bool> addRace(Series series, Race race) {
+     if (race.seriesId != series.id) throw (Exception("Race seaiesId does not equal series id"));
 
-    final races = [...series.races, updatedRace];
-    return _updateRaces(series, races);
-  }
+    final races = [...series.races, race];
 
-  /// Replaces the complete array of races
-  Future<bool> addRaces(RaceSeries series, List<Race> races) {
-    final update = races
-        .map((race) =>
-            race.copyWith(id: UniqueKey().toString(), seriesId: series.id))
-        .toList();
+    final update = series.copyWith(races: races);
 
-    return _updateRaces(series, update);
+    return this.update(update, update.id);
   }
 
   /// Update a races for a series
-  Future<bool> updateRace(RaceSeries series, String updatedId, Race race) {
+  Future<bool> updateRace(Series series, String updatedId, Race race) {
+     if (race.seriesId != series.id) throw (Exception("Race seaiesId does not equal series id"));
+
     final races = series.races
         .map((original) => (updatedId == original.id) ? race : original)
         .toList();
-    return _updateRaces(series, races);
+
+    final update = series.copyWith(races: races);
+
+    return this.update(update, update.id);
   }
 
   /// Remove a race for a series
-  Future<bool> removeRace(RaceSeries series, String deletedId) {
+  Future<bool> removeRace(Series series, String deletedId) {
+    
     final races = series.races.where((race) => race.id != deletedId).toList();
-    return _updateRaces(series, races);
+
+    final update = series.copyWith(races: races);
+
+    return this.update(update, update.id);
   }
 
-  Future<bool> _updateRaces(RaceSeries series, List<Race> races) {
+  Series _updateRaceDetails(Series series, List<Race> races) {
     // Sort Races for series into order based on start/end time
     races.sort((Race a, b) => a.scheduledStart.compareTo(b.scheduledStart));
 
     // Set race name based on time ordering
-    final updatedRaces = races.map( (race) {
-       int index = races.indexOf(race);
-       return race.copyWith(name: 'Race ${index.toString()}');
-    } ).toList();
- 
+    final updatedRaces = races.map((race) {
+      int index = races.indexOf(race);
+      return race.copyWith(name: 'Race ${index.toString()}');
+    }).toList();
+
     // Set start/end time of series
     final startDate = races.isNotEmpty ? races[0].scheduledStart : defaultDate;
     final endDate =
         races.isNotEmpty ? races[races.length - 1].scheduledStart : defaultDate;
 
-    final update =
-        series.copyWith(races: updatedRaces, startDate: startDate, endDate: endDate);
-
-    return this.update(update, update.id);
+    return series.copyWith(
+        races: updatedRaces, startDate: startDate, endDate: endDate);
   }
 }
 
 final seriesRepositoryProvider = Provider(
     (ref) => RaceSeriesService(ref.watch(currentClubProvider).current!.id));
 
-final allSeriesProvider = StreamProvider( (ref) {
+final allSeriesProvider = StreamProvider((ref) {
   final db = ref.read(seriesRepositoryProvider);
   return db.allRaceSeriess$;
 });

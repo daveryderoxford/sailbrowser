@@ -18,6 +18,8 @@ _$_Club _$$_ClubFromJson(Map<String, dynamic> json) => _$_Club(
               ?.map((e) => BoatClass.fromJson(e as Map<String, dynamic>))
               .toList() ??
           const [],
+      defaultScoringData: SeriesScoringData.fromJson(
+          json['defaultScoringData'] as Map<String, dynamic>),
     );
 
 Map<String, dynamic> _$$_ClubToJson(_$_Club instance) => <String, dynamic>{
@@ -26,6 +28,7 @@ Map<String, dynamic> _$$_ClubToJson(_$_Club instance) => <String, dynamic>{
       'status': _$ClubStatusEnumMap[instance.status]!,
       'fleets': instance.fleets.map((e) => e.toJson()).toList(),
       'boatClasses': instance.boatClasses.map((e) => e.toJson()).toList(),
+      'defaultScoringData': instance.defaultScoringData.toJson(),
     };
 
 const _$ClubStatusEnumMap = {

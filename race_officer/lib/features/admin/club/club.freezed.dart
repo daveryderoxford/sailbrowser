@@ -25,6 +25,8 @@ mixin _$Club {
   ClubStatus get status => throw _privateConstructorUsedError;
   List<Fleet> get fleets => throw _privateConstructorUsedError;
   List<BoatClass> get boatClasses => throw _privateConstructorUsedError;
+  SeriesScoringData get defaultScoringData =>
+      throw _privateConstructorUsedError;
 
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
   @JsonKey(ignore: true)
@@ -41,7 +43,10 @@ abstract class $ClubCopyWith<$Res> {
       String name,
       ClubStatus status,
       List<Fleet> fleets,
-      List<BoatClass> boatClasses});
+      List<BoatClass> boatClasses,
+      SeriesScoringData defaultScoringData});
+
+  $SeriesScoringDataCopyWith<$Res> get defaultScoringData;
 }
 
 /// @nodoc
@@ -62,6 +67,7 @@ class _$ClubCopyWithImpl<$Res, $Val extends Club>
     Object? status = null,
     Object? fleets = null,
     Object? boatClasses = null,
+    Object? defaultScoringData = null,
   }) {
     return _then(_value.copyWith(
       id: null == id
@@ -84,7 +90,19 @@ class _$ClubCopyWithImpl<$Res, $Val extends Club>
           ? _value.boatClasses
           : boatClasses // ignore: cast_nullable_to_non_nullable
               as List<BoatClass>,
+      defaultScoringData: null == defaultScoringData
+          ? _value.defaultScoringData
+          : defaultScoringData // ignore: cast_nullable_to_non_nullable
+              as SeriesScoringData,
     ) as $Val);
+  }
+
+  @override
+  @pragma('vm:prefer-inline')
+  $SeriesScoringDataCopyWith<$Res> get defaultScoringData {
+    return $SeriesScoringDataCopyWith<$Res>(_value.defaultScoringData, (value) {
+      return _then(_value.copyWith(defaultScoringData: value) as $Val);
+    });
   }
 }
 
@@ -99,7 +117,11 @@ abstract class _$$_ClubCopyWith<$Res> implements $ClubCopyWith<$Res> {
       String name,
       ClubStatus status,
       List<Fleet> fleets,
-      List<BoatClass> boatClasses});
+      List<BoatClass> boatClasses,
+      SeriesScoringData defaultScoringData});
+
+  @override
+  $SeriesScoringDataCopyWith<$Res> get defaultScoringData;
 }
 
 /// @nodoc
@@ -116,6 +138,7 @@ class __$$_ClubCopyWithImpl<$Res> extends _$ClubCopyWithImpl<$Res, _$_Club>
     Object? status = null,
     Object? fleets = null,
     Object? boatClasses = null,
+    Object? defaultScoringData = null,
   }) {
     return _then(_$_Club(
       id: null == id
@@ -138,6 +161,10 @@ class __$$_ClubCopyWithImpl<$Res> extends _$ClubCopyWithImpl<$Res, _$_Club>
           ? _value._boatClasses
           : boatClasses // ignore: cast_nullable_to_non_nullable
               as List<BoatClass>,
+      defaultScoringData: null == defaultScoringData
+          ? _value.defaultScoringData
+          : defaultScoringData // ignore: cast_nullable_to_non_nullable
+              as SeriesScoringData,
     ));
   }
 }
@@ -150,7 +177,8 @@ class _$_Club extends _Club {
       required this.name,
       required this.status,
       final List<Fleet> fleets = const [],
-      final List<BoatClass> boatClasses = const []})
+      final List<BoatClass> boatClasses = const [],
+      required this.defaultScoringData})
       : _fleets = fleets,
         _boatClasses = boatClasses,
         super._();
@@ -182,8 +210,11 @@ class _$_Club extends _Club {
   }
 
   @override
+  final SeriesScoringData defaultScoringData;
+
+  @override
   String toString() {
-    return 'Club(id: $id, name: $name, status: $status, fleets: $fleets, boatClasses: $boatClasses)';
+    return 'Club(id: $id, name: $name, status: $status, fleets: $fleets, boatClasses: $boatClasses, defaultScoringData: $defaultScoringData)';
   }
 
   @override
@@ -196,7 +227,9 @@ class _$_Club extends _Club {
             (identical(other.status, status) || other.status == status) &&
             const DeepCollectionEquality().equals(other._fleets, _fleets) &&
             const DeepCollectionEquality()
-                .equals(other._boatClasses, _boatClasses));
+                .equals(other._boatClasses, _boatClasses) &&
+            (identical(other.defaultScoringData, defaultScoringData) ||
+                other.defaultScoringData == defaultScoringData));
   }
 
   @JsonKey(ignore: true)
@@ -207,7 +240,8 @@ class _$_Club extends _Club {
       name,
       status,
       const DeepCollectionEquality().hash(_fleets),
-      const DeepCollectionEquality().hash(_boatClasses));
+      const DeepCollectionEquality().hash(_boatClasses),
+      defaultScoringData);
 
   @JsonKey(ignore: true)
   @override
@@ -229,7 +263,8 @@ abstract class _Club extends Club {
       required final String name,
       required final ClubStatus status,
       final List<Fleet> fleets,
-      final List<BoatClass> boatClasses}) = _$_Club;
+      final List<BoatClass> boatClasses,
+      required final SeriesScoringData defaultScoringData}) = _$_Club;
   const _Club._() : super._();
 
   factory _Club.fromJson(Map<String, dynamic> json) = _$_Club.fromJson;
@@ -244,6 +279,8 @@ abstract class _Club extends Club {
   List<Fleet> get fleets;
   @override
   List<BoatClass> get boatClasses;
+  @override
+  SeriesScoringData get defaultScoringData;
   @override
   @JsonKey(ignore: true)
   _$$_ClubCopyWith<_$_Club> get copyWith => throw _privateConstructorUsedError;

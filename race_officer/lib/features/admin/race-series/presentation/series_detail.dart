@@ -6,12 +6,12 @@ import 'package:sailbrowser_flutter/features/admin/fleet/fleet.dart';
 import 'package:sailbrowser_flutter/features/admin/race-series/presentation/race_edit.dart';
 import 'package:sailbrowser_flutter/features/admin/race-series/presentation/series_edit.dart';
 
-import '../race_series.dart';
-import '../race_series_service.dart';
+import '../series.dart';
+import '../series_service.dart';
 
 class RaceSeriesDetailScreen extends ConsumerWidget {
   final String seriesId;
-  late RaceSeries series;
+  late Series series;
 
   RaceSeriesDetailScreen(this.seriesId, {super.key});
 
@@ -56,7 +56,8 @@ class RaceSeriesDetailScreen extends ConsumerWidget {
     final fleetName = fleets.firstWhere((f) => f.id == series.fleetId).name;
     final dateFmt = DateFormat('dd MMM yyyy').format;
     final seriesDuration =
-        '${dateFmt(series.startDate)} to ${dateFmt(series.endDate)}';
+      series.races.isNotEmpty ?
+        '${dateFmt(series.startDate!)} to ${dateFmt(series.endDate!)}' : "";
 
     return Card(
       color: Theme.of(context).colorScheme.surfaceVariant,

@@ -10,7 +10,7 @@ _$_Fleet _$$_FleetFromJson(Map<String, dynamic> json) => _$_Fleet(
       id: json['id'] as String? ?? Fleet.unsetId,
       shortName: json['shortName'] as String,
       name: json['name'] as String,
-      handicapScheme: json['handicapScheme'] ?? HandicapScheme.py,
+      handicapScheme: json['handicapScheme'] ?? RatingSystem.ryaPY,
       classFlag: json['classFlag'] as String? ?? "",
     );
 

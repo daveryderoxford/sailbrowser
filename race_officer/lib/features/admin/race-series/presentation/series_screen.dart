@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import '../race_series_service.dart';
+import '../series_service.dart';
 import 'series_edit.dart';
-import 'race_series_list_item.dart';
+import 'series_list_item.dart';
 
 class RaceSeriesScreen extends ConsumerWidget {
   const RaceSeriesScreen({super.key});

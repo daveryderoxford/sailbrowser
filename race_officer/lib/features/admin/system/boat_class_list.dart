@@ -1,7 +1,7 @@
 
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:sailbrowser_flutter/features/admin/boat_class/boat_class.dart';
-import 'package:sailbrowser_flutter/features/admin/scoring/handicap.dart';
+import 'package:sailbrowser_flutter/features/admin/scoring/race_scoring.dart';
 
 part 'boat_class_list.freezed.dart';
 part 'boat_class_list.g.dart';
@@ -20,3 +20,4 @@ class BoatClassList with _$BoatClassList {
   factory BoatClassList.fromJson(Map<String, Object?> json) =>
       _$BoatClassListFromJson(json);
 }
+

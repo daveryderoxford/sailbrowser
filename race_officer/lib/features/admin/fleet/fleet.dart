@@ -1,6 +1,6 @@
    
 import 'package:freezed_annotation/freezed_annotation.dart';
-import 'package:sailbrowser_flutter/features/admin/scoring/handicap.dart';
+import 'package:sailbrowser_flutter/features/admin/scoring/race_scoring.dart';
 
 part 'fleet.freezed.dart';
 part 'fleet.g.dart';
@@ -14,7 +14,7 @@ class Fleet with _$Fleet {
     @Default(Fleet.unsetId) String id,
     required String shortName,
     required String name,
-    @Default(HandicapScheme.py) handicapScheme,
+    @Default(RatingSystem.ryaPY) handicapScheme,
     @Default("") String classFlag
   }) = _Fleet;
 

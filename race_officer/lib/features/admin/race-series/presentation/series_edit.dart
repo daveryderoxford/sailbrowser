@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_form_builder/flutter_form_builder.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:form_builder_validators/form_builder_validators.dart';
@@ -8,13 +9,14 @@ import 'package:sailbrowser_flutter/common_widgets/delete_button.dart';
 import 'package:sailbrowser_flutter/common_widgets/responsive_center.dart';
 import 'package:sailbrowser_flutter/common_widgets/will_pop_form.dart';
 import 'package:sailbrowser_flutter/features/admin/club/clubs_service.dart';
+import 'package:sailbrowser_flutter/features/admin/scoring/series_scoring.dart';
 
-import '../race_series.dart';
-import '../race_series_service.dart';
+import '../series.dart';
+import '../series_service.dart';
 
 class EditSeries extends ConsumerStatefulWidget {
   final String id;
-  final RaceSeries? series;
+  final Series? series;
 
   const EditSeries({this.series, required this.id, super.key});
 
@@ -25,7 +27,7 @@ class EditSeries extends ConsumerStatefulWidget {
 class _EditRaceSeriesState extends ConsumerState<EditSeries> with UiLoggy {
   final _formKey = GlobalKey<FormBuilderState>();
 
-  RaceSeries? series;
+  Series? series;
 
   @override
   void initState() {
@@ -36,25 +38,35 @@ class _EditRaceSeriesState extends ConsumerState<EditSeries> with UiLoggy {
   Future<void> _submit() async {
     final form = _formKey.currentState!;
 
-    final boatService = ref.read(seriesRepositoryProvider);
+    final raceSeriesService = ref.read(seriesRepositoryProvider);
 
     if (form.isValid) {
       final formData = _formKey.currentState!.value;
 
       bool success;
 
-      if (series == null) {
-        final update = RaceSeries(
-            name: formData['name'],
-            fleetId: formData['fleetId'],
-            startDate: DateTime(1970, 1, 1),
-            endDate: DateTime(1970, 1, 1));
-        success = await boatService.add(update);
-      } else {
-        final update = series!
-            .copyWith(name: formData['name'], fleetId: formData['fleetId']);
+      final scoringScheme = SeriesScoringData(
+          scheme: formData['scoringScheme'],
+          initialDiscardAfter: formData['initialDiscardAfter'],
+          subsequentDiscardsEveryN: formData['subsequentDiscardsEveryN'],
+          entryAlgorithm: formData['entryAlgorithm']
+        );
 
-        success = await boatService.update(update, update.id);
+      if (series == null) {
+        final update = Series(
+          name: formData['name'],
+          fleetId: formData['fleetId'],
+          scoringScheme: scoringScheme,
+        );
+        success = await raceSeriesService.add(update);
+      } else {
+        final update = series!.copyWith(
+          name: formData['name'],
+          fleetId: formData['fleetId'],
+          scoringScheme: scoringScheme,
+        );
+
+        success = await raceSeriesService.update(update, update.id);
       }
       if (success) {
         // ignore: use_build_context_synchronously
@@ -142,6 +154,9 @@ class _EditRaceSeriesState extends ConsumerState<EditSeries> with UiLoggy {
   }
 
   List<Widget> _buildFormChildren() {
+    final currentClub = ref.read(currentClubProvider);
+    final initialSeriesScoring = series == null ? currentClub.current!.defaultScoringData : series!.scoringScheme;
+
     final fleets = ref.read(currentClubProvider).current!.fleets;
     return [
       FormBuilderTextField(
@@ -166,6 +181,66 @@ class _EditRaceSeriesState extends ConsumerState<EditSeries> with UiLoggy {
                   child: Text(fleet.name),
                 ))
             .toList(),
+      ),
+      FormBuilderDropdown<SeriesScoringScheme>(
+        name: 'scoringScheme',
+        decoration: const InputDecoration(
+          labelText: 'Series scoring',
+        ),
+        validator: FormBuilderValidators.required(),
+        autovalidateMode: AutovalidateMode.onUserInteraction,
+        initialValue: initialSeriesScoring.scheme,
+        items: SeriesScoringScheme.values
+            .map((scheme) => DropdownMenuItem(
+                  value: scheme,
+                  child: Text(scheme.displayName),
+                ))
+            .toList(),
+      ),
+      FormBuilderDropdown<SeriesEntryAlgorithm>(
+        name: 'entryAlgorithm',
+        decoration: const InputDecoration(
+          labelText: 'Entries as',
+        ),
+        validator: FormBuilderValidators.required(),
+        autovalidateMode: AutovalidateMode.onUserInteraction,
+        initialValue: initialSeriesScoring.entryAlgorithm,
+        items: SeriesEntryAlgorithm.values
+            .map((scheme) => DropdownMenuItem(
+                  value: scheme,
+                  child: Text(scheme.displayName),
+                ))
+            .toList(),
+      ),
+      FormBuilderTextField(
+        name: 'initialDiscardAfter',
+        initialValue: initialSeriesScoring.initialDiscardAfter.toString(),
+        autovalidateMode: AutovalidateMode.onUserInteraction,
+        decoration: const InputDecoration(
+          labelText: 'Inital discard',
+          helperText: "Initial discard after N races",
+        ),
+        validator: FormBuilderValidators.required(),
+        keyboardType: TextInputType.number,
+        inputFormatters: <TextInputFormatter>[
+          FilteringTextInputFormatter.digitsOnly
+        ],
+        valueTransformer: (text) => text != null ? num.tryParse(text) : null,
+      ),
+      FormBuilderTextField(
+        name: 'subsequentDiscardsEveryN',
+        initialValue: initialSeriesScoring.subsequentDiscardsEveryN.toString(),
+        autovalidateMode: AutovalidateMode.onUserInteraction,
+        decoration: const InputDecoration(
+          labelText: 'Subsequent discards',
+          helperText: "Subsequent discards after every N races",
+        ),
+        validator: FormBuilderValidators.required(),
+        keyboardType: TextInputType.number,
+        inputFormatters: <TextInputFormatter>[
+          FilteringTextInputFormatter.digitsOnly
+        ],
+        valueTransformer: (text) => text != null ? num.tryParse(text) : null,
       ),
     ];
   }

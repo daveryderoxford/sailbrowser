@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import 'package:sailbrowser_flutter/features/admin/race-series/presentation/race_series_detail.dart';
+import 'package:sailbrowser_flutter/features/admin/race-series/presentation/series_detail.dart';
 
-import '../race_series.dart';
+import '../series.dart';
 
 class RaceSeriesListItem extends StatelessWidget {
-  final RaceSeries series;
+  final Series series;
 
   final DateFormat formatter = DateFormat('dd MMM yy');
 
@@ -23,8 +23,8 @@ class RaceSeriesListItem extends StatelessWidget {
         children: [
           Text('${series.races.length} races'),
           const SizedBox(width: 25),
-          Text(
-              '${formatter.format(series.startDate)} to ${formatter.format(series.endDate)}'),
+          series.startDate != null ? Text(
+              '${formatter.format(series.startDate!)} to ${formatter.format(series.endDate!)}'): const Text(""),
         ],
       ),
       trailing: IconButton(

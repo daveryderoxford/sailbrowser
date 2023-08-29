@@ -147,7 +147,7 @@ class _$_Fleet extends _Fleet {
       {this.id = Fleet.unsetId,
       required this.shortName,
       required this.name,
-      this.handicapScheme = HandicapScheme.py,
+      this.handicapScheme = RatingSystem.ryaPY,
       this.classFlag = ""})
       : super._();
 

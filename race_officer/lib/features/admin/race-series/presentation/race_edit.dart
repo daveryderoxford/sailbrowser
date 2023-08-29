@@ -9,13 +9,13 @@ import 'package:sailbrowser_flutter/common_widgets/delete_button.dart';
 import 'package:sailbrowser_flutter/common_widgets/responsive_center.dart';
 import 'package:sailbrowser_flutter/common_widgets/will_pop_form.dart';
 
-import '../race_series.dart';
-import '../race_series_service.dart';
+import '../series.dart';
+import '../series_service.dart';
 
 class EditRace extends ConsumerStatefulWidget {
   final String id;
   final Race? race;
-  final RaceSeries series;
+  final Series series;
 
   const EditRace(
       {this.race, required this.series, required this.id, super.key});
@@ -28,7 +28,7 @@ class _EditRaceSeriesState extends ConsumerState<EditRace> with UiLoggy {
   final _formKey = GlobalKey<FormBuilderState>();
 
   Race? race;
-  RaceSeries? series;
+  Series? series;
 
   @override
   void initState() {
@@ -38,6 +38,7 @@ class _EditRaceSeriesState extends ConsumerState<EditRace> with UiLoggy {
   }
 
   Future<void> _submit() async {
+    _formKey.currentState?.saveAndValidate();
     final form = _formKey.currentState!;
 
     final raceSeriesService = ref.read(seriesRepositoryProvider);
@@ -159,8 +160,11 @@ class _EditRaceSeriesState extends ConsumerState<EditRace> with UiLoggy {
   }
 
   List<Widget> _buildFormChildren() {
+    final DateTime? s = (race == null) ? null : race!.scheduledStart;
     final initialDate =
-        race == null ? _defaultDate(series!.races) : race!.scheduledStart;
+        race == null ? _defaultDate(series!.races) : DateTime(s!.year, s.month, s.day);
+     final initialTime =
+        race == null ? _defaultTime(series!.races) : DateTime(1970, 1, 1, s!.hour, s.minute);
 
     return [
       FormBuilderDateTimePicker(
@@ -168,17 +172,17 @@ class _EditRaceSeriesState extends ConsumerState<EditRace> with UiLoggy {
         initialEntryMode: DatePickerEntryMode.calendar,
         initialValue: initialDate,
         inputType: InputType.date,
-        format: DateFormat("MM-dd-yyyy"),
+        format: DateFormat("MMM-dd-yyyy"),
         autovalidateMode: AutovalidateMode.onUserInteraction,
         decoration: const InputDecoration(labelText: "Scheduled date"),
       ),
       FormBuilderDateTimePicker(
         name: "scheduledStartTime",
         autovalidateMode: AutovalidateMode.onUserInteraction,
-        initialEntryMode: DatePickerEntryMode.calendar,
-        initialValue: initialDate,
+        initialEntryMode: DatePickerEntryMode.input,
+        initialValue: initialTime,
         inputType: InputType.time,
-        format: DateFormat("hh:mm"),
+        format: DateFormat.Hm(),
         decoration: const InputDecoration(labelText: "Scheduled time"),
       ),
       FormBuilderDropdown<RaceType>(
@@ -209,13 +213,29 @@ class _EditRaceSeriesState extends ConsumerState<EditRace> with UiLoggy {
     ];
   }
 
+  /// Returns default start date based on
+  ///   Now if no races
+  ///   7 days after last race in series if one exists
+  ///  Time is set to 00:00:00 
   static DateTime _defaultDate(List<Race> races) {
     if (races.isEmpty) {
       final now = DateTime.now();
-      return DateTime(now.year, now.month, now.day, 10, 30);
+      return DateTime(now.year, now.month, now.day, 0, 0, 0);
+    } else {
+      final d = races.last.scheduledStart.add(const Duration(days: 7));
+      return DateTime(d.year, d.month, d.day, 0, 0, 0);
+    }
+  }
+
+/// Returns default time
+///   10:30 if no reaces exist
+///   Same as last race in the series if one exists
+    static DateTime _defaultTime(List<Race> races) {
+    if (races.isEmpty) {
+      return DateTime(1970, 1, 1, 10, 30);
     } else {
       final d = races.last.scheduledStart;
-      return d.add(const Duration(days: 7));
+      return DateTime(1970, 1, 1, d.hour, d.minute);
     }
   }
 }
