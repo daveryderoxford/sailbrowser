@@ -9,10 +9,12 @@ import 'package:sailbrowser_flutter/common_widgets/responsive_center.dart';
 class DeleteButton extends StatelessWidget {
   const DeleteButton(
       {super.key,
+      this.title = 'Delete',
       required this.itemName,
       required this.visible,
       required this.onDelete});
 
+  final String title ;
   final bool visible;
   final String itemName;
   final VoidCallback onDelete;
@@ -32,7 +34,7 @@ class DeleteButton extends StatelessWidget {
               onDelete();
             }
           },
-          child: const Text('Delete'),
+          child: Text(title),
         ),
         ),
       ),

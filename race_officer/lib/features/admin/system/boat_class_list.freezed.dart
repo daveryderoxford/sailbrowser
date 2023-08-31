@@ -54,7 +54,7 @@ class _$BoatClassListCopyWithImpl<$Res, $Val extends BoatClassList>
   @override
   $Res call({
     Object? name = null,
-    Object? handicapScheme = freezed,
+    Object? handicapScheme = null,
     Object? boats = null,
   }) {
     return _then(_value.copyWith(
@@ -62,7 +62,7 @@ class _$BoatClassListCopyWithImpl<$Res, $Val extends BoatClassList>
           ? _value.name
           : name // ignore: cast_nullable_to_non_nullable
               as String,
-      handicapScheme: freezed == handicapScheme
+      handicapScheme: null == handicapScheme
           ? _value.handicapScheme
           : handicapScheme // ignore: cast_nullable_to_non_nullable
               as HandicapScheme,
@@ -98,7 +98,7 @@ class __$$_BoatClassListCopyWithImpl<$Res>
   @override
   $Res call({
     Object? name = null,
-    Object? handicapScheme = freezed,
+    Object? handicapScheme = null,
     Object? boats = null,
   }) {
     return _then(_$_BoatClassList(
@@ -106,7 +106,7 @@ class __$$_BoatClassListCopyWithImpl<$Res>
           ? _value.name
           : name // ignore: cast_nullable_to_non_nullable
               as String,
-      handicapScheme: freezed == handicapScheme
+      handicapScheme: null == handicapScheme
           ? _value.handicapScheme
           : handicapScheme // ignore: cast_nullable_to_non_nullable
               as HandicapScheme,
@@ -155,17 +155,14 @@ class _$_BoatClassList extends _BoatClassList {
         (other.runtimeType == runtimeType &&
             other is _$_BoatClassList &&
             (identical(other.name, name) || other.name == name) &&
-            const DeepCollectionEquality()
-                .equals(other.handicapScheme, handicapScheme) &&
+            (identical(other.handicapScheme, handicapScheme) ||
+                other.handicapScheme == handicapScheme) &&
             const DeepCollectionEquality().equals(other._boats, _boats));
   }
 
   @JsonKey(ignore: true)
   @override
-  int get hashCode => Object.hash(
-      runtimeType,
-      name,
-      const DeepCollectionEquality().hash(handicapScheme),
+  int get hashCode => Object.hash(runtimeType, name, handicapScheme,
       const DeepCollectionEquality().hash(_boats));
 
   @JsonKey(ignore: true)

@@ -1,4 +1,3 @@
-
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:loggy/loggy.dart';
@@ -7,28 +6,27 @@ import 'package:sailbrowser_flutter/features/admin/club/clubs_service.dart';
 
 import 'series.dart';
 
-class RaceSeriesService with UiLoggy {
+class SeriesService with UiLoggy {
   static final defaultDate = DateTime.fromMicrosecondsSinceEpoch(0);
 
+  /// Order races by:
+  /// 1. Scheduled start date
+  /// 2. StartGroup
   static int sortRaces(Race a, b) {
     int ret = a.scheduledStart.compareTo(b.scheduledStart);
-    if (ret != 0) {
-      return ret;
+
+    if (ret == 0) {
+      return a.raceOfDay - b.raceOfDay as int;
     } else {
-      return (1);
-      //   const index1 = this.clubQuery.fleets.findIndex(f => f.id === a.fleetId);
-      //   const index2 = this.clubQuery.fleets.findIndex(f => f.id === b.fleetId);
-      //   return index1 - index2;
+      return ret;
     }
   }
 
-  // Series sorter - series are sorted in order of: 
+  // Series sorter - series are sorted in order of:
   //  * Series with no races first - null start date
   //  * In order od first race start
-  //  * In otrder of the fleet id
-
+  //  * In order of the fleet id
   static int seriesSort(Series a, b) {
-
     if (a.startDate == null) {
       return b.startDate == null ? 1 : 0;
     }
@@ -48,12 +46,11 @@ class RaceSeriesService with UiLoggy {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
   final String clubId;
 
-  late final CollectionReference _series = _firestore
-      .collection('/clubs/$clubId/series/')
-      .withConverter<Series>(
-        fromFirestore: (snapshot, _) => Series.fromJson(snapshot.data()!),
-        toFirestore: (Series series, _) => series.toJson(),
-      );
+  late final CollectionReference _series =
+      _firestore.collection('/clubs/$clubId/series/').withConverter<Series>(
+            fromFirestore: (snapshot, _) => Series.fromJson(snapshot.data()!),
+            toFirestore: (Series series, _) => series.toJson(),
+          );
 
   late final Stream<List<Series>> allRaceSeriess$ = _series.snapshots().map(
     (snap) {
@@ -64,11 +61,11 @@ class RaceSeriesService with UiLoggy {
     },
   ).shareReplay();
 
-  RaceSeriesService(this.clubId);
+  SeriesService(this.clubId);
 
   Future<bool> add(Series series) async {
     try {
-      final updatedRaces =  _updateRaceDetails(series, [...series.races]);
+      final updatedRaces = _updateRaceDetails(series, [...series.races]);
       final complateUpdate = updatedRaces.copyWith(id: _series.doc().id);
 
       await _series.doc(complateUpdate.id).set(complateUpdate);
@@ -91,7 +88,6 @@ class RaceSeriesService with UiLoggy {
 
 // Edit a series
   Future<bool> update(Series series, String id) async {
-
     final upDatedSeries = _updateRaceDetails(series, [...series.races]);
 
     try {
@@ -103,9 +99,11 @@ class RaceSeriesService with UiLoggy {
     }
   }
 
-  /// Adds a new race to a series. 
+  /// Adds a new race to a series.
   Future<bool> addRace(Series series, Race race) {
-     if (race.seriesId != series.id) throw (Exception("Race seaiesId does not equal series id"));
+    if (race.seriesId != series.id) {
+      throw (Exception("Race seaiesId does not equal series id"));
+    }
 
     final races = [...series.races, race];
 
@@ -116,7 +114,9 @@ class RaceSeriesService with UiLoggy {
 
   /// Update a races for a series
   Future<bool> updateRace(Series series, String updatedId, Race race) {
-     if (race.seriesId != series.id) throw (Exception("Race seaiesId does not equal series id"));
+    if (race.seriesId != series.id) {
+      throw (Exception("Race seaiesId does not equal series id"));
+    }
 
     final races = series.races
         .map((original) => (updatedId == original.id) ? race : original)
@@ -129,7 +129,6 @@ class RaceSeriesService with UiLoggy {
 
   /// Remove a race for a series
   Future<bool> removeRace(Series series, String deletedId) {
-    
     final races = series.races.where((race) => race.id != deletedId).toList();
 
     final update = series.copyWith(races: races);
@@ -138,8 +137,8 @@ class RaceSeriesService with UiLoggy {
   }
 
   Series _updateRaceDetails(Series series, List<Race> races) {
-    // Sort Races for series into order based on start/end time
-    races.sort((Race a, b) => a.scheduledStart.compareTo(b.scheduledStart));
+    // Sort Races for series into order based on start/end time and startgroup
+    races.sort((Race a, b) => sortRaces(a, b));
 
     // Set race name based on time ordering
     final updatedRaces = races.map((race) {
@@ -158,7 +157,7 @@ class RaceSeriesService with UiLoggy {
 }
 
 final seriesRepositoryProvider = Provider(
-    (ref) => RaceSeriesService(ref.watch(currentClubProvider).current!.id));
+    (ref) => SeriesService(ref.watch(currentClubProvider).current!.id));
 
 final allSeriesProvider = StreamProvider((ref) {
   final db = ref.read(seriesRepositoryProvider);

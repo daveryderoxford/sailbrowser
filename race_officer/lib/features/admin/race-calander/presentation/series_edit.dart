@@ -5,7 +5,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:form_builder_validators/form_builder_validators.dart';
 import 'package:go_router/go_router.dart';
 import 'package:loggy/loggy.dart';
-import 'package:sailbrowser_flutter/common_widgets/delete_button.dart';
 import 'package:sailbrowser_flutter/common_widgets/responsive_center.dart';
 import 'package:sailbrowser_flutter/common_widgets/will_pop_form.dart';
 import 'package:sailbrowser_flutter/features/admin/club/clubs_service.dart';
@@ -21,10 +20,10 @@ class EditSeries extends ConsumerStatefulWidget {
   const EditSeries({this.series, required this.id, super.key});
 
   @override
-  ConsumerState<EditSeries> createState() => _EditRaceSeriesState();
+  ConsumerState<EditSeries> createState() => _EditSeriesState();
 }
 
-class _EditRaceSeriesState extends ConsumerState<EditSeries> with UiLoggy {
+class _EditSeriesState extends ConsumerState<EditSeries> with UiLoggy {
   final _formKey = GlobalKey<FormBuilderState>();
 
   Series? series;
@@ -49,8 +48,7 @@ class _EditRaceSeriesState extends ConsumerState<EditSeries> with UiLoggy {
           scheme: formData['scoringScheme'],
           initialDiscardAfter: formData['initialDiscardAfter'],
           subsequentDiscardsEveryN: formData['subsequentDiscardsEveryN'],
-          entryAlgorithm: formData['entryAlgorithm']
-        );
+          entryAlgorithm: formData['entryAlgorithm']);
 
       if (series == null) {
         final update = Series(
@@ -84,12 +82,6 @@ class _EditRaceSeriesState extends ConsumerState<EditSeries> with UiLoggy {
         loggy.error('Error encountered saving series');
       }
     }
-  }
-
-  _deleteSeries() {
-    final raceSeriesService = ref.read(seriesRepositoryProvider);
-    raceSeriesService.remove(series!.id);
-    context.pop();
   }
 
   @override
@@ -126,11 +118,6 @@ class _EditRaceSeriesState extends ConsumerState<EditSeries> with UiLoggy {
                 padding: const EdgeInsets.all(16.0),
                 child: _buildForm(),
               ),
-              DeleteButton(
-                itemName: 'race',
-                visible: series != null,
-                onDelete: _deleteSeries,
-              ),
             ],
           ),
         ),
@@ -155,7 +142,9 @@ class _EditRaceSeriesState extends ConsumerState<EditSeries> with UiLoggy {
 
   List<Widget> _buildFormChildren() {
     final currentClub = ref.read(currentClubProvider);
-    final initialSeriesScoring = series == null ? currentClub.current!.defaultScoringData : series!.scoringScheme;
+    final initialSeriesScoring = series == null
+        ? currentClub.current!.defaultScoringData
+        : series!.scoringScheme;
 
     final fleets = ref.read(currentClubProvider).current!.fleets;
     return [
@@ -220,7 +209,10 @@ class _EditRaceSeriesState extends ConsumerState<EditSeries> with UiLoggy {
           labelText: 'Inital discard',
           helperText: "Initial discard after N races",
         ),
-        validator: FormBuilderValidators.required(),
+        validator: FormBuilderValidators.compose([
+          FormBuilderValidators.required(),
+          FormBuilderValidators.min(2),
+        ]),
         keyboardType: TextInputType.number,
         inputFormatters: <TextInputFormatter>[
           FilteringTextInputFormatter.digitsOnly
@@ -235,7 +227,10 @@ class _EditRaceSeriesState extends ConsumerState<EditSeries> with UiLoggy {
           labelText: 'Subsequent discards',
           helperText: "Subsequent discards after every N races",
         ),
-        validator: FormBuilderValidators.required(),
+        validator: FormBuilderValidators.compose([
+          FormBuilderValidators.required(),
+          FormBuilderValidators.min(2),
+        ]),
         keyboardType: TextInputType.number,
         inputFormatters: <TextInputFormatter>[
           FilteringTextInputFormatter.digitsOnly

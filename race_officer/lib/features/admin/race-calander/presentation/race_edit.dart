@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_form_builder/flutter_form_builder.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:form_builder_validators/form_builder_validators.dart';
@@ -21,10 +22,10 @@ class EditRace extends ConsumerStatefulWidget {
       {this.race, required this.series, required this.id, super.key});
 
   @override
-  ConsumerState<EditRace> createState() => _EditRaceSeriesState();
+  ConsumerState<EditRace> createState() => _EditSeriesState();
 }
 
-class _EditRaceSeriesState extends ConsumerState<EditRace> with UiLoggy {
+class _EditSeriesState extends ConsumerState<EditRace> with UiLoggy {
   final _formKey = GlobalKey<FormBuilderState>();
 
   Race? race;
@@ -35,6 +36,21 @@ class _EditRaceSeriesState extends ConsumerState<EditRace> with UiLoggy {
     super.initState();
     race = widget.race;
     series = widget.series;
+  }
+
+  Future<bool> _duplicateGroupWarning(BuildContext context, Race update) {
+  
+    final bool duplicateExists = series!.races.where((r) =>
+        update.id != r.id &&
+        r.scheduledStart == update.scheduledStart &&
+        r.raceOfDay == update.raceOfDay).isNotEmpty;
+
+    if (duplicateExists) {
+      // To do make this a dialog rather than just prohibiting it without a warning 
+     return Future.value(true);
+    } else {
+      return Future.value(false);
+    }
   }
 
   Future<void> _submit() async {
@@ -49,29 +65,36 @@ class _EditRaceSeriesState extends ConsumerState<EditRace> with UiLoggy {
       bool success;
 
       final DateTime startDate = formData['scheduledStartDate'];
-      final DateTime startTime = formData['scheduledStartTime'];
-      final duration =
-          Duration(hours: startTime.hour, minutes: startTime.minute);
-      final DateTime startDateTime = startDate.add(duration);
+      final int raceOfDay = formData['raceOfDay'];
 
       if (race == null) {
         final update = Race(
           fleetId: series!.fleetId,
           seriesId: series!.id,
-          actualStart: DateTime(1970, 1, 1),
-          scheduledStart: startDateTime,
+          scheduledStart: startDate,
           type: formData['type'],
+          raceOfDay: raceOfDay,
           isDiscardable: formData['isDiscardable'],
           isAverageLap: formData['isAverageLap'],
         );
 
+        if (await _duplicateGroupWarning(context, update)) {
+          return;
+        }
+
         success = await raceSeriesService.addRace(series!, update);
       } else {
         final update = race!.copyWith(
-            type: formData['type'],
-            isDiscardable: formData['isDiscardable'],
-            isAverageLap: formData['isAverageLap'],
-            scheduledStart: startDateTime);
+          type: formData['type'],
+          isDiscardable: formData['isDiscardable'],
+          isAverageLap: formData['isAverageLap'],
+          scheduledStart: startDate,
+          raceOfDay: raceOfDay,
+        );
+
+        if (await _duplicateGroupWarning(context, update)) {
+          return;
+        }
 
         success =
             await raceSeriesService.updateRace(series!, update.id, update);
@@ -161,10 +184,9 @@ class _EditRaceSeriesState extends ConsumerState<EditRace> with UiLoggy {
 
   List<Widget> _buildFormChildren() {
     final DateTime? s = (race == null) ? null : race!.scheduledStart;
-    final initialDate =
-        race == null ? _defaultDate(series!.races) : DateTime(s!.year, s.month, s.day);
-     final initialTime =
-        race == null ? _defaultTime(series!.races) : DateTime(1970, 1, 1, s!.hour, s.minute);
+    final initialDate = race == null
+        ? _defaultDate(series!.races)
+        : DateTime(s!.year, s.month, s.day);
 
     return [
       FormBuilderDateTimePicker(
@@ -175,15 +197,6 @@ class _EditRaceSeriesState extends ConsumerState<EditRace> with UiLoggy {
         format: DateFormat("MMM-dd-yyyy"),
         autovalidateMode: AutovalidateMode.onUserInteraction,
         decoration: const InputDecoration(labelText: "Scheduled date"),
-      ),
-      FormBuilderDateTimePicker(
-        name: "scheduledStartTime",
-        autovalidateMode: AutovalidateMode.onUserInteraction,
-        initialEntryMode: DatePickerEntryMode.input,
-        initialValue: initialTime,
-        inputType: InputType.time,
-        format: DateFormat.Hm(),
-        decoration: const InputDecoration(labelText: "Scheduled time"),
       ),
       FormBuilderDropdown<RaceType>(
         name: 'type',
@@ -199,6 +212,25 @@ class _EditRaceSeriesState extends ConsumerState<EditRace> with UiLoggy {
                   child: Text(type.displayName),
                 ))
             .toList(),
+      ),
+      FormBuilderTextField(
+        name: 'raceOfDay',
+        initialValue: race != null ? race!.raceOfDay.toString() : '1',
+        autovalidateMode: AutovalidateMode.onUserInteraction,
+        decoration: const InputDecoration(
+          labelText: 'Start of day (for fleet)',
+          helperText: "eg Morning=1,  Afternoon=2",
+        ),
+        validator: FormBuilderValidators.compose([
+          FormBuilderValidators.integer(),
+          FormBuilderValidators.min(1),
+          FormBuilderValidators.required()
+        ]),
+        keyboardType: TextInputType.number,
+        inputFormatters: <TextInputFormatter>[
+          FilteringTextInputFormatter.digitsOnly
+        ],
+        valueTransformer: (text) => text != null ? num.tryParse(text) : null,
       ),
       FormBuilderCheckbox(
         name: "isDiscardable",
@@ -216,7 +248,7 @@ class _EditRaceSeriesState extends ConsumerState<EditRace> with UiLoggy {
   /// Returns default start date based on
   ///   Now if no races
   ///   7 days after last race in series if one exists
-  ///  Time is set to 00:00:00 
+  ///  Time is set to 00:00:00
   static DateTime _defaultDate(List<Race> races) {
     if (races.isEmpty) {
       final now = DateTime.now();
@@ -224,18 +256,6 @@ class _EditRaceSeriesState extends ConsumerState<EditRace> with UiLoggy {
     } else {
       final d = races.last.scheduledStart.add(const Duration(days: 7));
       return DateTime(d.year, d.month, d.day, 0, 0, 0);
-    }
-  }
-
-/// Returns default time
-///   10:30 if no reaces exist
-///   Same as last race in the series if one exists
-    static DateTime _defaultTime(List<Race> races) {
-    if (races.isEmpty) {
-      return DateTime(1970, 1, 1, 10, 30);
-    } else {
-      final d = races.last.scheduledStart;
-      return DateTime(1970, 1, 1, d.hour, d.minute);
     }
   }
 }

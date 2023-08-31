@@ -77,12 +77,12 @@ class Race with _$Race {
     required String fleetId,
     required String seriesId,
     required DateTime scheduledStart,
+    required int raceOfDay,
     required DateTime actualStart,
     required RaceType type,
     required RaceStatus status,
     required bool isDiscardable,
     required bool isAverageLap,
-    required int backtoBackNumber,
   }) = _Race;
 
   // Factory race consructor specifying defaults
@@ -91,6 +91,7 @@ class Race with _$Race {
     required String fleetId,
     required String seriesId,
     required DateTime scheduledStart,
+    required int raceOfDay,
     DateTime? actualStart,
     RaceType? type,
     RaceStatus? status,
@@ -99,17 +100,17 @@ class Race with _$Race {
     int? backtoBackNumber,
   }) {
     return _Race(
-      id: const Uuid().v1(),
+      id: const Uuid().v4(),
       name: name ?? 'Unset',
       fleetId: fleetId,
       seriesId: seriesId,
       scheduledStart: scheduledStart,
+      raceOfDay: raceOfDay,
       actualStart: actualStart ?? DateTime.fromMicrosecondsSinceEpoch(0),
       type: type ?? RaceType.conventional,
       status: RaceStatus.future,
       isDiscardable: isDiscardable ?? true,
       isAverageLap: isAverageLap ?? true,
-      backtoBackNumber: backtoBackNumber ?? 1,
     );
   }
 

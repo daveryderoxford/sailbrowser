@@ -8,12 +8,12 @@ import 'package:loggy/loggy.dart';
 import 'package:sailbrowser_flutter/common_widgets/responsive_center.dart';
 import 'package:sailbrowser_flutter/common_widgets/will_pop_form.dart';
 import 'package:sailbrowser_flutter/features/admin/club/clubs_service.dart';
+import 'package:uuid/uuid.dart';
 
 import '../series.dart';
 import '../series_service.dart';
 
 class CopySeries extends ConsumerStatefulWidget {
-
   final Series? series;
 
   const CopySeries({this.series, super.key});
@@ -34,39 +34,45 @@ class _CopySeriesState extends ConsumerState<CopySeries> with UiLoggy {
   }
 
   Future<void> _submit() async {
+    _formKey.currentState?.saveAndValidate();
     final form = _formKey.currentState!;
 
     final raceSeriesService = ref.read(seriesRepositoryProvider);
 
     if (form.isValid) {
       final formData = _formKey.currentState!.value;
-
-      final scheduledStartTine = formData['startTimeOffset'];
-
-      final updatedSeries = series!.copyWith(
-          name: formData['name'], fleetId: formData['fleet'], races: []);
-
-      bool success = await raceSeriesService.add(updatedSeries);
+      final updatedFleetId = formData['fleetId'];
+      final updatedSeriesId = const Uuid().v4();
 
       final updatedRaces = series!.races.map(
         (race) {
           return race.copyWith(
-            scheduledStart:
-                race.scheduledStart.add(Duration(minutes: scheduledStartTine)),
+            id: const Uuid().v4(),
+            seriesId: updatedSeriesId,
+            fleetId: updatedFleetId,
           );
         },
+      ).toList();
+
+      final updatedSeries = series!.copyWith(
+        id: updatedSeriesId,
+        name: formData['name'],
+        fleetId: updatedFleetId,
+        races: updatedRaces,
       );
 
-      final update = Series(
-          name: formData['name'],
-          fleetId: formData['fleetId'],
-          startDate: DateTime(1970, 1, 1),
-          endDate: DateTime(1970, 1, 1));
+      bool success = await raceSeriesService.add(updatedSeries);
 
       if (success) {
+        // TODO: Could not use context.goNamed('series') as it did not navigate back
+        // up the stack - admin worked.  Need to look at how Navigator and goRouter interact.
+        // Currently just using gorouter to manage the top-level navigation stacks
         // ignore: use_build_context_synchronously
-        context.pop();
+          context.pop();
+          // ignore: use_build_context_synchronously
+          context.pop();
       } else {
+        loggy.error('Error encountered copying series');
         SnackBar(
           content: const Text('Error encountered copying series'),
           action: SnackBarAction(
@@ -76,7 +82,6 @@ class _CopySeriesState extends ConsumerState<CopySeries> with UiLoggy {
             },
           ),
         );
-        loggy.error('Error encountered copying series');
       }
     }
   }
@@ -90,10 +95,9 @@ class _CopySeriesState extends ConsumerState<CopySeries> with UiLoggy {
           title: const Text('Copy series'),
           actions: <Widget>[
             TextButton(
-              //      onPressed: state.isLoading ? null : _submit,
               onPressed: _submit,
               child: const Text(
-                'Create',
+                'Submit',
               ),
             ),
           ],
@@ -139,15 +143,16 @@ class _CopySeriesState extends ConsumerState<CopySeries> with UiLoggy {
         name: 'name',
         autovalidateMode: AutovalidateMode.onUserInteraction,
         decoration: const InputDecoration(
-          labelText: 'Name',
+          labelText: 'New name',
           helperText: "eg Summer",
         ),
         validator: FormBuilderValidators.required(),
       ),
       FormBuilderDropdown<String>(
         name: 'fleetId',
+        initialValue: fleets[0].id,
         decoration: const InputDecoration(
-          labelText: 'Fleet',
+          labelText: 'New fleet',
         ),
         validator: FormBuilderValidators.required(),
         autovalidateMode: AutovalidateMode.onUserInteraction,
@@ -157,20 +162,6 @@ class _CopySeriesState extends ConsumerState<CopySeries> with UiLoggy {
                   child: Text(fleet.name),
                 ))
             .toList(),
-      ),
-      FormBuilderTextField(
-        name: 'startTimeOffset',
-        autovalidateMode: AutovalidateMode.onUserInteraction,
-        keyboardType: TextInputType.number,
-        inputFormatters: <TextInputFormatter>[
-          FilteringTextInputFormatter.digitsOnly
-        ],
-        decoration: const InputDecoration(
-          labelText: 'Start time offset',
-          helperText: "Time offset from source series in minutes",
-        ),
-        validator: FormBuilderValidators.required(),
-        valueTransformer: (value) => value ?? int.parse(value!),
       ),
     ];
   }

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import 'package:sailbrowser_flutter/features/admin/race-series/presentation/series_detail.dart';
+import 'package:sailbrowser_flutter/features/admin/race-calander/presentation/series_detail.dart';
 
 import '../series.dart';
 
@@ -34,7 +34,7 @@ class RaceSeriesListItem extends StatelessWidget {
           Navigator.push(
             context,
             MaterialPageRoute(
-              builder: (context) => RaceSeriesDetailScreen(
+              builder: (context) => SeriesDetailScreen(
                 series.id,
               ),
             ),

@@ -3,8 +3,8 @@ import 'package:go_router/go_router.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:sailbrowser_flutter/app_shell/app_shell.dart';
 import 'package:sailbrowser_flutter/features/admin/boats/boat_screen.dart';
-import 'package:sailbrowser_flutter/features/admin/race-series/presentation/series_detail.dart';
-import 'package:sailbrowser_flutter/features/admin/race-series/presentation/series_screen.dart';
+import 'package:sailbrowser_flutter/features/admin/race-calander/presentation/series_detail.dart';
+import 'package:sailbrowser_flutter/features/admin/race-calander/presentation/series_screen.dart';
 import 'package:sailbrowser_flutter/features/entry/entry_screen.dart';
 import '../features/admin/admin_screen.dart';
 import '../features/finish/finish_screen.dart';
@@ -188,7 +188,7 @@ adminRoutes() {
             path: 'series',
             name: AppRoute.series.name,
             pageBuilder: (context, state) => const NoTransitionPage(
-              child: RaceSeriesScreen(),
+              child: SeriesScreen(),
             ),
           ),
           GoRoute(
@@ -196,7 +196,7 @@ adminRoutes() {
             name: AppRoute.seriesDetail.name,
             builder: (context, state) {
               final id = state.extra as String;
-              return RaceSeriesDetailScreen(id);
+              return SeriesDetailScreen(id);
             },
           ),
         ]),

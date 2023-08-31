@@ -47,12 +47,12 @@ _$_Race _$$_RaceFromJson(Map<String, dynamic> json) => _$_Race(
       fleetId: json['fleetId'] as String,
       seriesId: json['seriesId'] as String,
       scheduledStart: DateTime.parse(json['scheduledStart'] as String),
+      raceOfDay: json['raceOfDay'] as int,
       actualStart: DateTime.parse(json['actualStart'] as String),
       type: $enumDecode(_$RaceTypeEnumMap, json['type']),
       status: $enumDecode(_$RaceStatusEnumMap, json['status']),
       isDiscardable: json['isDiscardable'] as bool,
       isAverageLap: json['isAverageLap'] as bool,
-      backtoBackNumber: json['backtoBackNumber'] as int,
     );
 
 Map<String, dynamic> _$$_RaceToJson(_$_Race instance) => <String, dynamic>{
@@ -61,12 +61,12 @@ Map<String, dynamic> _$$_RaceToJson(_$_Race instance) => <String, dynamic>{
       'fleetId': instance.fleetId,
       'seriesId': instance.seriesId,
       'scheduledStart': instance.scheduledStart.toIso8601String(),
+      'raceOfDay': instance.raceOfDay,
       'actualStart': instance.actualStart.toIso8601String(),
       'type': _$RaceTypeEnumMap[instance.type]!,
       'status': _$RaceStatusEnumMap[instance.status]!,
       'isDiscardable': instance.isDiscardable,
       'isAverageLap': instance.isAverageLap,
-      'backtoBackNumber': instance.backtoBackNumber,
     };
 
 const _$RaceTypeEnumMap = {

@@ -5,8 +5,8 @@ import '../series_service.dart';
 import 'series_edit.dart';
 import 'series_list_item.dart';
 
-class RaceSeriesScreen extends ConsumerWidget {
-  const RaceSeriesScreen({super.key});
+class SeriesScreen extends ConsumerWidget {
+  const SeriesScreen({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {

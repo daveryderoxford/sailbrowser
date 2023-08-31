@@ -23,7 +23,7 @@ class Club with _$Club {
     required ClubStatus status,
     @Default([]) List<Fleet> fleets,
     @Default([]) List<BoatClass> boatClasses,
-    required SeriesScoringData defaultScoringData,
+    required SeriesScoringData defaultScoringData
   }) = _Club;
 
   const Club._();

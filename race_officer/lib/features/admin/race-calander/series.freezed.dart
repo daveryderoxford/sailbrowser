@@ -526,12 +526,12 @@ mixin _$Race {
   String get fleetId => throw _privateConstructorUsedError;
   String get seriesId => throw _privateConstructorUsedError;
   DateTime get scheduledStart => throw _privateConstructorUsedError;
+  int get raceOfDay => throw _privateConstructorUsedError;
   DateTime get actualStart => throw _privateConstructorUsedError;
   RaceType get type => throw _privateConstructorUsedError;
   RaceStatus get status => throw _privateConstructorUsedError;
   bool get isDiscardable => throw _privateConstructorUsedError;
   bool get isAverageLap => throw _privateConstructorUsedError;
-  int get backtoBackNumber => throw _privateConstructorUsedError;
   @optionalTypeArgs
   TResult when<TResult extends Object?>({
     required TResult Function(
@@ -540,12 +540,12 @@ mixin _$Race {
             String fleetId,
             String seriesId,
             DateTime scheduledStart,
+            int raceOfDay,
             DateTime actualStart,
             RaceType type,
             RaceStatus status,
             bool isDiscardable,
-            bool isAverageLap,
-            int backtoBackNumber)
+            bool isAverageLap)
         def,
   }) =>
       throw _privateConstructorUsedError;
@@ -557,12 +557,12 @@ mixin _$Race {
             String fleetId,
             String seriesId,
             DateTime scheduledStart,
+            int raceOfDay,
             DateTime actualStart,
             RaceType type,
             RaceStatus status,
             bool isDiscardable,
-            bool isAverageLap,
-            int backtoBackNumber)?
+            bool isAverageLap)?
         def,
   }) =>
       throw _privateConstructorUsedError;
@@ -574,12 +574,12 @@ mixin _$Race {
             String fleetId,
             String seriesId,
             DateTime scheduledStart,
+            int raceOfDay,
             DateTime actualStart,
             RaceType type,
             RaceStatus status,
             bool isDiscardable,
-            bool isAverageLap,
-            int backtoBackNumber)?
+            bool isAverageLap)?
         def,
     required TResult orElse(),
   }) =>
@@ -616,12 +616,12 @@ abstract class $RaceCopyWith<$Res> {
       String fleetId,
       String seriesId,
       DateTime scheduledStart,
+      int raceOfDay,
       DateTime actualStart,
       RaceType type,
       RaceStatus status,
       bool isDiscardable,
-      bool isAverageLap,
-      int backtoBackNumber});
+      bool isAverageLap});
 }
 
 /// @nodoc
@@ -642,12 +642,12 @@ class _$RaceCopyWithImpl<$Res, $Val extends Race>
     Object? fleetId = null,
     Object? seriesId = null,
     Object? scheduledStart = null,
+    Object? raceOfDay = null,
     Object? actualStart = null,
     Object? type = null,
     Object? status = null,
     Object? isDiscardable = null,
     Object? isAverageLap = null,
-    Object? backtoBackNumber = null,
   }) {
     return _then(_value.copyWith(
       id: null == id
@@ -670,6 +670,10 @@ class _$RaceCopyWithImpl<$Res, $Val extends Race>
           ? _value.scheduledStart
           : scheduledStart // ignore: cast_nullable_to_non_nullable
               as DateTime,
+      raceOfDay: null == raceOfDay
+          ? _value.raceOfDay
+          : raceOfDay // ignore: cast_nullable_to_non_nullable
+              as int,
       actualStart: null == actualStart
           ? _value.actualStart
           : actualStart // ignore: cast_nullable_to_non_nullable
@@ -690,10 +694,6 @@ class _$RaceCopyWithImpl<$Res, $Val extends Race>
           ? _value.isAverageLap
           : isAverageLap // ignore: cast_nullable_to_non_nullable
               as bool,
-      backtoBackNumber: null == backtoBackNumber
-          ? _value.backtoBackNumber
-          : backtoBackNumber // ignore: cast_nullable_to_non_nullable
-              as int,
     ) as $Val);
   }
 }
@@ -710,12 +710,12 @@ abstract class _$$_RaceCopyWith<$Res> implements $RaceCopyWith<$Res> {
       String fleetId,
       String seriesId,
       DateTime scheduledStart,
+      int raceOfDay,
       DateTime actualStart,
       RaceType type,
       RaceStatus status,
       bool isDiscardable,
-      bool isAverageLap,
-      int backtoBackNumber});
+      bool isAverageLap});
 }
 
 /// @nodoc
@@ -732,12 +732,12 @@ class __$$_RaceCopyWithImpl<$Res> extends _$RaceCopyWithImpl<$Res, _$_Race>
     Object? fleetId = null,
     Object? seriesId = null,
     Object? scheduledStart = null,
+    Object? raceOfDay = null,
     Object? actualStart = null,
     Object? type = null,
     Object? status = null,
     Object? isDiscardable = null,
     Object? isAverageLap = null,
-    Object? backtoBackNumber = null,
   }) {
     return _then(_$_Race(
       id: null == id
@@ -760,6 +760,10 @@ class __$$_RaceCopyWithImpl<$Res> extends _$RaceCopyWithImpl<$Res, _$_Race>
           ? _value.scheduledStart
           : scheduledStart // ignore: cast_nullable_to_non_nullable
               as DateTime,
+      raceOfDay: null == raceOfDay
+          ? _value.raceOfDay
+          : raceOfDay // ignore: cast_nullable_to_non_nullable
+              as int,
       actualStart: null == actualStart
           ? _value.actualStart
           : actualStart // ignore: cast_nullable_to_non_nullable
@@ -780,10 +784,6 @@ class __$$_RaceCopyWithImpl<$Res> extends _$RaceCopyWithImpl<$Res, _$_Race>
           ? _value.isAverageLap
           : isAverageLap // ignore: cast_nullable_to_non_nullable
               as bool,
-      backtoBackNumber: null == backtoBackNumber
-          ? _value.backtoBackNumber
-          : backtoBackNumber // ignore: cast_nullable_to_non_nullable
-              as int,
     ));
   }
 }
@@ -797,12 +797,12 @@ class _$_Race extends _Race with DiagnosticableTreeMixin {
       required this.fleetId,
       required this.seriesId,
       required this.scheduledStart,
+      required this.raceOfDay,
       required this.actualStart,
       required this.type,
       required this.status,
       required this.isDiscardable,
-      required this.isAverageLap,
-      required this.backtoBackNumber})
+      required this.isAverageLap})
       : super._();
 
   factory _$_Race.fromJson(Map<String, dynamic> json) => _$$_RaceFromJson(json);
@@ -818,6 +818,8 @@ class _$_Race extends _Race with DiagnosticableTreeMixin {
   @override
   final DateTime scheduledStart;
   @override
+  final int raceOfDay;
+  @override
   final DateTime actualStart;
   @override
   final RaceType type;
@@ -827,12 +829,10 @@ class _$_Race extends _Race with DiagnosticableTreeMixin {
   final bool isDiscardable;
   @override
   final bool isAverageLap;
-  @override
-  final int backtoBackNumber;
 
   @override
   String toString({DiagnosticLevel minLevel = DiagnosticLevel.info}) {
-    return 'Race.def(id: $id, name: $name, fleetId: $fleetId, seriesId: $seriesId, scheduledStart: $scheduledStart, actualStart: $actualStart, type: $type, status: $status, isDiscardable: $isDiscardable, isAverageLap: $isAverageLap, backtoBackNumber: $backtoBackNumber)';
+    return 'Race.def(id: $id, name: $name, fleetId: $fleetId, seriesId: $seriesId, scheduledStart: $scheduledStart, raceOfDay: $raceOfDay, actualStart: $actualStart, type: $type, status: $status, isDiscardable: $isDiscardable, isAverageLap: $isAverageLap)';
   }
 
   @override
@@ -845,12 +845,12 @@ class _$_Race extends _Race with DiagnosticableTreeMixin {
       ..add(DiagnosticsProperty('fleetId', fleetId))
       ..add(DiagnosticsProperty('seriesId', seriesId))
       ..add(DiagnosticsProperty('scheduledStart', scheduledStart))
+      ..add(DiagnosticsProperty('raceOfDay', raceOfDay))
       ..add(DiagnosticsProperty('actualStart', actualStart))
       ..add(DiagnosticsProperty('type', type))
       ..add(DiagnosticsProperty('status', status))
       ..add(DiagnosticsProperty('isDiscardable', isDiscardable))
-      ..add(DiagnosticsProperty('isAverageLap', isAverageLap))
-      ..add(DiagnosticsProperty('backtoBackNumber', backtoBackNumber));
+      ..add(DiagnosticsProperty('isAverageLap', isAverageLap));
   }
 
   @override
@@ -865,6 +865,8 @@ class _$_Race extends _Race with DiagnosticableTreeMixin {
                 other.seriesId == seriesId) &&
             (identical(other.scheduledStart, scheduledStart) ||
                 other.scheduledStart == scheduledStart) &&
+            (identical(other.raceOfDay, raceOfDay) ||
+                other.raceOfDay == raceOfDay) &&
             (identical(other.actualStart, actualStart) ||
                 other.actualStart == actualStart) &&
             (identical(other.type, type) || other.type == type) &&
@@ -872,9 +874,7 @@ class _$_Race extends _Race with DiagnosticableTreeMixin {
             (identical(other.isDiscardable, isDiscardable) ||
                 other.isDiscardable == isDiscardable) &&
             (identical(other.isAverageLap, isAverageLap) ||
-                other.isAverageLap == isAverageLap) &&
-            (identical(other.backtoBackNumber, backtoBackNumber) ||
-                other.backtoBackNumber == backtoBackNumber));
+                other.isAverageLap == isAverageLap));
   }
 
   @JsonKey(ignore: true)
@@ -886,12 +886,12 @@ class _$_Race extends _Race with DiagnosticableTreeMixin {
       fleetId,
       seriesId,
       scheduledStart,
+      raceOfDay,
       actualStart,
       type,
       status,
       isDiscardable,
-      isAverageLap,
-      backtoBackNumber);
+      isAverageLap);
 
   @JsonKey(ignore: true)
   @override
@@ -908,16 +908,16 @@ class _$_Race extends _Race with DiagnosticableTreeMixin {
             String fleetId,
             String seriesId,
             DateTime scheduledStart,
+            int raceOfDay,
             DateTime actualStart,
             RaceType type,
             RaceStatus status,
             bool isDiscardable,
-            bool isAverageLap,
-            int backtoBackNumber)
+            bool isAverageLap)
         def,
   }) {
-    return def(id, name, fleetId, seriesId, scheduledStart, actualStart, type,
-        status, isDiscardable, isAverageLap, backtoBackNumber);
+    return def(id, name, fleetId, seriesId, scheduledStart, raceOfDay,
+        actualStart, type, status, isDiscardable, isAverageLap);
   }
 
   @override
@@ -929,16 +929,16 @@ class _$_Race extends _Race with DiagnosticableTreeMixin {
             String fleetId,
             String seriesId,
             DateTime scheduledStart,
+            int raceOfDay,
             DateTime actualStart,
             RaceType type,
             RaceStatus status,
             bool isDiscardable,
-            bool isAverageLap,
-            int backtoBackNumber)?
+            bool isAverageLap)?
         def,
   }) {
-    return def?.call(id, name, fleetId, seriesId, scheduledStart, actualStart,
-        type, status, isDiscardable, isAverageLap, backtoBackNumber);
+    return def?.call(id, name, fleetId, seriesId, scheduledStart, raceOfDay,
+        actualStart, type, status, isDiscardable, isAverageLap);
   }
 
   @override
@@ -950,18 +950,18 @@ class _$_Race extends _Race with DiagnosticableTreeMixin {
             String fleetId,
             String seriesId,
             DateTime scheduledStart,
+            int raceOfDay,
             DateTime actualStart,
             RaceType type,
             RaceStatus status,
             bool isDiscardable,
-            bool isAverageLap,
-            int backtoBackNumber)?
+            bool isAverageLap)?
         def,
     required TResult orElse(),
   }) {
     if (def != null) {
-      return def(id, name, fleetId, seriesId, scheduledStart, actualStart, type,
-          status, isDiscardable, isAverageLap, backtoBackNumber);
+      return def(id, name, fleetId, seriesId, scheduledStart, raceOfDay,
+          actualStart, type, status, isDiscardable, isAverageLap);
     }
     return orElse();
   }
@@ -1009,12 +1009,12 @@ abstract class _Race extends Race {
       required final String fleetId,
       required final String seriesId,
       required final DateTime scheduledStart,
+      required final int raceOfDay,
       required final DateTime actualStart,
       required final RaceType type,
       required final RaceStatus status,
       required final bool isDiscardable,
-      required final bool isAverageLap,
-      required final int backtoBackNumber}) = _$_Race;
+      required final bool isAverageLap}) = _$_Race;
   _Race._() : super._();
 
   factory _Race.fromJson(Map<String, dynamic> json) = _$_Race.fromJson;
@@ -1030,6 +1030,8 @@ abstract class _Race extends Race {
   @override
   DateTime get scheduledStart;
   @override
+  int get raceOfDay;
+  @override
   DateTime get actualStart;
   @override
   RaceType get type;
@@ -1039,8 +1041,6 @@ abstract class _Race extends Race {
   bool get isDiscardable;
   @override
   bool get isAverageLap;
-  @override
-  int get backtoBackNumber;
   @override
   @JsonKey(ignore: true)
   _$$_RaceCopyWith<_$_Race> get copyWith => throw _privateConstructorUsedError;
