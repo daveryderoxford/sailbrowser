@@ -27,9 +27,9 @@ class FirebaseConfig with UiLoggy {
       // Enable Firestore persistance for web.  Enabled on ios/aidroid by default
       final db = FirebaseFirestore.instance;
       if (kIsWeb) {
-    //    await db.enablePersistence(
-    //        const PersistenceSettings(synchronizeTabs: true));
-    //    FirebaseAuth.instance.setPersistence(Persistence.SESSION);
+        await db.enablePersistence(
+            const PersistenceSettings(synchronizeTabs: true));
+        FirebaseAuth.instance.setPersistence(Persistence.SESSION);
       }
 
       // Wait for first logon event before displaying app to ensure saved login is applied

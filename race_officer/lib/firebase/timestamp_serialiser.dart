@@ -6,12 +6,18 @@ import 'package:json_annotation/json_annotation.dart';
 /** Serialises DateTime as Firestore datetime
  * Use in freezed @TimestampSerializer() required DateTime dob,
  */
-class TimestampSerializer implements JsonConverter<DateTime, dynamic> {
+class TimestampSerializer implements JsonConverter<DateTime?, dynamic> {
   const TimestampSerializer();
 
   @override
-  DateTime fromJson(dynamic timestamp) => timestamp.toDate();
+  DateTime? fromJson(dynamic timestamp) => timestamp?.toDate();
 
   @override
-  Timestamp toJson(DateTime date) => Timestamp.fromDate(date);
+  Timestamp? toJson(DateTime? date) {
+    if (date == null) {
+      return null;
+    } else {
+      return Timestamp.fromDate(date);
+    }
+  }
 }

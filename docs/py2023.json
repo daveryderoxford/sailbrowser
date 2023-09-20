@@ -1,0 +1,366 @@
+{
+    "name": "PY 2023",
+    "handicapScheme": "py",
+    "boats": [
+        {
+            "Id": "420",
+            "Handicap": 1100
+        },
+        {
+            "Id": "2000",
+            "Handicap": 1114
+        },
+        {
+            "Id": "29ER",
+            "Handicap": 897
+        },
+        {
+            "Id": "505",
+            "Handicap": 900
+        },
+        {
+            "Id": "ALBACORE",
+            "Handicap": 1037
+        },
+        {
+            "Id": "ALTO",
+            "Handicap": 921
+        },
+        {
+            "Id": "B14",
+            "Handicap": 858
+        },
+        {
+            "Id": "BLAZE",
+            "Handicap": 1033
+        },
+        {
+            "Id": "BRITISH MOTH",
+            "Handicap": 1165
+        },
+        {
+            "Id": "BYTE CII",
+            "Handicap": 1135
+        },
+        {
+            "Id": "COMET",
+            "Handicap": 1210
+        },
+        {
+            "Id": "COMET TRIO (MK I)",
+            "Handicap": 1096
+        },
+        {
+            "Id": "COMET TRIO (MK II)",
+            "Handicap": 1052
+        },
+        {
+            "Id": "CONTENDER",
+            "Handicap": 969
+        },
+        {
+            "Id": "DEVOTI D-ONE",
+            "Handicap": 948
+        },
+        {
+            "Id": "DEVOTI D-ZERO",
+            "Handicap": 1029
+        },
+        {
+            "Id": "ENTERPRISE",
+            "Handicap": 1126
+        },
+        {
+            "Id": "EUROPE",
+            "Handicap": 1141
+        },
+        {
+            "Id": "FINN",
+            "Handicap": 1049
+        },
+        {
+            "Id": "FIREBALL",
+            "Handicap": 952
+        },
+        {
+            "Id": "FIREFLY",
+            "Handicap": 1174
+        },
+        {
+            "Id": "FLYING FIFTEEN",
+            "Handicap": 1021
+        },
+        {
+            "Id": "GP14",
+            "Handicap": 1133
+        },
+        {
+            "Id": "GRADUATE",
+            "Handicap": 1120
+        },
+        {
+            "Id": "HADRON H2",
+            "Handicap": 1038
+        },
+        {
+            "Id": "HORNET",
+            "Handicap": 959
+        },
+        {
+            "Id": "ICON",
+            "Handicap": 976
+        },
+        {
+            "Id": "ILCA 4",
+            "Handicap": 1210
+        },
+        {
+            "Id": "ILCA 6",
+            "Handicap": 1150
+        },
+        {
+            "Id": "ILCA 7",
+            "Handicap": 1101
+        },
+        {
+            "Id": "K1",
+            "Handicap": 1070
+        },
+        {
+            "Id": "K6",
+            "Handicap": 919
+        },
+        {
+            "Id": "KESTREL",
+            "Handicap": 1038
+        },
+        {
+            "Id": "LARK",
+            "Handicap": 1065
+        },
+        {
+            "Id": "LIGHTNING 368",
+            "Handicap": 1160
+        },
+        {
+            "Id": "MEGABYTE",
+            "Handicap": 1072
+        },
+        {
+            "Id": "MERLIN-ROCKET",
+            "Handicap": 980
+        },
+        {
+            "Id": "MIRACLE",
+            "Handicap": 1194
+        },
+        {
+            "Id": "MIRROR (D/H)",
+            "Handicap": 1387
+        },
+        {
+            "Id": "MIRROR (S/H)",
+            "Handicap": 1377
+        },
+        {
+            "Id": "MUSTO SKIFF",
+            "Handicap": 845
+        },
+        {
+            "Id": "NATIONAL 12",
+            "Handicap": 1064
+        },
+        {
+            "Id": "OK",
+            "Handicap": 1104
+        },
+        {
+            "Id": "OPTIMIST",
+            "Handicap": 1635
+        },
+        {
+            "Id": "OSPREY",
+            "Handicap": 934
+        },
+        {
+            "Id": "PHANTOM",
+            "Handicap": 1002
+        },
+        {
+            "Id": "ROOSTER 8.1",
+            "Handicap": 1035
+        },
+        {
+            "Id": "RS 100 8.4",
+            "Handicap": 1002
+        },
+        {
+            "Id": "RS 200",
+            "Handicap": 1046
+        },
+        {
+            "Id": "RS 300",
+            "Handicap": 965
+        },
+        {
+            "Id": "RS 400",
+            "Handicap": 940
+        },
+        {
+            "Id": "RS 500",
+            "Handicap": 966
+        },
+        {
+            "Id": "RS 600",
+            "Handicap": 920
+        },
+        {
+            "Id": "RS 700",
+            "Handicap": 845
+        },
+        {
+            "Id": "RS 800",
+            "Handicap": 799
+        },
+        {
+            "Id": "RS AERO 5",
+            "Handicap": 1136
+        },
+        {
+            "Id": "RS AERO 7",
+            "Handicap": 1063
+        },
+        {
+            "Id": "RS AERO 9",
+            "Handicap": 1010
+        },
+        {
+            "Id": "RS FEVA XL",
+            "Handicap": 1248
+        },
+        {
+            "Id": "RS TERA PRO",
+            "Handicap": 1364
+        },
+        {
+            "Id": "RS TERA SPORT",
+            "Handicap": 1445
+        },
+        {
+            "Id": "RS VAREO",
+            "Handicap": 1093
+        },
+        {
+            "Id": "RS VISION",
+            "Handicap": 1137
+        },
+        {
+            "Id": "SCORPION",
+            "Handicap": 1043
+        },
+        {
+            "Id": "SEAFLY",
+            "Handicap": 1071
+        },
+        {
+            "Id": "SOLO",
+            "Handicap": 1142
+        },
+        {
+            "Id": "SOLUTION",
+            "Handicap": 1096
+        },
+        {
+            "Id": "STREAKER",
+            "Handicap": 1128
+        },
+        {
+            "Id": "SUPERNOVA",
+            "Handicap": 1077
+        },
+        {
+            "Id": "TASAR",
+            "Handicap": 1017
+        },
+        {
+            "Id": "TOPPER",
+            "Handicap": 1369
+        },
+        {
+            "Id": "WANDERER",
+            "Handicap": 1193
+        },
+        {
+            "Id": "WAYFARER",
+            "Handicap": 1105
+        },
+        {
+            "Id": "BYTE CI",
+            "Handicap": 1210
+        },
+        {
+            "Id": "BUZZ",
+            "Handicap": 1020
+        },
+        {
+            "Id": "CADET",
+            "Handicap": 1430
+        },
+        {
+            "Id": "CANOE INTERNATIONAL",
+            "Handicap": 858
+        },
+        {
+            "Id": "TOPPER 4.2",
+            "Handicap": 1420
+        },
+        {
+            "Id": "Fusion pro",
+            "Handicap": 1300
+        },
+        {
+            "Id": "Fusion pro Spinnaker",
+            "Handicap": 1275
+        },
+        {
+            "Id": "RS AERO 6",
+            "Handicap": 1105
+        },
+        {
+            "Id": "A CLASS CAT",
+            "Handicap": 684
+        },
+        {
+            "Id": "CATAPULT",
+            "Handicap": 898
+        },
+        {
+            "Id": "CHALLENGER",
+            "Handicap": 1173
+        },
+        {
+            "Id": "DART 18",
+            "Handicap": 822
+        },
+        {
+            "Id": "FORMULA 18",
+            "Handicap": 670
+        },
+        {
+            "Id": "HURRICANE 5.9 SX",
+            "Handicap": 695
+        },
+        {
+            "Id": "SPITFIRE",
+            "Handicap": 719
+        },
+        {
+            "Id": "DART 15 / SPRINT 15",
+            "Handicap": 926
+        },
+        {
+            "Id": "DART 15 SPORT / SPRINT 15 SPORT",
+            "Handicap": 904
+        }
+    ]
+}
