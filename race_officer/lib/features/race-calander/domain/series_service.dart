@@ -10,7 +10,7 @@ import 'series.dart';
 class SeriesService with UiLoggy {
   static final defaultDate = DateTime.fromMicrosecondsSinceEpoch(0);
 
-  /// Order races by:
+  /// Order race data by:
   /// 1. Scheduled start date
   /// 2. Races of the day
   static int sortRaces(Race a, b) {
@@ -23,10 +23,21 @@ class SeriesService with UiLoggy {
     }
   }
 
-  // Series sorter - series are sorted in order of:
-  //  * Series with no races first - null start date
-  //  * In order od first race start
-  //  * In order of the fleet id
+  static int sortRaceData(AllRaceData a, b) {
+    int ret = a.race.scheduledStart.compareTo(b.race.scheduledStart);
+
+    if (ret == 0) {
+      return a.race.raceOfDay - b.race.raceOfDay as int;
+    } else {
+      return ret;
+    }
+  }
+
+ 
+  /// Series sorter - series are sorted in order of:
+  ///  * Series with no races first - null start date
+  ///  * In order od first race start
+  ///  * In order of the fleet id
   static int seriesSort(Series a, b) {
     if (a.startDate == null) {
       return b.startDate == null ? 1 : 0;
@@ -171,11 +182,19 @@ class SeriesService with UiLoggy {
 final seriesRepositoryProvider =
     Provider((ref) => SeriesService(ref.watch(currentClubProvider).current.id));
 
+/// All series for all time 
 final allSeriesProvider = StreamProvider.autoDispose<List<Series>>((ref) {
   final db = ref.watch(seriesRepositoryProvider);
   return db.allRaceSeriess$;
 });
 
+/// Find series based on its Id
+final seriesProvider = Provider.autoDispose.family<Series?, String>( (ref, id) {
+  final series = ref.watch(allSeriesProvider);
+  return series.valueOrNull?.firstWhere((s) => s.id == id);
+});
+
+/// Streeam of all races 
 final allRacesProvider = StreamProvider.autoDispose<List<Race>>((ref) {
   final db = ref.watch(seriesRepositoryProvider);
   return db.allRaces$;
@@ -201,6 +220,8 @@ final allRaceDataProvider =
 
       allRaces.addAll(seriesRaces);
     }
+    allRaces.sort((a, b) => SeriesService.sortRaceData(a,b));
+
     return allRaces;
     //   allRaces.sort((AllRaceData a, b) => sortRaces(a.race, b.race));
   }).shareReplay();

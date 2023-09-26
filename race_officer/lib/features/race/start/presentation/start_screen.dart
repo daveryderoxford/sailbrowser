@@ -1,17 +1,17 @@
-
-import 'package:clock/clock.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:loggy/loggy.dart';
 import 'package:sailbrowser_flutter/common_widgets/time_display.dart';
-import 'package:sailbrowser_flutter/features/home/presentation/home_race_list_item.dart';
 import 'package:sailbrowser_flutter/features/race-calander/domain/series.dart';
-import 'package:sailbrowser_flutter/features/race-calander/domain/series_service.dart';
-import 'package:sailbrowser_flutter/util/list_extensions.dart';
+import 'package:sailbrowser_flutter/features/race/domain/selected_races.dart';
+import 'package:sailbrowser_flutter/features/race/start/domain/start_sequence.dart';
+import 'package:sailbrowser_flutter/features/race/start/domain/start_sequence_service.dart';
+import 'package:sailbrowser_flutter/features/race/start/presentation/start_list_item.dart';
+import 'package:sailbrowser_flutter/features/race/start/presentation/start_sequence_display.dart';
 
+typedef StartRecord = ({DateTime date, int order, List<Race> races});
 
-enum UserMenuOptions { logout, profile }
-
-class StartScreen extends ConsumerWidget {
+class StartScreen extends ConsumerWidget with UiLoggy {
   const StartScreen({super.key});
 
   @override
@@ -19,57 +19,67 @@ class StartScreen extends ConsumerWidget {
     //  final ButtonStyle textButtonStyle = TextButton.styleFrom(
     //   foregroundColor: Theme.of(context).colorScheme.onPrimary,
     //  );
+    final startStatus =
+        ref.watch(startSequenceProvider.select((value) => value.startStatus));
+
     return Scaffold(
       appBar: AppBar(
-          title: const Text('Start'),
+        title: const Text('Start'),
       ),
-      body: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          _racesToday(context, ref),
-        ],
-      ),
+      body: (startStatus == StartStatus.notConfigured)
+          ? _startsList(context, ref)
+          : const StartSequenceDisplay(),
     );
   }
 
-  Map<num, List<Race>> _groupByStart(List<Race> races) {
-    return races.groupBy((race) => race.raceOfDay);
+  List<StartRecord> _groupByStart(List<Race> races) {
+    final starts = <StartRecord>[];
+
+    DateTime date = DateTime(0, 0, 0);
+    int raceOfDay = 0;
+
+    for (var race in races) {
+      if (date != race.scheduledStart || raceOfDay != race.raceOfDay) {
+        starts.add((
+          date: race.scheduledStart,
+          order: race.raceOfDay,
+          races: [race],
+        ));
+        date = race.scheduledStart;
+        raceOfDay = race.raceOfDay;
+      } else {
+        starts.last.races.add(race);
+      }
+    }
+    return starts;
   }
 
-  Widget _racesToday(BuildContext context, WidgetRef ref) {
-    final races = ref.watch(allRacesProvider);
+  Widget _startsList(BuildContext context, WidgetRef ref) {
+    final raceData = ref.watch(selectedRacesProvider);
+    final races = raceData.map((r) => r.race).toList();
+    final starts = _groupByStart(races);
 
-    final now = clock.now();
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: [
-        const TimeDisplay(textScaleFactor: 1.2),
-        const Text('Todays races', textScaleFactor: 1.2),
-        SizedBox(
-          height: 200,
-          child: races.when(
-              loading: () => const CircularProgressIndicator(),
-              error: (error, stackTrace) => Text(error.toString()),
-              data: (races) {
-                final todaysRaces = races
-                    .where((r) =>
-                        r.scheduledStart.year == now.year &&
-                        r.scheduledStart.month == now.month &&
-                        r.scheduledStart.day == now.day)
-                    .toList();
-                if (todaysRaces.isEmpty) {
-                  return const Text('No races today');
-                } else {
-                  return ListView.builder(
-                    itemCount: todaysRaces.length,
-                    itemBuilder: (context, index) =>
-                        HomeRaceListItem(todaysRaces[index]),
-                  );
-                }
-              }),
+        const Row(
+          mainAxisAlignment: MainAxisAlignment.end,
+          children: [
+            TimeDisplay(textScaleFactor: 1.2),
+          ],
+        ),
+        Expanded(
+          child: (races.isEmpty)
+              ? const Text(
+                  'No races to start. Select more races on homepage if required')
+              : ListView.separated(
+                  itemCount: starts.length,
+                  itemBuilder: (context, index) => StartListItem(starts[index]),
+                  separatorBuilder: (BuildContext context, int index) =>
+                      const Divider(),
+                ),
         ),
       ],
-      //   ),
     );
   }
 }

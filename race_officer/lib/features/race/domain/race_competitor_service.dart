@@ -3,9 +3,11 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:loggy/loggy.dart';
 import 'package:rxdart/rxdart.dart';
 import 'package:sailbrowser_flutter/features/club/domain/clubs_service.dart';
+import 'package:sailbrowser_flutter/features/race/domain/result_code.dart';
 import 'package:sailbrowser_flutter/features/race/domain/selected_races.dart';
 import 'package:sailbrowser_flutter/features/race-calander/domain/series.dart';
 import 'package:sailbrowser_flutter/features/race/domain/race_competitor.dart';
+import 'package:sailbrowser_flutter/main.dart';
 
 /// Competitors for selected races
 class RaceCompetitorService with UiLoggy {
@@ -38,6 +40,7 @@ class RaceCompetitorService with UiLoggy {
   ).shareReplay();
 
   RaceCompetitorService(this.clubId, this.selectedRaces) {
+    // compute unique series Ids for selected races
     seriesIds = selectedRaces.map((race) => race.seriesId).toSet().toList();
   }
 
@@ -69,6 +72,23 @@ class RaceCompetitorService with UiLoggy {
       loggy.error(e.toString());
       return Future.error(e); //return error
     }
+  }
+
+  Future<bool> saveLap(RaceCompetitor comp, String id, String seriesId) async {
+    final time = getClock().now();
+    final laps = [...comp.lapTimes, time];
+
+    return await update(comp.copyWith(lapTimes: laps), id, seriesId);
+  }
+
+  Future<bool> finish(RaceCompetitor comp, String id, String seriesId) async {
+    final time = getClock().now();
+    final resultCode = comp.resultCode == ResultCode.notFinished
+        ? ResultCode.ok
+        : comp.resultCode;
+    final c = comp.copyWith(finishTime: time, resultCode: resultCode);
+
+    return await update(c, id, seriesId);
   }
 }
 

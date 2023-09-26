@@ -15,21 +15,11 @@ class PrimaryButton extends StatelessWidget {
   final VoidCallback? onPressed;
   @override
   Widget build(BuildContext context) {
-    return SizedBox(
-      height: Sizes.p48,
-      child: ElevatedButton(
+    return FilledButton(
         onPressed: onPressed,
         child: isLoading
             ? const CircularProgressIndicator()
-            : Text(
-                text,
-                textAlign: TextAlign.center,
-                style: Theme.of(context)
-                    .textTheme
-                    .titleLarge!
-                    .copyWith(color: Colors.white),
-              ),
-      ),
-    );
+            : Text(text)
+      );
   }
 }

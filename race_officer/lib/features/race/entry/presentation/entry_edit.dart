@@ -1,24 +1,20 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_form_builder/flutter_form_builder.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:form_builder_extra_fields/form_builder_extra_fields.dart';
-import 'package:form_builder_validators/form_builder_validators.dart';
 import 'package:go_router/go_router.dart';
 import 'package:loggy/loggy.dart';
 import 'package:sailbrowser_flutter/common_widgets/delete_button.dart';
-import 'package:sailbrowser_flutter/common_widgets/null_widget.dart';
 import 'package:sailbrowser_flutter/common_widgets/responsive_center.dart';
 import 'package:sailbrowser_flutter/common_widgets/will_pop_form.dart';
-import 'package:sailbrowser_flutter/features/club/presentation/boats_service.dart';
 import 'package:sailbrowser_flutter/features/race-calander/domain/series.dart';
 import 'package:sailbrowser_flutter/features/race-calander/domain/series_service.dart';
 import 'package:sailbrowser_flutter/features/race/domain/race_competitor.dart';
 import 'package:sailbrowser_flutter/features/race/domain/race_competitor_service.dart';
-import 'package:sailbrowser_flutter/features/race/domain/selected_races.dart';
 import 'package:sailbrowser_flutter/features/system/domain/boat_class.dart';
-import 'package:sailbrowser_flutter/util/list_extensions.dart';
 import 'package:uuid/uuid.dart';
+
+import 'existing_entry_form_fields.dart';
+import 'select_races_filter_chip.dart';
 
 class EditEntry extends ConsumerStatefulWidget {
   final String id;
@@ -68,7 +64,8 @@ class _EditSeriesState extends ConsumerState<EditEntry> with UiLoggy {
             helm: formData['helm'],
             crew: formData['crew'],
             raceId: race.id,
-            handicap: 0, // _getHandicap(race, formData['boatClass']),
+            seriesId: _getSeriesId(race.id),
+            handicap: 0, // TODO getHandicap(race, formData['boatClass']),
           );
 
           success = await competitorService.add(update, race.seriesId);
@@ -83,8 +80,8 @@ class _EditSeriesState extends ConsumerState<EditEntry> with UiLoggy {
           crew: formData['crew'],
         );
 
-        success = await competitorService.update(
-            update, update.id, _getSeriesId(update));
+        success =
+            await competitorService.update(update, update.id, update.seriesId);
       }
 
       if (success) {
@@ -108,11 +105,9 @@ class _EditSeriesState extends ConsumerState<EditEntry> with UiLoggy {
     }
   }
 
-  String _getSeriesId(RaceCompetitor competitor) {
-    final seriesProvider = ref.read(allRacesProvider);
-    final allRaces = seriesProvider.valueOrNull;
-
-    final race = allRaces?.firstWhere((r) => r.id == raceCompetitor!.raceId);
+  String _getSeriesId(String raceId) {
+    final allRaces = ref.read(allRacesProvider).valueOrNull;
+    final race = allRaces?.firstWhere((r) => r.id == raceId);
     return (race!.seriesId);
   }
 
@@ -172,11 +167,11 @@ class _EditSeriesState extends ConsumerState<EditEntry> with UiLoggy {
                 itemName: 'entry',
                 visible: raceCompetitor != null,
                 onDelete: () {
-                    ref.read(raceCompetitorRepositoryProvider).remove(
-                          raceCompetitor!.id,
-                          _getSeriesId(raceCompetitor!),
-                        );
-                    context.pop();
+                  ref.read(raceCompetitorRepositoryProvider).remove(
+                        raceCompetitor!.id,
+                        raceCompetitor!.seriesId,
+                      );
+                  context.pop();
                 },
               ),
             ],
@@ -193,128 +188,10 @@ class _EditSeriesState extends ConsumerState<EditEntry> with UiLoggy {
         _formKey.currentState!.save();
         loggy.info(_formKey.currentState!.value.toString());
       },
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: _buildFormChildren(),
-      ),
-    );
-  }
-
-  List<Widget> _buildFormChildren() {
-    // final classes = ref.watch(allClassesProvider);
-    final boats = ref.watch(allBoatProvider).valueOrNull;
-
-    final classNames = boats != null
-        ? boats.map((boat) => boat.sailingClass).toList().unique((c) => c)
-        : <String>[];
-    classNames.sort((a, b) => a.compareTo(b));
-
-    return [
-      FormBuilderTypeAhead<String>(
-        decoration: const InputDecoration(
-            labelText: 'Class', hintText: 'Start typing class to be prompted'),
-        name: 'boatClass',
-        itemBuilder: (context, className) {
-          return ListTile(title: Text(className));
-        },
-        initialValue: (raceCompetitor != null) ? raceCompetitor!.boatClass : '',
-        validator: FormBuilderValidators.required(
-            errorText: 'A class is required to be selected'),
-        autovalidateMode: AutovalidateMode.onUserInteraction,
-        hideOnEmpty: true,
-        suggestionsCallback: (query) {
-          if (query.isNotEmpty) {
-            final q = query.toLowerCase();
-            return classNames.where((b) => b.toLowerCase().startsWith(q));
-          } else {
-            return classNames;
-          }
-        },
-      ),
-      /*  FormBuilderTypeAhead<int>(
-        decoration: const InputDecoration(
-          labelText: 'Sail number',
-        ),
-        name: 'sailNumber',
-        itemBuilder: (context, sailNumber) {
-          // return ListTile(title: SailNumber(num: boat.sailNumber));
-          return ListTile(
-            title: Text(sailNumber.toString()),
-          );
-        }, 
-        controller: TextEditingController(text: ''),
-        validator: FormBuilderValidators.required(),
-        autovalidateMode: AutovalidateMode.onUserInteraction,
-        hideOnEmpty: true,
-        selectionToTextTransformer: (sailNumber) => sailNumber.toString(),
-        suggestionsCallback: (query) {
-          final selectedBoatClass =
-              _formKey.currentState?.value['boatClass']?.toLowerCase();
-          return boats!
-              .where((b) =>
-                  b.sailingClass.toLowerCase() == selectedBoatClass &&
-                  b.sailNumber.toString().startsWith(query))
-              .map((b) => b.sailNumber);
-        },
-      ), */
-      FormBuilderTextField(
-        name: 'sailNumber',
-        initialValue: raceCompetitor != null
-            ? raceCompetitor!.sailNumber.toString()
-            : '0',
-        autovalidateMode: AutovalidateMode.onUserInteraction,
-        decoration: const InputDecoration(
-          labelText: 'Sail number',
-        ),
-        validator: FormBuilderValidators.compose([
-          FormBuilderValidators.integer(),
-          FormBuilderValidators.min(1),
-          FormBuilderValidators.required()
-        ]),
-        keyboardType: TextInputType.number,
-        inputFormatters: <TextInputFormatter>[
-          FilteringTextInputFormatter.digitsOnly
-        ],
-        valueTransformer: (text) => text != null ? num.tryParse(text) : null,
-      ),
-      FormBuilderTextField(
-        decoration: const InputDecoration(
-          labelText: 'Helm',
-        ),
-        name: 'helm',
-        initialValue: (raceCompetitor != null) ? raceCompetitor!.helm : '',
-        validator: FormBuilderValidators.required(),
-        autovalidateMode: AutovalidateMode.onUserInteraction,
-      ),
-      FormBuilderTextField(
-        decoration: const InputDecoration(
-          labelText: 'Crew',
-        ),
-        name: 'crew',
-        initialValue: (raceCompetitor != null) ? raceCompetitor!.crew : '',
-      ),
-      _buildRaces(context),
-    ];
-  }
-
-  Widget _buildRaces(BuildContext context) {
-    if (raceCompetitor != null) return const NullWidget();
-    final raceData = ref.watch(selectedRacesProvider).toList();
-    return FormBuilderFilterChip<Race>(
-      name: 'races',
-      initialValue: raceData.map((data) => data.race).toList(),
-      validator: FormBuilderValidators.required(
-          errorText: 'At least one race must be selected'),
-      autovalidateMode: AutovalidateMode.onUserInteraction,
-      direction: Axis.vertical,
-      options: raceData.map(
-        (data) {
-          return FormBuilderChipOption(
-            value: data.race,
-            child: Text('${data.series.name} - ${data.race.name} '),
-          );
-        },
-      ).toList(),
+      child: Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: [
+        ExistingEntryFormFields(competitor: raceCompetitor),
+        SelectRacesFilterChip(competitor: raceCompetitor),
+      ]),
     );
   }
 }

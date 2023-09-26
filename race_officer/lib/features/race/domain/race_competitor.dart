@@ -10,13 +10,14 @@ class RaceCompetitor with _$RaceCompetitor {
   factory RaceCompetitor({
     required String id,
     required String raceId,
+    required String seriesId,
     required String helm,
     String? crew,
     required String boatClass,
     required int sailNumber,
     required num handicap,
     @TimestampSerializer() DateTime? finishTime,
-    @Default(0) int laps,
+    @Default(ResultCode.notFinished) ResultCode resultCode,
     @Default([]) List<DateTime> lapTimes,
     ResultData? result,
   }) = _RaceCompetitor;
@@ -25,6 +26,9 @@ class RaceCompetitor with _$RaceCompetitor {
 
   factory RaceCompetitor.fromJson(Map<String, Object?> json) =>
       _$RaceCompetitorFromJson(json);
+
+  get numLaps => lapTimes.length;
+ 
 }
 
 @freezed
@@ -34,7 +38,6 @@ class ResultData with _$ResultData {
     @Default(0) num points,
     required Duration elapsedTime,
     required Duration correctedTime,
-    required ResultCode resultCode,
     required bool isDiscarded,
     required bool isDiscardable,
   }) = _ResultData;

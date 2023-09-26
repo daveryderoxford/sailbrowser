@@ -16,8 +16,17 @@ class SailNumber extends StatelessWidget {
       return RichText(
         text: TextSpan(
           children: [
-            TextSpan(text: firstDigits),
-            TextSpan(text: lastDigits, style: const TextStyle(color: Colors.red, fontWeight: FontWeight.bold)),
+            TextSpan(
+              text: firstDigits,
+              style: DefaultTextStyle.of(context).style,
+              children: <TextSpan>[
+                TextSpan(
+                  text: lastDigits,
+                  style: const TextStyle(
+                      color: Colors.red, fontWeight: FontWeight.bold),
+                ),
+              ],
+            ),
           ],
         ),
       );

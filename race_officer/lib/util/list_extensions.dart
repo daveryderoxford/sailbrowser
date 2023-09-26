@@ -1,3 +1,4 @@
+/// Returns that groups elements in a list by provided
 extension Iterables<E> on Iterable<E> {
   Map<K, List<E>> groupBy<K>(K Function(E) keyFunction) => fold(
       <K, List<E>>{},
@@ -5,6 +6,7 @@ extension Iterables<E> on Iterable<E> {
           map..putIfAbsent(keyFunction(element), () => <E>[]).add(element));
 }
 
+/// Returns list of unique elements based on provided function.  
 extension Unique<E, Id> on List<E> {
   List<E> unique([Id Function(E element)? id, bool inplace = true]) {
     final ids = <dynamic>{};
