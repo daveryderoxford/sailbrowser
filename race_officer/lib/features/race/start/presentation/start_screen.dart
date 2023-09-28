@@ -56,30 +56,40 @@ class StartScreen extends ConsumerWidget with UiLoggy {
 
   Widget _startsList(BuildContext context, WidgetRef ref) {
     final raceData = ref.watch(selectedRacesProvider);
-    final races = raceData.map((r) => r.race).toList();
+    final races = raceData
+        .map((r) => r.race)
+        .where((r) =>
+            r.status == RaceStatus.future || r.status == RaceStatus.postponed)
+        .toList();
+
     final starts = _groupByStart(races);
 
-    return Column(
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        const Row(
-          mainAxisAlignment: MainAxisAlignment.end,
-          children: [
-            TimeDisplay(textScaleFactor: 1.2),
-          ],
-        ),
-        Expanded(
-          child: (races.isEmpty)
-              ? const Text(
-                  'No races to start. Select more races on homepage if required')
-              : ListView.separated(
+    return (races.isEmpty)
+        ? const Center(
+            child: Text(
+              textAlign: TextAlign.center,
+              textScaleFactor: 1.2,
+              'No races to start today.\nSelect more races on homepage if required',
+            ),
+          )
+        : Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              const Row(
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: [
+                  TimeDisplay(textScaleFactor: 1.2),
+                ],
+              ),
+              Expanded(
+                child: ListView.separated(
                   itemCount: starts.length,
                   itemBuilder: (context, index) => StartListItem(starts[index]),
                   separatorBuilder: (BuildContext context, int index) =>
                       const Divider(),
                 ),
-        ),
-      ],
-    );
+              ),
+            ],
+          );
   }
 }

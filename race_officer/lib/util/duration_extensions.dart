@@ -11,7 +11,7 @@ extension DurationExtensions on Duration {
   ///
   String _twoDigits(int n) => n.toString().padLeft(2, "0");
 
-  String asFormattedString({DurationFormat format = DurationFormat.minSec}) {
+  String asHourMinSec({DurationFormat format = DurationFormat.minSec}) {
     String twoDigitMinutes = _twoDigits(inMinutes.remainder(60));
     String twoDigitSeconds = _twoDigits(inSeconds.remainder(60));
 

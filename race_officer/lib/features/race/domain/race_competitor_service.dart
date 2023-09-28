@@ -1,3 +1,4 @@
+import 'package:clock/clock.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:loggy/loggy.dart';
@@ -7,7 +8,6 @@ import 'package:sailbrowser_flutter/features/race/domain/result_code.dart';
 import 'package:sailbrowser_flutter/features/race/domain/selected_races.dart';
 import 'package:sailbrowser_flutter/features/race-calander/domain/series.dart';
 import 'package:sailbrowser_flutter/features/race/domain/race_competitor.dart';
-import 'package:sailbrowser_flutter/main.dart';
 
 /// Competitors for selected races
 class RaceCompetitorService with UiLoggy {
@@ -75,18 +75,26 @@ class RaceCompetitorService with UiLoggy {
   }
 
   Future<bool> saveLap(RaceCompetitor comp, String id, String seriesId) async {
-    final time = getClock().now();
+    final time = clock.now();
     final laps = [...comp.lapTimes, time];
 
     return await update(comp.copyWith(lapTimes: laps), id, seriesId);
   }
 
   Future<bool> finish(RaceCompetitor comp, String id, String seriesId) async {
-    final time = getClock().now();
+    final time = clock.now();
     final resultCode = comp.resultCode == ResultCode.notFinished
         ? ResultCode.ok
         : comp.resultCode;
-    final c = comp.copyWith(finishTime: time, resultCode: resultCode);
+    
+    final race = selectedRaces.firstWhere( (race) => race.id == comp.raceId);
+    final elapsed = time.difference(race.actualStart);
+
+    final c = comp.copyWith(
+      finishTime: time, 
+      elapsedTime: elapsed,
+      resultCode: resultCode
+    );
 
     return await update(c, id, seriesId);
   }

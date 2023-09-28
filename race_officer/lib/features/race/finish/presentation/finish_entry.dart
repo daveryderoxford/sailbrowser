@@ -2,9 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:loggy/loggy.dart';
+import 'package:sailbrowser_flutter/common_widgets/null_widget.dart';
 import 'package:sailbrowser_flutter/common_widgets/numeric_keypad.dart';
 import 'package:sailbrowser_flutter/features/race-calander/domain/series.dart';
+import 'package:sailbrowser_flutter/features/race/finish/domain/finish_lists.dart';
 import 'package:sailbrowser_flutter/features/race/finish/presentation/finish_list.dart';
+import 'package:sailbrowser_flutter/util/list_extensions.dart';
 
 class FinishEntry extends ConsumerStatefulWidget {
   final Series? series;
@@ -17,8 +20,6 @@ class FinishEntry extends ConsumerStatefulWidget {
 
 class _FinishEntryState extends ConsumerState<FinishEntry> with UiLoggy {
   Series? series;
-  String sailNumber = "";
-  int? _boatClass = 1; // temp
 
   @override
   void initState() {
@@ -36,78 +37,85 @@ class _FinishEntryState extends ConsumerState<FinishEntry> with UiLoggy {
 
   @override
   Widget build(BuildContext context) {
+    final filter = ref.watch(compFilterProvider);
+
     return Column(
       children: [
         const Expanded(
-          child: FinishList(),
+          child: FinishList(racing: true, filtered: true,),
         ),
-        _buildClassFilter(context),
+        const SizedBox(height: 5),
+        _buildClassFilter(context, filter.boatClass),
+        const SizedBox(height: 10),
         Center(
           child: Text(
-            'Sail number:  $sailNumber',
+            'Sail number:  ${filter.sailNumber}',
             textScaleFactor: 1.2,
           ),
         ),
+        const SizedBox(height: 5),
         NumericKeyPad(
-          onKeyboardTap: (key) => setState(() {
+          onKeyboardTap: (key) {
+            String sailNumber = filter.sailNumber;
             if (key == 'backspace') {
               if (sailNumber.isNotEmpty) {
-                sailNumber = sailNumber.substring(0, sailNumber.length - 1);
+                _setSailNumber(sailNumber.substring(0, sailNumber.length - 1));
               }
             } else if (key == 'clear') {
-              sailNumber = "";
+              _setSailNumber("");
             } else {
-              sailNumber = sailNumber + key;
+              _setSailNumber(sailNumber + key);
             }
-          }),
-        )
+          },
+        ),
       ],
     );
   }
 
-  Widget _buildClassFilter(BuildContext context) {
-    return Column(children: [
-      const Text('Choose an item'),
-      const SizedBox(height: 10.0),
-      Wrap(
-        spacing: 5.0,
-        children: List<Widget>.generate(
-          10,
-          (int index) {
-            return ChoiceChip(
-              label: Text('Item $index'),
-              selected: _boatClass == index,
-              onSelected: (bool selected) {
-                setState(() {
-                  _boatClass = selected ? index : null;
-                });
-              },
-            );
-          },
-        ).toList(),
-      ),
-    ]);
+  Widget _buildClassFilter(BuildContext context, String boatClass) {
+    final competitors = ref.watch(racingCompetitorsProvider(true));
+    final boatClasses = competitors.map((e) => e.boatClass).toList().unique();
+    boatClasses.sort();
+
+    return boatClasses.isEmpty || boatClasses.length == 1
+        ? const NullWidget()
+        : Wrap(
+            spacing: 5.0,
+            children: boatClasses
+                .map(
+                  (bc) => ChoiceChip(
+                    label: Text(bc),
+                    selected: (boatClass == bc),
+                    onSelected: (bool selected) {
+                      ref.read(compFilterProvider.notifier).boatClass =
+                          (selected ? bc : null);
+                    },
+                  ),
+                )
+                .toList(),
+          );
   }
 
   bool _onKey(KeyEvent event) {
     final key = event.logicalKey.keyLabel;
+    String sailNumber = ref.read(compFilterProvider).sailNumber;
 
     if (event is KeyDownEvent) {
       loggy.info("Kery pressed $key");
       final num = int.tryParse(key);
       if (num != null) {
-        setState(() {
-          sailNumber = sailNumber + key;
-        });
+        _setSailNumber(sailNumber + key);
       }
       if (key == "Backspace") {
-        setState(() {
-          if (sailNumber.isNotEmpty) {
-            sailNumber = sailNumber.substring(0, sailNumber.length - 1);
-          }
-        });
+        if (sailNumber.isNotEmpty) {
+          _setSailNumber(sailNumber.substring(0, sailNumber.length - 1));
+        }
       }
     }
     return false;
+  }
+
+  _setSailNumber(String s) {
+    ref.read(compFilterProvider.notifier).sailNumber = s;
   }
 }

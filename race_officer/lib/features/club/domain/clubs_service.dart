@@ -60,6 +60,7 @@ final clubProvider = Provider((ref) => ClubService());
 
 final currentClubProvider = Provider((ref) => CurrentClub());
 
+///
 final allClassesProvider =
     Provider.family<List<BoatClass>, HandicapScheme>((ref, scheme) {
   final systemData = ref.watch(systemDataProvider);

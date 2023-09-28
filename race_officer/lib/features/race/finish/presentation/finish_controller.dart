@@ -6,55 +6,61 @@ import 'package:sailbrowser_flutter/features/race/domain/result_code.dart';
 import 'package:sailbrowser_flutter/features/race/finish/domain/finish_lists.dart';
 
 class FinishController with UiLoggy {
-  PinnedCompetitors approaching;
-  RaceCompetitorService resultService;
+  PinnedCompetitors pinned;
+  RaceCompetitorService compService; 
+  CompFilterNotifier filterNotifier;
 
-  FinishController(this.approaching, this.resultService);
+  FinishController(this.pinned, this.compService, this.filterNotifier);
 
-  _log(String action, RaceCompetitor result) {
-    loggy.info('$action: ${result.id} ${result.helm}');
+  _log(String action, RaceCompetitor comp) {
+    loggy.info('$action: ${comp.id} ${comp.helm}');
   }
 
-  _removeApproaching(RaceCompetitor result) {
-    approaching.removeId(result.id);
+  _removePin(RaceCompetitor comp) {
+    pinned.removeId(comp.id);
+    filterNotifier.clear();
   }
 
-  lap(RaceCompetitor result) {
-    resultService.saveLap(result, result.id, result.seriesId);
-    _removeApproaching(result);
-    _log('lap', result);
+  lap(RaceCompetitor comp) {
+    compService.saveLap(comp, comp.id, comp.seriesId);
+    _removePin(comp);
+    _log('lap', comp);
   }
 
-  finish(RaceCompetitor result) {
-    _removeApproaching(result);
-    _log('finish', result);
+  finish(RaceCompetitor comp) {
+    compService.finish(comp, comp.id, comp.seriesId);
+    _removePin(comp);
+    _log('finish', comp);
   }
 
-  top(RaceCompetitor result) {
-    approaching.addId(result.id);
-    _log('top', result);
+  pin(RaceCompetitor comp) {
+    pinned.addId(comp.id);
+    _log('pin', comp);
   }
 
-  retired(RaceCompetitor result) {
-    final update = result.copyWith(resultCode: ResultCode.rdg);
-    resultService.update(update, update.id, result.seriesId);
-    _removeApproaching(result);
+  retired(RaceCompetitor comp) {
+    final update = comp.copyWith(resultCode: ResultCode.rdg);
+    compService.update(update, update.id, comp.seriesId);
+    _removePin(comp);
   }
 
-  didNotStart(RaceCompetitor result) {
-    final update = result.copyWith(resultCode: ResultCode.dns);
-    resultService.update(update, update.id, result.seriesId);
-    _removeApproaching(result);
+  didNotStart(RaceCompetitor comp) {
+    final update = comp.copyWith(resultCode: ResultCode.dns);
+    compService.update(update, update.id, comp.seriesId);
+    _removePin(comp);
   }
 
-  stillRacing(RaceCompetitor result) {
+  stillRacing(RaceCompetitor comp) {
     final update =
-        result.copyWith(finishTime: null, resultCode: ResultCode.dns);
-    resultService.update(update, update.id, result.seriesId);
+        comp.copyWith(finishTime: null, resultCode: ResultCode.notFinished);
+    compService.update(update, update.id, comp.seriesId);
   }
+
 }
 
 final finshControllerProvider = Provider(
-  (ref) => FinishController(ref.watch(pinnedCompetitorsProvider.notifier),
-      ref.watch(raceCompetitorRepositoryProvider)),
+  (ref) => FinishController(
+      ref.watch(pinnedCompetitorsProvider.notifier),
+      ref.watch(raceCompetitorRepositoryProvider),
+      ref.watch(compFilterProvider.notifier)),
 );

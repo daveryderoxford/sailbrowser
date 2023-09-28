@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:intl/intl.dart';
 import 'package:sailbrowser_flutter/common_widgets/null_widget.dart';
 import 'package:sailbrowser_flutter/features/club/domain/clubs_service.dart';
 import 'package:sailbrowser_flutter/features/race-calander/domain/series.dart';
@@ -9,9 +8,7 @@ import 'package:sailbrowser_flutter/features/race-calander/domain/series_service
 class HomeRaceListItem extends ConsumerWidget {
   final Race race;
 
-  final DateFormat formatter = DateFormat('dd MMM yy');
-
-  HomeRaceListItem(this.race, {super.key});
+  const HomeRaceListItem(this.race, {super.key});
 
   @override
   Widget build(BuildContext context, ref) {

@@ -38,7 +38,7 @@ class NumericKeyPad extends StatefulWidget {
       this.leftIcon,
       this.mainAxisAlignment = MainAxisAlignment.spaceBetween})
       : super(key: key);
-
+      
   @override
   State<StatefulWidget> createState() {
     return _NumericKeyPadState();
@@ -56,33 +56,33 @@ class _NumericKeyPadState extends State<NumericKeyPad> {
           ButtonBar(
             alignment: widget.mainAxisAlignment,
             children: <Widget>[
-              _calcButton('1'),
-              _calcButton('2'),
-              _calcButton('3'),
+              _textButton('1'),
+              _textButton('2'),
+              _textButton('3'),
             ],
           ),
           ButtonBar(
             alignment: widget.mainAxisAlignment,
             children: <Widget>[
-              _calcButton('4'),
-              _calcButton('5'),
-              _calcButton('6'),
+              _textButton('4'),
+              _textButton('5'),
+              _textButton('6'),
             ],
           ),
           ButtonBar(
             alignment: widget.mainAxisAlignment,
             children: <Widget>[
-              _calcButton('7'),
-              _calcButton('8'),
-              _calcButton('9'),
+              _textButton('7'),
+              _textButton('8'),
+              _textButton('9'),
             ],
           ),
           ButtonBar(
             alignment: widget.mainAxisAlignment,
             children: <Widget>[
-              _calcIconButton('clear', const Icon(Icons.clear_outlined)),
-              _calcButton('0'),
-              _calcIconButton(
+              _iconButton('clear', const Icon(Icons.clear_outlined)),
+              _textButton('0'),
+              _iconButton(
                   'backspace', const Icon(Icons.backspace_outlined)),
             ],
           ),
@@ -91,7 +91,7 @@ class _NumericKeyPadState extends State<NumericKeyPad> {
     );
   }
 
-  Widget _calcButton(String value) {
+  Widget _textButton(String value) {
     return InkWell(
         borderRadius: BorderRadius.circular(45),
         onTap: () {
@@ -105,10 +105,11 @@ class _NumericKeyPadState extends State<NumericKeyPad> {
             value,
             style: widget.textStyle,
           ),
-        ));
+        ),
+        );
   }
 
-  Widget _calcIconButton(String value, Icon icon) {
+  Widget _iconButton(String value, Icon icon) {
     return InkWell(
         borderRadius: BorderRadius.circular(45),
         onTap: () {
@@ -119,6 +120,7 @@ class _NumericKeyPadState extends State<NumericKeyPad> {
           width: 50,
           height: 50,
           child: icon,
-        ));
+        ),
+      );
   }
 }

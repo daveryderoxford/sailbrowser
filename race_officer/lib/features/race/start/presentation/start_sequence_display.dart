@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:intl/intl.dart';
 import 'package:sailbrowser_flutter/features/race/start/domain/start_sequence.dart';
 import 'package:sailbrowser_flutter/features/race/start/domain/start_sequence_service.dart';
+import 'package:sailbrowser_flutter/util/date_time_extensions.dart';
 import 'package:sailbrowser_flutter/util/duration_extensions.dart';
 
 class StartSequenceDisplay extends ConsumerWidget {
@@ -11,11 +11,10 @@ class StartSequenceDisplay extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final sequence = ref.watch(startSequenceProvider);
-    final hourMin = DateFormat(DateFormat.HOUR24_MINUTE);
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: [
-        Text('Next Start:  ${sequence.timeToNextStart.asFormattedString()}',
+        Text('Next Start:  ${sequence.timeToNextStart.asHourMinSec()}',
             textScaleFactor: 1.7,
             style: const TextStyle(fontWeight: FontWeight.bold)),
         const SizedBox(height: 20),
@@ -35,7 +34,7 @@ class StartSequenceDisplay extends ConsumerWidget {
                     children: [
                       Text(race.name),
                       const SizedBox(width: 20),
-                      Text('Start ${hourMin.format(race.actualStart)}'),
+                      Text('Start ${race.actualStart.asHourMin()}'),
                     ],
                   ),
                   subtitle: Row(

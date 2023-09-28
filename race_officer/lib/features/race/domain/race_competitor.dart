@@ -5,6 +5,7 @@ import 'package:sailbrowser_flutter/firebase/timestamp_serialiser.dart';
 part 'race_competitor.freezed.dart';
 part 'race_competitor.g.dart';
 
+///
 @freezed
 class RaceCompetitor with _$RaceCompetitor {
   factory RaceCompetitor({
@@ -17,10 +18,12 @@ class RaceCompetitor with _$RaceCompetitor {
     required int sailNumber,
     required num handicap,
     @TimestampSerializer() DateTime? finishTime,
+    @Default(Duration()) Duration elapsedTime,
+    @Default(Duration()) Duration correctedTime,
     @Default(ResultCode.notFinished) ResultCode resultCode,
     @Default([]) List<DateTime> lapTimes,
     ResultData? result,
-  }) = _RaceCompetitor;
+  }) = _RaceCompetitor; 
 
   const RaceCompetitor._();
 
@@ -28,16 +31,18 @@ class RaceCompetitor with _$RaceCompetitor {
       _$RaceCompetitorFromJson(json);
 
   get numLaps => lapTimes.length;
- 
+
+  get helmCrew =>  (crew != null && crew!.trim().isNotEmpty)
+        ? '$helm / $crew}'
+        : helm;
 }
 
+/// Results data that depends on other competitors in the race
 @freezed
 class ResultData with _$ResultData {
   factory ResultData({
     required int position,
     @Default(0) num points,
-    required Duration elapsedTime,
-    required Duration correctedTime,
     required bool isDiscarded,
     required bool isDiscardable,
   }) = _ResultData;

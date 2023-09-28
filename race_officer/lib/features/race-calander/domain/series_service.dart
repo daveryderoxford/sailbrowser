@@ -194,6 +194,12 @@ final seriesProvider = Provider.autoDispose.family<Series?, String>( (ref, id) {
   return series.valueOrNull?.firstWhere((s) => s.id == id);
 });
 
+/// Find a races based on its Id
+final raceProvider = Provider.autoDispose.family<Race?, String>( (ref, id) {
+  final races = ref.watch(allRacesProvider);
+  return races.valueOrNull?.firstWhere((s) => s.id == id);
+});
+
 /// Streeam of all races 
 final allRacesProvider = StreamProvider.autoDispose<List<Race>>((ref) {
   final db = ref.watch(seriesRepositoryProvider);

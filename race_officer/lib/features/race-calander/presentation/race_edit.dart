@@ -64,7 +64,7 @@ class _EditSeriesState extends ConsumerState<EditRace> with UiLoggy {
 
   Future<void> _submit() async {
 
-    _formKey.currentState?.saveAndValidate();
+    _formKey.currentState?.saveAndValidate(); 
     final form = _formKey.currentState!;
     form.validate();
 

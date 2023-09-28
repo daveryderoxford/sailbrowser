@@ -6,16 +6,14 @@ import 'package:sailbrowser_flutter/features/race/domain/result_code.dart';
 import 'package:sailbrowser_flutter/features/race/domain/selected_races.dart';
 import 'package:sailbrowser_flutter/util/list_extensions.dart';
 
-/// Competitors actively racing.
-/// Takes parameter if finished or unfnished baots should be returned.
-/// Based on:
-/// * races is in progress and
-/// * the competitor has not finihed,
+/// Competitors for races thta are currently in progress.
+/// Takes a parameter to return competitors thta have finished or not.
 final racingCompetitorsProvider =
     Provider.family<List<RaceCompetitor>, bool>((ref, bool racing) {
   final competitors = ref.watch(currentCompetitors).valueOrNull;
   if (competitors == null) return [];
 
+  // Get races in progress
   final raceData = ref.watch(selectedRacesProvider);
 
   final raceIds = raceData
@@ -37,21 +35,59 @@ final racingCompetitorsProvider =
   }
 });
 
-// Competitors approaching the finish - selected by the race officer
-class PinnedCompetitors extends StateNotifier<Iterable<String>> {
-  List<RaceCompetitor> competitors;
+/// Competitors approaching the finish - selected by the race officer.
+class PinnedCompetitors extends StateNotifier<List<RaceCompetitor>> {
+  final List<RaceCompetitor> competitors;
 
-  PinnedCompetitors(this.competitors) : super([]);
+  PinnedCompetitors(this.competitors) : super(<RaceCompetitor>[]);
 
-  void addId(String compId) {
-    state = [...state, compId].unique((id) => id);
+  void addId(String id) {
+    final comp = competitors.firstWhere((c) => c.id == id);
+    state = [...state, comp].unique((comp) => comp.id);
   }
 
-  void removeId(String compId) {
-    state = state.where((id) => compId != id).toList();
+  void removeId(String id) {
+    state = state.where((comp) => id != comp.id).toList();
   }
 }
 
 final pinnedCompetitorsProvider = StateNotifierProvider(
   (ref) => PinnedCompetitors(ref.watch(racingCompetitorsProvider(true))),
 );
+
+typedef CompFilter = ({String boatClass, String sailNumber});
+
+class CompFilterNotifier extends Notifier<CompFilter> {
+
+  static const unsetClass = "UNSET";
+
+  @override
+  build() => (boatClass: unsetClass, sailNumber: "");
+
+  set boatClass(String? b) {
+    b ??= unsetClass;
+    state = (boatClass: b, sailNumber: state.sailNumber);
+  }
+
+  set sailNumber(String? s) {
+    s ??= "";
+   state = (boatClass: state.boatClass, sailNumber: s);
+  }
+
+  clear() {
+    state = (boatClass: unsetClass, sailNumber: "");
+  }
+}
+
+final compFilterProvider =
+    NotifierProvider<CompFilterNotifier, CompFilter>(CompFilterNotifier.new);
+
+final filteredCompetitorListProvider = Provider((ref) {
+  final competitors = ref.watch(racingCompetitorsProvider(true));
+  final filter = ref.watch(compFilterProvider);
+  return competitors
+      .where((comp) =>
+          (filter.boatClass == CompFilterNotifier.unsetClass || comp.boatClass == filter.boatClass) &&
+          comp.sailNumber.toString().contains(filter.sailNumber))
+      .toList();
+});

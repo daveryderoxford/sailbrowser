@@ -42,14 +42,14 @@ class BoatService with UiLoggy {
      loggy.info('Creating Boat service');
   }
 
-  Future<bool> add(Boat boat) async {
+  add(Boat boat) {
     try {
       final update = boat.copyWith(id: _boatsCollection.doc().id);
-      await _boatsCollection.doc(update.id).set(update);
-      return true;
+      _boatsCollection.doc(update.id)
+         .set(update)
+         .onError((error, stackTrace) => null);
     } catch (e) {
       loggy.error(e.toString());
-      return Future.error(e);
     }
   }
 

@@ -32,20 +32,18 @@ class _EditBoatState extends ConsumerState<EditBoat> with UiLoggy {
     boat = widget.boat;
   }
 
-  Future<void> _submit() async {
+  _submit() {
     final form = _formKey.currentState!;
-    form.validate();
+    form.saveAndValidate();
 
     final boatService = ref.read(boatsProvider);
 
     if (form.isValid) {
       final formData = _formKey.currentState!.value;
 
-      bool success;
-
       if (boat == null) {
         final u = Boat.fromJson(formData);
-        success = await boatService.add(u);
+        boatService.add(u);
       } else {
         final update = boat!.copyWith(
           sailingClass: formData['sailingClass'],
@@ -57,29 +55,16 @@ class _EditBoatState extends ConsumerState<EditBoat> with UiLoggy {
           crew: formData['crew'],
         );
 
-        success = await boatService.update(update, update.id);
+        boatService.update(update, update.id);
       }
-      if (success) {
-        if (context.mounted) context.pop();
-       
-      } else {
-         loggy.error('Error encountered saving boat');
-        SnackBar(
-          content: const Text('Error encountered saving boat'),
-          action: SnackBarAction(
-            label: 'Discard changes',
-            onPressed: () {
-               if (context.mounted) context.pop();
-            },
-          ),
-        );
-      }
+
+      if (context.mounted) context.pop();
     }
   }
 
-  _deleteBoat() async {
+  _deleteBoat() {
     final boatService = ref.read(boatsProvider);
-    await boatService.remove(boat!.id);
+    boatService.remove(boat!.id);
     if (context.mounted) context.pop();
   }
 
@@ -92,7 +77,6 @@ class _EditBoatState extends ConsumerState<EditBoat> with UiLoggy {
             title: Text(widget.boat == null ? 'New Boat' : 'Edit Boat'),
             actions: <Widget>[
               TextButton(
-                //      onPressed: state.isLoading ? null : _submit,
                 onPressed: _submit,
                 child: const Text(
                   'Save',
@@ -136,15 +120,22 @@ class _EditBoatState extends ConsumerState<EditBoat> with UiLoggy {
         debugPrint(_formKey.currentState!.value.toString());
       },
       initialValue: boat != null ? boat!.toJson() : {},
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: _buildFormChildren(),
-      ),
+      child: BoatFormFields(boat: boat),
     );
   }
+}
 
-  List<Widget> _buildFormChildren() {
-    return [
+class BoatFormFields extends StatelessWidget {
+  const BoatFormFields({
+    super.key,
+    this.boat,
+  });
+
+  final Boat? boat;
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: [
       FormBuilderTextField(
         name: 'sailingClass',
         autovalidateMode: AutovalidateMode.onUserInteraction,
@@ -202,6 +193,6 @@ class _EditBoatState extends ConsumerState<EditBoat> with UiLoggy {
         name: 'owner',
         decoration: const InputDecoration(labelText: 'Owner'),
       ),
-    ];
+    ]);
   }
 }

@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:intl/intl.dart';
 import 'package:sailbrowser_flutter/common_widgets/delete_button.dart';
 import 'package:sailbrowser_flutter/features/club/domain/clubs_service.dart';
 import 'package:sailbrowser_flutter/features/club/domain/fleet.dart';
@@ -10,6 +9,7 @@ import 'package:sailbrowser_flutter/features/race-calander/domain/series_service
 import 'package:sailbrowser_flutter/features/race-calander/presentation/copy_series.dart';
 import 'package:sailbrowser_flutter/features/race-calander/presentation/race_edit.dart';
 import 'package:sailbrowser_flutter/features/race-calander/presentation/series_edit.dart';
+import 'package:sailbrowser_flutter/util/date_time_extensions.dart';
 
 class SeriesDetailScreen extends ConsumerWidget {
   final String seriesId;
@@ -74,9 +74,8 @@ class SeriesDetailScreen extends ConsumerWidget {
 
   Widget _seriesCard(BuildContext context, Series series, List<Fleet> fleets) {
     final fleetName = fleets.firstWhere((f) => f.id == series.fleetId).name;
-    final dateFmt = DateFormat('dd MMM yyyy').format;
     final seriesDuration = series.races.isNotEmpty
-        ? '${dateFmt(series.startDate!)} to ${dateFmt(series.endDate!)}'
+        ? '${series.startDate!.asDateString()} to ${series.endDate!.asDateString()}'
         : "";
 
     return Card(
@@ -143,9 +142,9 @@ class SeriesDetailScreen extends ConsumerWidget {
               itemBuilder: (BuildContext context, int index) {
                 final race = races[index];
                 final avgLap = race.isAverageLap ? 'Average lap' : '';
-                final date = DateFormat("d MMM yy").format(race.scheduledStart);
+                final date = race.scheduledStart.asDateString();
                 final startTime =
-                    'Start:  ${DateFormat.Hm().format(race.scheduledStart)}';
+                    'Start:  ${race.scheduledStart.asHourMin()}';
                 final status = race.status.displayName;
                 final type = race.type != RaceType.conventional
                     ? race.type.displayName

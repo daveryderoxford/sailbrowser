@@ -15,7 +15,7 @@ class FinishScreen extends StatelessWidget {
           appBar: AppBar(
             bottom: const TabBar(
               tabs: [
-                Tab(text: 'Finfd'),
+                Tab(text: 'Find'),
                 Tab(text: 'All'),
                 Tab(text: 'Finished'),
               ],
@@ -25,8 +25,8 @@ class FinishScreen extends StatelessWidget {
           body: const TabBarView(
             children: [
               FinishEntry(),
-              FinishList(),
-              FinishList(),
+              FinishList(racing: true),
+              FinishList(racing: false),
             ],
           ),
         ),
