@@ -3,6 +3,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:loggy/loggy.dart';
+import 'package:sailbrowser_flutter/common_widgets/snackbar_service.dart';
 import 'package:sailbrowser_flutter/routing/app_router.dart';
 import 'package:stack_trace/stack_trace.dart';
 import 'firebase/firebase_config.dart';
@@ -61,6 +62,7 @@ class MyApp extends ConsumerWidget {
     final goRouter = ref.watch(goRouterProvider);
     return MaterialApp.router(
       routerConfig: goRouter,
+      scaffoldMessengerKey: SnackBarService.scaffoldKey,   
       title: 'Sailbrowser',
       theme: ThemeData(
         colorSchemeSeed: const Color(0xff6750a4),

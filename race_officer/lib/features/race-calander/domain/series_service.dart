@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:loggy/loggy.dart';
 import 'package:rxdart/rxdart.dart';
+import 'package:sailbrowser_flutter/common_widgets/snackbar_service.dart';
 import 'package:sailbrowser_flutter/features/club/domain/clubs_service.dart';
 import 'package:sailbrowser_flutter/features/club/domain/fleet.dart';
 
@@ -33,7 +34,6 @@ class SeriesService with UiLoggy {
     }
   }
 
- 
   /// Series sorter - series are sorted in order of:
   ///  * Series with no races first - null start date
   ///  * In order od first race start
@@ -86,44 +86,35 @@ class SeriesService with UiLoggy {
 
   SeriesService(this.clubId);
 
-  Future<bool> add(Series series) async {
-    try {
+  add(Series series) {
       final updatedRaces = _updateRaceDetails(series, [...series.races]);
       final complateUpdate = updatedRaces.copyWith(id: _series.doc().id);
 
-      await _series.doc(complateUpdate.id).set(complateUpdate);
-      return true;
-    } catch (e) {
-      loggy.error(e.toString());
-      return Future.error(e);
-    }
+      _series
+         .doc(complateUpdate.id)
+         .set(complateUpdate)
+         .onError((error, stackTrace) => _errorHandler(error, stackTrace, 'add'));
   }
 
-  Future<bool> remove(String id) async {
-    try {
-      await _series.doc(id).delete();
-      return true;
-    } catch (e) {
-      (e.toString());
-      return Future.error(e);
-    }
+  remove(String id)  {
+     _series
+      .doc(id)
+      .delete()        
+      .onError((error, stackTrace) => _errorHandler(error, stackTrace, 'remove'));
   }
 
 // Edit a series
-  Future<bool> update(Series series, String id) async {
+  update(Series series, String id)  {
     final upDatedSeries = _updateRaceDetails(series, [...series.races]);
 
-    try {
-      await _series.doc(id).update(upDatedSeries.toJson());
-      return true;
-    } catch (e) {
-      loggy.error(e.toString());
-      return Future.error(e); //return error
-    }
+    _series
+      .doc(id)
+      .update(upDatedSeries.toJson())
+      .onError((error, stackTrace) => _errorHandler(error, stackTrace, 'update'));
   }
 
   /// Adds a new race to a series.
-  Future<bool> addRace(Series series, Race race) {
+  addRace(Series series, Race race) {
     if (race.seriesId != series.id) {
       throw (Exception("Race seaiesId does not equal series id"));
     }
@@ -132,11 +123,11 @@ class SeriesService with UiLoggy {
 
     final update = series.copyWith(races: races);
 
-    return this.update(update, update.id);
+    this.update(update, update.id);
   }
 
   /// Update a races for a series
-  Future<bool> updateRace(Series series, String updatedId, Race race) {
+  updateRace(Series series, String updatedId, Race race) {
     if (race.seriesId != series.id) {
       throw (Exception("Race seaiesId does not equal series id"));
     }
@@ -147,16 +138,16 @@ class SeriesService with UiLoggy {
 
     final update = series.copyWith(races: races);
 
-    return this.update(update, update.id);
+    this.update(update, update.id);
   }
 
   /// Remove a race for a series
-  Future<bool> removeRace(Series series, String deletedId) {
+  removeRace(Series series, String deletedId) {
     final races = series.races.where((race) => race.id != deletedId).toList();
 
     final update = series.copyWith(races: races);
 
-    return this.update(update, update.id);
+    this.update(update, update.id);
   }
 
   Series _updateRaceDetails(Series series, List<Race> races) {
@@ -177,30 +168,38 @@ class SeriesService with UiLoggy {
     return series.copyWith(
         races: updatedRaces, startDate: startDate, endDate: endDate);
   }
+
+  _errorHandler(Object? error, StackTrace stackTrace, String func) {
+    final s = (error == null)
+        ? error.toString()
+        : 'Error encountered Series.  $func';
+    SnackBarService.showErrorSnackBar(content: s);
+    loggy.error(s);
+  }
 }
 
 final seriesRepositoryProvider =
     Provider((ref) => SeriesService(ref.watch(currentClubProvider).current.id));
 
-/// All series for all time 
+/// All series for all time
 final allSeriesProvider = StreamProvider.autoDispose<List<Series>>((ref) {
   final db = ref.watch(seriesRepositoryProvider);
   return db.allRaceSeriess$;
 });
 
 /// Find series based on its Id
-final seriesProvider = Provider.autoDispose.family<Series?, String>( (ref, id) {
+final seriesProvider = Provider.autoDispose.family<Series?, String>((ref, id) {
   final series = ref.watch(allSeriesProvider);
   return series.valueOrNull?.firstWhere((s) => s.id == id);
 });
 
 /// Find a races based on its Id
-final raceProvider = Provider.autoDispose.family<Race?, String>( (ref, id) {
+final raceProvider = Provider.autoDispose.family<Race?, String>((ref, id) {
   final races = ref.watch(allRacesProvider);
   return races.valueOrNull?.firstWhere((s) => s.id == id);
 });
 
-/// Streeam of all races 
+/// Streeam of all races
 final allRacesProvider = StreamProvider.autoDispose<List<Race>>((ref) {
   final db = ref.watch(seriesRepositoryProvider);
   return db.allRaces$;
@@ -208,13 +207,11 @@ final allRacesProvider = StreamProvider.autoDispose<List<Race>>((ref) {
 
 typedef AllRaceData = ({Race race, Series series, Fleet fleet});
 
-final allRaceDataProvider =
-    StreamProvider<List<AllRaceData>>((ref) {
+final allRaceDataProvider = StreamProvider<List<AllRaceData>>((ref) {
   final seriesProvider = ref.read(seriesRepositoryProvider);
   final club = ref.watch(currentClubProvider);
 
   return seriesProvider.allRaceSeriess$.map((seriesList) {
-
     List<AllRaceData> allRaces = [];
 
     for (var series in seriesList) {
@@ -226,7 +223,7 @@ final allRaceDataProvider =
 
       allRaces.addAll(seriesRaces);
     }
-    allRaces.sort((a, b) => SeriesService.sortRaceData(a,b));
+    allRaces.sort((a, b) => SeriesService.sortRaceData(a, b));
 
     return allRaces;
     //   allRaces.sort((AllRaceData a, b) => sortRaces(a.race, b.race));

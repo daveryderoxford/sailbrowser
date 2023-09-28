@@ -2,6 +2,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:loggy/loggy.dart';
 import 'package:rxdart/rxdart.dart';
+import 'package:sailbrowser_flutter/common_widgets/snackbar_service.dart';
 import 'package:sailbrowser_flutter/features/club/domain/fleet.dart';
 import 'package:sailbrowser_flutter/features/results/scoring/race_scoring.dart';
 import 'package:sailbrowser_flutter/features/results/scoring/series_scoring.dart';
@@ -25,26 +26,27 @@ class ClubService with UiLoggy {
         return clubs;
       }).shareReplay();
 
-  Future<bool> add(Club club) async {
-    try {
-      final id = club.name.replaceAll(' ', '');
-      final update = club.copyWith(id: id);
-      await _clubs.doc(update.id).set(update);
-      return true;
-    } catch (e) {
-      loggy.error(e.toString());
-      return Future.error(e);
-    }
+  add(Club club) {
+    final id = club.name.replaceAll(' ', '');
+    final update = club.copyWith(id: id);
+    _clubs
+       .doc(update.id)
+       .set(update)
+       .onError((error, stackTrace) => _errorHandler(error, stackTrace, 'add'));
   }
 
-  Future<bool> update(Club club, String id) async {
-    try {
-      await _clubs.doc(id).update(club.toJson());
-      return true;
-    } catch (e) {
-      loggy.error(e.toString());
-      return Future.error(e); //return error
-    }
+  update(Club club, String id) {
+    _clubs
+      .doc(id)
+      .update(club.toJson())
+      .onError((error, stackTrace) => _errorHandler(error, stackTrace, 'update'));
+  }
+
+  _errorHandler(Object? error, StackTrace stackTrace, String func) {
+    final s =
+        (error == null) ? error.toString() : 'Error encountered Club.  $func';
+    SnackBarService.showErrorSnackBar(content: s);
+    loggy.error(s);
   }
 }
 

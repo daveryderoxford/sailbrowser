@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:loggy/loggy.dart';
 import 'package:rxdart/rxdart.dart';
+import 'package:sailbrowser_flutter/common_widgets/snackbar_service.dart';
 import 'package:sailbrowser_flutter/features/club/domain/clubs_service.dart';
 import 'package:sailbrowser_flutter/features/race/domain/result_code.dart';
 import 'package:sailbrowser_flutter/features/race/domain/selected_races.dart';
@@ -44,59 +45,55 @@ class RaceCompetitorService with UiLoggy {
     seriesIds = selectedRaces.map((race) => race.seriesId).toSet().toList();
   }
 
-  Future<bool> add(RaceCompetitor comp, String seriesId) async {
-    try {
-      await _compCollection(seriesId).doc(comp.id).set(comp);
-      return true;
-    } catch (e) {
-      loggy.error(e.toString());
-      return Future.error(e);
-    }
+  add(RaceCompetitor comp, String seriesId) {
+    _compCollection(seriesId)
+      .doc(comp.id)
+      .set(comp)
+      .onError((error, stackTrace) => _errorHandler(error, stackTrace, 'add'));
+
   }
 
-  Future<bool> remove(String id, String seriesId) async {
-    try {
-      await _compCollection(seriesId).doc(id).delete();
-      return true;
-    } catch (e) {
-      (e.toString());
-      return Future.error(e);
-    }
+  remove(String id, String seriesId)  {
+    _compCollection(seriesId)
+      .doc(id)
+      .delete()
+      .onError((error, stackTrace) => _errorHandler(error, stackTrace, 'remove'));
   }
 
-  Future<bool> update(RaceCompetitor comp, String id, String seriesId) async {
-    try {
-      await _compCollection(seriesId).doc(id).update(comp.toJson());
-      return true;
-    } catch (e) {
-      loggy.error(e.toString());
-      return Future.error(e); //return error
-    }
+  update(RaceCompetitor comp, String id, String seriesId) async {
+      _compCollection(seriesId)
+           .doc(id)
+           .update(comp.toJson())
+           .onError((error, stackTrace) => _errorHandler(error, stackTrace, 'update'));
   }
 
-  Future<bool> saveLap(RaceCompetitor comp, String id, String seriesId) async {
+  saveLap(RaceCompetitor comp, String id, String seriesId) {
     final time = clock.now();
     final laps = [...comp.lapTimes, time];
 
-    return await update(comp.copyWith(lapTimes: laps), id, seriesId);
+    update(comp.copyWith(lapTimes: laps), id, seriesId);
   }
 
-  Future<bool> finish(RaceCompetitor comp, String id, String seriesId) async {
+  finish(RaceCompetitor comp, String id, String seriesId) {
     final time = clock.now();
     final resultCode = comp.resultCode == ResultCode.notFinished
         ? ResultCode.ok
         : comp.resultCode;
-    
-    final race = selectedRaces.firstWhere( (race) => race.id == comp.raceId);
+
+    final race = selectedRaces.firstWhere((race) => race.id == comp.raceId);
     final elapsed = time.difference(race.actualStart);
 
     final c = comp.copyWith(
-      finishTime: time, 
-      elapsedTime: elapsed,
-      resultCode: resultCode
-    );
+        finishTime: time, elapsedTime: elapsed, resultCode: resultCode);
 
-    return await update(c, id, seriesId);
+    update(c, id, seriesId);
+  }
+
+  _errorHandler(Object? error, StackTrace stackTrace, String func) {
+    final s =
+        (error == null) ? error.toString() : 'Error encountered Race Competitor.  $func';
+    SnackBarService.showErrorSnackBar(content: s);
+    loggy.error(s);
   }
 }
 

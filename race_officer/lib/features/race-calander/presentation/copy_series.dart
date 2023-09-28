@@ -30,11 +30,11 @@ class _CopySeriesState extends ConsumerState<CopySeries> with UiLoggy {
     series = widget.series;
   }
 
-  Future<void> _submit() async {
+  _submit() {
     _formKey.currentState?.saveAndValidate();
     final form = _formKey.currentState!;
     form.validate();
-    
+
     final raceSeriesService = ref.read(seriesRepositoryProvider);
 
     if (form.isValid) {
@@ -59,29 +59,14 @@ class _CopySeriesState extends ConsumerState<CopySeries> with UiLoggy {
         races: updatedRaces,
       );
 
-      bool success = await raceSeriesService.add(updatedSeries);
+      raceSeriesService.add(updatedSeries);
 
-      if (success) {
-        // TODO: Could not use context.goNamed('series') as it did not navigate back
-        // up the stack - admin worked.  Need to look at how Navigator and goRouter interact.
-        // Currently just using gorouter to manage the top-level navigation stacks
-        if (context.mounted) {
-          Navigator.of(context).pop();
-          Navigator.of(context).pop();
-        }
-      } else {
-        loggy.error('Error encountered copying series');
-        SnackBar(
-          content: const Text('Error encountered copying series'),
-          action: SnackBarAction(
-            label: 'Discard changes',
-            onPressed: () {
-              if (context.mounted) {
-                Navigator.of(context).pop();
-              }
-            },
-          ),
-        );
+      // TODO: Could not use context.goNamed('series') as it did not navigate back
+      // up the stack - admin worked.  Need to look at how Navigator and goRouter interact.
+      // Currently just using gorouter to manage the top-level navigation stacks
+      if (context.mounted) {
+        Navigator.of(context).pop();
+        Navigator.of(context).pop();
       }
     }
   }

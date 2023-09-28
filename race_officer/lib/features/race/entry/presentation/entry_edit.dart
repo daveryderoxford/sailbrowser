@@ -44,7 +44,7 @@ class _EditSeriesState extends ConsumerState<EditEntry> with UiLoggy {
     return (0);
   }
 
-  Future<void> _submit() async {
+  _submit() {
     final form = _formKey.currentState!;
     form.saveAndValidate();
 
@@ -52,8 +52,6 @@ class _EditSeriesState extends ConsumerState<EditEntry> with UiLoggy {
 
     if (form.isValid) {
       final formData = _formKey.currentState!.value;
-
-      bool success = false;
 
       if (raceCompetitor == null) {
         for (var race in formData['races']) {
@@ -68,9 +66,7 @@ class _EditSeriesState extends ConsumerState<EditEntry> with UiLoggy {
             handicap: 0, // TODO getHandicap(race, formData['boatClass']),
           );
 
-          success = await competitorService.add(update, race.seriesId);
-
-          if (!success) break;
+          competitorService.add(update, race.seriesId);
         }
       } else {
         final update = raceCompetitor!.copyWith(
@@ -80,27 +76,11 @@ class _EditSeriesState extends ConsumerState<EditEntry> with UiLoggy {
           crew: formData['crew'],
         );
 
-        success =
-            await competitorService.update(update, update.id, update.seriesId);
+        competitorService.update(update, update.id, update.seriesId);
       }
 
-      if (success) {
-        if (context.mounted) {
-          context.pop();
-        }
-      } else {
-        SnackBar(
-          content: const Text('Error encountered saving series'),
-          action: SnackBarAction(
-            label: 'Discard changes',
-            onPressed: () {
-              if (context.mounted) {
-                context.pop();
-              }
-            },
-          ),
-        );
-        loggy.error('Error encountered saving series');
+      if (context.mounted) {
+        context.pop();
       }
     }
   }

@@ -14,10 +14,7 @@ enum StartWhen {
   scheduledStartTime,
 }
 
-enum BeepDuration {
-  short,
-  long
-}
+enum BeepDuration { short, long }
 
 class StartSequence extends StateNotifier<StartSequenceState> with UiLoggy {
   StartSequence(this.ref, [StartSequenceState? initialStartState])
@@ -105,16 +102,16 @@ class StartSequence extends StateNotifier<StartSequenceState> with UiLoggy {
   }
 
   /// Handler for one second timer
-  _timerTickHandler(Timer timer) async {
+  _timerTickHandler(Timer timer) {
     final secondstoStart = state.timeToNextStart.inSeconds - 1;
-   // loggy.info(
-   //     'Time to next start:  ${state.timeToNextStart.inSeconds}  Race start: ${state.races[0].raceOfDay.toString()}');
+    // loggy.info(
+    //     'Time to next start:  ${state.timeToNextStart.inSeconds}  Race start: ${state.races[0].raceOfDay.toString()}');
 
     /** Beep at set times before the start */
     if (_shortBeepTimes.contains(secondstoStart)) {
       _beep();
     }
-    if (secondstoStart == 0 ) {
+    if (secondstoStart == 0) {
       _beep(duration: BeepDuration.long);
     }
 
@@ -131,15 +128,15 @@ class StartSequence extends StateNotifier<StartSequenceState> with UiLoggy {
         actualStart: clock.now(),
       );
 
-       final series = ref.read(seriesProvider(race.seriesId));
-        await ref.read(seriesRepositoryProvider).updateRace(series!, races[0].id, race);
+      final series = ref.read(seriesProvider(race.seriesId));
+      ref.read(seriesRepositoryProvider).updateRace(series!, race.id, race);
 
       startedRaces.add(races[0]);
       races.removeAt(0);
 
       // End of start sequence
       if (races.isEmpty) {
-        state = state.copyWith( 
+        state = state.copyWith(
           races: races,
           startedRaces: startedRaces,
           startStatus: StartStatus.finished,
@@ -164,17 +161,17 @@ class StartSequence extends StateNotifier<StartSequenceState> with UiLoggy {
       return r;
     }).toList();
 
-     for (var r in updated) {
-        loggy.info( '${r.fleetId}  ${r.actualStart}\n');
-      }
-      
-      return updated;
+    for (var r in updated) {
+      loggy.info('${r.fleetId}  ${r.actualStart}\n');
+    }
+
+    return updated;
   }
 
-  _beep({BeepDuration? duration = BeepDuration.short})  {
-    
-    String audioasset = (duration == BeepDuration.short) ?
-   "audio/beep-short.mp3"  : "audio/beep-long.mp3";
+  _beep({BeepDuration? duration = BeepDuration.short}) {
+    String audioasset = (duration == BeepDuration.short)
+        ? "audio/beep-short.mp3"
+        : "audio/beep-long.mp3";
 
     AudioPlayer player = AudioPlayer();
 

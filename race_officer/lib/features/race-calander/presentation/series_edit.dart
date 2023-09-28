@@ -33,16 +33,14 @@ class _EditSeriesState extends ConsumerState<EditSeries> with UiLoggy {
     series = widget.series;
   }
 
-  Future<void> _submit() async {
+  _submit()  {
     final form = _formKey.currentState!;
     form.validate();
-    
+
     final raceSeriesService = ref.read(seriesRepositoryProvider);
 
     if (form.isValid) {
       final formData = _formKey.currentState!.value;
-
-      bool success;
 
       final scoringScheme = SeriesScoringData(
           scheme: formData['scoringScheme'],
@@ -56,7 +54,7 @@ class _EditSeriesState extends ConsumerState<EditSeries> with UiLoggy {
           fleetId: formData['fleetId'],
           scoringScheme: scoringScheme,
         );
-        success = await raceSeriesService.add(update);
+        raceSeriesService.add(update);
       } else {
         final update = series!.copyWith(
           name: formData['name'],
@@ -64,21 +62,11 @@ class _EditSeriesState extends ConsumerState<EditSeries> with UiLoggy {
           scoringScheme: scoringScheme,
         );
 
-        success = await raceSeriesService.update(update, update.id);
+        raceSeriesService.update(update, update.id);
       }
-      if (success) {
-              if (context.mounted) { context.pop(); }
-      } else {
-        SnackBar(
-          content: const Text('Error encountered saving series'),
-          action: SnackBarAction(
-            label: 'Discard changes',
-            onPressed: () {
-              if (context.mounted) { context.pop(); }
-            },
-          ),
-        );
-        loggy.error('Error encountered saving series');
+
+      if (context.mounted) {
+        context.pop();
       }
     }
   }
@@ -192,7 +180,9 @@ class _EditSeriesState extends ConsumerState<EditSeries> with UiLoggy {
         ),
         validator: FormBuilderValidators.required(),
         autovalidateMode: AutovalidateMode.onUserInteraction,
-        initialValue: (series != null) ? series!.scoringScheme.entryAlgorithm : initialSeriesScoring.entryAlgorithm,
+        initialValue: (series != null)
+            ? series!.scoringScheme.entryAlgorithm
+            : initialSeriesScoring.entryAlgorithm,
         items: SeriesEntryAlgorithm.values
             .map((scheme) => DropdownMenuItem(
                   value: scheme,

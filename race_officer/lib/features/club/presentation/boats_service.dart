@@ -2,9 +2,9 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:loggy/loggy.dart';
 import 'package:rxdart/rxdart.dart';
+import 'package:sailbrowser_flutter/common_widgets/snackbar_service.dart';
 import 'package:sailbrowser_flutter/features/club/domain/boat.dart';
 import 'package:sailbrowser_flutter/features/club/domain/clubs_service.dart';
-
 
 class BoatService with UiLoggy {
   static int _boatsSort(Boat a, b) {
@@ -27,59 +27,48 @@ class BoatService with UiLoggy {
           fromFirestore: (snapshot, _) => Boat.fromJson(snapshot.data()!),
           toFirestore: (Boat boat, _) => boat.toJson());
 
-  late final Stream<List<Boat>> allBoats$ = _boatsCollection.snapshots()
-  .map(
+  late final Stream<List<Boat>> allBoats$ = _boatsCollection.snapshots().map(
     (snap) {
-      loggy.info('snapshot size: smap ${snap.size}   Number of changes ${snap.docChanges.length}');
       final boats = snap.docs.map<Boat>((doc) => doc.data() as Boat).toList();
       boats.sort((a, b) => _boatsSort(a, b));
-      loggy.info('Boats updateed}');
       return boats;
     },
   ).shareReplay();
 
-  BoatService(this.clubId) {
-     loggy.info('Creating Boat service');
-  }
+  BoatService(this.clubId);
 
   add(Boat boat) {
-    try {
-      final update = boat.copyWith(id: _boatsCollection.doc().id);
-      _boatsCollection.doc(update.id)
-         .set(update)
-         .onError((error, stackTrace) => null);
-    } catch (e) {
-      loggy.error(e.toString());
-    }
+    final update = boat.copyWith(id: _boatsCollection.doc().id);
+    _boatsCollection
+        .doc(update.id)
+        .set(update)
+        .onError((error, stackTrace) => _errorHandler(error, stackTrace, 'add'));
   }
 
-  Future<bool> remove(String id) async {
-    try {
-      await _boatsCollection.doc(id).delete();
-      return true;
-    } catch (e) {
-      loggy.error(e.toString());
-      return Future.error(e);
-    }
+  remove(String id) {
+    _boatsCollection.doc(id)
+    .delete()
+    .onError((error, stackTrace) => _errorHandler(error, stackTrace, 'remove'));
   }
 
-  Future<bool> update(Boat boat, String id) async {
-    try {
-      await _boatsCollection.doc(id).update(boat.toJson());
-      return true;
-    } catch (e) {
-      loggy.error('Error encountered saving boat ${e.toString()}');
-      return Future.error(e);
-    }
+  update(Boat boat, String id) {
+    _boatsCollection
+        .doc(id)
+        .update(boat.toJson())
+        .onError((error, stackTrace) => _errorHandler(error, stackTrace, 'update'));
+  }
+
+  _errorHandler(Object? error, StackTrace stackTrace, String func) {
+    final s = (error== null)  ? error.toString() : 'Error encountered BoatService.  $func';
+    SnackBarService.showErrorSnackBar(content: s);
+    loggy.error(s);
   }
 }
 
 final boatsProvider =
     Provider((ref) => BoatService(ref.watch(currentClubProvider).current.id));
 
-final allBoatProvider =
-    StreamProvider( (ref)  {
-      final bs = ref.read(boatsProvider);
-      return bs.allBoats$;
-    });
-
+final allBoatProvider = StreamProvider((ref) {
+  final bs = ref.read(boatsProvider);
+  return bs.allBoats$;
+});

@@ -63,8 +63,7 @@ class _EditSeriesState extends ConsumerState<EditRace> with UiLoggy {
   }
 
   Future<void> _submit() async {
-
-    _formKey.currentState?.saveAndValidate(); 
+    _formKey.currentState?.saveAndValidate();
     final form = _formKey.currentState!;
     form.validate();
 
@@ -72,8 +71,6 @@ class _EditSeriesState extends ConsumerState<EditRace> with UiLoggy {
 
     if (form.isValid) {
       final formData = _formKey.currentState!.value;
-
-      bool success;
 
       final DateTime startDate = formData['scheduledStartDate'];
       final int raceOfDay = formData['raceOfDay'];
@@ -93,7 +90,7 @@ class _EditSeriesState extends ConsumerState<EditRace> with UiLoggy {
           return;
         }
 
-        success = await raceSeriesService.addRace(series!, update);
+        raceSeriesService.addRace(series!, update);
       } else {
         final update = race!.copyWith(
           type: formData['type'],
@@ -107,26 +104,11 @@ class _EditSeriesState extends ConsumerState<EditRace> with UiLoggy {
           return;
         }
 
-        success =
-            await raceSeriesService.updateRace(series!, update.id, update);
+        raceSeriesService.updateRace(series!, update.id, update);
       }
-      if (success) {
-        if (context.mounted) {
-          context.pop();
-        }
-      } else {
-        SnackBar(
-          content: const Text('Error encountered saving series'),
-          action: SnackBarAction(
-            label: 'Discard changes',
-            onPressed: () {
-              if (context.mounted) {
-                context.pop();
-              }
-            },
-          ),
-        );
-        loggy.error('Error encountered saving race');
+
+      if (context.mounted) {
+        context.pop();
       }
     }
   }
