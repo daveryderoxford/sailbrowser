@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:sailbrowser_flutter/features/club/presentation/boat_list_item.dart';
-import 'package:sailbrowser_flutter/features/club/presentation/boats_service.dart';
+import 'package:sailbrowser_flutter/features/club/presentation/widgets/boat_list_item.dart';
+import 'package:sailbrowser_flutter/features/club/domain/boats_service.dart';
 
 import 'boat_edit.dart';
 

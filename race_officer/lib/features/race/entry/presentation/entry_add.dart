@@ -6,6 +6,7 @@ import 'package:loggy/loggy.dart';
 import 'package:sailbrowser_flutter/common_widgets/responsive_center.dart';
 import 'package:sailbrowser_flutter/common_widgets/will_pop_form.dart';
 import 'package:sailbrowser_flutter/features/club/presentation/boat_edit.dart';
+import 'package:sailbrowser_flutter/features/club/presentation/widgets/boat_form_fields.dart';
 import 'package:sailbrowser_flutter/features/race-calander/domain/series.dart';
 import 'package:sailbrowser_flutter/features/race-calander/domain/series_service.dart';
 import 'package:sailbrowser_flutter/features/race/domain/race_competitor.dart';

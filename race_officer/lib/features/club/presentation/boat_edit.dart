@@ -1,15 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_form_builder/flutter_form_builder.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:form_builder_validators/form_builder_validators.dart';
 import 'package:go_router/go_router.dart';
 import 'package:loggy/loggy.dart';
 import 'package:sailbrowser_flutter/common_widgets/delete_button.dart';
 import 'package:sailbrowser_flutter/common_widgets/responsive_center.dart';
 import 'package:sailbrowser_flutter/common_widgets/will_pop_form.dart';
 import 'package:sailbrowser_flutter/features/club/domain/boat.dart';
+import 'package:sailbrowser_flutter/features/club/presentation/widgets/boat_form_fields.dart';
 
-import 'boats_service.dart';
+import '../domain/boats_service.dart';
 
 class EditBoat extends ConsumerStatefulWidget {
   final String id;
@@ -122,77 +122,5 @@ class _EditBoatState extends ConsumerState<EditBoat> with UiLoggy {
       initialValue: boat != null ? boat!.toJson() : {},
       child: BoatFormFields(boat: boat),
     );
-  }
-}
-
-class BoatFormFields extends StatelessWidget {
-  const BoatFormFields({
-    super.key,
-    this.boat,
-  });
-
-  final Boat? boat;
-
-  @override
-  Widget build(BuildContext context) {
-    return Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: [
-      FormBuilderTextField(
-        name: 'boatClass',
-        autovalidateMode: AutovalidateMode.onUserInteraction,
-        decoration: const InputDecoration(
-          labelText: 'Class',
-          helperText: "Class eg Areo 7, Fireball",
-        ),
-        validator: FormBuilderValidators.required(),
-      ),
-      FormBuilderTextField(
-        name: 'sailNumber',
-        decoration: const InputDecoration(labelText: 'Sail number'),
-        autovalidateMode: AutovalidateMode.onUserInteraction,
-        valueTransformer: (text) => text != null ? num.tryParse(text) : null,
-        validator: FormBuilderValidators.compose([
-          FormBuilderValidators.required(),
-          FormBuilderValidators.numeric(),
-        ]),
-        initialValue: boat?.sailNumber.toString(),
-        keyboardType: const TextInputType.numberWithOptions(
-          signed: false,
-          decimal: false,
-        ),
-        textInputAction: TextInputAction.next,
-        textAlign: TextAlign.start,
-      ),
-      FormBuilderDropdown<String>(
-        name: 'type',
-        autovalidateMode: AutovalidateMode.onUserInteraction,
-        initialValue: boat?.type.name,
-        decoration: const InputDecoration(
-          labelText: 'Type',
-        ),
-        validator: FormBuilderValidators.required(),
-        items: BoatType.values
-            .map((type) => DropdownMenuItem(
-                  value: type.name,
-                  child: Text(type.displayName),
-                ))
-            .toList(),
-      ),
-      FormBuilderTextField(
-        name: 'name',
-        decoration: const InputDecoration(labelText: 'Boat name'),
-      ),
-      FormBuilderTextField(
-        name: 'helm',
-        decoration: const InputDecoration(labelText: 'Helm'),
-      ),
-      FormBuilderTextField(
-        name: 'crew',
-        decoration: const InputDecoration(labelText: 'Crew'),
-      ),
-      FormBuilderTextField(
-        name: 'owner',
-        decoration: const InputDecoration(labelText: 'Owner'),
-      ),
-    ]);
   }
 }
