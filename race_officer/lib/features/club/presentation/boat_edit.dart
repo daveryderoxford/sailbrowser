@@ -46,7 +46,7 @@ class _EditBoatState extends ConsumerState<EditBoat> with UiLoggy {
         boatService.add(u);
       } else {
         final update = boat!.copyWith(
-          sailingClass: formData['sailingClass'],
+          boatClass: formData['boatClass'],
           type: BoatType.values.byName(formData['type']),
           sailNumber: formData['sailNumber'],
           name: formData['name'],
@@ -137,11 +137,11 @@ class BoatFormFields extends StatelessWidget {
   Widget build(BuildContext context) {
     return Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: [
       FormBuilderTextField(
-        name: 'sailingClass',
+        name: 'boatClass',
         autovalidateMode: AutovalidateMode.onUserInteraction,
         decoration: const InputDecoration(
           labelText: 'Class',
-          helperText: "Sailing class eg Fireball",
+          helperText: "Class eg Areo 7, Fireball",
         ),
         validator: FormBuilderValidators.required(),
       ),

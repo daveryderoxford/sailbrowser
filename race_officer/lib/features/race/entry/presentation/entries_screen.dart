@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:loggy/loggy.dart';
 import 'package:sailbrowser_flutter/features/race/domain/race_competitor_service.dart';
-import 'package:sailbrowser_flutter/features/race/entry/presentation/competitor_list_item.dart';
-import 'package:sailbrowser_flutter/features/race/entry/presentation/entry_edit.dart';
+import 'package:sailbrowser_flutter/features/race/entry/presentation/entry_add.dart';
+import 'package:sailbrowser_flutter/features/race/entry/presentation/widgets/competitor_list_item.dart';
 
 class EntriesScreen extends ConsumerWidget with UiLoggy {
   const EntriesScreen({super.key});
@@ -44,9 +44,7 @@ class EntriesScreen extends ConsumerWidget with UiLoggy {
           Navigator.push(
             context,
             MaterialPageRoute(
-              builder: (context) => const EditEntry(
-                id: '',
-              ),
+              builder: (context) => const AddEntry(),
             ),
           );
         },

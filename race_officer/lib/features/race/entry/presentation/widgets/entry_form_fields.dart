@@ -8,8 +8,8 @@ import 'package:sailbrowser_flutter/features/club/presentation/boats_service.dar
 import 'package:sailbrowser_flutter/features/race/domain/race_competitor.dart';
 import 'package:sailbrowser_flutter/util/list_extensions.dart';
 
-class ExistingEntryFormFields extends ConsumerWidget {
-  const ExistingEntryFormFields({
+class EntryFormFields extends ConsumerWidget {
+  const EntryFormFields({
     super.key,
     this.competitor,
   });
@@ -21,7 +21,7 @@ class ExistingEntryFormFields extends ConsumerWidget {
     final boats = ref.watch(allBoatProvider).valueOrNull;
 
     final classNames = boats != null
-        ? boats.map((boat) => boat.sailingClass).toList().unique((c) => c)
+        ? boats.map((boat) => boat.boatClass).toList().unique((c) => c)
         : <String>[];
     classNames.sort((a, b) => a.compareTo(b));
 
@@ -71,7 +71,7 @@ class ExistingEntryFormFields extends ConsumerWidget {
               _formKey.currentState?.value['boatClass']?.toLowerCase();
           return boats!
               .where((b) =>
-                  b.sailingClass.toLowerCase() == selectedBoatClass &&
+                  b.boatClass.toLowerCase() == selectedBoatClass &&
                   b.sailNumber.toString().startsWith(query))
               .map((b) => b.sailNumber);
         },

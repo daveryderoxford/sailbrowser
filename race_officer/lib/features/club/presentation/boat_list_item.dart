@@ -25,7 +25,7 @@ class BoatListItem extends StatelessWidget {
   Widget build(BuildContext context) {
     return ListTile(
       title: Row(children: [
-        Text(boat.sailingClass),
+        Text(boat.boatClass),
         const SizedBox(width: 25),
         SailNumber(num: boat.sailNumber),
         const SizedBox(width: 25),

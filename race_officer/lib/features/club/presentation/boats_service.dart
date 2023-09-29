@@ -8,8 +8,8 @@ import 'package:sailbrowser_flutter/features/club/domain/clubs_service.dart';
 
 class BoatService with UiLoggy {
   static int _boatsSort(Boat a, b) {
-    final ca = a.sailingClass.toLowerCase();
-    final cb = b.sailingClass.toLowerCase();
+    final ca = a.boatClass.toLowerCase();
+    final cb = b.boatClass.toLowerCase();
 
     if (ca != cb) {
       return ca.compareTo(cb);

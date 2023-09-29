@@ -20,7 +20,7 @@ class StartListItem extends ConsumerWidget with UiLoggy {
         const SizedBox(width: 25),
         Text('Start number:  ${start.order.toString()}'),
       ]),
-      trailing: TextButton(
+      trailing: OutlinedButton(
         onPressed: () {
           if (startStatus == StartStatus.notConfigured) {
             final sequence =  ref.read(startSequenceProvider.notifier);

@@ -29,7 +29,7 @@ class Boat with _$Boat {
   const factory Boat({
     @Default(Boat.UNSET_ID) String id,
     required int sailNumber,
-    required String sailingClass,
+    required String boatClass,
     required BoatType type,
     @Default("") String  name,
     @Default("") String owner,
