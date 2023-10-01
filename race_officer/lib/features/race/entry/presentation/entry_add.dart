@@ -5,12 +5,13 @@ import 'package:go_router/go_router.dart';
 import 'package:loggy/loggy.dart';
 import 'package:sailbrowser_flutter/common_widgets/responsive_center.dart';
 import 'package:sailbrowser_flutter/common_widgets/will_pop_form.dart';
-import 'package:sailbrowser_flutter/features/club/presentation/boat_edit.dart';
+import 'package:sailbrowser_flutter/features/club/domain/clubs_service.dart';
 import 'package:sailbrowser_flutter/features/club/presentation/widgets/boat_form_fields.dart';
 import 'package:sailbrowser_flutter/features/race-calander/domain/series.dart';
 import 'package:sailbrowser_flutter/features/race-calander/domain/series_service.dart';
 import 'package:sailbrowser_flutter/features/race/domain/race_competitor.dart';
 import 'package:sailbrowser_flutter/features/race/domain/race_competitor_service.dart';
+import 'package:sailbrowser_flutter/features/results/scoring/race_scoring.dart';
 import 'package:sailbrowser_flutter/features/system/domain/boat_class.dart';
 import 'package:uuid/uuid.dart';
 
@@ -32,11 +33,6 @@ class _AddSeriesState extends ConsumerState<AddEntry> with UiLoggy {
   String? selectedClass;
   AddEntryMode entryMode = AddEntryMode.existingBoat;
 
-  num _getHandicap(Race race, BoatClass boatClass) {
-    // TODO - look up handlicap based on algorithm
-    return (0);
-  }
-
   _submit() {
     final form = _formKey.currentState!;
     form.saveAndValidate();
@@ -46,6 +42,9 @@ class _AddSeriesState extends ConsumerState<AddEntry> with UiLoggy {
     if (form.isValid) {
       final formData = _formKey.currentState!.value;
 
+      final boatClasses = ref.read(allBoatClassesProvider(HandicapScheme.py)); // TO DO to add suppor for multiple handicap schemes
+      final handicap = boatClasses.firstWhere((bs) => bs.name == formData['boatClass']).handicap;  
+
       for (var race in formData['races']) {
         RaceCompetitor update;
 
@@ -54,12 +53,12 @@ class _AddSeriesState extends ConsumerState<AddEntry> with UiLoggy {
             update = RaceCompetitor(
               id: const Uuid().v4(),
               boatClass: formData['boatClass'],
-              sailNumber: formData['sailNumber'],
+              sailNumber: formData['sailNumber1'],
               helm: formData['helm'],
               crew: formData['crew'],
               raceId: race.id,
               seriesId: ref.read(raceProvider(race.id))!.seriesId,
-              handicap: 0, // TODO getHandicap(race, formData['boatClass']),
+              handicap: handicap,
             );
           case AddEntryMode.newBoat:
             update = RaceCompetitor(
@@ -70,7 +69,7 @@ class _AddSeriesState extends ConsumerState<AddEntry> with UiLoggy {
               crew: formData['crew'],
               raceId: race.id,
               seriesId: ref.read(raceProvider(race.id))!.seriesId,
-              handicap: 0, // TODO getHandicap(race, formData['boatClass']),
+              handicap: handicap,
             );
         }
 

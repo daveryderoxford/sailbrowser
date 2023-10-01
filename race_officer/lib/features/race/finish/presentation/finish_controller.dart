@@ -7,7 +7,7 @@ import 'package:sailbrowser_flutter/features/race/finish/domain/finish_lists.dar
 
 class FinishController with UiLoggy {
   PinnedCompetitors pinned;
-  RaceCompetitorService compService; 
+  RaceCompetitorService compService;
   CompFilterNotifier filterNotifier;
 
   FinishController(this.pinned, this.compService, this.filterNotifier);
@@ -16,20 +16,22 @@ class FinishController with UiLoggy {
     loggy.info('$action: ${comp.id} ${comp.helm}');
   }
 
-  _removePin(RaceCompetitor comp) {
+/// Resets the filter and removes pinned competitor
+/// after action has beeen performed on it
+  _reset(RaceCompetitor comp) {
     pinned.removeId(comp.id);
     filterNotifier.clear();
   }
 
   lap(RaceCompetitor comp) {
     compService.saveLap(comp, comp.id, comp.seriesId);
-    _removePin(comp);
+    _reset(comp);
     _log('lap', comp);
   }
 
   finish(RaceCompetitor comp) {
     compService.finish(comp, comp.id, comp.seriesId);
-    _removePin(comp);
+    _reset(comp);
     _log('finish', comp);
   }
 
@@ -41,19 +43,22 @@ class FinishController with UiLoggy {
   retired(RaceCompetitor comp) {
     final update = comp.copyWith(resultCode: ResultCode.rdg);
     compService.update(update, update.id, comp.seriesId);
-    _removePin(comp);
+    _reset(comp);
+    _log('retired', comp);
   }
 
   didNotStart(RaceCompetitor comp) {
     final update = comp.copyWith(resultCode: ResultCode.dns);
     compService.update(update, update.id, comp.seriesId);
-    _removePin(comp);
+    _reset(comp);
+    _log('DNS', comp);
   }
 
   stillRacing(RaceCompetitor comp) {
     final update =
         comp.copyWith(finishTime: null, resultCode: ResultCode.notFinished);
     compService.update(update, update.id, comp.seriesId);
+    _log('still racing', comp);
   }
 
 }

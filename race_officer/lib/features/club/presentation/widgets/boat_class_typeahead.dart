@@ -10,11 +10,13 @@ class BoatClassTypeAhead extends StatelessWidget {
     required this.name,
     required this.classNames,
     required this.initialValue,
+    this.onChanged,
   });
 
   final String initialValue;
   final String name;
   final List<String> classNames;
+  final Function(String?)? onChanged;
 
   @override
   Widget build(BuildContext context) {
@@ -29,6 +31,7 @@ class BoatClassTypeAhead extends StatelessWidget {
       initialValue: initialValue,
       validator: FormBuilderValidators.required(
           errorText: 'A class is required to be selected'),
+      onChanged: onChanged,
       autovalidateMode: AutovalidateMode.onUserInteraction,
       hideOnEmpty: true,
       suggestionsCallback: (query) {

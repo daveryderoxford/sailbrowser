@@ -13,13 +13,15 @@ class StartListItem extends ConsumerWidget with UiLoggy {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final startStatus = ref.watch(startSequenceProvider.select((value) => value.startStatus));
-
-    return ListTile(
+  
+    return ExpansionTile(
       title: Row(children: [
         // Text(start.date),
         const SizedBox(width: 25),
         Text('Start number:  ${start.order.toString()}'),
       ]),
+      controlAffinity: ListTileControlAffinity.leading,
+
       trailing: OutlinedButton(
         onPressed: () {
           if (startStatus == StartStatus.notConfigured) {
@@ -34,6 +36,9 @@ class StartListItem extends ConsumerWidget with UiLoggy {
         },
         child: const Text('Start sequence'),
       ),
+      children: const <Widget>[
+            ListTile(title: Text('This is tile number 3')),
+          ],
     );
   }
 }

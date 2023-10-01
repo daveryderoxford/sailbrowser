@@ -29,7 +29,6 @@ class BoatListItem extends StatelessWidget {
         const SizedBox(width: 25),
         SailNumber(num: boat.sailNumber),
         const SizedBox(width: 25),
-        // ignore: unnecessary_null_comparison
         (boat.name != null) ? Text(boat.name) : const NullWidget(),
       ]),
       subtitle: Text(_subTitle(boat)),

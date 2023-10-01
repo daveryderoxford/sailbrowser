@@ -81,12 +81,11 @@ class StartScreen extends ConsumerWidget with UiLoggy {
                   TimeDisplay(textScaleFactor: 1.2),
                 ],
               ),
+              const SizedBox(height: 15,),
               Expanded(
-                child: ListView.separated(
+                child: ListView.builder(
                   itemCount: starts.length,
                   itemBuilder: (context, index) => StartListItem(starts[index]),
-                  separatorBuilder: (BuildContext context, int index) =>
-                      const Divider(),
                 ),
               ),
             ],

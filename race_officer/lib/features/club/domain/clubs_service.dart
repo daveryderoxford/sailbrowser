@@ -62,8 +62,10 @@ final clubProvider = Provider((ref) => ClubService());
 
 final currentClubProvider = Provider((ref) => CurrentClub());
 
-///
-final allClassesProvider =
+/// Return all boat classes for a specifed handicap scheme from both system and club.
+/// Classes for the club are prefered to the system values. 
+/// Classes for the club are listed first. 
+final allBoatClassesProvider =
     Provider.family<List<BoatClass>, HandicapScheme>((ref, scheme) {
   final systemData = ref.watch(systemDataProvider);
   final clubData = ref.watch(currentClubProvider);
@@ -96,18 +98,13 @@ Club defaultClub = Club(
   ],
   handicaps: [
     const HandicapList(
-      name: 'Portsmouth yardstick 2030',
+      name: 'Club PY handicaos 2030',
       handicapScheme: HandicapScheme.py,
       boats: [
-        BoatClass(name: 'Laser', handicap: 1024, source: BoatClassSource.club),
-        BoatClass(name: 'Aero 9', handicap: 1014, source: BoatClassSource.club),
-        BoatClass(name: 'Aero 7', handicap: 1065, source: BoatClassSource.club),
-        BoatClass(
-            name: 'ILCA 7/Laser', handicap: 1024, source: BoatClassSource.club),
-        BoatClass(
-            name: 'ILCA 6/Laser Radial',
-            handicap: 1024,
-            source: BoatClassSource.club),
+        BoatClass(name: 'RS Aero 9', handicap: 1014, source: BoatClassSource.club),
+        BoatClass(name: 'Rs Aero 7', handicap: 1065, source: BoatClassSource.club),
+        BoatClass(name: 'Local club 1', handicap: 1000, source: BoatClassSource.club),
+        BoatClass(name: 'Local club 2', handicap: 1000, source: BoatClassSource.club),
       ],
     ),
   ],

@@ -12,7 +12,8 @@ class FinishedListItem extends ConsumerWidget {
   String _subTitle(RaceCompetitor comp) {
     final finishTime = 'Finish:  ${comp.finishTime!.asHourMinSec()}';
     final elapsedTime = 'Elapsed: ${comp.elapsedTime.asHourMinSec()}';
-    return ('${comp.helmCrew} \n$finishTime    $elapsedTime ');
+    final status = 'Status:  ${comp.resultCode.displayName}';
+    return ('${comp.helmCrew}    $status\n$finishTime   $elapsedTime  ');
   }
 
   const FinishedListItem(this.competitor, {super.key});

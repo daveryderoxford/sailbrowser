@@ -6,10 +6,10 @@ import 'package:loggy/loggy.dart';
 import 'package:sailbrowser_flutter/common_widgets/delete_button.dart';
 import 'package:sailbrowser_flutter/common_widgets/responsive_center.dart';
 import 'package:sailbrowser_flutter/common_widgets/will_pop_form.dart';
-import 'package:sailbrowser_flutter/features/race-calander/domain/series.dart';
+import 'package:sailbrowser_flutter/features/club/domain/clubs_service.dart';
 import 'package:sailbrowser_flutter/features/race/domain/race_competitor.dart';
 import 'package:sailbrowser_flutter/features/race/domain/race_competitor_service.dart';
-import 'package:sailbrowser_flutter/features/system/domain/boat_class.dart';
+import 'package:sailbrowser_flutter/features/results/scoring/race_scoring.dart';
 
 import 'widgets/entry_form_fields.dart';
 
@@ -37,27 +37,25 @@ class _EditSeriesState extends ConsumerState<EditEntry> with UiLoggy {
     super.initState();
     raceCompetitor = widget.raceCompetitor;
   }
-
-  num _getHandicap(Race race, BoatClass boatClass) {
-    // TODO - look up handlicap based on algorithm
-    return (0);
-  }
-
   _submit() {
     final form = _formKey.currentState!;
     form.saveAndValidate();
 
     final competitorService = ref.read(raceCompetitorRepositoryProvider);
 
+
     if (form.isValid) {
       final formData = _formKey.currentState!.value;
 
+      final boatClasses = ref.read(allBoatClassesProvider(HandicapScheme.py)); // TO DO to add suppor for multiple handicap schemes
+      final handicap = boatClasses.firstWhere((bs) => bs.name == formData['boatClass']).handicap;  
+
       final update = raceCompetitor!.copyWith(
         boatClass: formData['boatClass'],
-        sailNumber: formData['sailNumber'],
+        sailNumber: formData['sailNumber1'],
         helm: formData['helm'],
         crew: formData['crew'],
-        handicap: 0 // TODO  _getHandicap(race, boatClass)
+        handicap: handicap,
       );
 
       competitorService.update(update, update.id, update.seriesId);

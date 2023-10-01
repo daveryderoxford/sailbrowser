@@ -4,7 +4,6 @@ enum ResultCodeAlgorithm {
   na,
   compInSeries,
   compInStartArea,
-  scoreLike,
   avgAll,
   avgBefore,
   timePenalty,
@@ -13,285 +12,203 @@ enum ResultCodeAlgorithm {
 }
 
 sealed class ResultCodeScoringBase {
-  ResultCodeScoringBase({required ResultCode code});
+  ResultCodeScoringBase();
 }
 
-sealed class ResultCodeScoring extends ResultCodeScoringBase {
+class ResultCodeScoring extends ResultCodeScoringBase {
   ResultCodeScoring({
-    required ResultCodeAlgorithm longSeriesAlgorithm,
-    required ResultCodeAlgorithm shortSeriesAlgorithm,
-    required num shortSeriesFactor,
-    required num longSeriesFactor,
-    required bool isDiscardable,
-    required bool isStartAreaComp,
-    required bool isStartedComp,
-    required bool isFinishedComp,
-    required super.code,
+    required this.longSeriesAlgorithm, 
+    required this.shortSeriesAlgorithm, 
+    required this.shortSeriesFactor, 
+    required this.longSeriesFactor, 
+    required this.isDiscardable, 
+    required this.isStartAreaComp,
+    required this.isStartedComp, 
+    required this.isFinishedComp, 
   });
+
+  final ResultCodeAlgorithm longSeriesAlgorithm; 
+  final ResultCodeAlgorithm shortSeriesAlgorithm; 
+  final num shortSeriesFactor; 
+  final num longSeriesFactor; 
+  final bool isDiscardable;
+  final bool isStartAreaComp; 
+  final bool isStartedComp; 
+  final bool isFinishedComp; 
 }
 
-sealed class ResultCodeScoreLike extends ResultCodeScoringBase {
+class ResultCodeScoreLike extends ResultCodeScoringBase {
   ResultCodeScoreLike({
-    required ResultCode scoreLike,
-    required super.code,
+    required this.scoreLike,
   });
+  final ResultCode scoreLike;
 }
 
-/*
- Map<ResultCode, ResultCodeData> resultCodes = [
-  'NotFinished', {
-    label: 'Not Finished',
-    description: 'Competitor has not yet finished - Race in progress',
-    group: 'Race',
-    longSeries: 'NA',
-    shortSeries: 'NA',
+/// Map of the algoritms to use for all results codes 
+Map<ResultCode, ResultCodeScoringBase> resultCodes = {
+  ResultCode.notFinished: ResultCodeScoring(
+    longSeriesAlgorithm: ResultCodeAlgorithm.na,
+    shortSeriesAlgorithm: ResultCodeAlgorithm.na,
     shortSeriesFactor: 0,
     longSeriesFactor: 0,
-    discardable: true,
-    startArea: true,
-    started: false,
-    finished: false,
-    isBasic: true,
-}], [
-  'OK' , {
-    label: 'OK',
-    isBasic: true,
-    group: 'Race',
-    shortSeries: 'NA',
+    isDiscardable: true,
+    isStartAreaComp: true,
+    isStartedComp: false,
+    isFinishedComp: false,
+  ),
+  ResultCode.ok: ResultCodeScoring(
+    shortSeriesAlgorithm: ResultCodeAlgorithm.na,
     shortSeriesFactor: 0,
-    longSeries: 'NA',
+    longSeriesAlgorithm: ResultCodeAlgorithm.na,
     longSeriesFactor: 0,
-    discardable: true,
-    startArea: true,
-    started: true,
-    finished: true,
-    description: 'The competitor completed the race'
-  }],   [
-  'DNC', {
-    label: 'Did not compete',
-    isBasic: true,
-    group: 'Race',
-    shortSeries: 'InSeries',
+    isDiscardable: true,
+    isStartAreaComp: true,
+    isStartedComp: true,
+    isFinishedComp: true,
+  ),
+  ResultCode.dnc: ResultCodeScoring(
+    shortSeriesAlgorithm: ResultCodeAlgorithm.compInSeries,
     shortSeriesFactor: 1,
-    longSeries: 'InSeries',
+    longSeriesAlgorithm: ResultCodeAlgorithm.compInSeries,
     longSeriesFactor: 1,
-    discardable: true,
-    startArea: false,
-    started: false,
-    finished: false,
-    description: 'Did not come to the starting area'
-  }],   [
-  'DNF', {
-    label: 'Did not Finish',
-    isBasic: true,
-    group: 'Race',
-    shortSeries: 'InSeries',
+    isDiscardable: true,
+    isStartAreaComp: false,
+    isStartedComp: false,
+    isFinishedComp: false,
+  ),
+  ResultCode.dnf: ResultCodeScoring(
+    shortSeriesAlgorithm: ResultCodeAlgorithm.compInSeries,
     shortSeriesFactor: 1,
-    longSeries: 'StartArea',
+    longSeriesAlgorithm: ResultCodeAlgorithm.compInStartArea,
     longSeriesFactor: 1,
-    discardable: true,
-    startArea: true,
-    started: true,
-    finished: false,
-    description: 'Did not finish the race after starting'
-  }],  [
-  'RET', {
-    label: 'Retired',
-    isBasic: true,
-    group: 'Race',
-    shortSeries: 'ScoreLike',
-    longSeries: 'ScoreLike',
-    scoreLike: 'DNF',
-    description: 'Retired the race after starting'
-  }],  [
-  'DNS', {
-    label: 'Did not start',
-    isBasic: false,
-    group: 'Race',
-    shortSeries: 'InSeries',
+    isDiscardable: true,
+    isStartAreaComp: true,
+    isStartedComp: true,
+    isFinishedComp: false,
+  ),
+  ResultCode.ret: ResultCodeScoreLike(
+    scoreLike: ResultCode.dnf,
+  ),
+  ResultCode.dns: ResultCodeScoring(
+    shortSeriesAlgorithm: ResultCodeAlgorithm.compInSeries,
     shortSeriesFactor: 1,
-    longSeries: 'StartArea',
+    longSeriesAlgorithm: ResultCodeAlgorithm.compInStartArea,
     longSeriesFactor: 1,
-    discardable: true,
-    startArea: false,
-    started: false,
-    finished: false,
-    description: 'Did not start the race (other than DNC and OCS)'
-  }],  [
-  'OOD', {
-    label: 'OOD',
-    isBasic: true,
-    group: 'Race',
-    shortSeries: 'AvgAll',
+    isDiscardable: true,
+    isStartAreaComp: false,
+    isStartedComp: false,
+    isFinishedComp: false,
+  ),
+  ResultCode.ood: ResultCodeScoring(
+    shortSeriesAlgorithm: ResultCodeAlgorithm.avgAll,
     shortSeriesFactor: 0,
-    longSeries: 'AvgAll',
+    longSeriesAlgorithm: ResultCodeAlgorithm.avgAll,
     longSeriesFactor: 0,
-    discardable: true,
-    startArea: false,
-    started: false,
-    finished: false,
-    description: 'Officer of the day'
-  }],  [
-  'OCS', {
-    label: 'On course side',
-    isBasic: true,
-    group: 'Start',
-    shortSeries: 'ScoreLike',
-    longSeries: 'ScoreLike',
-    scoreLike: 'DNF',
-    description: 'On course side of starting line at her starting signal and failed to start or broke rule 30.1 (I Flag)'
-  }],  [
-  'BFD', {
-    label: 'BFD (black flag)',
-    isBasic: false,
-    group: 'Start',
-    shortSeries: 'ScoreLike',
-    longSeries: 'ScoreLike',
-    scoreLike: 'DNF',
-    description: 'Disqualification under rule 30.4 (Black Flag)'
-  }], [
-  'DGM', {
-    label: 'DGM (non-discarable black flag)',
-    isBasic: false,
-    group: 'Start',
-    shortSeries: 'InSeries',
+    isDiscardable: true,
+    isStartAreaComp: false,
+    isStartedComp: false,
+    isFinishedComp: false,
+  ),
+  ResultCode.ocs: ResultCodeScoreLike(
+    scoreLike: ResultCode.dnf,
+  ),
+  ResultCode.bdf: ResultCodeScoreLike(
+    scoreLike: ResultCode.dnf,
+  ),
+  ResultCode.dgm: ResultCodeScoring(
+    shortSeriesAlgorithm: ResultCodeAlgorithm.compInSeries,
     shortSeriesFactor: 1,
-    longSeries: 'StartArea',
+    longSeriesAlgorithm: ResultCodeAlgorithm.compInStartArea,
     longSeriesFactor: 1,
-    discardable: false,
-    startArea: true,
-    started: true,
-    finished: true,
-    description: 'Non-disscardable Black Flag disqualification under rule 30.4.'
-  }],  [
-  'UFD', {
-    label: 'UFD',
-    isBasic: false,
-    group: 'Start',
-    shortSeries: 'ScoreLike',
-    longSeries: 'ScoreLike',
-    scoreLike: 'DNF',
-    description: 'Disqualification under rule 30.3 (U Flag)'
-  }], [
-  'ZFP', {
-    label: 'ZFP',
-    isBasic: false,
-    group: 'Start',
-    shortSeries: 'TimePenalty',
+    isDiscardable: false,
+    isStartAreaComp: true,
+    isStartedComp: true,
+    isFinishedComp: true,
+  ),
+  ResultCode.udf: ResultCodeScoreLike(
+    scoreLike: ResultCode.dnf,
+  ),
+  ResultCode.zfp: ResultCodeScoring(
+    shortSeriesAlgorithm: ResultCodeAlgorithm.timePenalty,
     shortSeriesFactor: 1.2,
-    longSeries: 'TimePenalty',
+    longSeriesAlgorithm: ResultCodeAlgorithm.timePenalty,
     longSeriesFactor: 1.2,
-    discardable: true,
-    startArea: true,
-    started: true,
-    finished: true,
-    description: '20% time penalty under rule 30.2 (Z Flag)'
-  }], [
-  'DSQ', {
-    label: 'Disqualified',
-    isBasic: true,
-    group: 'Penalty',
-    shortSeries: 'ScoreLike',
-    longSeries: 'ScoreLike',
-    scoreLike: 'DNF',
-    description: 'Disqualification due to rule infrimgement'
-  }], [
-  'XPA', {
-    label: 'Exoneration penalty',
-    isBasic: false,
-    group: 'Penalty',
-    shortSeries: 'PositionPenalty',
+    isDiscardable: true,
+    isStartAreaComp: true,
+    isStartedComp: true,
+    isFinishedComp: true,
+  ),
+  ResultCode.dsq: ResultCodeScoreLike(
+    scoreLike: ResultCode.dnf,
+  ),
+  ResultCode.xpa: ResultCodeScoring(
+    shortSeriesAlgorithm: ResultCodeAlgorithm.positionPenalty,
     shortSeriesFactor: 1.2,
-    longSeries: 'PositionPenalty',
+    longSeriesAlgorithm: ResultCodeAlgorithm.positionPenalty,
     longSeriesFactor: 1.2,
-    discardable: true,
-    startArea: true,
-    started: true,
-    finished: true,
-    description: 'Exoneration penalty as a result of an Advisory Hearing and/or RYA Arbitration.'
-  }],  [
-  'SCP', {
-    label: 'Scoring penalty',
-    isBasic: false,
-    group: 'Penalty',
-    shortSeries: 'TimePenalty',
+    isDiscardable: true,
+    isStartAreaComp: true,
+    isStartedComp: true,
+    isFinishedComp: true,
+  ),
+  ResultCode.scp: ResultCodeScoring(
+    shortSeriesAlgorithm: ResultCodeAlgorithm.timePenalty,
     shortSeriesFactor: 1.2,
-    longSeries: 'TimePenalty',
+    longSeriesAlgorithm: ResultCodeAlgorithm.timePenalty,
     longSeriesFactor: 1.2,
-    discardable: true,
-    startArea: true,
-    started: true,
-    finished: true,
-    description: 'Scoring Penalty applied'
-  }],  [
-  'DPI', {
-    label: 'Discretionary penalty',
-    isBasic: false,
-    group: 'Penalty',
-    shortSeries: 'SetByHand',
+    isDiscardable: true,
+    isStartAreaComp: true,
+    isStartedComp: true,
+    isFinishedComp: true,
+  ),
+  ResultCode.dpi: ResultCodeScoring(
+    shortSeriesAlgorithm: ResultCodeAlgorithm.setByHand,
     shortSeriesFactor: 0,
-    longSeries: 'SetByHand',
+    longSeriesAlgorithm: ResultCodeAlgorithm.setByHand,
     longSeriesFactor: 0,
-    discardable: true,
-    startArea: true,
-    started: true,
-    finished: true,
-    description: 'Discretionary penalty imposed'
-  }],  [
-  'RDG', {
-    label: 'Redress given (hand set)',
-    isBasic: false,
-    group: 'Penalty',
-    shortSeries: 'SetByHand',
+    isDiscardable: true,
+    isStartAreaComp: true,
+    isStartedComp: true,
+    isFinishedComp: true,
+  ),
+  ResultCode.rdg: ResultCodeScoring(
+    shortSeriesAlgorithm: ResultCodeAlgorithm.setByHand,
     shortSeriesFactor: 0,
-    longSeries: 'SetByHand',
+    longSeriesAlgorithm: ResultCodeAlgorithm.setByHand,
     longSeriesFactor: 0,
-    discardable: true,
-    startArea: true,
-    started: true,
-    finished: true,
-    description: 'Redress given - Set points by hand'
-  }],  [
-  'RDGa', {
-    label: 'Redress given (avg all races)',
-    isBasic: false,
-    group: 'Penalty',
-    shortSeries: 'AvgAll',
+    isDiscardable: true,
+    isStartAreaComp: true,
+    isStartedComp: true,
+    isFinishedComp: true,
+  ),
+  ResultCode.rdga: ResultCodeScoring(
+    shortSeriesAlgorithm: ResultCodeAlgorithm.avgAll,
     shortSeriesFactor: 0,
-    longSeries: 'AvgAll',
+    longSeriesAlgorithm: ResultCodeAlgorithm.avgAll,
     longSeriesFactor: 0,
-    discardable: true,
-    startArea: true,
-    started: true,
-    finished: true,
-    description: 'Redress given -  Avg of all races'
-  }],  [
-  'RDGb', {
-    label: 'Redress given (avg races before)',
-    isBasic: false,
-    group: 'Penalty',
-    shortSeries: 'AvgBefore',
+    isDiscardable: true,
+    isStartAreaComp: true,
+    isStartedComp: true,
+    isFinishedComp: true,
+  ),
+  ResultCode.rdgb: ResultCodeScoring(
+    shortSeriesAlgorithm: ResultCodeAlgorithm.avgBefore,
     shortSeriesFactor: 0,
-    longSeries: 'AvgBefore',
+    longSeriesAlgorithm: ResultCodeAlgorithm.avgBefore,
     longSeriesFactor: 0,
-    discardable: true,
-    startArea: true,
-    started: true,
-    finished: true,
-    description: 'Redress given - Avg of all Races before'
-  }], [
-  'RDGc', {
-    label: 'Redress given (poisition at incidient)',
-    isBasic: false,
-    group: 'Penalty',
-    shortSeries: 'SetByHand',
+    isDiscardable: true,
+    isStartAreaComp: true,
+    isStartedComp: true,
+    isFinishedComp: true,
+  ),
+  ResultCode.rdgc: ResultCodeScoring(
+    shortSeriesAlgorithm: ResultCodeAlgorithm.setByHand,
     shortSeriesFactor: 0,
-    longSeries: 'SetByHand',
+    longSeriesAlgorithm: ResultCodeAlgorithm.setByHand,
     longSeriesFactor: 0,
-    discardable: true,
-    startArea: true,
-    started: true,
-    finished: true,
-    description: 'Redress given - Position at incident'
-  }]
-]); */
+    isDiscardable: true,
+    isStartAreaComp: true,
+    isStartedComp: true,
+    isFinishedComp: true,
+  )
+};

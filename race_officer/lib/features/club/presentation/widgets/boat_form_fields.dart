@@ -2,9 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_form_builder/flutter_form_builder.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:form_builder_validators/form_builder_validators.dart';
+import 'package:sailbrowser_flutter/common_widgets/form_builder_integer_field.dart';
 import 'package:sailbrowser_flutter/features/club/domain/boat.dart';
-import 'package:sailbrowser_flutter/features/club/domain/boats_service.dart';
+import 'package:sailbrowser_flutter/features/club/domain/clubs_service.dart';
 import 'package:sailbrowser_flutter/features/club/presentation/widgets/boat_class_typeahead.dart';
+import 'package:sailbrowser_flutter/features/results/scoring/race_scoring.dart';
 
 class BoatFormFields extends ConsumerWidget {
   const BoatFormFields({
@@ -16,7 +18,9 @@ class BoatFormFields extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final classNames =<String>['Laser', 'Merlin Rocket'];
+    final boatClasses = ref.watch(allBoatClassesProvider(HandicapScheme.py));
+
+    final classNames = boatClasses.map((bc) => bc.name).toList();
 
     return Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: [
       BoatClassTypeAhead(
@@ -24,22 +28,11 @@ class BoatFormFields extends ConsumerWidget {
         classNames: classNames,
         initialValue: (boat != null) ? boat!.boatClass : "",
       ),
-      FormBuilderTextField(
+      FormBuilderIntegerField(
         name: 'sailNumber',
+        initialValue: boat?.sailNumber,
         decoration: const InputDecoration(labelText: 'Sail number'),
-        autovalidateMode: AutovalidateMode.onUserInteraction,
-        valueTransformer: (text) => text != null ? num.tryParse(text) : null,
-        validator: FormBuilderValidators.compose([
-          FormBuilderValidators.required(),
-          FormBuilderValidators.numeric(),
-        ]),
-        initialValue: boat?.sailNumber.toString(),
-        keyboardType: const TextInputType.numberWithOptions(
-          signed: false,
-          decimal: false,
-        ),
-        textInputAction: TextInputAction.next,
-        textAlign: TextAlign.start,
+        minValue: 1,
       ),
       FormBuilderDropdown<String>(
         name: 'type',
