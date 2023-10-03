@@ -36,8 +36,8 @@ class SeriesService with UiLoggy {
 
   /// Series sorter - series are sorted in order of:
   ///  * Series with no races first - null start date
-  ///  * In order od first race start
-  ///  * In order of the fleet id
+  ///  * TODO  start of first race. No races sorted at the end
+  ///  * fleetId
   static int seriesSort(Series a, b) {
     if (a.startDate == null) {
       return b.startDate == null ? 1 : 0;

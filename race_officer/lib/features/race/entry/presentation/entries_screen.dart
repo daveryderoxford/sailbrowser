@@ -1,9 +1,18 @@
+import 'dart:collection';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:loggy/loggy.dart';
+import 'package:sailbrowser_flutter/features/race-calander/domain/series.dart';
+import 'package:sailbrowser_flutter/features/race-calander/domain/series_service.dart';
+import 'package:sailbrowser_flutter/features/race/domain/race_competitor.dart';
 import 'package:sailbrowser_flutter/features/race/domain/race_competitor_service.dart';
 import 'package:sailbrowser_flutter/features/race/entry/presentation/entry_add.dart';
 import 'package:sailbrowser_flutter/features/race/entry/presentation/widgets/competitor_list_item.dart';
+import 'package:sailbrowser_flutter/features/race/entry/presentation/widgets/race_entries_list_item.dart';
+import 'package:sailbrowser_flutter/util/list_extensions.dart';
+
+typedef EntryRecord = ({Race race, List<RaceCompetitor> competitors});
 
 class EntriesScreen extends ConsumerWidget with UiLoggy {
   const EntriesScreen({super.key});
@@ -18,20 +27,28 @@ class EntriesScreen extends ConsumerWidget with UiLoggy {
       body: competitorsProvider.when(
         loading: () => const CircularProgressIndicator(),
         error: (error, stackTrace) {
-          loggy.error( 'Error reading competiors:  $error stack trace : ${stackTrace.toString()}');
+          loggy.error(
+              'Error reading competiors:  $error stack trace : ${stackTrace.toString()}');
           return Text(error.toString());
         },
         data: (competitors) {
-          // Display all the messages in a scrollable list view.
           if (competitors.isEmpty) {
             return const Center(
               child: Text(textScaleFactor: 1.2, 'No entries for races today'),
             );
           } else {
+            final entryMap = competitors.groupBy((comp) => comp.raceId);
+
+            final entryList = <EntryRecord>[];
+            entryMap.forEach((key, value) {
+              final race = ref.watch(raceProvider(key));
+              entryList.add((race: race!, competitors: value));
+            });
+            entryList.sort( (a, b) => SeriesService.sortRaces(a.race, b.race));
+
             return ListView.separated(
-              itemCount: competitors.length,
-              itemBuilder: (context, index) =>
-                  CompetitorListItem(competitors[index]),
+              itemCount: entryList.length,
+              itemBuilder: (context, index) => RaceEntriesListItem(entryList[index]),
               separatorBuilder: (BuildContext context, int index) =>
                   const Divider(),
             );

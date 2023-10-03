@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:sailbrowser_flutter/features/race/start/domain/start_sequence.dart';
-import 'package:sailbrowser_flutter/features/race/start/domain/start_sequence_service.dart';
+import 'package:sailbrowser_flutter/features/race/start/domain/start_sequence_controller.dart';
 import 'package:sailbrowser_flutter/util/date_time_extensions.dart';
 import 'package:sailbrowser_flutter/util/duration_extensions.dart';
 
