@@ -40,20 +40,17 @@ class _CopySeriesState extends ConsumerState<CopySeries> with UiLoggy {
     if (form.isValid) {
       final formData = _formKey.currentState!.value;
       final updatedFleetId = formData['fleetId'];
-      final updatedSeriesId = const Uuid().v4();
 
       final updatedRaces = series!.races.map(
         (race) {
           return race.copyWith(
             id: const Uuid().v4(),
-            seriesId: updatedSeriesId,
             fleetId: updatedFleetId,
           );
         },
       ).toList();
 
       final updatedSeries = series!.copyWith(
-        id: updatedSeriesId,
         name: formData['name'],
         fleetId: updatedFleetId,
         races: updatedRaces,

@@ -6,7 +6,7 @@ import 'package:sailbrowser_flutter/common_widgets/form_builder_integer_field.da
 import 'package:sailbrowser_flutter/features/club/domain/boat.dart';
 import 'package:sailbrowser_flutter/features/club/domain/clubs_service.dart';
 import 'package:sailbrowser_flutter/features/club/presentation/widgets/boat_class_typeahead.dart';
-import 'package:sailbrowser_flutter/features/results/scoring/race_scoring.dart';
+import 'package:sailbrowser_flutter/features/results/scoring/rating_system.dart';
 
 class BoatFormFields extends ConsumerWidget {
   const BoatFormFields({

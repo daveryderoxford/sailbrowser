@@ -20,7 +20,6 @@ class SelectRacesFilterChip extends ConsumerWidget {
     final raceData = ref.watch(selectedRacesProvider).toList();
     return FormBuilderFilterChip<Race>(
       name: 'races',
-      initialValue: raceData.map((data) => data.race).toList(),
       validator: FormBuilderValidators.required(
           errorText: 'At least one race must be selected'),
       autovalidateMode: AutovalidateMode.onUserInteraction,
@@ -29,7 +28,7 @@ class SelectRacesFilterChip extends ConsumerWidget {
         (data) {
           return FormBuilderChipOption(
             value: data.race,
-            child: Text('${data.series.name} - ${data.race.name} '),
+            child: Text('${data.race.name} '),
           );
         },
       ).toList(),

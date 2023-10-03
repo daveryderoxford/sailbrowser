@@ -1,6 +1,6 @@
    
 import 'package:freezed_annotation/freezed_annotation.dart';
-import 'package:sailbrowser_flutter/features/results/scoring/race_scoring.dart';
+import 'package:sailbrowser_flutter/features/results/scoring/rating_system.dart';
 
 part 'fleet.freezed.dart';
 part 'fleet.g.dart';

@@ -1,6 +1,6 @@
 
 import 'package:freezed_annotation/freezed_annotation.dart';
-import 'package:sailbrowser_flutter/features/results/scoring/race_scoring.dart';
+import 'package:sailbrowser_flutter/features/results/scoring/rating_system.dart';
 
 import 'boat_class.dart';
 
@@ -25,9 +25,8 @@ class HandicapList with _$HandicapList{
      return boats.firstWhere( (boat) => boat.name == className);
   }
 
-    static HandicapList findScheme(List<HandicapList> handicaps, HandicapScheme scheme) {
+  static HandicapList findScheme(List<HandicapList> handicaps, HandicapScheme scheme) {
      return handicaps.firstWhere( (hcaps) => hcaps.handicapScheme == scheme);
   }
- 
 
 }

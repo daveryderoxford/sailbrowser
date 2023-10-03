@@ -9,7 +9,7 @@ import 'package:sailbrowser_flutter/common_widgets/will_pop_form.dart';
 import 'package:sailbrowser_flutter/features/club/domain/clubs_service.dart';
 import 'package:sailbrowser_flutter/features/race/domain/race_competitor.dart';
 import 'package:sailbrowser_flutter/features/race/domain/race_competitor_service.dart';
-import 'package:sailbrowser_flutter/features/results/scoring/race_scoring.dart';
+import 'package:sailbrowser_flutter/features/results/scoring/rating_system.dart';
 
 import 'widgets/entry_form_fields.dart';
 

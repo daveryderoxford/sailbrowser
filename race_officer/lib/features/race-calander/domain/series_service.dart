@@ -87,12 +87,15 @@ class SeriesService with UiLoggy {
   SeriesService(this.clubId);
 
   add(Series series) {
-      final updatedRaces = _updateRaceDetails(series, [...series.races]);
-      final complateUpdate = updatedRaces.copyWith(id: _series.doc().id);
+
+      // set series Id.  
+      final updated1 = series.copyWith(id: _series.doc().id);
+
+      final update = _setRaceDetails(updated1, [...updated1.races]);
 
       _series
-         .doc(complateUpdate.id)
-         .set(complateUpdate)
+         .doc(update.id)
+         .set(update)
          .onError((error, stackTrace) => _errorHandler(error, stackTrace, 'add'));
   }
 
@@ -105,7 +108,7 @@ class SeriesService with UiLoggy {
 
 // Edit a series
   update(Series series, String id)  {
-    final upDatedSeries = _updateRaceDetails(series, [...series.races]);
+    final upDatedSeries = _setRaceDetails(series, [...series.races]);
 
     _series
       .doc(id)
@@ -150,14 +153,20 @@ class SeriesService with UiLoggy {
     this.update(update, update.id);
   }
 
-  Series _updateRaceDetails(Series series, List<Race> races) {
+  /// Set de-normalised race details in race and series objects 
+  Series _setRaceDetails(Series series, List<Race> races) {
+
     // Sort Races for series into order based on start/end time and startgroup
     races.sort((Race a, b) => sortRaces(a, b));
 
-    // Set race name based on time ordering
+    // Set de-normalised details from the series
     final updatedRaces = races.map((race) {
       int index = races.indexOf(race);
-      return race.copyWith(name: 'Race ${index.toString()}');
+      return race.copyWith(
+        seriesId: series.id,
+        fleetId: series.fleetId,
+        index: index,
+        seriesName: series.name);
     }).toList();
 
     // Set start/end time of series

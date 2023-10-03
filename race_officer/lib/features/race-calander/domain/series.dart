@@ -20,8 +20,11 @@ class Series with _$Series {
     required List<Race> races,
     required bool archived,
     required SeriesScoringData scoringScheme,
+    @Default("") note,
   }) = _Series;
 
+  /// Public Series constructor.
+  /// the series Id will be populated 
   factory Series({
     String? season,
     required String name,
@@ -29,6 +32,7 @@ class Series with _$Series {
     DateTime? startDate,
     DateTime? endDate,
     SeriesScoringData? scoringScheme,
+    String? note, 
   }) {
     return _Series(
       id: const Uuid().v1(),
@@ -40,6 +44,7 @@ class Series with _$Series {
       races: [],
       archived: false,
       scoringScheme:  scoringScheme ?? SeriesScoringData.defaultScheme,
+      note: note ?? "",
     );
   }
 
@@ -73,7 +78,8 @@ enum RaceStatus {
 class Race with _$Race {
   factory Race.def({
     required String id,
-    required String name,
+    @Default('Unset') String seriesName,
+    @Default(0) int index,
     required String fleetId,
     required String seriesId,
     required DateTime scheduledStart,
@@ -87,7 +93,6 @@ class Race with _$Race {
 
   // Factory race consructor specifying defaults
   factory Race({
-     String? name,
     required String fleetId,
     required String seriesId,
     required DateTime scheduledStart,
@@ -100,7 +105,6 @@ class Race with _$Race {
   }) {
     return _Race(
       id: const Uuid().v4(),
-      name: name ?? 'Unset',
       fleetId: fleetId,
       seriesId: seriesId,
       scheduledStart: scheduledStart,
@@ -112,6 +116,9 @@ class Race with _$Race {
       isAverageLap: isAverageLap ?? true,
     );
   }
+
+  String get name => '$seriesName - Race $index';
+  String get shortname => 'Race $index';
 
   const Race._();
 

@@ -7,12 +7,10 @@ import 'package:sailbrowser_flutter/common_widgets/responsive_center.dart';
 import 'package:sailbrowser_flutter/common_widgets/will_pop_form.dart';
 import 'package:sailbrowser_flutter/features/club/domain/clubs_service.dart';
 import 'package:sailbrowser_flutter/features/club/presentation/widgets/boat_form_fields.dart';
-import 'package:sailbrowser_flutter/features/race-calander/domain/series.dart';
 import 'package:sailbrowser_flutter/features/race-calander/domain/series_service.dart';
 import 'package:sailbrowser_flutter/features/race/domain/race_competitor.dart';
 import 'package:sailbrowser_flutter/features/race/domain/race_competitor_service.dart';
-import 'package:sailbrowser_flutter/features/results/scoring/race_scoring.dart';
-import 'package:sailbrowser_flutter/features/system/domain/boat_class.dart';
+import 'package:sailbrowser_flutter/features/results/scoring/rating_system.dart';
 import 'package:uuid/uuid.dart';
 
 import 'widgets/entry_form_fields.dart';
@@ -156,7 +154,7 @@ class _AddSeriesState extends ConsumerState<AddEntry> with UiLoggy {
               FormBuilderSwitch(
                 name: 'saveBoat',
                 title: const Text('Save Boat details'),
-                subtitle: const Text('If selected boat detailds will be saved to database of boats'),
+                subtitle: const Text('If selected boat details will be saved to database of boats'),
                 initialValue: false,
                 controlAffinity: ListTileControlAffinity.leading
               )

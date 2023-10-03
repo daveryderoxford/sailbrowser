@@ -1,4 +1,3 @@
-import 'package:clock/clock.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_form_builder/flutter_form_builder.dart';
@@ -13,6 +12,8 @@ import 'package:sailbrowser_flutter/common_widgets/responsive_center.dart';
 import 'package:sailbrowser_flutter/common_widgets/will_pop_form.dart';
 import 'package:sailbrowser_flutter/features/race-calander/domain/series.dart';
 import 'package:sailbrowser_flutter/features/race-calander/domain/series_service.dart';
+
+import 'race_calander_controller.dart';
 
 class EditRace extends ConsumerStatefulWidget {
   final String id;
@@ -184,7 +185,7 @@ class _EditSeriesState extends ConsumerState<EditRace> with UiLoggy {
   List<Widget> _buildFormChildren() {
     final DateTime? s = (race == null) ? null : race!.scheduledStart;
     final initialDate = race == null
-        ? _defaultDate(series!.races)
+        ? ref.read(raceCalanderController).defaultRaceStartTime(series!.races)
         : DateTime(s!.year, s.month, s.day);
 
     return [
@@ -242,19 +243,5 @@ class _EditSeriesState extends ConsumerState<EditRace> with UiLoggy {
         title: const Text("Is avarage lap"),
       ),
     ];
-  }
-
-  /// Returns default start date based on
-  ///   Now if no races
-  ///   7 days after last race in series if one exists
-  ///  Time is set to 00:00:00
-  static DateTime _defaultDate(List<Race> races) {
-    if (races.isEmpty) {
-      final now = clock.now();
-      return DateTime(now.year, now.month, now.day, 0, 0, 0);
-    } else {
-      final d = races.last.scheduledStart.add(const Duration(days: 7));
-      return DateTime(d.year, d.month, d.day, 0, 0, 0);
-    }
   }
 }

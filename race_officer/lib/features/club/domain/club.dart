@@ -1,6 +1,7 @@
 
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:sailbrowser_flutter/features/club/domain/fleet.dart';
+import 'package:sailbrowser_flutter/features/race/start/domain/start_flag_sequence.dart';
 import 'package:sailbrowser_flutter/features/results/scoring/series_scoring.dart';
 
 import 'package:sailbrowser_flutter/features/system/domain/boat_class_list.dart';
@@ -21,9 +22,11 @@ class Club with _$Club {
     required String id,
     required String name,
     required ClubStatus status,
+    @Default("") contactEmail,
     @Default([]) List<Fleet> fleets,
     @Default([]) List<HandicapList> handicaps,
-    required SeriesScoringData defaultScoringData
+    required SeriesScoringData defaultScoringData,
+    @Default(StartFlagSequence()) startFlagSequence,
   }) = _Club;
 
   const Club._();

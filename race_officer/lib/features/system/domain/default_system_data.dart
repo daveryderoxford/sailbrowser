@@ -88,37 +88,37 @@ const _json = '''
           "source": "standard"
         },
         {
-          "name": "DEVOTI D-ZERO",
+          "name": "Devoti D-Zero",
           "handicap": 1029,
           "source": "standard"
         },
         {
-          "name": "ENTERPRISE",
+          "name": "Enterprise",
           "handicap": 1126,
           "source": "standard"
         },
         {
-          "name": "EUROPE",
+          "name": "Europe",
           "handicap": 1141,
           "source": "standard"
         },
         {
-          "name": "FINN",
+          "name": "Finn",
           "handicap": 1049,
           "source": "standard"
         },
         {
-          "name": "FIREBALL",
+          "name": "Fireball",
           "handicap": 952,
           "source": "standard"
         },
         {
-          "name": "FIREFLY",
+          "name": "Firefly",
           "handicap": 1174,
           "source": "standard"
         },
         {
-          "name": "FLYING FIFTEEN",
+          "name": "Flying Fifteen",
           "handicap": 1021,
           "source": "standard"
         },
@@ -128,37 +128,37 @@ const _json = '''
           "source": "standard"
         },
         {
-          "name": "GRADUATE",
+          "name": "Graduate",
           "handicap": 1120,
           "source": "standard"
         },
         {
-          "name": "HADRON H2",
+          "name": "Hadron H2",
           "handicap": 1038,
           "source": "standard"
         },
         {
-          "name": "HORNET",
+          "name": "Hornet",
           "handicap": 959,
           "source": "standard"
         },
         {
-          "name": "ICON",
+          "name": "Icon",
           "handicap": 976,
           "source": "standard"
         },
         {
-          "name": "ILCA 4",
+          "name": "ILCA4/Laser 4.7",
           "handicap": 1210,
           "source": "standard"
         },
         {
-          "name": "ILCA 6",
+          "name": "ILCA 6/Laser Radial",
           "handicap": 1150,
           "source": "standard"
         },
         {
-          "name": "ILCA 7",
+          "name": "ILCA 7/laser",
           "handicap": 1101,
           "source": "standard"
         },
@@ -173,52 +173,52 @@ const _json = '''
           "source": "standard"
         },
         {
-          "name": "KESTREL",
+          "name": "Kestrel",
           "handicap": 1038,
           "source": "standard"
         },
         {
-          "name": "LARK",
+          "name": "Lark",
           "handicap": 1065,
           "source": "standard"
         },
         {
-          "name": "LIGHTNING 368",
+          "name": "Lightning 368",
           "handicap": 1160,
           "source": "standard"
         },
         {
-          "name": "MEGABYTE",
+          "name": "Megabyte",
           "handicap": 1072,
           "source": "standard"
         },
         {
-          "name": "MERLIN-ROCKET",
+          "name": "Merlin-Rocket",
           "handicap": 980,
           "source": "standard"
         },
         {
-          "name": "MIRACLE",
+          "name": "Miracle",
           "handicap": 1194,
           "source": "standard"
         },
         {
-          "name": "MIRROR (D/H)",
+          "name": "Mirror (D/H)",
           "handicap": 1387,
           "source": "standard"
         },
         {
-          "name": "MIRROR (S/H)",
+          "name": "Mirror (S/H)",
           "handicap": 1377,
           "source": "standard"
         },
         {
-          "name": "MUSTO SKIFF",
+          "name": "Musto Skiff",
           "handicap": 845,
           "source": "standard"
         },
         {
-          "name": "NATIONAL 12",
+          "name": "National 12",
           "handicap": 1064,
           "source": "standard"
         },
@@ -228,27 +228,27 @@ const _json = '''
           "source": "standard"
         },
         {
-          "name": "OPTIMIST",
+          "name": "Optimist",
           "handicap": 1635,
           "source": "standard"
         },
         {
-          "name": "OSPREY",
+          "name": "Osprey",
           "handicap": 934,
           "source": "standard"
         },
         {
-          "name": "PHANTOM",
+          "name": "Phantom",
           "handicap": 1002,
           "source": "standard"
         },
         {
-          "name": "ROOSTER 8.1",
+          "name": "Rooster 8.1",
           "handicap": 1035,
           "source": "standard"
         },
         {
-          "name": "RS 100 8.4",
+          "name": "RS100 8.4",
           "handicap": 1002,
           "source": "standard"
         },
@@ -288,117 +288,117 @@ const _json = '''
           "source": "standard"
         },
         {
-          "name": "RS AERO 5",
+          "name": "RS Aero 5",
           "handicap": 1136,
           "source": "standard"
         },
         {
-          "name": "RS AERO 7",
+          "name": "RS Aero 7",
           "handicap": 1063,
           "source": "standard"
         },
         {
-          "name": "RS AERO 9",
+          "name": "RS Aero 9",
           "handicap": 1010,
           "source": "standard"
         },
         {
-          "name": "RS FEVA XL",
+          "name": "RS Feva XL",
           "handicap": 1248,
           "source": "standard"
         },
         {
-          "name": "RS TERA PRO",
+          "name": "RS Tera PRO",
           "handicap": 1364,
           "source": "standard"
         },
         {
-          "name": "RS TERA SPORT",
+          "name": "RS Tera Sport",
           "handicap": 1445,
           "source": "standard"
         },
         {
-          "name": "RS VAREO",
+          "name": "RS Vareo",
           "handicap": 1093,
           "source": "standard"
         },
         {
-          "name": "RS VISION",
+          "name": "RS Vision",
           "handicap": 1137,
           "source": "standard"
         },
         {
-          "name": "SCORPION",
+          "name": "Scorpion",
           "handicap": 1043,
           "source": "standard"
         },
         {
-          "name": "SEAFLY",
+          "name": "Seafly",
           "handicap": 1071,
           "source": "standard"
         },
         {
-          "name": "SOLO",
+          "name": "Solo",
           "handicap": 1142,
           "source": "standard"
         },
         {
-          "name": "SOLUTION",
+          "name": "Solution",
           "handicap": 1096,
           "source": "standard"
         },
         {
-          "name": "STREAKER",
+          "name": "Streaker",
           "handicap": 1128,
           "source": "standard"
         },
         {
-          "name": "SUPERNOVA",
+          "name": "Supernova",
           "handicap": 1077,
           "source": "standard"
         },
         {
-          "name": "TASAR",
+          "name": "Tasar",
           "handicap": 1017,
           "source": "standard"
         },
         {
-          "name": "TOPPER",
+          "name": "Topper",
           "handicap": 1369,
           "source": "standard"
         },
         {
-          "name": "WANDERER",
+          "name": "Wanderer",
           "handicap": 1193,
           "source": "standard"
         },
         {
-          "name": "WAYFARER",
+          "name": "Wayfarer",
           "handicap": 1105,
           "source": "standard"
         },
         {
-          "name": "BYTE CI",
+          "name": "Byte CI",
           "handicap": 1210,
           "source": "standard"
         },
         {
-          "name": "BUZZ",
+          "name": "Buzz",
           "handicap": 1020,
           "source": "standard"
         },
         {
-          "name": "CADET",
+          "name": "Cadet",
           "handicap": 1430,
           "source": "standard"
         },
         {
-          "name": "CANOE INTERNATIONAL",
+          "name": "Canoe International",
           "handicap": 858,
           "source": "standard"
         },
         {
-          "name": "TOPPER 4.2",
+          "name": "Topper 4.2",
           "handicap": 1420,
           "source": "standard"
         },
@@ -413,42 +413,42 @@ const _json = '''
           "source": "standard"
         },
         {
-          "name": "RS AERO 6",
+          "name": "RS Aero 6",
           "handicap": 1105,
           "source": "standard"
         },
         {
-          "name": "A CLASS CAT",
+          "name": "A Class Cat",
           "handicap": 684,
           "source": "standard"
         },
         {
-          "name": "CATAPULT",
+          "name": "Catapult",
           "handicap": 898,
           "source": "standard"
         },
         {
-          "name": "CHALLENGER",
+          "name": "Challenger",
           "handicap": 1173,
           "source": "standard"
         },
         {
-          "name": "DART 18",
+          "name": "Dart 18",
           "handicap": 822,
           "source": "standard"
         },
         {
-          "name": "FORMULA 18",
+          "name": "Formula 18",
           "handicap": 670,
           "source": "standard"
         },
         {
-          "name": "HURRICANE 5.9 SX",
+          "name": "Hurricane 5.9 SX",
           "handicap": 695,
           "source": "standard"
         },
         {
-          "name": "SPITFIRE",
+          "name": "Spitfire",
           "handicap": 719,
           "source": "standard"
         },
@@ -458,7 +458,7 @@ const _json = '''
           "source": "standard"
         },
         {
-          "name": "Dart 15 Sport / Sprint 15 SPORT",
+          "name": "Dart 15 Sport / Sprint 15 Sport",
           "handicap": 904,
           "source": "standard"
         }

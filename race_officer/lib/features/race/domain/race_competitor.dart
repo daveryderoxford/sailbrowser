@@ -21,6 +21,8 @@ class RaceCompetitor with _$RaceCompetitor {
     @Default(Duration()) Duration elapsedTime,
     @Default(Duration()) Duration correctedTime,
     @Default(ResultCode.notFinished) ResultCode resultCode,
+    /// Numbder of laps - defaults to number of lap times but may be manually set
+    @Default(0) int manualLaps,
     @Default([]) List<DateTime> lapTimes,
     ResultData? result,
   }) = _RaceCompetitor; 
@@ -30,14 +32,15 @@ class RaceCompetitor with _$RaceCompetitor {
   factory RaceCompetitor.fromJson(Map<String, Object?> json) =>
       _$RaceCompetitorFromJson(json);
 
-  get numLaps => lapTimes.length;
+  /// the number of laps, manual value if set, otherwise the number of lap times recorded
+  get numLaps => (manualLaps != 0) ? manualLaps : lapTimes.length;
 
   get helmCrew =>  (crew != null && crew!.trim().isNotEmpty)
         ? '$helm / $crew}'
         : helm;
 }
 
-/// Results data that depends on other competitors in the race
+/// Results data that depends on other competitors in the race.
 @freezed
 class ResultData with _$ResultData {
   factory ResultData({
