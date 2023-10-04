@@ -60,9 +60,9 @@ class StartSequenceDisplay extends ConsumerWidget {
             onPressed: () => startSeqService.run(StartWhen.nextMinute),
             child: const Text("Start sequence (next minute)"),
           ),
-          FilledButton(
+          OutlinedButton(
             onPressed: () => startSeqService.reset(), // Add confirmation dialog
-            child: const Text("Abort"),
+            child: const Text("Cancel"),
           ),
         ];
       case StartStatus.running:

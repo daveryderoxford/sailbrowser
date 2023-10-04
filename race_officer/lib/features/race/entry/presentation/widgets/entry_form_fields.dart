@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_form_builder/flutter_form_builder.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:form_builder_validators/form_builder_validators.dart';
+import 'package:loggy/loggy.dart';
 import 'package:sailbrowser_flutter/features/club/domain/boat.dart';
 import 'package:sailbrowser_flutter/features/club/domain/boats_service.dart';
 import 'package:sailbrowser_flutter/features/club/presentation/widgets/boat_class_typeahead.dart';
@@ -10,7 +11,7 @@ import 'package:sailbrowser_flutter/features/race/entry/presentation/widgets/boa
 import 'package:sailbrowser_flutter/features/race/entry/presentation/widgets/sail_number_typeahead.dart';
 import 'package:sailbrowser_flutter/util/list_extensions.dart';
 
-class EntryFormFields extends ConsumerWidget {
+class EntryFormFields extends ConsumerWidget with UiLoggy {
   const EntryFormFields({
     super.key,
     this.competitor,

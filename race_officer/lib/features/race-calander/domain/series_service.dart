@@ -14,6 +14,7 @@ class SeriesService with UiLoggy {
   /// Order race data by:
   /// 1. Scheduled start date
   /// 2. Races of the day
+  /// TODO needs to order by fleet.startorder
   static int sortRaces(Race a, b) {
     int ret = a.scheduledStart.compareTo(b.scheduledStart);
 

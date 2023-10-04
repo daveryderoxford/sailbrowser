@@ -102,7 +102,7 @@ Club defaultClub = Club(
       handicapScheme: HandicapScheme.py,
       boats: [
         BoatClass(name: 'RS Aero 9', handicap: 1014, source: BoatClassSource.club),
-        BoatClass(name: 'Rs Aero 7', handicap: 1065, source: BoatClassSource.club),
+        BoatClass(name: 'RS Aero 7', handicap: 1065, source: BoatClassSource.club),
         BoatClass(name: 'Local club 1', handicap: 1000, source: BoatClassSource.club),
         BoatClass(name: 'Local club 2', handicap: 1000, source: BoatClassSource.club),
       ],

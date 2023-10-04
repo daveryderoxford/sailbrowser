@@ -1,4 +1,3 @@
-import 'dart:collection';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -8,7 +7,6 @@ import 'package:sailbrowser_flutter/features/race-calander/domain/series_service
 import 'package:sailbrowser_flutter/features/race/domain/race_competitor.dart';
 import 'package:sailbrowser_flutter/features/race/domain/race_competitor_service.dart';
 import 'package:sailbrowser_flutter/features/race/entry/presentation/entry_add.dart';
-import 'package:sailbrowser_flutter/features/race/entry/presentation/widgets/competitor_list_item.dart';
 import 'package:sailbrowser_flutter/features/race/entry/presentation/widgets/race_entries_list_item.dart';
 import 'package:sailbrowser_flutter/util/list_extensions.dart';
 

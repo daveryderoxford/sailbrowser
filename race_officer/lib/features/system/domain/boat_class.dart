@@ -27,7 +27,7 @@ class BoatClass  with _$BoatClass {
 
 }
 
-/// Static functions related to boat calss name
+/// Static functions related to boat class name
 class BoatClassName {
   static List<String> alternateNames(String name) => name.split('/');
 

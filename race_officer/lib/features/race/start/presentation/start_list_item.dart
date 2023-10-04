@@ -16,11 +16,10 @@ class StartListItem extends ConsumerWidget with UiLoggy {
         ref.watch(startSequenceProvider.select((value) => value.startStatus));
 
     return ExpansionTile(
-      title: Row(children: [
-        // Text(start.date),
-        const SizedBox(width: 25),
-        Text('Start: ${start.order.toString()}   ${start.races.length} races'),
-      ]),
+      title: 
+        Text('Start: ${start.order.toString()}'),
+      subtitle: Text('${start.races.length} races'),
+  
       controlAffinity: ListTileControlAffinity.leading,
       backgroundColor: Theme.of(context).colorScheme.onPrimary,
       shape: const Border(),
@@ -39,7 +38,7 @@ class StartListItem extends ConsumerWidget with UiLoggy {
             );
           }
         },
-        child: const Text('Start sequence'),
+        child: const Text('Run'),
       ),
       children: start.races
           .map(
