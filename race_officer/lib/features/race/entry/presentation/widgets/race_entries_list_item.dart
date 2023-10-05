@@ -12,7 +12,7 @@ class RaceEntriesListItem extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ExpansionTile(
-      title: Text(raceEntries.race.name, textScaleFactor: 1.2),
+      title: Text(raceEntries.race.name, textScaleFactor: 1.0),
       subtitle: Text(raceEntries.race.fleetId),
       children: raceEntries.competitors.map((comp) => CompetitorListItem(comp)).toList(),
     );

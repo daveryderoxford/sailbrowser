@@ -10,7 +10,7 @@ class FinishedListItem extends ConsumerWidget {
   final RaceCompetitor competitor;
 
   String _subTitle(RaceCompetitor comp) {
-    final finishTime = 'Finish:  ${comp.finishTime!.asHourMinSec()}';
+    final finishTime = (comp.finishTime == null) ? "": 'Finish:  ${comp.finishTime?.asHourMinSec()}';
     final elapsedTime = 'Elapsed: ${comp.elapsedTime.asHourMinSec()}';
     final status = 'Status:  ${comp.resultCode.displayName}';
     return ('${comp.helmCrew}    $status\n$finishTime   $elapsedTime  ');

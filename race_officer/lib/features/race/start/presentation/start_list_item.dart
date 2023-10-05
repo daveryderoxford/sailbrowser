@@ -19,9 +19,8 @@ class StartListItem extends ConsumerWidget with UiLoggy {
       title: 
         Text('Start: ${start.order.toString()}'),
       subtitle: Text('${start.races.length} races'),
-  
       controlAffinity: ListTileControlAffinity.leading,
-      backgroundColor: Theme.of(context).colorScheme.onPrimary,
+      backgroundColor: Theme.of(context).colorScheme.surface,
       shape: const Border(),
       trailing: OutlinedButton(
         onPressed: () {

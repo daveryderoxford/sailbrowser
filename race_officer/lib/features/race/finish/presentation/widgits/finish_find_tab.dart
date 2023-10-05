@@ -6,19 +6,19 @@ import 'package:sailbrowser_flutter/common_widgets/null_widget.dart';
 import 'package:sailbrowser_flutter/common_widgets/numeric_keypad.dart';
 import 'package:sailbrowser_flutter/features/race-calander/domain/series.dart';
 import 'package:sailbrowser_flutter/features/race/finish/domain/finish_lists.dart';
-import 'package:sailbrowser_flutter/features/race/finish/presentation/finish_list.dart';
+import 'package:sailbrowser_flutter/features/race/finish/presentation/widgits/finish_list_tab.dart';
 import 'package:sailbrowser_flutter/util/list_extensions.dart';
 
-class FinishEntry extends ConsumerStatefulWidget {
+class FinishFindTab extends ConsumerStatefulWidget {
   final Series? series;
 
-  const FinishEntry({this.series, super.key});
+  const FinishFindTab({this.series, super.key});
 
   @override
-  ConsumerState<FinishEntry> createState() => _FinishEntryState();
+  ConsumerState<FinishFindTab> createState() => _FinishEntryState();
 }
 
-class _FinishEntryState extends ConsumerState<FinishEntry> with UiLoggy {
+class _FinishEntryState extends ConsumerState<FinishFindTab> with UiLoggy {
   Series? series;
 
   @override
@@ -42,7 +42,7 @@ class _FinishEntryState extends ConsumerState<FinishEntry> with UiLoggy {
     return Column(
       children: [
         const Expanded(
-          child: FinishList(racing: true, filtered: true,),
+          child: FinishListTab(racing: true, filtered: true,),
         ),
         const SizedBox(height: 5),
         _buildClassFilter(context, filter.boatClass),

@@ -2,12 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:loggy/loggy.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:sailbrowser_flutter/features/race/finish/domain/finish_lists.dart';
-import 'package:sailbrowser_flutter/features/race/finish/presentation/finish_item.dart';
+import 'package:sailbrowser_flutter/features/race/finish/presentation/widgits/finish_list_item.dart';
 
 import 'finished_list_item.dart';
 
-class FinishList extends ConsumerWidget with UiLoggy {
-  const FinishList({this.racing = true, this.filtered = false, super.key});
+class FinishListTab extends ConsumerWidget with UiLoggy {
+  const FinishListTab({this.racing = true, this.filtered = false, super.key});
 
   final bool racing;
   final bool filtered;

@@ -2,9 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:sailbrowser_flutter/common_widgets/sail_number.dart';
 import 'package:sailbrowser_flutter/features/race/domain/race_competitor.dart';
-import 'package:sailbrowser_flutter/features/race/finish/presentation/finish_popup_menu.dart';
+import 'package:sailbrowser_flutter/features/race/finish/presentation/widgits/finish_popup_menu.dart';
 
-import 'finish_controller.dart';
+import '../finish_controller.dart';
 
 class FinishListItem extends ConsumerWidget {
   final RaceCompetitor competitor;

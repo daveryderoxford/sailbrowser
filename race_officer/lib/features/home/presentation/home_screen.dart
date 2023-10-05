@@ -20,9 +20,9 @@ class HomeScreen extends ConsumerWidget {
     //   foregroundColor: Theme.of(context).colorScheme.onPrimary,
     //  );
     return Scaffold(
-      appBar: AppBar(
-          title: const Text('Home'),
-          actions: <Widget>[_buildUserMenuButton(context, ref)]),
+      appBar: AppBar(title: const Text('Home'), actions: <Widget>[
+        _buildUserMenuButton(context, ref),
+      ]),
       body: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
@@ -37,42 +37,44 @@ class HomeScreen extends ConsumerWidget {
     final now = clock.now();
     List<Race> todaysRaces = [];
 
-    return Column(
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        const Text('Todays races'),
-        TextButton(
-          onPressed: ()  {
-            final ids = todaysRaces.map( (race) => race.id).toList();
-            ref.read(selectedRaceIdsProvider.notifier).addRace(ids);
-          }, 
-          child: const Text('Add Races'),
+    return Card(
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          const Text('Todays races'),
+          TextButton(
+            onPressed: () {
+              final ids = todaysRaces.map((race) => race.id).toList();
+              ref.read(selectedRaceIdsProvider.notifier).addRace(ids);
+            },
+            child: const Text('Add Races'),
           ),
-        SizedBox(
-          height: 200,
-          child: races.when(
-              loading: () => const CircularProgressIndicator(),
-              error: (error, stackTrace) => Text(error.toString()),
-              data: (races) {
-                todaysRaces = races
-                    .where((r) =>
-                        r.scheduledStart.year == now.year &&
-                        r.scheduledStart.month == now.month &&
-                        r.scheduledStart.day == now.day)
-                    .toList();
-                if (todaysRaces.isEmpty) {
-                  return const Text('No races today');
-                } else {
-                  return ListView.builder(
-                    itemCount: todaysRaces.length,
-                    itemBuilder: (context, index) =>
-                        HomeRaceListItem(todaysRaces[index]),
-                  );
-                }
-              }),
-        ),
-      ],
-      //   ),
+          SizedBox(
+            height: 200,
+            child: races.when(
+                loading: () => const CircularProgressIndicator(),
+                error: (error, stackTrace) => Text(error.toString()),
+                data: (races) {
+                  todaysRaces = races
+                      .where((r) =>
+                          r.scheduledStart.year == now.year &&
+                          r.scheduledStart.month == now.month &&
+                          r.scheduledStart.day == now.day)
+                      .toList();
+                  if (todaysRaces.isEmpty) {
+                    return const Text('No races today');
+                  } else {
+                    return ListView.builder(
+                      itemCount: todaysRaces.length,
+                      itemBuilder: (context, index) =>
+                          HomeRaceListItem(todaysRaces[index]),
+                    );
+                  }
+                }),
+          ),
+        ],
+        //   ),
+      ),
     );
   }
 

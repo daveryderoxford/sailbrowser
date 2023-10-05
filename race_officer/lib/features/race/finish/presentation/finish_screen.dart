@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:sailbrowser_flutter/features/race/finish/presentation/finish_entry.dart';
-import 'package:sailbrowser_flutter/features/race/finish/presentation/finish_list.dart';
+import 'package:sailbrowser_flutter/features/race/finish/presentation/widgits/finish_find_tab.dart';
+import 'package:sailbrowser_flutter/features/race/finish/presentation/widgits/finish_list_tab.dart';
 
 class FinishScreen extends StatelessWidget {
   const FinishScreen({super.key});
@@ -22,9 +22,9 @@ class FinishScreen extends StatelessWidget {
           ),
           body: const TabBarView(
             children: [
-              FinishEntry(),
-              FinishList(racing: true),
-              FinishList(racing: false),
+              FinishFindTab(),
+              FinishListTab(racing: true),
+              FinishListTab(racing: false),
             ],
           ),
         ),

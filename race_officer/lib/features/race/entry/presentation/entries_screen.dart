@@ -32,7 +32,7 @@ class EntriesScreen extends ConsumerWidget with UiLoggy {
         data: (competitors) {
           if (competitors.isEmpty) {
             return const Center(
-              child: Text(textScaleFactor: 1.2, 'No entries for races today'),
+              child: Text(textScaleFactor: 1.2,'No entries for races today'),
             );
           } else {
             final entryMap = competitors.groupBy((comp) => comp.raceId);
