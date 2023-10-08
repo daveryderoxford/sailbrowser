@@ -100,7 +100,9 @@ class SeriesService with UiLoggy {
          .onError((error, stackTrace) => _errorHandler(error, stackTrace, 'add'));
   }
 
-  remove(String id)  {
+  /// Remove a series
+  /// All competitors should have been removed from the series before removing removing it. 
+  remove(String id) {
      _series
       .doc(id)
       .delete()        
@@ -145,7 +147,8 @@ class SeriesService with UiLoggy {
     this.update(update, update.id);
   }
 
-  /// Remove a race for a series
+  /// Remove a race for a series.
+  /// All competitors should have been removed from the series before removing a race. 
   removeRace(Series series, String deletedId) {
     final races = series.races.where((race) => race.id != deletedId).toList();
 
