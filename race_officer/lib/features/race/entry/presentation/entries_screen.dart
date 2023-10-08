@@ -40,6 +40,7 @@ class EntriesScreen extends ConsumerWidget with UiLoggy {
             final entryList = <EntryRecord>[];
             entryMap.forEach((key, value) {
               final race = ref.watch(raceProvider(key));
+              assert (race!=null, 'Race does not exist for race competitor key: $key');
               entryList.add((race: race!, competitors: value));
             });
             entryList.sort( (a, b) => SeriesService.sortRaces(a.race, b.race));

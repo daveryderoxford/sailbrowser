@@ -1,11 +1,9 @@
-import 'package:clock/clock.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:sailbrowser_flutter/common_widgets/responsive_center.dart';
 import 'package:sailbrowser_flutter/features/authentication/data/firebase_auth_repository.dart';
 import 'package:sailbrowser_flutter/features/home/presentation/home_race_list_item.dart';
-import 'package:sailbrowser_flutter/features/race-calander/domain/series.dart';
-import 'package:sailbrowser_flutter/features/race-calander/domain/series_service.dart';
 import 'package:sailbrowser_flutter/features/race/domain/selected_races.dart';
 import 'package:sailbrowser_flutter/routing/app_router.dart';
 
@@ -23,57 +21,9 @@ class HomeScreen extends ConsumerWidget {
       appBar: AppBar(title: const Text('Home'), actions: <Widget>[
         _buildUserMenuButton(context, ref),
       ]),
-      body: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          _racesToday(context, ref),
-        ],
-      ),
-    );
-  }
-
-  Widget _racesToday(BuildContext context, WidgetRef ref) {
-    final races = ref.watch(allRacesProvider);
-    final now = clock.now();
-    List<Race> todaysRaces = [];
-
-    return Card(
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          const Text('Todays races'),
-          TextButton(
-            onPressed: () {
-              final ids = todaysRaces.map((race) => race.id).toList();
-              ref.read(selectedRaceIdsProvider.notifier).addRace(ids);
-            },
-            child: const Text('Add Races'),
-          ),
-          SizedBox(
-            height: 200,
-            child: races.when(
-                loading: () => const CircularProgressIndicator(),
-                error: (error, stackTrace) => Text(error.toString()),
-                data: (races) {
-                  todaysRaces = races
-                      .where((r) =>
-                          r.scheduledStart.year == now.year &&
-                          r.scheduledStart.month == now.month &&
-                          r.scheduledStart.day == now.day)
-                      .toList();
-                  if (todaysRaces.isEmpty) {
-                    return const Text('No races today');
-                  } else {
-                    return ListView.builder(
-                      itemCount: todaysRaces.length,
-                      itemBuilder: (context, index) =>
-                          HomeRaceListItem(todaysRaces[index]),
-                    );
-                  }
-                }),
-          ),
-        ],
-        //   ),
+      body: ResponsiveCenter(
+        maxContentWidth: 600,
+        child: SelectedRacesCard(context: context, ref: ref),
       ),
     );
   }
@@ -103,6 +53,47 @@ class HomeScreen extends ConsumerWidget {
           child: Text('User details'),
         ),
       ],
+    );
+  }
+}
+
+class SelectedRacesCard extends StatelessWidget {
+  const SelectedRacesCard({
+    super.key,
+    required this.context,
+    required this.ref,
+  });
+
+  final BuildContext context;
+  final WidgetRef ref;
+
+  @override
+  Widget build(BuildContext context) {
+    final raceData = ref.watch(selectedRacesProvider); 
+
+    return Card(
+      child: Column(
+        children: [
+          ListTile(
+            title: const Center(child: Text('Races Today')),
+            trailing: IconButton(
+              onPressed: () {}, // TODO
+              icon: const Icon(Icons.add),
+            ),
+          ),
+          (raceData.isEmpty)
+              ? const Center(
+                  child: Text(textScaleFactor: 1.2, 'No races today'),
+                )
+              : Expanded(
+                  child: ListView(
+                    children: raceData
+                        .map((rd) => HomeRaceListItem(rd.race))
+                        .toList(),
+                  ),
+                ),
+        ],
+      ),
     );
   }
 }

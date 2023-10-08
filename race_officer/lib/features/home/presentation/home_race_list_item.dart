@@ -15,13 +15,14 @@ class HomeRaceListItem extends ConsumerWidget {
         currectClub.current.fleets.firstWhere((f) => (f.id == race.fleetId));
 
     return ListTile(
-        title: Text(race.name),
-        subtitle: Row(
-          children: [
-            Text('Fleet: ${fleet.name}'),
-            const SizedBox(width: 25),
-            Text('Start number: ${race.raceOfDay.toString()}'),
-          ],
-        ));
+      title: Text(race.name),
+      subtitle: Row(
+        children: [
+          Text('Fleet: ${fleet.name}'),
+          const SizedBox(width: 25),
+          Text('Start number: ${race.raceOfDay.toString()}'),
+        ],
+      ),
+    );
   }
 }

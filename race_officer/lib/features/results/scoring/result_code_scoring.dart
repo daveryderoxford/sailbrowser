@@ -11,11 +11,12 @@ enum ResultCodeAlgorithm {
   setByHand
 }
 
-sealed class ResultCodeScoringBase {
-  ResultCodeScoringBase();
+ sealed class _ResultCodeScoringBase {
+  _ResultCodeScoringBase();
 }
 
-class ResultCodeScoring extends ResultCodeScoringBase {
+class ResultCodeScoring extends _ResultCodeScoringBase {
+
   ResultCodeScoring({
     required this.longSeriesAlgorithm, 
     required this.shortSeriesAlgorithm, 
@@ -37,15 +38,26 @@ class ResultCodeScoring extends ResultCodeScoringBase {
   final bool isFinishedComp; 
 }
 
-class ResultCodeScoreLike extends ResultCodeScoringBase {
-  ResultCodeScoreLike({
+class _ResultCodeScoreLike extends _ResultCodeScoringBase {
+  _ResultCodeScoreLike({
     required this.scoreLike,
   });
   final ResultCode scoreLike;
 }
 
-/// Map of the algoritms to use for all results codes 
-Map<ResultCode, ResultCodeScoringBase> resultCodes = {
+/// Returns scoring data for a result code 
+ResultCodeScoring? getScoringData(ResultCode code) {
+  final resultScoring = _resultCodes[code];
+
+  return switch (resultScoring) {
+    _ResultCodeScoreLike() => _resultCodes[resultScoring.scoreLike] as ResultCodeScoring,
+    ResultCodeScoring() => resultScoring,
+    null => null
+  };
+}
+
+/// Private map of the algoritms to use for all results codes 
+Map<ResultCode, _ResultCodeScoringBase> _resultCodes = {
   ResultCode.notFinished: ResultCodeScoring(
     longSeriesAlgorithm: ResultCodeAlgorithm.na,
     shortSeriesAlgorithm: ResultCodeAlgorithm.na,
@@ -86,7 +98,7 @@ Map<ResultCode, ResultCodeScoringBase> resultCodes = {
     isStartedComp: true,
     isFinishedComp: false,
   ),
-  ResultCode.ret: ResultCodeScoreLike(
+  ResultCode.ret: _ResultCodeScoreLike(
     scoreLike: ResultCode.dnf,
   ),
   ResultCode.dns: ResultCodeScoring(
@@ -109,10 +121,10 @@ Map<ResultCode, ResultCodeScoringBase> resultCodes = {
     isStartedComp: false,
     isFinishedComp: false,
   ),
-  ResultCode.ocs: ResultCodeScoreLike(
+  ResultCode.ocs: _ResultCodeScoreLike(
     scoreLike: ResultCode.dnf,
   ),
-  ResultCode.bdf: ResultCodeScoreLike(
+  ResultCode.bdf: _ResultCodeScoreLike(
     scoreLike: ResultCode.dnf,
   ),
   ResultCode.dgm: ResultCodeScoring(
@@ -125,7 +137,7 @@ Map<ResultCode, ResultCodeScoringBase> resultCodes = {
     isStartedComp: true,
     isFinishedComp: true,
   ),
-  ResultCode.udf: ResultCodeScoreLike(
+  ResultCode.udf: _ResultCodeScoreLike(
     scoreLike: ResultCode.dnf,
   ),
   ResultCode.zfp: ResultCodeScoring(
@@ -138,7 +150,7 @@ Map<ResultCode, ResultCodeScoringBase> resultCodes = {
     isStartedComp: true,
     isFinishedComp: true,
   ),
-  ResultCode.dsq: ResultCodeScoreLike(
+  ResultCode.dsq: _ResultCodeScoreLike(
     scoreLike: ResultCode.dnf,
   ),
   ResultCode.xpa: ResultCodeScoring(

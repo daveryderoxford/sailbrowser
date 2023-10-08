@@ -38,6 +38,9 @@ class RaceCompetitor with _$RaceCompetitor {
   get helmCrew =>  (crew != null && crew!.trim().isNotEmpty)
         ? '$helm / $crew}'
         : helm;
+
+   /// Competitor has finished OK
+   get isOk => resultCode == ResultCode.ok;
 }
 
 /// Results data that depends on other competitors in the race.
@@ -54,4 +57,5 @@ class ResultData with _$ResultData {
 
   factory ResultData.fromJson(Map<String, Object?> json) =>
       _$ResultDataFromJson(json);
+
 }
