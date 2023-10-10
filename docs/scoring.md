@@ -109,3 +109,7 @@ When the sailing instructions do not state the number of places, the penalty sha
 
 
 # Sailwave scoring guide https://www.sailwave.com/download/sailwave/2019_CORK_Results_Management_Manual_V10_Sept2019.pdf
+
+Average lap time 
+https://boxstuff-uploads.s3.amazonaws.com/762169.bin?response-content-disposition=inline;%20filename%3daveragelapracing.pdf&AWSAccessKeyId=12AYQSWG53AAJQKVGXR2&Expires=1696891231&Signature=v%2FPZI%2BA%2FPT3TOJOdCtySvpdchMw%3D
+

@@ -42,7 +42,7 @@ class EntriesScreen extends ConsumerWidget with UiLoggy {
               var race = ref.watch(raceProvider(key));
               assert (race!=null, 'Competitor references raceId that does not exist. Race key: $key');
               race ??= Race(fleetId: 'No fleet', seriesId: 'Orphaned competitors', scheduledStart: DateTime.now(), raceOfDay: 0);
-              entryList.add((race: race!, competitors: value));
+              entryList.add((race: race, competitors: value));
             });
             entryList.sort( (a, b) => SeriesService.sortRaces(a.race, b.race));
 

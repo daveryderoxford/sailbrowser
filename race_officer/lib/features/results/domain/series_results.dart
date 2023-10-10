@@ -16,7 +16,6 @@ class Results with _$Results {
     required String name,
     required String fleet,
     required SeriesResults seriesResults,
-
   }) = _Results;
   const Results._();
 
@@ -26,11 +25,12 @@ class Results with _$Results {
   addResult() {}
 }
 
-/// Data related to the results for a series.  
+/// Data related to the results for a series.
 @unfreezed
 class SeriesResults with _$SeriesResults {
   const factory SeriesResults({
     @Default([]) List<SeriesCompetitor> competitors,
+
     /// List of list of results indexed by race as the first index and position as the second (eg Series[race][position].
     @Default([[]]) List<List<SeriesResult>> results,
   }) = _SeriesResults;
@@ -53,4 +53,7 @@ typedef SeriesCompetitor = ({
   num? handicap,
 });
 
-typedef SeriesResult = ({int points, bool isDiscard});
+typedef SeriesResult = ({
+  int points,
+  bool isDiscard,
+});

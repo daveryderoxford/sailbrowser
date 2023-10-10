@@ -21,7 +21,7 @@ class RaceCompetitor with _$RaceCompetitor {
     @Default(Duration()) Duration elapsedTime,
     @Default(Duration()) Duration correctedTime,
     @Default(ResultCode.notFinished) ResultCode resultCode,
-    /// Numbder of laps - defaults to number of lap times but may be manually set
+    /// Number of laps - defaults to number of lap times but may be manually set
     @Default(0) int manualLaps,
     @Default([]) List<DateTime> lapTimes,
     ResultData? result,
@@ -33,7 +33,14 @@ class RaceCompetitor with _$RaceCompetitor {
       _$RaceCompetitorFromJson(json);
 
   /// the number of laps, manual value if set, otherwise the number of lap times recorded
-  get numLaps => (manualLaps != 0) ? manualLaps : lapTimes.length;
+  get numLaps {
+    if (manualLaps != 0){
+      return manualLaps;
+    } else {
+      // If competitor has finished then he has completed an extra lap.  
+      return finishTime == null ? lapTimes.length : lapTimes.length+1;
+    }
+  }
 
   get helmCrew =>  (crew != null && crew!.trim().isNotEmpty)
         ? '$helm / $crew}'

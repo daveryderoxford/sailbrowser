@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:sailbrowser_flutter/common_widgets/responsive_center.dart';
 
 typedef KeyboardTapCallback = void Function(String text);
 
@@ -48,9 +49,9 @@ class NumericKeyPad extends StatefulWidget {
 class _NumericKeyPadState extends State<NumericKeyPad> {
   @override
   Widget build(BuildContext context) {
-    return Container(
+    return ResponsiveCenter(
+      maxContentWidth: 400,
       padding: const EdgeInsets.only(left: 32, right: 32, top: 20),
-      alignment: Alignment.center,
       child: Column(
         children: <Widget>[
           ButtonBar(

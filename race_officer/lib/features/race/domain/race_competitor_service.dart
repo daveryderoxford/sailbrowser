@@ -50,7 +50,6 @@ class RaceCompetitorService with UiLoggy {
       .doc(comp.id)
       .set(comp)
       .onError((error, stackTrace) => _errorHandler(error, stackTrace, 'add'));
-
   }
 
   remove(String id, String seriesId)  {
@@ -81,6 +80,10 @@ class RaceCompetitorService with UiLoggy {
         : comp.resultCode;
 
     final race = selectedRaces.firstWhere((race) => race.id == comp.raceId);
+    /// TODO do - needs to use scorer? Maybe introduce timeTaken - Inject scorer into racecomp seems wrong
+    /// maybe seprate out results object - scoring would need maxlaps that is deifnitly external.
+    /// best solution seems to be for race scorer to listen for chnges to results.  
+    /// maybe just trigger scorer to get data async scorer.   
     final elapsed = time.difference(race.actualStart);
 
     final c = comp.copyWith(

@@ -1,26 +1,31 @@
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:sailbrowser_flutter/features/race/domain/race_competitor.dart';
 import 'package:sailbrowser_flutter/features/results/scoring/rating_system.dart';
 
 import '../scoring/result_code_scoring.dart';
 
+/// Functions related to calculating times and positions for an individual race.
 class RaceScorer {
   RaceScorer();
 
   /// Calculates the corrected time taking into account any time penalty.
-  /// The number of laps is scaled up to the maximum number of laps 
-  /// TODO - need to check rounding here.  When should I round ???
+  /// The number of laps is scaled up to the maximum number of laps
   ({Duration corrected, Duration elapsed}) calculateResultTimes(
       RaceCompetitor res,
       RatingSystem scheme,
       bool isAverageLap,
       DateTime startTime,
       int maxLaps) {
-
     var corrected = 0.0;
     var elapsed = 0.0;
 
     if (res.finishTime != null) {
-      final diff = res.finishTime!.difference(startTime).inSeconds as double;
+      final diff = res.finishTime!.difference(startTime).inSeconds.toDouble();
+
+      // If start time is before finish time return defaults of zero
+      if (diff < 0) {
+        return (corrected: const Duration(), elapsed: const Duration());
+      }
 
       elapsed = isAverageLap ? diff / res.numLaps * maxLaps : diff;
 
@@ -34,16 +39,26 @@ class RaceScorer {
     }
 
     return (
-      corrected: Duration(seconds: corrected.toInt()),
-      elapsed: Duration(seconds: elapsed.toInt())
+      // Round to nearest second rather than integer part
+      corrected: Duration(seconds: corrected.round()),
+      elapsed: Duration(seconds: elapsed.round())
     );
   }
 
   /// Return the number of starters in race taking into account result code
   int startersInRace(List<RaceCompetitor> results) {
-    final res = results.fold(0, (count, comp) {
+    final res = results.fold<int>(0, (count, comp) {
       final code = getScoringData(comp.resultCode);
-      return (code!.isStartAreaComp) ? count++ : count;
+      return (code!.isStartAreaComp) ? count = count + 1 : count;
+    });
+    return res;
+  }
+
+    /// Return the number of finishers in race taking into account result code
+  int finishersInRace(List<RaceCompetitor> results) {
+    final res = results.fold<int>(0, (count, comp) {
+      final code = getScoringData(comp.resultCode);
+      return (code!.isFinishedComp) ? count = count + 1 : count;
     });
     return res;
   }
@@ -65,7 +80,7 @@ class RaceScorer {
 /// Assign posiiton and points for finishers
 /// Competitors with the same ellapsed time get average of the two positions 
 /// 
-/// Time penalities should be applied befre calling thios function
+/// Time penalities should be applied befre calling this function
 assignPointsForFinishers(results: Result[]) {
   let position = 1;
   let count = 1;
@@ -86,7 +101,7 @@ assignPointsForNonFinishers(results: Result[], competitorsInSeries: number, shor
   const starters = startersInRace(results);
 
   for (const res of results) {
-    const resultCode = getResultScoringData(res.resultCode);
+    const resultCode = getScoringData(res.resultCode);
 
     const code = shortSeries ? resultCode.shortSeries : resultCode.longSeries;
     const factor = shortSeries ? resultCode.shortSeriesFactor : resultCode.longSeriesFactor;
@@ -95,24 +110,25 @@ assignPointsForNonFinishers(results: Result[], competitorsInSeries: number, shor
     switch (code) {
       case 'StartArea':
         res.points = starters + factor;
-        break;
-      case 'TimePenalty':
-        // Time penality is halded by modifying the ellapsed time rather than points score
-        // Question is this ciorrect - should time pemalty impact other competitots ???
-        throw new Error("Check correct TimePenalty behaviour");
+      case 'scoringPenalty':
+           // Scoring penalties are applied after all other positions have been determined.
+
         break;
       case 'InSeries':
         res.points = competitorsInSeries + factor;
-        break;
       case 'AvgBefore':
+          // 
+          throw new Error("To Do");
         break;
       case 'AvgAll':
+            throw new Error("To Do");
+
         break;
       case 'SetByHand':
+            throw new Error("To Do");
         break;
       case 'NA':
-
-        //  NA is wither NoFinished or OK
+        //  NA is either NoFinished or OK
         break;
     }
 
@@ -126,6 +142,12 @@ assignPointsForNonFinishers(results: Result[], competitorsInSeries: number, shor
     // 'NA' | 'InSeries' | | 'AvgAll' | 'AvgBefore' | 'TimePenalty' |  | 'SetByHand';
 
   }
+}
+
+/// Scoring penalty appliey.  This is 20% for zfp and default of 20% for scp
+/// This is applied after the points and order have been calculated.  
+applyScoringPenalties() {
+  // 
 }
 
 /** Calculates positions for a single race */
@@ -145,6 +167,10 @@ export function calculateRacePositions(results: Result[], race: Race, fleet: Fle
   results.sort((a, b) => sortByCorrectedTime(a, b));
   assignPointsForFinishers(results);
   assignPointsForNonFinishers(results);
+  sortByPoints(results);
+  applyScoringPenaties(results);
+  handSetOverrides(results);
+  sortByPoints(results);
 
   return updatedResults;
 
@@ -154,12 +180,7 @@ function sortByPoints(a: Result) {
 
 }
 
-function calculateSeries() {
-  // Assign pont for series based results codes
-
-  // Sort series results
-
-  // Update codes dependent on
-  // This includes race codes that depend on all races not just races be
-} */
+ */
 }
+
+final raceScorerProvider = Provider((ref) => RaceScorer());
