@@ -127,7 +127,7 @@ class _EditSeriesState extends ConsumerState<EditEntry> with UiLoggy {
         loggy.info(_formKey.currentState!.value.toString());
       },
       child: Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: [
-        EntryFormFields(competitor: raceCompetitor),
+        EntryFormFields(competitor: raceCompetitor, formKey: _formKey,),
       ]),
     );
   }

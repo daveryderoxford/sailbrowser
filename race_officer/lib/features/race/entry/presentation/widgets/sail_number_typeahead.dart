@@ -15,7 +15,7 @@ class SailNumberTypeAhead extends StatelessWidget {
     this.onChanged,
   });
 
-  final String initialValue;
+  final int initialValue;
   final String name;
   final List<int> sailNumbers;
   final Function(int?)? onChanged;
@@ -28,8 +28,10 @@ class SailNumberTypeAhead extends StatelessWidget {
           labelText: 'Sail number',
           hintText: 'Start sail number to be prompted'),
       name: name,
-      itemBuilder: (context, n) {
-        return ListTile(title: Text(n.toString()));
+      initialValue: initialValue,
+      onChanged: (value) => (onChanged !=null) ? onChanged!(value) : null,
+      itemBuilder: (context, sn) {
+        return ListTile(title: Text(sn.toString()));
       },
       autovalidateMode: AutovalidateMode.onUserInteraction,
       validator: FormBuilderValidators.compose([
@@ -37,7 +39,7 @@ class SailNumberTypeAhead extends StatelessWidget {
         FormBuilderValidators.min(minValue),
       ]),
       suggestionsCallback: (query) =>
-         sailNumbers.where((sn) => sn.toString().startsWith(query)),
+         sailNumbers.where((sn) => query == '0' || sn.toString().startsWith(query)),
       selectionToTextTransformer:(suggestion) => suggestion.toString(),
       textFieldConfiguration: TextFieldConfiguration(
           keyboardType: const TextInputType.numberWithOptions(

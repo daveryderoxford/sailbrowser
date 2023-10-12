@@ -77,7 +77,7 @@ class SelectedRacesCard extends StatelessWidget {
           ListTile(
             title: const Center(child: Text('Races Today')),
             trailing: IconButton(
-              onPressed: () {}, // TODO
+              onPressed: () {}, // TODO impleemnt dialog to allow additional races ot be added to the current races
               icon: const Icon(Icons.add),
             ),
           ),

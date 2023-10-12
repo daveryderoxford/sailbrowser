@@ -146,7 +146,7 @@ class _AddSeriesState extends ConsumerState<AddEntry> with UiLoggy {
       },
       child: Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: [
         if (entryMode == AddEntryMode.existingBoat)
-          const EntryFormFields(competitor: null)
+           EntryFormFields(competitor: null, formKey: _formKey)
         else
           Column(
             children: [

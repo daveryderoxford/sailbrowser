@@ -12,12 +12,10 @@ import 'package:sailbrowser_flutter/features/race/entry/presentation/widgets/sai
 import 'package:sailbrowser_flutter/util/list_extensions.dart';
 
 class EntryFormFields extends ConsumerWidget with UiLoggy {
-  const EntryFormFields({
-    super.key,
-    this.competitor,
-  });
+  const EntryFormFields({super.key, this.competitor, required this.formKey});
 
   final RaceCompetitor? competitor;
+  final GlobalKey<FormBuilderState> formKey;
 
   List<String> _classNames(List<Boat>? boats) {
     final classNames = boats != null
@@ -37,7 +35,6 @@ class EntryFormFields extends ConsumerWidget with UiLoggy {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-
     final allBoats = ref.watch(allBoatProvider).valueOrNull;
     final classNames = _classNames(allBoats);
 
@@ -47,17 +44,26 @@ class EntryFormFields extends ConsumerWidget with UiLoggy {
     return Column(
       children: [
         BoatClassTypeAhead(
-          name: 'boatClass',
-          classNames: classNames,
-          initialValue: competitor != null ? competitor!.boatClass : "",
-          onChanged: (val) => ref.read(classBoatFilter.notifier).state = val,
-        ),
+            name: 'boatClass',
+            classNames: classNames,
+            initialValue: competitor != null ? competitor!.boatClass : "",
+            onChanged: (val) {
+              ref.read(classBoatFilter.notifier).state = val;
+              formKey.currentState?.patchValue({'sailNumber1': 0});
+            }),
         SailNumberTypeAhead(
           name: 'sailNumber1',
           sailNumbers: sailNumbers,
-          initialValue:
-              competitor != null ? competitor!.sailNumber.toString() : "",
-        ), 
+          initialValue: competitor != null ? competitor!.sailNumber : 0,
+          onChanged: (val) {
+            if (val != 0) {
+              final boat =
+                  filtered.firstWhere((boat) => boat.sailNumber == val);
+              formKey.currentState
+                  ?.patchValue({'helm': boat.helm, 'crew': boat.crew});
+            }
+          },
+        ),
         FormBuilderTextField(
           decoration: const InputDecoration(
             labelText: 'Helm',
