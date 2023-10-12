@@ -13,7 +13,7 @@ import 'package:sailbrowser_flutter/features/results/scoring/rating_system.dart'
 
 import 'widgets/entry_form_fields.dart';
 
-/// Screen to edit an entry.  
+/// Screen to edit an entry.
 /// Use AddEnty screento add an entry
 class EditEntry extends ConsumerStatefulWidget {
   final String id;
@@ -28,7 +28,7 @@ class EditEntry extends ConsumerStatefulWidget {
 class _EditSeriesState extends ConsumerState<EditEntry> with UiLoggy {
   final _formKey = GlobalKey<FormBuilderState>();
 
-  RaceCompetitor? raceCompetitor;
+  late final RaceCompetitor? raceCompetitor;
   String? selectedClass;
   String selectedView = 'existing';
 
@@ -37,18 +37,21 @@ class _EditSeriesState extends ConsumerState<EditEntry> with UiLoggy {
     super.initState();
     raceCompetitor = widget.raceCompetitor;
   }
+
   _submit() {
     final form = _formKey.currentState!;
     form.saveAndValidate();
 
     final competitorService = ref.read(raceCompetitorRepositoryProvider);
 
-
     if (form.isValid) {
       final formData = _formKey.currentState!.value;
 
-      final boatClasses = ref.read(allBoatClassesProvider(HandicapScheme.py)); // TO DO to add suppor for multiple handicap schemes
-      final handicap = boatClasses.firstWhere((bs) => bs.name == formData['boatClass']).handicap;  
+      final boatClasses = ref.read(allBoatClassesProvider(HandicapScheme
+          .py)); // TO DO to add suppor for multiple handicap schemes
+      final handicap = boatClasses
+          .firstWhere((bs) => bs.name == formData['boatClass'])
+          .handicap;
 
       final update = raceCompetitor!.copyWith(
         boatClass: formData['boatClass'],
@@ -72,7 +75,7 @@ class _EditSeriesState extends ConsumerState<EditEntry> with UiLoggy {
         formKey: _formKey,
         child: Scaffold(
           appBar: AppBar(
-            title: const Text( 'Edit Entry Details'),
+            title: const Text('Edit Entry Details'),
             actions: <Widget>[
               TextButton(
                 onPressed: _submit,

@@ -183,4 +183,8 @@ function sortByPoints(a: Result) {
  */
 }
 
-final raceScorerProvider = Provider((ref) => RaceScorer());
+final raceScorerProvider = Provider((ref) {
+
+  
+  return RaceScorer();
+});

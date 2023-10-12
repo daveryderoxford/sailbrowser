@@ -29,7 +29,6 @@ class StartScreen extends ConsumerWidget with UiLoggy {
     );
   }
 
-
   Widget _startsList(BuildContext context, WidgetRef ref) {
     final starts = ref.watch(startListProvider);
 
@@ -47,10 +46,18 @@ class StartScreen extends ConsumerWidget with UiLoggy {
               const Row(
                 mainAxisAlignment: MainAxisAlignment.end,
                 children: [
-                  TimeDisplay(textScaleFactor: 1.2),
+                  Padding(
+                    padding: EdgeInsets.only(right: 25.0),
+                    child: TimeDisplay(
+                      textScaleFactor: 1.2,
+                      format: "hh:mm:ss",
+                    ),
+                  ),
                 ],
               ),
-              const SizedBox(height: 15,),
+              const SizedBox(
+                height: 15,
+              ),
               Expanded(
                 child: ListView.builder(
                   itemCount: starts.length,

@@ -17,7 +17,14 @@ class RaceCompetitor with _$RaceCompetitor {
     required String boatClass,
     required int sailNumber,
     required num handicap,
-    @TimestampSerializer() DateTime? finishTime,
+    /// Finish time recored when competitor finishes.
+    /// If a manual finish time set by hand is specified it is used in preference.
+    /// The recorded finish time is null if it has not been recorded. 
+    @TimestampSerializer() DateTime? recordedFinishTime,
+    /// Manually specified finsih time.  
+    /// Used in preference to the recorded finish time if specified. 
+    /// The manula finish time may be set to null to disable it.
+    @TimestampSerializer() DateTime? manualFinishTime,
     @Default(Duration()) Duration elapsedTime,
     @Default(Duration()) Duration correctedTime,
     @Default(ResultCode.notFinished) ResultCode resultCode,
@@ -33,16 +40,18 @@ class RaceCompetitor with _$RaceCompetitor {
       _$RaceCompetitorFromJson(json);
 
   /// the number of laps, manual value if set, otherwise the number of lap times recorded
-  get numLaps {
+  int get numLaps {
     if (manualLaps != 0){
       return manualLaps;
     } else {
       // If competitor has finished then he has completed an extra lap.  
-      return finishTime == null ? lapTimes.length : lapTimes.length+1;
+      return (finishTime == null) ? lapTimes.length : lapTimes.length+1;
     }
   }
 
-  get helmCrew =>  (crew != null && crew!.trim().isNotEmpty)
+  DateTime? get finishTime => (manualFinishTime != null) ? manualFinishTime : recordedFinishTime;
+
+  String get helmCrew =>  (crew != null && crew!.trim().isNotEmpty)
         ? '$helm / $crew}'
         : helm;
 

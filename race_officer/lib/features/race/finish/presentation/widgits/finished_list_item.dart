@@ -1,22 +1,27 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:sailbrowser_flutter/common_widgets/null_widget.dart';
 import 'package:sailbrowser_flutter/common_widgets/sail_number.dart';
 import 'package:sailbrowser_flutter/features/race/domain/race_competitor.dart';
 import 'package:sailbrowser_flutter/features/race/finish/presentation/finish_controller.dart';
+import 'package:sailbrowser_flutter/features/race/finish/presentation/finsh_manual_entry.dart';
 import 'package:sailbrowser_flutter/util/date_time_extensions.dart';
 import 'package:sailbrowser_flutter/util/duration_extensions.dart';
 
 class FinishedListItem extends ConsumerWidget {
   final RaceCompetitor competitor;
+  final bool showButtons;
 
   String _subTitle(RaceCompetitor comp) {
-    final finishTime = (comp.finishTime == null) ? "": 'Finish:  ${comp.finishTime?.asHourMinSec()}';
+    final finishTime = (comp.finishTime == null)
+        ? ""
+        : 'Finish:  ${comp.finishTime?.asHourMinSec()}';
     final elapsedTime = 'Elapsed: ${comp.elapsedTime.asHourMinSec()}';
     final status = 'Status:  ${comp.resultCode.displayName}';
     return ('${comp.helmCrew}    $status\n$finishTime   $elapsedTime  ');
   }
 
-  const FinishedListItem(this.competitor, {super.key});
+  const FinishedListItem(this.competitor, {this.showButtons= true, super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -28,7 +33,7 @@ class FinishedListItem extends ConsumerWidget {
         SailNumber(num: competitor.sailNumber),
       ]),
       subtitle: Text(_subTitle(competitor)),
-      trailing: Row(
+      trailing: (!showButtons) ? const NullWidget() : Row(
         mainAxisSize: MainAxisSize.min,
         children: [
           TextButton(
@@ -36,8 +41,17 @@ class FinishedListItem extends ConsumerWidget {
                 ref.read(finshControllerProvider).stillRacing(competitor),
             child: const Text('Undo'),
           ),
+          TextButton(
+            onPressed: () => Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => FinishManualEntry(competitor: competitor),
+              ),
+            ),
+            child: const Text('Edit'),
+          ),
         ],
-      ),
+      ), 
     );
   }
 }

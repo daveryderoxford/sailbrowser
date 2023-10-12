@@ -87,7 +87,7 @@ class RaceCompetitorService with UiLoggy {
     final elapsed = time.difference(race.actualStart);
 
     final c = comp.copyWith(
-        finishTime: time, elapsedTime: elapsed, resultCode: resultCode);
+        recordedFinishTime: time, elapsedTime: elapsed, resultCode: resultCode);
 
     update(c, id, seriesId);
   }
@@ -113,3 +113,4 @@ final currentCompetitors = StreamProvider(
     return db.currectCompetitors$;
   },
 );
+

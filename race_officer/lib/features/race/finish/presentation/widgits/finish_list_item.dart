@@ -8,13 +8,14 @@ import '../finish_controller.dart';
 
 class FinishListItem extends ConsumerWidget {
   final RaceCompetitor competitor;
+  final bool showButtons;
 
   String _subTitle(RaceCompetitor comp) {
 
     return '${comp.helmCrew}  ${comp.numLaps.toString()} laps';
   }
 
-  const FinishListItem(this.competitor, {super.key});
+  const FinishListItem(this.competitor, {this.showButtons= true, super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {

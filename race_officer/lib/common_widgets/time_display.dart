@@ -7,8 +7,9 @@ import 'package:intl/intl.dart';
 class TimeDisplay extends StatefulWidget {
   final TextStyle? style;
   final double? textScaleFactor;
+  final String? format;
 
-  const TimeDisplay({this.textScaleFactor, this.style, super.key});
+  const TimeDisplay({this.textScaleFactor, this.style, this.format='dd-MMM-yyyy hh:mm:ss', super.key});
 
   @override
   TimeDisplayState createState() => TimeDisplayState();
@@ -49,6 +50,6 @@ class TimeDisplayState extends State<TimeDisplay> {
   }
 
   String _formatDateTime(DateTime dateTime) {
-    return DateFormat('dd-MMM-yyyy hh:mm:ss').format(dateTime);
+    return DateFormat(widget.format).format(dateTime);
   }
 }

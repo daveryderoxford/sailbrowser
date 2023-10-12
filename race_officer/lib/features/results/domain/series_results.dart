@@ -22,10 +22,9 @@ class Results with _$Results {
   factory Results.fromJson(Map<String, Object?> json) =>
       _$ResultsFromJson(json);
 
-  addResult() {}
 }
 
-/// Data related to the results for a series.
+/// Read-only class representing results for a series. 
 @unfreezed
 class SeriesResults with _$SeriesResults {
   const factory SeriesResults({

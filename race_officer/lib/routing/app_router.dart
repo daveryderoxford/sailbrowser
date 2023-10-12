@@ -8,8 +8,8 @@ import 'package:sailbrowser_flutter/features/race-calander/presentation/series_d
 import 'package:sailbrowser_flutter/features/race-calander/presentation/series_screen.dart';
 import 'package:sailbrowser_flutter/features/home/presentation/home_screen.dart';
 import 'package:sailbrowser_flutter/features/race/entry/presentation/entries_screen.dart';
+import 'package:sailbrowser_flutter/features/results/presentation/results_screen.dart';
 import '../features/race/finish/presentation/finish_screen.dart';
-import '../features/results/results_screen.dart';
 import '../features/race/start/presentation/start_screen.dart';
 import './go_router_refresh_stream.dart';
 import '../features/authentication/data/firebase_auth_repository.dart';

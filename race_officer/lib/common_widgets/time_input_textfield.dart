@@ -2,8 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'dart:math' as math;
 
+import 'package:intl/intl.dart';
+
 class TimeInputField extends StatefulWidget {
-  const TimeInputField({Key? key}) : super(key: key);
+  const TimeInputField({this.onChanged, this.initialValue, Key? key}) : super(key: key);
+
+  final ValueChanged<DateTime?>? onChanged;
+  final DateTime? initialValue;
 
   @override
   TimeInputFieldState createState() => TimeInputFieldState();
@@ -12,9 +17,34 @@ class TimeInputField extends StatefulWidget {
 class TimeInputFieldState extends State<TimeInputField> {
   final TextEditingController _txtTimeController = TextEditingController();
 
+  late final ValueChanged<DateTime?>? onChanged;
+  late final DateTime? initialValue;
+
+  final format = DateFormat('HH:mm:ss');
+
+  @override
+  void initState() {
+    super.initState();
+    onChanged = widget.onChanged;
+    initialValue = widget.initialValue;
+  }
+
   @override
   Widget build(BuildContext context) {
+    
     return TextFormField(
+      onChanged: (value) {
+        DateTime? date;
+        try {
+          date = format.parse(value);
+        } catch (e) {
+          date = null;
+        }
+
+        if (widget.onChanged != null) {
+          onChanged!(date);
+        }
+      },
       controller: _txtTimeController,
       keyboardType: const TextInputType.numberWithOptions(decimal: false),
       decoration: const InputDecoration(

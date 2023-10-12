@@ -12,15 +12,16 @@ RaceCompetitor _makeComp(
   List<DateTime> laps,
 ) {
   var comp = RaceCompetitor(
-      id: "id",
-      raceId: 'raceId',
-      seriesId: 'seriesid',
-      helm: "helm;",
-      boatClass: 'class',
-      sailNumber: 123,
-      handicap: handicap,
-      finishTime: finishTime,
-      lapTimes: laps);
+    id: "id",
+    raceId: 'raceId',
+    seriesId: 'seriesid',
+    helm: "helm;",
+    boatClass: 'class',
+    sailNumber: 123,
+    handicap: handicap,
+    recordedFinishTime: finishTime,
+    lapTimes: laps,
+  );
   if (manualLaps != null) {
     comp = comp.copyWith(manualLaps: manualLaps);
   }
@@ -205,6 +206,5 @@ void main() {
       final starters = scorer.startersInRace(comps);
       expect(starters, equals(comps.length));
     });
-
   });
 }

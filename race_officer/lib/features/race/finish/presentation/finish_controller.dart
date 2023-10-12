@@ -56,11 +56,10 @@ class FinishController with UiLoggy {
 
   stillRacing(RaceCompetitor comp) {
     final update =
-        comp.copyWith(finishTime: null, resultCode: ResultCode.notFinished);
+        comp.copyWith(recordedFinishTime: null, resultCode: ResultCode.notFinished);
     compService.update(update, update.id, comp.seriesId);
     _log('still racing', comp);
   }
-
 }
 
 final finshControllerProvider = Provider(

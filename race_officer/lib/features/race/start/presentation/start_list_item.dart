@@ -37,7 +37,7 @@ class StartListItem extends ConsumerWidget with UiLoggy {
             );
           }
         },
-        child: const Text('Run'),
+        child: const Text('Select'),
       ),
       children: start.races
           .map(

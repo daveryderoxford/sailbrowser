@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:sailbrowser_flutter/common_widgets/null_widget.dart';
 import 'package:sailbrowser_flutter/common_widgets/sail_number.dart';
 import 'package:sailbrowser_flutter/features/club/presentation/boat_edit.dart';
 import 'package:sailbrowser_flutter/features/club/domain/boat.dart';
@@ -29,7 +28,7 @@ class BoatListItem extends StatelessWidget {
         const SizedBox(width: 25),
         SailNumber(num: boat.sailNumber),
         const SizedBox(width: 25),
-        (boat.name != null) ? Text(boat.name) : const NullWidget(),
+        Text(boat.name),
       ]),
       subtitle: Text(_subTitle(boat)),
       trailing: IconButton(
