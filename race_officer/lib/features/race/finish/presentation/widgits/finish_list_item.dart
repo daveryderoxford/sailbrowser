@@ -11,7 +11,6 @@ class FinishListItem extends ConsumerWidget {
   final bool showButtons;
 
   String _subTitle(RaceCompetitor comp) {
-
     return '${comp.helmCrew}  ${comp.numLaps.toString()} laps';
   }
 

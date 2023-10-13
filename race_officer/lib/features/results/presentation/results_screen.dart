@@ -1,10 +1,19 @@
 
 import 'package:flutter/material.dart';
+import 'package:sailbrowser_flutter/features/results/domain/series_results.dart';
 import 'package:sailbrowser_flutter/features/results/presentation/race_results_tab.dart';
+import 'package:sailbrowser_flutter/features/results/presentation/series_results_tab.dart';
 
 
 class ResultsScreen extends StatelessWidget {
-  const ResultsScreen({super.key});
+    ResultsScreen({super.key});
+
+    final seriesResults = SeriesResults(
+    publishedOn: DateTime.now(), 
+    status: ResultsStatus.provisional, 
+    name: 'name', 
+    fleet: 'fleet'
+  );
 
   @override
   Widget build(BuildContext context) {
@@ -20,10 +29,10 @@ class ResultsScreen extends StatelessWidget {
             ),
             title: const Text('Results'),
           ),
-          body: const TabBarView(
+          body:  TabBarView(
             children: [
               RaceResultsTab(),
-              RaceResultsTab(), //TODO 
+              SeriesResultsTab(results: seriesResults), 
             ],
           ),
         ),

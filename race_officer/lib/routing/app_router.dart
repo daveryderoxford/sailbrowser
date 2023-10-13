@@ -162,7 +162,7 @@ resultsRoutes() {
     GoRoute(
         path: '/results',
         name: AppRoute.results.name,
-        pageBuilder: (context, state) => const NoTransitionPage(
+        pageBuilder: (context, state) => NoTransitionPage(
               child: ResultsScreen(),
             ))
   ];

@@ -42,10 +42,13 @@ class _FinishEntryState extends ConsumerState<FinishFindTab> with UiLoggy {
     return Column(
       children: [
         const Expanded(
-          child: FinishListTab(racing: true, filtered: true,),
+          child: FinishListTab(
+            racing: true,
+            filtered: true,
+          ),
         ),
         const SizedBox(height: 5),
-        _buildClassFilter(context, filter.boatClass),
+        BoatClassChoiceChip(boatClass: filter.boatClass),
         const SizedBox(height: 10),
         Center(
           child: Text(
@@ -72,30 +75,6 @@ class _FinishEntryState extends ConsumerState<FinishFindTab> with UiLoggy {
     );
   }
 
-  Widget _buildClassFilter(BuildContext context, String boatClass) {
-    final competitors = ref.watch(racingCompetitorsProvider(true));
-    final boatClasses = competitors.map((e) => e.boatClass).toList().unique();
-    boatClasses.sort();
-
-    return boatClasses.isEmpty || boatClasses.length == 1
-        ? const NullWidget()
-        : Wrap(
-            spacing: 5.0,
-            children: boatClasses
-                .map(
-                  (bc) => ChoiceChip(
-                    label: Text(bc),
-                    selected: (boatClass == bc),
-                    onSelected: (bool selected) {
-                      ref.read(compFilterProvider.notifier).boatClass =
-                          (selected ? bc : null);
-                    },
-                  ),
-                )
-                .toList(),
-          );
-  }
-
   bool _onKey(KeyEvent event) {
     final key = event.logicalKey.keyLabel;
     String sailNumber = ref.read(compFilterProvider).sailNumber;
@@ -117,5 +96,39 @@ class _FinishEntryState extends ConsumerState<FinishFindTab> with UiLoggy {
 
   _setSailNumber(String s) {
     ref.read(compFilterProvider.notifier).sailNumber = s;
+  }
+}
+
+class BoatClassChoiceChip extends ConsumerWidget {
+  const BoatClassChoiceChip({
+    super.key,
+    required this.boatClass,
+  });
+
+  final String boatClass;
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final competitors = ref.watch(racingCompetitorsProvider(true));
+    final boatClasses = competitors.map((e) => e.boatClass).toList().unique();
+    boatClasses.sort();
+
+    return boatClasses.isEmpty || boatClasses.length == 1
+        ? const NullWidget()
+        : Wrap(
+            spacing: 5.0,
+            children: boatClasses
+                .map(
+                  (bc) => ChoiceChip(
+                    label: Text(bc),
+                    selected: (boatClass == bc),
+                    onSelected: (bool selected) {
+                      ref.read(compFilterProvider.notifier).boatClass =
+                          (selected ? bc : null);
+                    },
+                  ),
+                )
+                .toList(),
+          );
   }
 }

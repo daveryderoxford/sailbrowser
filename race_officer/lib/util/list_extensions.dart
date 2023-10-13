@@ -14,4 +14,12 @@ extension Unique<E, Id> on List<E> {
     list.retainWhere((x) => ids.add(id != null ? id(x) : x as Id));
     return list;
   }
+
+  /// Maps each element of the list.
+  /// The [map] function gets both the original [item] and its [index].
+  Iterable<T> mapIndexed<T>(T Function(int index, E item) map) sync* {
+    for (var index = 0; index < length; index++) {
+      yield map(index, this[index]);
+    }
+  }
 }

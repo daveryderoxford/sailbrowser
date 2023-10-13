@@ -15,6 +15,7 @@ dependencies:
   clock: ^1.1.1
   cloud_firestore: ^4.8.0
   cupertino_icons: ^1.0.2
+  data_table_2: ^2.5.8
   firebase_auth: ^4.6.3
   firebase_core: ^2.13.1
   firebase_ui_auth: ^1.5.0
@@ -34,7 +35,6 @@ dependencies:
   riverpod_annotation: ^2.1.1
   rxdart: ^0.27.7
   stack_trace: ^1.11.0
-  table_sticky_headers: ^2.0.5
   uuid: ^3.0.7
 
 dev_dependencies:

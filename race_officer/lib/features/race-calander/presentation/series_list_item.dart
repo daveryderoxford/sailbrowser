@@ -8,7 +8,7 @@ class RaceSeriesListItem extends StatelessWidget {
   final Series series;
 
 
-  RaceSeriesListItem(this.series, {super.key});
+  const RaceSeriesListItem(this.series, {super.key});
 
   @override
   Widget build(BuildContext context) {
