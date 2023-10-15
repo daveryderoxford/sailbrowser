@@ -128,7 +128,7 @@ class StartSequence extends StateNotifier<StartSequenceState> with UiLoggy {
         actualStart: clock.now(),
       );
 
-      final series = ref.read(seriesProvider(race.seriesId));
+      final series = ref.read(seriesProvider(race.seriesId)); //TODO may be a problem wiht read here??
       ref.read(seriesRepositoryProvider).updateRace(series!, race.id, race);
 
       startedRaces.add(races[0]);

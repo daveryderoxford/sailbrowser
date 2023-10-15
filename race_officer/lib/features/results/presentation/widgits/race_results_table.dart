@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:sailbrowser_flutter/common_widgets/responsive_center.dart';
 import 'package:sailbrowser_flutter/features/race/domain/result_code.dart';
 import 'package:sailbrowser_flutter/features/results/domain/race_result.dart';
+import 'package:sailbrowser_flutter/util/color_extensions.dart';
 import 'package:sailbrowser_flutter/util/duration_extensions.dart';
 import 'package:sailbrowser_flutter/util/list_extensions.dart';
 
@@ -16,6 +17,9 @@ class RaceResultsTable extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+      final stripe1 = Theme.of(context).colorScheme.primary.tone(92);
+      final stripe2 = Theme.of(context).colorScheme.primary.tone(95);
+
     return ResponsiveCenter(
       maxContentWidth: 800,
       child: Padding(
@@ -25,7 +29,7 @@ class RaceResultsTable extends StatelessWidget {
           horizontalMargin: 12,
           minWidth: 550,
           fixedLeftColumns: 2,
-          empty: const Center(child: Text('No results to display')),
+          empty: const Center(child: Text(textScaleFactor: 1.2,'No results to display')),
           columns: const [
             DataColumn2(
               label: Text('Pos'),
@@ -33,7 +37,7 @@ class RaceResultsTable extends StatelessWidget {
             ),
             DataColumn2(
               label: Text('Name'),
-               size: ColumnSize.L, 
+              size: ColumnSize.L, 
             ),
             DataColumn2(
               label: Text('Boat'),
@@ -56,10 +60,10 @@ class RaceResultsTable extends StatelessWidget {
               .mapIndexed<DataRow>(
                 (index, result) => DataRow(
                     color: MaterialStateColor.resolveWith((states) =>
-                        index % 2 == 1 ? Colors.grey[200]! : Colors.transparent),
+                        index % 2 == 1 ? stripe1 : stripe2),
                     cells: [
                       DataCell(Text(result.position.toString())),
-                      DataCell(_nameCell(context, result)),
+                      DataCell(_nameCell(context, result, index)),
                       DataCell(_boatCell(context, result)),
                       DataCell(Center(child: Text(result.elapsed.asMinSec()))),
                       DataCell(Center(child: Text(result.corrected.asMinSec()))),
@@ -72,8 +76,8 @@ class RaceResultsTable extends StatelessWidget {
     );
   }
 
-  Widget _nameCell(BuildContext context, RaceResult res) {
-    return (Text('${res.helm}\n${res.crew}'));
+  Widget _nameCell(BuildContext context, RaceResult res, int index) {
+    return Text('${res.helm}\n${res.crew}');
   }
 
   ///

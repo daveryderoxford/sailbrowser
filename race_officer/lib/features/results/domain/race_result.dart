@@ -14,7 +14,7 @@ class RaceResults with _$RaceResults {
     required DateTime date,
     required String fleet,
     required int index,
-    //  @Default([]) List<RaceResult> results,
+    @Default([]) List<RaceResult> results,
   }) = _RaceResults;
 
   const RaceResults._();

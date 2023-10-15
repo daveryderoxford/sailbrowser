@@ -5,6 +5,8 @@ import 'package:sailbrowser_flutter/features/race/domain/result_code.dart';
 import 'package:sailbrowser_flutter/features/results/domain/race_result.dart';
 import 'package:sailbrowser_flutter/features/results/presentation/widgits/race_results_table.dart';
 
+import 'widgits/races_dropdown.dart';
+
 class RaceResultsTab extends ConsumerWidget with UiLoggy {
   RaceResultsTab({super.key});
 
@@ -15,8 +17,8 @@ class RaceResultsTab extends ConsumerWidget with UiLoggy {
             crew: ' Michelle Ryder',
             boatClass: 'RS400',
             sailNumber: 1544,
-            position: (index+1).toString(),
-            points: index+1,
+            position: (index + 1).toString(),
+            points: index + 1,
             resultCode: ResultCode.ok,
             elapsed: const Duration(minutes: 45, seconds: 15),
             corrected: const Duration(minutes: 48, seconds: 21),
@@ -26,7 +28,9 @@ class RaceResultsTab extends ConsumerWidget with UiLoggy {
   Widget build(BuildContext context, WidgetRef ref) {
     return Column(
       children: [
-        //  const RaceChoiceChip(selected: null),
+        const SizedBox(height: 20),
+        const RacesDropDown(),
+        // const RaceChoiceChip(selected: null),
         Expanded(child: RaceResultsTable(results: results)),
       ],
     );

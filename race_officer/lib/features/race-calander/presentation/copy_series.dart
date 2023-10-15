@@ -119,7 +119,7 @@ class _CopySeriesState extends ConsumerState<CopySeries> with UiLoggy {
   }
 
   List<Widget> _buildFormChildren() {
-    final fleets = ref.read(currentClubProvider).current.fleets;
+    final fleets = ref.watch(currentClubProvider).current.fleets;
     return [
       FormBuilderTextField(
         name: 'name',

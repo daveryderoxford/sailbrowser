@@ -195,7 +195,7 @@ final seriesRepositoryProvider =
     Provider((ref) => SeriesService(ref.watch(currentClubProvider).current.id));
 
 /// All series for all time
-final allSeriesProvider = StreamProvider.autoDispose<List<Series>>((ref) {
+final allSeriesProvider = StreamProvider<List<Series>>((ref) {
   final db = ref.watch(seriesRepositoryProvider);
   return db.allRaceSeriess$;
 });
@@ -221,7 +221,7 @@ final allRacesProvider = StreamProvider.autoDispose<List<Race>>((ref) {
 typedef AllRaceData = ({Race race, Series series, Fleet fleet});
 
 final allRaceDataProvider = StreamProvider<List<AllRaceData>>((ref) {
-  final seriesProvider = ref.read(seriesRepositoryProvider);
+  final seriesProvider = ref.watch(seriesRepositoryProvider);
   final club = ref.watch(currentClubProvider);
 
   return seriesProvider.allRaceSeriess$.map((seriesList) {

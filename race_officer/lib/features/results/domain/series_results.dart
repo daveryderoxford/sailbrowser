@@ -1,5 +1,6 @@
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:sailbrowser_flutter/features/race/domain/result_code.dart';
+import 'package:sailbrowser_flutter/features/results/domain/race_result.dart';
 
 part 'series_results.freezed.dart';
 part 'series_results.g.dart';
@@ -13,11 +14,12 @@ enum ResultsStatus {
 @unfreezed
 class SeriesResults with _$SeriesResults {
    factory SeriesResults({
-     required DateTime publishedOn,
+    required DateTime publishedOn,
     required ResultsStatus status,
     required String name,
     required String fleet,
     @Default([]) List<SeriesCompetitor> competitors,
+    @Default([]) List<RaceResults> races,
 
     /// List of list of results indexed by race as the first index and position as the second (eg Series[race][position].
     @Default([[]]) List<List<SeriesResult>> results,
@@ -42,7 +44,7 @@ typedef SeriesCompetitor = ({
 });
 
 typedef SeriesResult = ({
-  int points,
-  ResultCode resulktCode,
+  num points,
+  ResultCode resultCode,
   bool isDiscard,
 });

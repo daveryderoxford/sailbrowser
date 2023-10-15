@@ -69,6 +69,6 @@ final boatsProvider =
     Provider((ref) => BoatService(ref.watch(currentClubProvider).current.id));
 
 final allBoatProvider = StreamProvider((ref) {
-  final bs = ref.read(boatsProvider);
+  final bs = ref.watch(boatsProvider);
   return bs.allBoats$;
 });

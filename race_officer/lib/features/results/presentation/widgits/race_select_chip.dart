@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:sailbrowser_flutter/common_widgets/null_widget.dart';
 import 'package:sailbrowser_flutter/features/race-calander/domain/series.dart';
 import 'package:sailbrowser_flutter/features/race/domain/selected_races.dart';
+import 'package:sailbrowser_flutter/features/results/presentation/result_controller.dart';
 
 class RaceChoiceChip extends ConsumerWidget {
   const RaceChoiceChip({
@@ -27,7 +28,7 @@ class RaceChoiceChip extends ConsumerWidget {
                     label: Text(race.name),
                     selected: (selected == race),
                     onSelected: (bool selected) {
-                      //
+                      selected ? ref.read(resultsController.notifier).displayRace(race) : null;
                     },
                   ),
                 )
