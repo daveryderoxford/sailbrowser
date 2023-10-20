@@ -4,9 +4,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:sailbrowser_flutter/features/race/domain/result_code.dart';
 import 'package:sailbrowser_flutter/features/results/domain/race_result.dart';
 import 'package:sailbrowser_flutter/features/results/domain/series_results.dart';
-import 'package:sailbrowser_flutter/features/system/domain/boat_class.dart';
-
-import 'widgits/race_results_table.dart';
 import 'widgits/series_dropdown.dart';
 import 'widgits/series_results_table.dart';
 
@@ -37,9 +34,9 @@ class SeriesResultsTab extends ConsumerWidget with UiLoggy {
         boatClass: 'RS400',
         sailNumber: 1445,
         name: 'The Dark Destriyer',
-        totalPoints: 100.0,
-        netPoints: 50.0,
-        position: index,
+        totalPoints: 100.5,
+        netPoints: 50.5,
+        position: index+1,
         handicap: 1000.0,
       ),
     ),
@@ -48,9 +45,9 @@ class SeriesResultsTab extends ConsumerWidget with UiLoggy {
       (compIndex) => List.generate(
         10,
         (raceIndex) => (
-          points: 6.0,
-          resultCode: ResultCode.ok,
-          isDiscard: false,
+          points: 1.0,
+          resultCode: ResultCode.dns,
+          isDiscard: true,
         ),
       ),
     ),

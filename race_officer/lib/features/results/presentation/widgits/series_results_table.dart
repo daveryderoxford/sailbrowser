@@ -1,30 +1,53 @@
 import 'package:data_table_2/data_table_2.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:loggy/loggy.dart';
 import 'package:sailbrowser_flutter/common_widgets/responsive_center.dart';
 import 'package:sailbrowser_flutter/features/race/domain/result_code.dart';
+import 'package:sailbrowser_flutter/features/results/domain/race_result.dart';
 import 'package:sailbrowser_flutter/features/results/domain/series_results.dart';
 import 'package:sailbrowser_flutter/util/color_extensions.dart';
 import 'package:sailbrowser_flutter/util/list_extensions.dart';
 
-class SeriesResultsTable extends StatelessWidget {
+enum _RaceHeaderFormat { numOnly, dateOnly, numAndDate }
+
+class SeriesResultsTable extends StatelessWidget with UiLoggy {
   const SeriesResultsTable({
     super.key,
     required this.results,
   });
 
-  final _sizeNum = 40.0;
-  final _sizeResult = 40.0;
+  final _sizePos = 40.0;
+  final _sizeNum = 50.0;
+  final _sizeResult = 60.0;
 
   final SeriesResults results;
+
+  /// Specify fomat for race header.
+  /// If all dates are same just display race number.
+  /// If all dates are different display date only
+  /// If there are multiple date and races then display races of day
+  _RaceHeaderFormat _getRaceHeaderFormat(List<RaceResults> races) {
+    final uniqueDates = races.map((e) => e.date).toList().unique();
+
+    if (uniqueDates.length == 1) {
+      // All same date - race number only
+      return _RaceHeaderFormat.numOnly;
+    } else if (uniqueDates.length == races.length) {
+      // One race/day date only
+      return _RaceHeaderFormat.dateOnly;
+    } else {
+      // Otherwise date plus race number
+      return _RaceHeaderFormat.numAndDate;
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
     final stripe1 = Theme.of(context).colorScheme.primary.tone(92);
     final stripe2 = Theme.of(context).colorScheme.primary.tone(95);
-    final minWidth = 400 + results.races.length * _sizeResult;
-
-    final format = DateFormat("mm/dd").format;
+    final minWidth = 370 + results.races.length * _sizeResult;
+    final headerFormat = _getRaceHeaderFormat(results.races);
 
     return ResponsiveCenter(
       maxContentWidth: 800,
@@ -40,7 +63,7 @@ class SeriesResultsTable extends StatelessWidget {
           columns: [
             DataColumn2(
               label: const Text('Pos'),
-              fixedWidth: _sizeNum,
+              fixedWidth: _sizePos,
             ),
             const DataColumn2(
               label: Text('Name'),
@@ -50,7 +73,7 @@ class SeriesResultsTable extends StatelessWidget {
               size: ColumnSize.S,
             ),
             ...results.races.map((raceResult) => DataColumn2(
-                  label: Text(format(raceResult.date)),
+                  label: _raceHeading(context, raceResult, headerFormat),
                   fixedWidth: _sizeResult,
                 )),
             DataColumn2(
@@ -72,10 +95,10 @@ class SeriesResultsTable extends StatelessWidget {
                     DataCell(_nameCell(context, comp)),
                     DataCell(_boatCell(context, comp)),
                     ...results.races.mapIndexed<DataCell>((raceIndex, race) =>
-                        DataCell(_pointsCell(
+                        DataCell(_racePointsCell(
                             context, results.results[compIndex][raceIndex]))),
-                    DataCell(Text(comp.totalPoints.toString())),
-                    DataCell(Text(comp.netPoints.toString())),
+                    DataCell(Text(_roundedPointsStr(comp.totalPoints))),
+                    DataCell(Text(_roundedPointsStr(comp.netPoints))),
                   ],
                 ),
               )
@@ -93,14 +116,36 @@ class SeriesResultsTable extends StatelessWidget {
     return (Text('${res.boatClass}\n${res.sailNumber}'));
   }
 
-  Widget _pointsCell(BuildContext context, SeriesResult res) {
-    final pointsStr = (res.isDiscard) ? '(${res.points})' : '${res.points}';
-    final str = (res.resultCode != ResultCode.ok)
-        ? '$pointsStr\n${res.resultCode}'
-        : pointsStr;
+  String _roundedPointsStr(num points) {
+    return (points.toInt() == points)
+        ? points.toStringAsFixed(0)
+        : points.toStringAsFixed(1);
+  }
 
+  Widget _racePointsCell(BuildContext context, SeriesResult res) {
+    var pointsStr = _roundedPointsStr(res.points);
+    pointsStr = (res.isDiscard) ? '($pointsStr)' : pointsStr;
+    final str = (res.resultCode != ResultCode.ok)
+        ? '$pointsStr\n${res.resultCode.displayName}'
+        : pointsStr;
     return Center(
       child: Text(str),
     );
+  }
+
+  Widget _raceHeading(
+      BuildContext context, RaceResults race, _RaceHeaderFormat headerFormat) {
+    final month = DateFormat('MMM').format(race.date);
+    final day = DateFormat('d').format(race.date);
+    final index = race.index.toString();
+
+    switch (headerFormat) {
+      case _RaceHeaderFormat.dateOnly:
+        return Center(child: Text('$month\n$day'));
+      case _RaceHeaderFormat.numOnly:
+        return Center(child: Text(index));
+      case _RaceHeaderFormat.numAndDate:
+        return Center(child: Text('$month\n$day\n$index'));
+    }
   }
 }
