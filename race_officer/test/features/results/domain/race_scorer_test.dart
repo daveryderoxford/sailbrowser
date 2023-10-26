@@ -2,7 +2,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:sailbrowser_flutter/features/race/domain/race_competitor.dart';
 import 'package:sailbrowser_flutter/features/race/domain/result_code.dart';
-import 'package:sailbrowser_flutter/features/results/domain/race_scorer.dart';
+import 'package:sailbrowser_flutter/features/results/domain/race_result.dart';
+import 'package:sailbrowser_flutter/features/results/scoring/race_scorer.dart';
 import 'package:sailbrowser_flutter/features/results/scoring/rating_system.dart';
 
 RaceCompetitor _makeComp(
@@ -29,8 +30,30 @@ RaceCompetitor _makeComp(
   return comp;
 }
 
-RaceCompetitor _compWithResCode(ResultCode code) {
-  var comp = _makeComp(1100, null, DateTime(2023, 01, 02, 11, 15, 10), []);
+
+RaceResult _makeRaceResult(
+  ResultCode code,
+    Duration corrected, 
+   Duration  elapsed,
+   num points, 
+   String position,
+) {
+  var comp = RaceResult(
+    helm: "helm;",
+    boatClass: 'class',
+    sailNumber: 123,
+    resultCode: code, 
+    corrected: corrected, 
+    elapsed: corrected, 
+    points: points, 
+    position: position
+  );
+
+  return comp;
+}
+
+RaceResult _resWithResCode(ResultCode code) {
+  var comp = _makeRaceResult(code, const Duration(), const Duration(), 0,'unset');
   return comp.copyWith(resultCode: code);
 }
 
@@ -51,7 +74,12 @@ void main() {
           final res = _makeComp(1100, null, finishTime, []);
 
           final times = scorer.calculateResultTimes(
-              res, RatingSystem.py, true, startTime, 1);
+            comp: res,
+            scheme: RatingSystem.py,
+            isAverageLap: true,
+            startTime: startTime,
+            maxLaps: 1,
+          );
           expect(times.elapsed, equals(offset));
           expect(
               times.corrected,
@@ -70,7 +98,12 @@ void main() {
           comp = comp.copyWith(resultCode: ResultCode.bdf);
 
           final times = scorer.calculateResultTimes(
-              comp, RatingSystem.py, true, startTime, 1);
+            comp: comp,
+            scheme: RatingSystem.py,
+            isAverageLap: true,
+            startTime: startTime,
+            maxLaps: 1,
+          );
           expect(times.elapsed, equals(offset));
           expect(
               times.corrected,
@@ -90,7 +123,11 @@ void main() {
           var comp = _makeComp(1100, null, finishTime, []);
 
           final times = scorer.calculateResultTimes(
-              comp, RatingSystem.py, true, startTime, 1);
+              comp: comp,
+              scheme: RatingSystem.py,
+              isAverageLap: true,
+              startTime: startTime,
+              maxLaps: 1);
 
           /// Elapsed / corrected times set to zero.
           expect(times.elapsed, equals(const Duration()));
@@ -108,7 +145,12 @@ void main() {
               [dummyLapTime, dummyLapTime, dummyLapTime]);
 
           final times = scorer.calculateResultTimes(
-              res, RatingSystem.py, true, startTime, 5);
+            comp: res,
+            scheme: RatingSystem.py,
+            isAverageLap: true,
+            startTime: startTime,
+            maxLaps: 5,
+          );
 
           final seconds = ((45.0 * 60.0 + 15.0) * 5 / 4).round();
           final expected = Duration(seconds: seconds);
@@ -124,7 +166,12 @@ void main() {
           comp = comp.copyWith(resultCode: ResultCode.dnf);
 
           final times = scorer.calculateResultTimes(
-              comp, RatingSystem.py, false, startTime, 5);
+            comp: comp,
+            scheme: RatingSystem.py,
+            isAverageLap: false,
+            startTime: startTime,
+            maxLaps: 5,
+          );
 
           expect(
               times.elapsed, equals(const Duration(minutes: 45, seconds: 15)));
@@ -141,7 +188,12 @@ void main() {
           comp = comp.copyWith(manualLaps: 7);
 
           final times = scorer.calculateResultTimes(
-              comp, RatingSystem.py, true, startTime, 7);
+            comp: comp,
+            scheme: RatingSystem.py,
+            isAverageLap: true,
+            startTime: startTime,
+            maxLaps: 7,
+          );
 
           final seconds = ((45.0 * 60.0 + 15.0) * 7 / 7).round();
           final expected = Duration(seconds: seconds);
@@ -165,8 +217,8 @@ void main() {
     test('All finishers', () {
       final scorer = ProviderContainer().read(raceScorerProvider);
 
-      final comps = List<RaceCompetitor>.generate(
-          4, (index) => _compWithResCode(ResultCode.ok));
+      final comps = List<RaceResult>.generate(
+          4, (index) => _resWithResCode(ResultCode.ok));
 
       final starters = scorer.startersInRace(comps);
       expect(starters, equals(4));
@@ -175,9 +227,9 @@ void main() {
     test('Results codes as not started', () {
       final scorer = ProviderContainer().read(raceScorerProvider);
       final comps = [
-        _compWithResCode(ResultCode.dns),
-        _compWithResCode(ResultCode.ood),
-        _compWithResCode(ResultCode.dnc),
+        _resWithResCode(ResultCode.dns),
+        _resWithResCode(ResultCode.ood),
+        _resWithResCode(ResultCode.dnc),
       ];
       final starters = scorer.startersInRace(comps);
       expect(starters, equals(0));
@@ -186,22 +238,22 @@ void main() {
     test('Result codes counted as started', () {
       final scorer = ProviderContainer().read(raceScorerProvider);
       final comps = [
-        _compWithResCode(ResultCode.bdf),
-        _compWithResCode(ResultCode.dgm),
-        _compWithResCode(ResultCode.dnf),
-        _compWithResCode(ResultCode.dpi),
-        _compWithResCode(ResultCode.dsq),
-        _compWithResCode(ResultCode.ocs),
-        _compWithResCode(ResultCode.ok),
-        _compWithResCode(ResultCode.rdg),
-        _compWithResCode(ResultCode.rdga),
-        _compWithResCode(ResultCode.rdgb),
-        _compWithResCode(ResultCode.rdgc),
-        _compWithResCode(ResultCode.ret),
-        _compWithResCode(ResultCode.scp),
-        _compWithResCode(ResultCode.udf),
-        _compWithResCode(ResultCode.zfp),
-        _compWithResCode(ResultCode.notFinished),
+        _resWithResCode(ResultCode.bdf),
+        _resWithResCode(ResultCode.dgm),
+        _resWithResCode(ResultCode.dnf),
+        _resWithResCode(ResultCode.dpi),
+        _resWithResCode(ResultCode.dsq),
+        _resWithResCode(ResultCode.ocs),
+        _resWithResCode(ResultCode.ok),
+        _resWithResCode(ResultCode.rdg),
+        _resWithResCode(ResultCode.rdga),
+        _resWithResCode(ResultCode.rdgb),
+        _resWithResCode(ResultCode.rdgc),
+        _resWithResCode(ResultCode.ret),
+        _resWithResCode(ResultCode.scp),
+        _resWithResCode(ResultCode.udf),
+        _resWithResCode(ResultCode.zfp),
+        _resWithResCode(ResultCode.notFinished),
       ];
       final starters = scorer.startersInRace(comps);
       expect(starters, equals(comps.length));

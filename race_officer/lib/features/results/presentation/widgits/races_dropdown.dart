@@ -14,7 +14,7 @@ class RacesDropDown extends ConsumerWidget {
 
     return DropdownMenu<Race>(
       /// must not cause rebild for initial state 
-      initialSelection: ref.read(resultsController).race,
+      initialSelection: ref.read(resultsController).displayedRace,
       textStyle: const TextStyle(fontSize: 15),
       label: const Text('Select Race'),
       dropdownMenuEntries: races

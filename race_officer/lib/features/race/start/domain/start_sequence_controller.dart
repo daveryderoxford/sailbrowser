@@ -6,6 +6,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:loggy/loggy.dart';
 import 'package:sailbrowser_flutter/features/race-calander/domain/series.dart';
 import 'package:sailbrowser_flutter/features/race-calander/domain/series_service.dart';
+import 'package:sailbrowser_flutter/features/race/domain/race_competitor_service.dart';
 import 'package:sailbrowser_flutter/features/race/start/domain/start_sequence.dart';
 
 enum StartWhen {
@@ -107,7 +108,7 @@ class StartSequence extends StateNotifier<StartSequenceState> with UiLoggy {
     // loggy.info(
     //     'Time to next start:  ${state.timeToNextStart.inSeconds}  Race start: ${state.races[0].raceOfDay.toString()}');
 
-    /** Beep at set times before the start */
+    /// Beep at set times before the start */
     if (_shortBeepTimes.contains(secondstoStart)) {
       _beep();
     }
@@ -123,13 +124,22 @@ class StartSequence extends StateNotifier<StartSequenceState> with UiLoggy {
       final races = [...state.races];
       final startedRaces = [...state.startedRaces];
 
+      final startTime = clock.now();
+
       final race = races[0].copyWith(
         status: RaceStatus.inProgress,
-        actualStart: clock.now(),
+        actualStart: startTime,
       );
 
       final series = ref.read(seriesProvider(race.seriesId)); //TODO may be a problem wiht read here??
       ref.read(seriesRepositoryProvider).updateRace(series!, race.id, race);
+
+      // Write start time for each competitor. 
+      final competitors = ref.read(currentCompetitors).value!.where((comp) => comp.raceId == race.id);
+      for (var comp in competitors) {
+        comp = comp.copyWith( startTime: startTime );
+        ref.read(raceCompetitorRepositoryProvider).update(comp, comp.id, race.seriesId );
+      }
 
       startedRaces.add(races[0]);
       races.removeAt(0);

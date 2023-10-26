@@ -1,17 +1,20 @@
 import 'package:data_table_2/data_table_2.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
 import 'package:loggy/loggy.dart';
 import 'package:sailbrowser_flutter/common_widgets/responsive_center.dart';
+import 'package:sailbrowser_flutter/features/race-calander/domain/series_service.dart';
 import 'package:sailbrowser_flutter/features/race/domain/result_code.dart';
 import 'package:sailbrowser_flutter/features/results/domain/race_result.dart';
 import 'package:sailbrowser_flutter/features/results/domain/series_results.dart';
+import 'package:sailbrowser_flutter/features/results/presentation/result_controller.dart';
 import 'package:sailbrowser_flutter/util/color_extensions.dart';
 import 'package:sailbrowser_flutter/util/list_extensions.dart';
 
 enum _RaceHeaderFormat { numOnly, dateOnly, numAndDate }
 
-class SeriesResultsTable extends StatelessWidget with UiLoggy {
+class SeriesResultsTable extends ConsumerWidget with UiLoggy {
   const SeriesResultsTable({
     super.key,
     required this.results,
@@ -43,7 +46,7 @@ class SeriesResultsTable extends StatelessWidget with UiLoggy {
   }
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final stripe1 = Theme.of(context).colorScheme.primary.tone(92);
     final stripe2 = Theme.of(context).colorScheme.primary.tone(95);
     final minWidth = 370 + results.races.length * _sizeResult;
@@ -75,6 +78,10 @@ class SeriesResultsTable extends StatelessWidget with UiLoggy {
             ...results.races.map((raceResult) => DataColumn2(
                   label: _raceHeading(context, raceResult, headerFormat),
                   fixedWidth: _sizeResult,
+                  onSort: (index, ascending) {
+                    final race = ref.read(raceProvider(raceResult.raceId));
+                    ref.read(resultsController.notifier).displayRace(race!);
+                  }
                 )),
             DataColumn2(
               label: const Text('Total'),
@@ -96,7 +103,7 @@ class SeriesResultsTable extends StatelessWidget with UiLoggy {
                     DataCell(_boatCell(context, comp)),
                     ...results.races.mapIndexed<DataCell>((raceIndex, race) =>
                         DataCell(_racePointsCell(
-                            context, results.results[compIndex][raceIndex]))),
+                            context, results.competitors[compIndex].results[raceIndex]))),
                     DataCell(Text(_roundedPointsStr(comp.totalPoints))),
                     DataCell(Text(_roundedPointsStr(comp.netPoints))),
                   ],
@@ -122,7 +129,7 @@ class SeriesResultsTable extends StatelessWidget with UiLoggy {
         : points.toStringAsFixed(1);
   }
 
-  Widget _racePointsCell(BuildContext context, SeriesResult res) {
+  Widget _racePointsCell(BuildContext context, SeriesResultData res) {
     var pointsStr = _roundedPointsStr(res.points);
     pointsStr = (res.isDiscard) ? '($pointsStr)' : pointsStr;
     final str = (res.resultCode != ResultCode.ok)

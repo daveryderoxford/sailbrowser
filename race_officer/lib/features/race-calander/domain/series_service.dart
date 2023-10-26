@@ -65,7 +65,7 @@ class SeriesService with UiLoggy {
             toFirestore: (Series series, _) => series.toJson(),
           );
 
-  late final Stream<List<Series>> allRaceSeriess$ = _series.snapshots().map(
+  late final ReplayStream<List<Series>> allRaceSeriess$ = _series.snapshots().map(
     (snap) {
       final series =
           snap.docs.map<Series>((doc) => doc.data() as Series).toList();
@@ -74,7 +74,7 @@ class SeriesService with UiLoggy {
     },
   ).shareReplay();
 
-  late final Stream<List<Race>> allRaces$ = allRaceSeriess$.map(
+  late final ReplayStream<List<Race>> allRaces$ = allRaceSeriess$.map(
     (seriesList) {
       final List<Race> races = [];
       for (var series in seriesList) {
@@ -213,7 +213,7 @@ final raceProvider = Provider.autoDispose.family<Race?, String>((ref, id) {
 });
 
 /// Streeam of all races
-final allRacesProvider = StreamProvider.autoDispose<List<Race>>((ref) {
+final allRacesProvider = StreamProvider<List<Race>>((ref) {
   final db = ref.watch(seriesRepositoryProvider);
   return db.allRaces$;
 });
@@ -242,3 +242,4 @@ final allRaceDataProvider = StreamProvider<List<AllRaceData>>((ref) {
     //   allRaces.sort((AllRaceData a, b) => sortRaces(a.race, b.race));
   }).shareReplay();
 });
+

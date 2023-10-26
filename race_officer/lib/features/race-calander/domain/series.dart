@@ -54,6 +54,7 @@ class Series with _$Series {
       _$SeriesFromJson(json);
 }
 
+/// Type of race conventional/pursuit
 enum RaceType {
   conventional('Conventional'),
   pursuit('Pursuit');
@@ -62,6 +63,7 @@ enum RaceType {
   const RaceType(this.displayName);
 }
 
+/// Status of the race - future/in progess etc. 
 enum RaceStatus {
   future('Future'),
   inProgress('In progress'),

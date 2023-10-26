@@ -33,6 +33,7 @@ class FirebaseConfig with UiLoggy {
       }
 
       // Wait for first logon event before displaying app to ensure saved login is applied
+      // TODO not sure if this is necessary
       final user = await FirebaseAuth.instance.authStateChanges().first;
       final msg = (user != null)
           ? "Using saved login details. ${user.displayName}"

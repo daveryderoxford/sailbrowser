@@ -28,7 +28,7 @@ class RaceCompetitorService with UiLoggy {
         );
   }
 
-  late final Stream<List<RaceCompetitor>> currectCompetitors$ = _firestore
+  late final ReplayStream<List<RaceCompetitor>> currectCompetitors$ = _firestore
       .collectionGroup("race_competitors")
       .where('raceId', whereIn: selectedRaces.map((race) => race.id))
       .snapshots()
@@ -36,9 +36,15 @@ class RaceCompetitorService with UiLoggy {
     (snap) {
       final comps =
           snap.docs.map((doc) => RaceCompetitor.fromJson(doc.data())).toList();
+      final changes = snap.docChanges.map<RaceCompetitor>((change) => change.doc.data() as RaceCompetitor).toList();
+      _changes$.add(changes);
       return comps;
     },
   ).shareReplay();
+
+  final _changes$ = BehaviorSubject<List<RaceCompetitor>>.seeded([]);
+  /// Stream of changes to currect competitors.  May be used to invalidate 
+  get changes$ => _changes$.stream;
 
   RaceCompetitorService(this.clubId, this.selectedRaces) {
     // compute unique series Ids for selected races
@@ -80,14 +86,9 @@ class RaceCompetitorService with UiLoggy {
         : comp.resultCode;
 
     final race = selectedRaces.firstWhere((race) => race.id == comp.raceId);
-    /// TODO do - needs to use scorer? Maybe introduce timeTaken - Inject scorer into racecomp seems wrong
-    /// maybe seprate out results object - scoring would need maxlaps that is deifnitly external.
-    /// best solution seems to be for race scorer to listen for chnges to results.  
-    /// maybe just trigger scorer to get data async scorer.   
-    final elapsed = time.difference(race.actualStart);
 
     final c = comp.copyWith(
-        recordedFinishTime: time, elapsedTime: elapsed, resultCode: resultCode);
+        recordedFinishTime: time, startTime: race.actualStart, resultCode: resultCode);
 
     update(c, id, seriesId);
   }
@@ -111,6 +112,13 @@ final currentCompetitors = StreamProvider(
   (ref) {
     final db = ref.watch(raceCompetitorRepositoryProvider);
     return db.currectCompetitors$;
+  },
+);
+
+final changedCompetitors = StreamProvider(
+  (ref) {
+    final db = ref.watch(raceCompetitorRepositoryProvider);
+    return db.changes$;
   },
 );
 

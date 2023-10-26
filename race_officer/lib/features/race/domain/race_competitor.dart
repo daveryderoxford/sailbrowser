@@ -17,22 +17,26 @@ class RaceCompetitor with _$RaceCompetitor {
     required String boatClass,
     required int sailNumber,
     required num handicap,
+
     /// Finish time recored when competitor finishes.
     /// If a manual finish time set by hand is specified it is used in preference.
-    /// The recorded finish time is null if it has not been recorded. 
+    /// The recorded finish time is null if it has not been recorded.
     @TimestampSerializer() DateTime? recordedFinishTime,
-    /// Manually specified finsih time.  
-    /// Used in preference to the recorded finish time if specified. 
+
+    /// Manually specified finsih time.
+    /// Used in preference to the recorded finish time if specified.
     /// The manula finish time may be set to null to disable it.
     @TimestampSerializer() DateTime? manualFinishTime,
-    @Default(Duration()) Duration elapsedTime,
-    @Default(Duration()) Duration correctedTime,
+
+    /// Start time for the competitor - set based on the race at start and finish
+    @TimestampSerializer() DateTime? startTime,
     @Default(ResultCode.notFinished) ResultCode resultCode,
+
     /// Number of laps - defaults to number of lap times but may be manually set
     @Default(0) int manualLaps,
     @Default([]) List<DateTime> lapTimes,
     ResultData? result,
-  }) = _RaceCompetitor; 
+  }) = _RaceCompetitor;
 
   const RaceCompetitor._();
 
@@ -41,28 +45,34 @@ class RaceCompetitor with _$RaceCompetitor {
 
   /// the number of laps, manual value if set, otherwise the number of lap times recorded
   int get numLaps {
-    if (manualLaps != 0){
+    if (manualLaps != 0) {
       return manualLaps;
     } else {
-      // If competitor has finished then he has completed an extra lap.  
-      return (finishTime == null) ? lapTimes.length : lapTimes.length+1;
+      // If competitor has finished then he has completed an extra lap.
+      return (finishTime == null) ? lapTimes.length : lapTimes.length + 1;
     }
   }
 
-  DateTime? get finishTime => (manualFinishTime != null) ? manualFinishTime : recordedFinishTime;
+  DateTime? get finishTime =>
+      (manualFinishTime != null) ? manualFinishTime : recordedFinishTime;
 
-  String get helmCrew =>  (crew != null && crew!.trim().isNotEmpty)
-        ? '$helm / $crew}'
-        : helm;
+  Duration get totalTime => (finishTime != null && startTime != null)
+      ? finishTime!.difference(startTime!)
+      : const Duration();
 
-   /// Competitor has finished OK
-   get isOk => resultCode == ResultCode.ok;
+  String get helmCrew =>
+      (crew != null && crew!.trim().isNotEmpty) ? '$helm / $crew}' : helm;
+
+  /// Competitor has finished OK
+  get isOk => resultCode == ResultCode.ok;
 }
 
 /// Results data that depends on other competitors in the race.
 @freezed
 class ResultData with _$ResultData {
   factory ResultData({
+    @Default(Duration()) Duration elapsedTime,
+    @Default(Duration()) Duration correctedTime,
     required int position,
     @Default(0) num points,
     required bool isDiscarded,
@@ -73,5 +83,4 @@ class ResultData with _$ResultData {
 
   factory ResultData.fromJson(Map<String, Object?> json) =>
       _$ResultDataFromJson(json);
-
 }

@@ -14,6 +14,7 @@ class RaceResults with _$RaceResults {
     required DateTime date,
     required String fleet,
     required int index,
+    required String raceId,
     @Default([]) List<RaceResult> results,
   }) = _RaceResults;
 
@@ -41,6 +42,9 @@ class RaceResult with _$RaceResult {
   }) = _RaceResult;
 
   const RaceResult._();
+
+  /// Competitor has finished OK
+  get isOk => resultCode == ResultCode.ok;
 
   factory RaceResult.fromJson(Map<String, Object?> json) =>
       _$RaceResultFromJson(json);
