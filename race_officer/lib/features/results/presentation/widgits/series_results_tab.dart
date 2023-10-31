@@ -6,11 +6,10 @@ import 'package:sailbrowser_flutter/features/results/presentation/widgits/series
 
 import 'series_dropdown.dart';
 
-
 class SeriesResultsTab extends ConsumerWidget with UiLoggy {
   SeriesResultsTab({required this.results, super.key});
 
-  final SeriesResults results;
+  final SeriesResults? results;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {

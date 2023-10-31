@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:loggy/loggy.dart';
 import 'package:rxdart/rxdart.dart';
@@ -65,7 +66,8 @@ class SeriesService with UiLoggy {
             toFirestore: (Series series, _) => series.toJson(),
           );
 
-  late final ReplayStream<List<Series>> allRaceSeriess$ = _series.snapshots().map(
+  late final ReplayStream<List<Series>> allRaceSeriess$ =
+      _series.snapshots().map(
     (snap) {
       final series =
           snap.docs.map<Series>((doc) => doc.data() as Series).toList();
@@ -88,35 +90,28 @@ class SeriesService with UiLoggy {
   SeriesService(this.clubId);
 
   add(Series series) {
+    // set series Id.
+    final updated1 = series.copyWith(id: _series.doc().id);
 
-      // set series Id.  
-      final updated1 = series.copyWith(id: _series.doc().id);
+    final update = _setRaceDetails(updated1, [...updated1.races]);
 
-      final update = _setRaceDetails(updated1, [...updated1.races]);
-
-      _series
-         .doc(update.id)
-         .set(update)
-         .onError((error, stackTrace) => _errorHandler(error, stackTrace, 'add'));
+    _series.doc(update.id).set(update).onError(
+        (error, stackTrace) => _errorHandler(error, stackTrace, 'add'));
   }
 
   /// Remove a series
-  /// All competitors should have been removed from the series before removing removing it. 
+  /// All competitors should have been removed from the series before removing removing it.
   remove(String id) {
-     _series
-      .doc(id)
-      .delete()        
-      .onError((error, stackTrace) => _errorHandler(error, stackTrace, 'remove'));
+    _series.doc(id).delete().onError(
+        (error, stackTrace) => _errorHandler(error, stackTrace, 'remove'));
   }
 
 // Edit a series
-  update(Series series, String id)  {
+  update(Series series, String id) {
     final upDatedSeries = _setRaceDetails(series, [...series.races]);
 
-    _series
-      .doc(id)
-      .update(upDatedSeries.toJson())
-      .onError((error, stackTrace) => _errorHandler(error, stackTrace, 'update'));
+    _series.doc(id).update(upDatedSeries.toJson()).onError(
+        (error, stackTrace) => _errorHandler(error, stackTrace, 'update'));
   }
 
   /// Adds a new race to a series.
@@ -148,7 +143,7 @@ class SeriesService with UiLoggy {
   }
 
   /// Remove a race for a series.
-  /// All competitors should have been removed from the series before removing a race. 
+  /// All competitors should have been removed from the series before removing a race.
   removeRace(Series series, String deletedId) {
     final races = series.races.where((race) => race.id != deletedId).toList();
 
@@ -157,9 +152,8 @@ class SeriesService with UiLoggy {
     this.update(update, update.id);
   }
 
-  /// Set de-normalised race details in race and series objects 
+  /// Set de-normalised race details in race and series objects
   Series _setRaceDetails(Series series, List<Race> races) {
-
     // Sort Races for series into order based on start/end time and startgroup
     races.sort((Race a, b) => sortRaces(a, b));
 
@@ -167,10 +161,10 @@ class SeriesService with UiLoggy {
     final updatedRaces = races.map((race) {
       int index = races.indexOf(race);
       return race.copyWith(
-        seriesId: series.id,
-        fleetId: series.fleetId,
-        index: index,
-        seriesName: series.name);
+          seriesId: series.id,
+          fleetId: series.fleetId,
+          index: index,
+          seriesName: series.name);
     }).toList();
 
     // Set start/end time of series
@@ -183,9 +177,8 @@ class SeriesService with UiLoggy {
   }
 
   _errorHandler(Object? error, StackTrace stackTrace, String func) {
-    final s = (error == null)
-        ? error.toString()
-        : 'Error encountered Series.  $func';
+    final s =
+        (error == null) ? error.toString() : 'Error encountered Series.  $func';
     SnackBarService.showErrorSnackBar(content: s);
     loggy.error(s);
   }
@@ -209,6 +202,13 @@ final seriesProvider = Provider.autoDispose.family<Series?, String>((ref, id) {
 /// Find a races based on its Id
 final raceProvider = Provider.autoDispose.family<Race?, String>((ref, id) {
   final races = ref.watch(allRacesProvider);
+  if (races.hasError) {
+    debugPrint('raceProvider races has error');
+  } else if (races.isLoading) {
+    debugPrint('raceProvider loading');
+  } else {
+    debugPrint('raceProvider races count: ${races.value!.length}');
+  }
   return races.valueOrNull?.firstWhere((s) => s.id == id);
 });
 
@@ -242,4 +242,3 @@ final allRaceDataProvider = StreamProvider<List<AllRaceData>>((ref) {
     //   allRaces.sort((AllRaceData a, b) => sortRaces(a.race, b.race));
   }).shareReplay();
 });
-

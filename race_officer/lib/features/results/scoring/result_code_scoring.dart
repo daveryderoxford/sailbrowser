@@ -7,7 +7,6 @@ enum ResultCodeAlgorithm {
   avgAll,
   avgBefore,
   scoringPenalty,
-  positionPenalty,
   setByHand
 }
 
@@ -154,9 +153,9 @@ Map<ResultCode, _ResultCodeScoringBase> _resultCodes = {
     scoreLike: ResultCode.dnf,
   ),
   ResultCode.xpa: ResultCodeScoring(
-    shortSeriesAlgorithm: ResultCodeAlgorithm.positionPenalty,
+    shortSeriesAlgorithm: ResultCodeAlgorithm.scoringPenalty,
     shortSeriesFactor: 1.2,
-    longSeriesAlgorithm: ResultCodeAlgorithm.positionPenalty,
+    longSeriesAlgorithm: ResultCodeAlgorithm.scoringPenalty,
     longSeriesFactor: 1.2,
     isDiscardable: true,
     isStartAreaComp: true,

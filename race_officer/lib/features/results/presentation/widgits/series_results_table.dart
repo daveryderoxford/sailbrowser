@@ -4,7 +4,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
 import 'package:loggy/loggy.dart';
 import 'package:sailbrowser_flutter/common_widgets/responsive_center.dart';
-import 'package:sailbrowser_flutter/features/race-calander/domain/series_service.dart';
 import 'package:sailbrowser_flutter/features/race/domain/result_code.dart';
 import 'package:sailbrowser_flutter/features/results/domain/race_result.dart';
 import 'package:sailbrowser_flutter/features/results/domain/series_results.dart';
@@ -24,7 +23,7 @@ class SeriesResultsTable extends ConsumerWidget with UiLoggy {
   final _sizeNum = 50.0;
   final _sizeResult = 60.0;
 
-  final SeriesResults results;
+  final SeriesResults? results;
 
   /// Specify fomat for race header.
   /// If all dates are same just display race number.
@@ -47,72 +46,81 @@ class SeriesResultsTable extends ConsumerWidget with UiLoggy {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final stripe1 = Theme.of(context).colorScheme.primary.tone(92);
-    final stripe2 = Theme.of(context).colorScheme.primary.tone(95);
-    final minWidth = 370 + results.races.length * _sizeResult;
-    final headerFormat = _getRaceHeaderFormat(results.races);
-
-    return ResponsiveCenter(
-      maxContentWidth: 800,
-      child: Padding(
-        padding: const EdgeInsets.all(16),
-        child: DataTable2(
-          columnSpacing: 12,
-          horizontalMargin: 12,
-          minWidth: minWidth,
-          fixedLeftColumns: 2,
-          empty: const Center(
-              child: Text(textScaleFactor: 1.2, 'No results to display')),
-          columns: [
-            DataColumn2(
-              label: const Text('Pos'),
-              fixedWidth: _sizePos,
+    if (results == null) {
+      return const Center(
+        child: Text(textScaleFactor: 1.2, 'No results to display'),
+      );
+    } else {
+      final stripe1 = Theme.of(context).colorScheme.primary.tone(92);
+      final stripe2 = Theme.of(context).colorScheme.primary.tone(95);
+      final minWidth = 370 + results!.races.length * _sizeResult;
+      final headerFormat = _getRaceHeaderFormat(results!.races);
+      return ResponsiveCenter(
+        maxContentWidth: 800,
+        child: Padding(
+          padding: const EdgeInsets.all(16),
+          child: DataTable2(
+            columnSpacing: 12,
+            horizontalMargin: 12,
+            minWidth: minWidth,
+            fixedLeftColumns: 2,
+            empty: const Center(
+              child: Text(textScaleFactor: 1.2, 'No results to display'),
             ),
-            const DataColumn2(
-              label: Text('Name'),
-            ),
-            const DataColumn2(
-              label: Text('Boat'),
-              size: ColumnSize.S,
-            ),
-            ...results.races.map((raceResult) => DataColumn2(
+            columns: [
+              DataColumn2(
+                label: const Text('Pos'),
+                fixedWidth: _sizePos,
+              ),
+              const DataColumn2(
+                label: Text('Name'),
+              ),
+              const DataColumn2(
+                label: Text('Boat'),
+                size: ColumnSize.S,
+              ),
+              ...results!.races.map((raceResult) => DataColumn2(
                   label: _raceHeading(context, raceResult, headerFormat),
                   fixedWidth: _sizeResult,
                   onSort: (index, ascending) {
-                    final race = ref.read(raceProvider(raceResult.raceId));
-                    ref.read(resultsController.notifier).displayRace(race!);
-                  }
-                )),
-            DataColumn2(
-              label: const Text('Total'),
-              fixedWidth: _sizeNum,
-            ),
-            DataColumn2(
-              label: const Text('Net'),
-              fixedWidth: _sizeNum,
-            ),
-          ],
-          rows: results.competitors
-              .mapIndexed<DataRow>(
-                (compIndex, comp) => DataRow(
-                  color: MaterialStateColor.resolveWith(
-                      (states) => compIndex % 2 == 1 ? stripe1 : stripe2),
-                  cells: [
-                    DataCell(Text(comp.position.toString())),
-                    DataCell(_nameCell(context, comp)),
-                    DataCell(_boatCell(context, comp)),
-                    ...results.races.mapIndexed<DataCell>((raceIndex, race) =>
-                        DataCell(_racePointsCell(
-                            context, results.competitors[compIndex].results[raceIndex]))),
-                    DataCell(Text(_roundedPointsStr(comp.totalPoints))),
-                    DataCell(Text(_roundedPointsStr(comp.netPoints))),
-                  ],
-                ),
-              )
-              .toList(),
+                    ref
+                        .read(resultsController.notifier)
+                        .displayRace(raceResult);
+                    DefaultTabController.of(context).animateTo(0);
+                  })),
+              DataColumn2(
+                label: const Text('Total'),
+                fixedWidth: _sizeNum,
+              ),
+              DataColumn2(
+                label: const Text('Net'),
+                fixedWidth: _sizeNum,
+              ),
+            ],
+            rows: results!.competitors
+                .mapIndexed<DataRow>(
+                  (compIndex, comp) => DataRow(
+                    color: MaterialStateColor.resolveWith(
+                        (states) => compIndex % 2 == 1 ? stripe1 : stripe2),
+                    cells: [
+                      DataCell(Text(comp.position.toString())),
+                      DataCell(_nameCell(context, comp)),
+                      DataCell(_boatCell(context, comp)),
+                      ...results!.races.mapIndexed<DataCell>(
+                          (raceIndex, race) => DataCell(_racePointsCell(
+                              context,
+                              results!
+                                  .competitors[compIndex].results[raceIndex]))),
+                      DataCell(Text(_roundedPointsStr(comp.totalPoints))),
+                      DataCell(Text(_roundedPointsStr(comp.netPoints))),
+                    ],
+                  ),
+                )
+                .toList(),
+          ),
         ),
-      ),
-    );
+      );
+    }
   }
 
   Widget _nameCell(BuildContext context, SeriesCompetitor res) {

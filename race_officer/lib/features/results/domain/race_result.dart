@@ -1,15 +1,16 @@
 import 'package:freezed_annotation/freezed_annotation.dart';
+import 'package:sailbrowser_flutter/features/race-calander/domain/series.dart';
 import 'package:sailbrowser_flutter/features/race/domain/result_code.dart';
 import 'package:sailbrowser_flutter/features/results/domain/series_results.dart';
 
 part 'race_result.freezed.dart';
 part 'race_result.g.dart';
 
-@unfreezed
+@Freezed(addImplicitFinal: false, makeCollectionsUnmodifiable: false)
 class RaceResults with _$RaceResults {
   factory RaceResults({
-    required DateTime publishedOn,
-    required ResultsStatus status,
+    DateTime? publishedOn,
+    @Default(ResultsStatus.provisional) ResultsStatus status,
     required String name,
     required DateTime date,
     required String fleet,
@@ -22,9 +23,19 @@ class RaceResults with _$RaceResults {
 
   factory RaceResults.fromJson(Map<String, Object?> json) =>
       _$RaceResultsFromJson(json);
+
+  factory RaceResults.fromRace(Race race) {
+    return RaceResults(
+      date: race.scheduledStart,
+      fleet: race.fleetId,
+      index: race.index,
+      name: race.name,
+      raceId: race.id,
+    );
+  }
 }
 
-@unfreezed
+@Freezed(addImplicitFinal: false, makeCollectionsUnmodifiable: false)
 class RaceResult with _$RaceResult {
   factory RaceResult({
     required String helm,
@@ -38,7 +49,6 @@ class RaceResult with _$RaceResult {
     required ResultCode resultCode,
     required Duration elapsed,
     required Duration corrected,
-    //  @Default([]) List<RaceResult> results,
   }) = _RaceResult;
 
   const RaceResult._();

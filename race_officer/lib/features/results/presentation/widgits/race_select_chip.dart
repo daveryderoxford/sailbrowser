@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:sailbrowser_flutter/common_widgets/null_widget.dart';
-import 'package:sailbrowser_flutter/features/race-calander/domain/series.dart';
-import 'package:sailbrowser_flutter/features/race/domain/selected_races.dart';
+import 'package:sailbrowser_flutter/features/results/domain/race_result.dart';
+import 'package:sailbrowser_flutter/features/results/domain/results_service.dart';
 import 'package:sailbrowser_flutter/features/results/presentation/result_controller.dart';
 
 class RaceChoiceChip extends ConsumerWidget {
@@ -11,12 +11,11 @@ class RaceChoiceChip extends ConsumerWidget {
     required this.selected,
   });
 
-  final Race? selected;
+  final RaceResults? selected;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final data = ref.watch(selectedRacesProvider);
-    final races = data.map((d) => d.race).toList();
+    final races = ref.watch(raceResultsProvider);
 
     return races.isEmpty
         ? const NullWidget()

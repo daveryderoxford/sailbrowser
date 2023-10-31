@@ -1,27 +1,25 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:sailbrowser_flutter/features/race-calander/domain/series.dart';
-import 'package:sailbrowser_flutter/features/race/domain/selected_races.dart';
+import 'package:sailbrowser_flutter/features/results/domain/results_service.dart';
+import 'package:sailbrowser_flutter/features/results/domain/series_results.dart';
 import 'package:sailbrowser_flutter/features/results/presentation/result_controller.dart';
-import 'package:sailbrowser_flutter/util/list_extensions.dart';
 
 class SeriesDropDown extends ConsumerWidget {
   const SeriesDropDown({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final data = ref.watch(selectedRacesProvider);
-    final series = data.map((d) => d.series).toList().unique().toList();
+    final series = ref.watch(resultsService).requireValue;
 
-    return DropdownMenu<Series>(
+    return DropdownMenu<SeriesResults>(
       /// must not cause rebild for initial state 
       initialSelection: ref.read(resultsController).displayedSeries,
       textStyle: const TextStyle(fontSize: 15),
-      label: const Text('Select Race'),
+      label: const Text('Select Series'),
       dropdownMenuEntries: series
-          .map((series) => DropdownMenuEntry(value: series, label: series.name))
+          .map((s) => DropdownMenuEntry(value: s, label: s.name))
           .toList(),
-      onSelected: (Series? series) {
+      onSelected: (SeriesResults? series) {
         if (series != null) {
           ref.read(resultsController.notifier).displaySeries(series);
         }

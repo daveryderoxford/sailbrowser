@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:sailbrowser_flutter/features/race-calander/domain/series.dart';
-import 'package:sailbrowser_flutter/features/race/domain/selected_races.dart';
+import 'package:sailbrowser_flutter/features/results/domain/race_result.dart';
+import 'package:sailbrowser_flutter/features/results/domain/results_service.dart';
 import 'package:sailbrowser_flutter/features/results/presentation/result_controller.dart';
 
 class RacesDropDown extends ConsumerWidget {
@@ -9,18 +9,17 @@ class RacesDropDown extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final data = ref.watch(selectedRacesProvider);
-    final races = data.map((d) => d.race).toList();
+    final races = ref.watch(raceResultsProvider);
 
-    return DropdownMenu<Race>(
+    return DropdownMenu<RaceResults>(
       /// must not cause rebild for initial state 
       initialSelection: ref.read(resultsController).displayedRace,
       textStyle: const TextStyle(fontSize: 15),
       label: const Text('Select Race'),
       dropdownMenuEntries: races
-          .map((race) => DropdownMenuEntry(value: race, label: race.name))
+          .map((race) => DropdownMenuEntry<RaceResults>(value: race, label: race.name))
           .toList(),
-      onSelected: (Race? race) {
+      onSelected: (RaceResults? race) {
         if (race != null) {
           ref.read(resultsController.notifier).displayRace(race);
         }

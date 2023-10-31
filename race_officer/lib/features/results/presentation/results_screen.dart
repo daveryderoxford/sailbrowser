@@ -1,17 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:sailbrowser_flutter/features/race/domain/result_code.dart';
-import 'package:sailbrowser_flutter/features/results/domain/race_result.dart';
-import 'package:sailbrowser_flutter/features/results/domain/series_results.dart';
+import 'package:loggy/loggy.dart';
 import 'package:sailbrowser_flutter/features/results/presentation/widgits/series_results_tab.dart';
 import 'package:sailbrowser_flutter/features/results/presentation/widgits/race_results_tab.dart';
 import 'package:sailbrowser_flutter/features/results/presentation/result_controller.dart';
-import 'package:sailbrowser_flutter/features/results/scoring/series_scoring.dart';
 
-class ResultsScreen extends ConsumerWidget {
+class ResultsScreen extends ConsumerWidget with UiLoggy {
   ResultsScreen({super.key});
 
-  static const numCompetitors = 30;
+ /* static const numCompetitors = 30;
   static const numRaces = 10;
 
   final r = SeriesResults(
@@ -72,17 +69,15 @@ class ResultsScreen extends ConsumerWidget {
         ),
       ),
     ),
-  );
+  ); */
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final tabIndex = ref
-        .watch(resultsController..select((controller) => controller.tabIndex))
-        .tabIndex;
+    final controller = ref.watch(resultsController);
 
     return DefaultTabController(
       length: 2,
-      initialIndex: tabIndex,
+      initialIndex: 0,
       child: Scaffold(
         appBar: AppBar(
           actions: [
@@ -102,10 +97,10 @@ class ResultsScreen extends ConsumerWidget {
           ),
           title: const Text('Results'),
         ),
-        body: TabBarView(
+        body:  TabBarView(
           children: [
-            RaceResultsTab(results: r.races[0].results),
-            SeriesResultsTab(results: r),
+            RaceResultsTab(results: controller.displayedRace),
+            SeriesResultsTab(results: controller.displayedSeries),
           ],
         ),
       ),

@@ -9,16 +9,18 @@ import 'races_dropdown.dart';
 class RaceResultsTab extends ConsumerWidget with UiLoggy {
   RaceResultsTab({required this.results, super.key});
 
-  final List<RaceResult> results;
+  final RaceResults? results;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final races = (results != null) ? results!.results : <RaceResult>[];
+ 
     return Column(
       children: [
         const SizedBox(height: 20),
         const RacesDropDown(),
         // const RaceChoiceChip(selected: null),
-        Expanded(child: RaceResultsTable(results: results)),
+        Expanded(child: RaceResultsTable(results: races)),
       ],
     );
   }

@@ -87,7 +87,7 @@ class RaceScorer {
     } else if (!a.isOk && b.isOk) {
       return -1;
     } else {
-      // a and b both not OK - keep sort order
+      // a and b both not OK - keep existing order
       return 0;
     }
   }
@@ -97,7 +97,6 @@ class RaceScorer {
   /// This funciton assumes that the competitor list is sorted into corrected time order
   @visibleForTesting
   assignPointsForFinishers(List<RaceResult> results) {
-
     /// Group competitors by their finish time
     final resultsByTime = results.groupBy((res) => res.corrected);
 
@@ -124,72 +123,63 @@ class RaceScorer {
     return pos;
   }
 
-/*
-/// Assigns points for non-finishers depending on race data.
-/// Result codes depending on competitors in the series will be determined when 
-/// series points are calculated. 
-@visibleForTesting
-assignPointsForNonFinishers(List<RaceResult> results, int competitorsInSeries,  bool shortSeries) {
-  final starters = startersInRace(results);
+  /// Assigns points for non-finishers depending on race data.
+  /// Result codes depending on competitors in the series will be determined when
+  /// series points are calculated.
+  @visibleForTesting
+  assignPointsForNonFinishers(List<RaceResult> results, bool shortSeries) {
+    var starters = -1; // Lazily calculated
 
-  for (var res in results) {
-    final resultCode = getScoringData(res.resultCode)!;
+    for (var res in results) {
+      final resultCode = getScoringData(res.resultCode)!;
 
-    final algorithm = shortSeries ? resultCode.shortSeriesAlgorithm : resultCode.longSeriesAlgorithm;
+      final algorithm = shortSeries
+          ? resultCode.shortSeriesAlgorithm
+          : resultCode.longSeriesAlgorithm;
+      final factor = shortSeries
+          ? resultCode.shortSeriesFactor
+          : resultCode.longSeriesFactor;
 
-    final code = shortSeries ? resultCode.shortSeriesAlgorithm : resultCode.longSeriesAlgorithm;
-    final factor = shortSeries ? resultCode.shortSeriesFactor : resultCode.longSeriesFactor;
-
-    // Assign the times
-    switch (algorithm.) {
-      case 'StartArea':
-        res.points = starters + factor;
-      case 'scoringPenalty':
-           // Scoring penalties are applied after all other positions have been determined.
-
-        break;
-      case 'InSeries':
-        res.points = competitorsInSeries + factor;
-      case 'AvgBefore':
-          // 
-          throw new Error("To Do");
-        break;
-      case 'AvgAll':
-            throw new Error("To Do");
-
-        break;
-      case 'SetByHand':
-            throw new Error("To Do");
-        break;
-      case 'NA':
-        //  NA is either NoFinished or OK
-        break;
+      // Assign the times
+      switch (algorithm) {
+        case ResultCodeAlgorithm.compInStartArea:
+          // Lazily initialise starters as an optimisation in case the code is not used.
+          if (starters == -1) {
+            starters = startersInRace(results);
+          }
+          res.points = starters + factor;
+        case ResultCodeAlgorithm.scoringPenalty:
+        // TODO Scoring penalties are applied after all other positions have been determined - so require a second loop (zpf/scp)
+        case ResultCodeAlgorithm.compInSeries:
+          throw Error.safeToString(
+              "Competitirs in series  handled part of series scoring");
+        case ResultCodeAlgorithm.avgBefore:
+          throw Error.safeToString(
+              "Average before handled part of series scoring");
+        case ResultCodeAlgorithm.avgAll:
+          throw Error.safeToString(
+              "Average of all handled part of series scoring");
+        case ResultCodeAlgorithm.setByHand:
+          throw Error.safeToString(
+              "Set by hand handled part of series scoring");
+        case ResultCodeAlgorithm.na:
+          //  NA is either NoFinished or OK
+          break;
+      }
     }
-
-    switch
-    if (resultCode.shortSeries === 'StartArea') {
-      res.points = starters + resultCode.shortSeriesFactor;
-    } else if (resultCode.shortSeries === 'PositionPenalty') {
-
-    } else if
-
-    // 'NA' | 'InSeries' | | 'AvgAll' | 'AvgBefore' | 'TimePenalty' |  | 'SetByHand';
-
   }
-}
 
-/// Scoring penalty appliey.  This is 20% for zfp and default of 20% for scp
-/// This is applied after the points and order have been calculated.  
-@visibleForTesting
-applyScoringPenalties() {
-  // 
-} */
+  /// Scoring penalty appliey.  This is 20% for zfp and default of 20% for scp
+  /// This is applied after the points and order have been calculated.
+  @visibleForTesting
+  applyScoringPenalties() {
+    //
+  }
 
   /// Calculates positions for a list of race competitors.
-  /// Returns a list of race results ordered by points. 
+  /// Returns a list of race results ordered by points.
   List<RaceResult> calculateRaceResults(
       List<RaceCompetitor> competitors, RatingSystem scheme, Race race) {
-        
     final laps = maxLaps(competitors);
 
     final results = competitors.map((comp) {
@@ -218,10 +208,10 @@ applyScoringPenalties() {
     assignPointsForFinishers(results);
 
     // assignPointsForNonFinishers(results);
-    // results.sortByPoints(results);
+    // sortByPoints(results);
     // results = applyScoringPenaties(results);
     // handSetOverrides(res);
-    // sortByPoints(competitors);
+    // sortByPoints(results);
 
     return results;
   }

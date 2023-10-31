@@ -26,8 +26,8 @@ class SeriesResults with _$SeriesResults {
     @TimestampSerializer() required DateTime startDate,
     @TimestampSerializer() required DateTime endDate,
     required SeriesScoringData scoringScheme,
-    @Default([]) List<RaceResults> races,
-    @Default([]) List<SeriesCompetitor> competitors,
+    required List<RaceResults> races, // Cant use default and allow to add to the list
+    required List<SeriesCompetitor> competitors,  // Cant use default and allow to add to the list
   }) = _SeriesResults;
 
   const SeriesResults._();
@@ -41,6 +41,8 @@ class SeriesResults with _$SeriesResults {
       scoringScheme: series.scoringScheme,
       startDate: series.startDate!,
       endDate: series.endDate!,
+      races: [],
+      competitors: [],
     );
   }
 
@@ -48,7 +50,7 @@ class SeriesResults with _$SeriesResults {
       _$SeriesResultsFromJson(json);
 }
 
-@unfreezed
+@Freezed(addImplicitFinal: false, makeCollectionsUnmodifiable: false)
 class SeriesCompetitor with _$SeriesCompetitor {
   factory SeriesCompetitor({
     required String helm,

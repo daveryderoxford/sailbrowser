@@ -36,8 +36,8 @@ class RaceCompetitorService with UiLoggy {
     (snap) {
       final comps =
           snap.docs.map((doc) => RaceCompetitor.fromJson(doc.data())).toList();
-      final changes = snap.docChanges.map<RaceCompetitor>((change) => change.doc.data() as RaceCompetitor).toList();
-      _changes$.add(changes);
+    //  final changes = snap.docChanges.map<RaceCompetitor>((change) => change.doc.data() as RaceCompetitor).toList();
+     // _changes$.add(changes);
       return comps;
     },
   ).shareReplay();
@@ -108,14 +108,14 @@ final raceCompetitorRepositoryProvider = Provider((ref) {
   return RaceCompetitorService(clubId, races);
 });
 
-final currentCompetitors = StreamProvider(
+final currentCompetitors = StreamProvider<List<RaceCompetitor>>(
   (ref) {
     final db = ref.watch(raceCompetitorRepositoryProvider);
     return db.currectCompetitors$;
   },
 );
 
-final changedCompetitors = StreamProvider(
+final changedCompetitors = StreamProvider<List<RaceCompetitor>>(
   (ref) {
     final db = ref.watch(raceCompetitorRepositoryProvider);
     return db.changes$;
