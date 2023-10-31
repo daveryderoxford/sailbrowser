@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:loggy/loggy.dart';
+import 'package:sailbrowser_flutter/features/results/domain/series_results.dart';
+import 'package:sailbrowser_flutter/features/results/presentation/widgits/publish_results_dialog.dart';
 import 'package:sailbrowser_flutter/features/results/presentation/widgits/series_results_tab.dart';
 import 'package:sailbrowser_flutter/features/results/presentation/widgits/race_results_tab.dart';
 import 'package:sailbrowser_flutter/features/results/presentation/result_controller.dart';
@@ -8,7 +10,7 @@ import 'package:sailbrowser_flutter/features/results/presentation/result_control
 class ResultsScreen extends ConsumerWidget with UiLoggy {
   ResultsScreen({super.key});
 
- /* static const numCompetitors = 30;
+  /* static const numCompetitors = 30;
   static const numRaces = 10;
 
   final r = SeriesResults(
@@ -82,10 +84,15 @@ class ResultsScreen extends ConsumerWidget with UiLoggy {
         appBar: AppBar(
           actions: [
             FilledButton(
-              onPressed: () {},
-              /* => ref
-                  .read(resultsController.notifier)
-                  .publishResults(PublishResultsOptions.selectedRace), */
+              onPressed: () async {
+                if (controller.displayedSeries != null) {
+                  final status = await showDialog<ResultsStatus>(
+                      context: context,
+                      builder: (BuildContext context) =>
+                          const PublishResultsDialog());
+                  ref.read(resultsController.notifier).publishResults(status!);
+                }
+              },
               child: const Text("Publish"),
             ),
           ],
@@ -97,7 +104,7 @@ class ResultsScreen extends ConsumerWidget with UiLoggy {
           ),
           title: const Text('Results'),
         ),
-        body:  TabBarView(
+        body: TabBarView(
           children: [
             RaceResultsTab(results: controller.displayedRace),
             SeriesResultsTab(results: controller.displayedSeries),

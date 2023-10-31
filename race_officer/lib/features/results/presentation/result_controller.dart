@@ -1,6 +1,7 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:sailbrowser_flutter/features/results/domain/race_result.dart';
+import 'package:sailbrowser_flutter/features/results/domain/results_repository.dart';
 import 'package:sailbrowser_flutter/features/results/domain/results_service.dart';
 import 'package:sailbrowser_flutter/features/results/domain/series_results.dart';
 import 'package:sailbrowser_flutter/features/results/scoring/race_scorer.dart';
@@ -54,9 +55,9 @@ class ResultsController extends Notifier<ResultsState> {
     state = state.copyWith(displayedRace: null, displayedSeries: s);
   }
 
-  /// Publish eother the selected series or all Results
-  publishResults(PublishResultsOptions option, ResultsStatus status) {
-    // ref.read(resultsRepositoryProvider).publish(seriesResults, status);
+  /// Publish race
+  publishResults(ResultsStatus status) {
+     ref.read(resultsRepositoryProvider).publish(state.displayedSeries!, status);
   }
 }
 
