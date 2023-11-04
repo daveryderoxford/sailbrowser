@@ -74,7 +74,7 @@ class ResultData with _$ResultData {
     @Default(Duration()) Duration elapsedTime,
     @Default(Duration()) Duration correctedTime,
     required int position,
-    @Default(0) num points,
+    @Default(0) double points,
     required bool isDiscarded,
     required bool isDiscardable,
   }) = _ResultData;

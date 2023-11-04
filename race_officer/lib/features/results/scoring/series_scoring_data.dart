@@ -1,7 +1,7 @@
 import 'package:freezed_annotation/freezed_annotation.dart';
 
-part 'series_scoring.freezed.dart';
-part 'series_scoring.g.dart';
+part 'series_scoring_data.freezed.dart';
+part 'series_scoring_data.g.dart';
 
 /// Map of all possible handicap schemes
 enum SeriesScoringScheme {

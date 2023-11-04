@@ -6,8 +6,9 @@ import 'package:sailbrowser_flutter/features/results/domain/series_results.dart'
 part 'race_result.freezed.dart';
 part 'race_result.g.dart';
 
-@Freezed(addImplicitFinal: false, makeCollectionsUnmodifiable: false)
+@unfreezed
 class RaceResults with _$RaceResults {
+
   factory RaceResults({
     DateTime? publishedOn,
     @Default(ResultsStatus.provisional) ResultsStatus status,
@@ -16,10 +17,11 @@ class RaceResults with _$RaceResults {
     required String fleet,
     required int index,
     required String raceId,
-    @Default([]) List<RaceResult> results,
+    List<RaceResult>? results,
+    @Default(true) bool dirty
   }) = _RaceResults;
 
-  const RaceResults._();
+  RaceResults._();
 
   factory RaceResults.fromJson(Map<String, Object?> json) =>
       _$RaceResultsFromJson(json);
@@ -31,11 +33,12 @@ class RaceResults with _$RaceResults {
       index: race.index,
       name: race.name,
       raceId: race.id,
+      results: [],
     );
   }
 }
 
-@Freezed(addImplicitFinal: false, makeCollectionsUnmodifiable: false)
+@unfreezed
 class RaceResult with _$RaceResult {
   factory RaceResult({
     required String helm,
@@ -44,7 +47,7 @@ class RaceResult with _$RaceResult {
     required int sailNumber,
     String? name,
     required String position,
-    required num points,
+    required double points,
     @Default(0) double handicap,
     required ResultCode resultCode,
     required Duration elapsed,

@@ -42,7 +42,7 @@ class RaceScorer {
 
       switch (scheme) {
         case RatingSystem.py:
-          corrected = elapsed * 1000 / comp.handicap;
+          corrected = elapsed * 1000.0 / comp.handicap;
         case RatingSystem.irc:
           corrected = elapsed / comp.handicap;
         case RatingSystem.levelRating:
@@ -103,7 +103,7 @@ class RaceScorer {
     var times = resultsByTime.keys.toList();
     times.sort(); // Map does not garentee order of keys
 
-    var pos = 1;
+    var pos = 1.0;
     var updated = <RaceResult>[];
 
     for (var time in times) {
@@ -147,7 +147,7 @@ class RaceScorer {
           if (starters == -1) {
             starters = startersInRace(results);
           }
-          res.points = starters + factor;
+          res.points = (starters + factor) as double;
         case ResultCodeAlgorithm.scoringPenalty:
         // TODO Scoring penalties are applied after all other positions have been determined - so require a second loop (zpf/scp)
         case ResultCodeAlgorithm.compInSeries:

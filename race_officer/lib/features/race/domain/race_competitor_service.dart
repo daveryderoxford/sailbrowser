@@ -10,6 +10,11 @@ import 'package:sailbrowser_flutter/features/race/domain/selected_races.dart';
 import 'package:sailbrowser_flutter/features/race-calander/domain/series.dart';
 import 'package:sailbrowser_flutter/features/race/domain/race_competitor.dart';
 
+typedef RaceCompetitorChangers = ({
+  DocumentChangeType type,
+  RaceCompetitor competitor
+});
+
 /// Competitors for selected races
 class RaceCompetitorService with UiLoggy {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
@@ -36,14 +41,20 @@ class RaceCompetitorService with UiLoggy {
     (snap) {
       final comps =
           snap.docs.map((doc) => RaceCompetitor.fromJson(doc.data())).toList();
-    //  final changes = snap.docChanges.map<RaceCompetitor>((change) => change.doc.data() as RaceCompetitor).toList();
-     // _changes$.add(changes);
+      final changes = snap.docChanges
+          .map<RaceCompetitorChangers>((change) => (
+                type: change.type,
+                competitor: change.doc.data() as RaceCompetitor
+              ))
+          .toList();
+      _changes$.add(changes);
       return comps;
     },
   ).shareReplay();
 
-  final _changes$ = BehaviorSubject<List<RaceCompetitor>>.seeded([]);
-  /// Stream of changes to currect competitors.  May be used to invalidate 
+  final _changes$ = BehaviorSubject<List<RaceCompetitorChangers>>.seeded([]);
+
+  /// Stream of changes to currect competitors.  May be used to invalidate
   get changes$ => _changes$.stream;
 
   RaceCompetitorService(this.clubId, this.selectedRaces) {
@@ -52,24 +63,18 @@ class RaceCompetitorService with UiLoggy {
   }
 
   add(RaceCompetitor comp, String seriesId) {
-    _compCollection(seriesId)
-      .doc(comp.id)
-      .set(comp)
-      .onError((error, stackTrace) => _errorHandler(error, stackTrace, 'add'));
+    _compCollection(seriesId).doc(comp.id).set(comp).onError(
+        (error, stackTrace) => _errorHandler(error, stackTrace, 'add'));
   }
 
-  remove(String id, String seriesId)  {
-    _compCollection(seriesId)
-      .doc(id)
-      .delete()
-      .onError((error, stackTrace) => _errorHandler(error, stackTrace, 'remove'));
+  remove(String id, String seriesId) {
+    _compCollection(seriesId).doc(id).delete().onError(
+        (error, stackTrace) => _errorHandler(error, stackTrace, 'remove'));
   }
 
   update(RaceCompetitor comp, String id, String seriesId) async {
-      _compCollection(seriesId)
-           .doc(id)
-           .update(comp.toJson())
-           .onError((error, stackTrace) => _errorHandler(error, stackTrace, 'update'));
+    _compCollection(seriesId).doc(id).update(comp.toJson()).onError(
+        (error, stackTrace) => _errorHandler(error, stackTrace, 'update'));
   }
 
   saveLap(RaceCompetitor comp, String id, String seriesId) {
@@ -88,14 +93,17 @@ class RaceCompetitorService with UiLoggy {
     final race = selectedRaces.firstWhere((race) => race.id == comp.raceId);
 
     final c = comp.copyWith(
-        recordedFinishTime: time, startTime: race.actualStart, resultCode: resultCode);
+        recordedFinishTime: time,
+        startTime: race.actualStart,
+        resultCode: resultCode);
 
     update(c, id, seriesId);
   }
 
   _errorHandler(Object? error, StackTrace stackTrace, String func) {
-    final s =
-        (error == null) ? error.toString() : 'Error encountered Race Competitor.  $func';
+    final s = (error == null)
+        ? error.toString()
+        : 'Error encountered Race Competitor.  $func';
     SnackBarService.showErrorSnackBar(content: s);
     loggy.error(s);
   }
@@ -108,6 +116,7 @@ final raceCompetitorRepositoryProvider = Provider((ref) {
   return RaceCompetitorService(clubId, races);
 });
 
+/// Competitors for the currently selected races
 final currentCompetitors = StreamProvider<List<RaceCompetitor>>(
   (ref) {
     final db = ref.watch(raceCompetitorRepositoryProvider);
@@ -115,10 +124,11 @@ final currentCompetitors = StreamProvider<List<RaceCompetitor>>(
   },
 );
 
-final changedCompetitors = StreamProvider<List<RaceCompetitor>>(
+/// Stream of changes to competitor data.
+/// If a competitor is changed or added
+final changedCompetitors = StreamProvider<List<RaceCompetitorChangers>>(
   (ref) {
     final db = ref.watch(raceCompetitorRepositoryProvider);
     return db.changes$;
   },
 );
-

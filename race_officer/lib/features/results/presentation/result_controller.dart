@@ -53,6 +53,7 @@ class ResultsController extends Notifier<ResultsState> {
   /// The race displayed is cleared
   displaySeries(SeriesResults s) {
     state = state.copyWith(displayedRace: null, displayedSeries: s);
+    ref.read(resultsService.notifier).computeSeriesResults(s);
   }
 
   /// Publish race
@@ -63,4 +64,3 @@ class ResultsController extends Notifier<ResultsState> {
 
 final resultsController =
     NotifierProvider<ResultsController, ResultsState>( () => ResultsController(SeriesScorer(), RaceScorer()));
-

@@ -38,7 +38,7 @@ class ResultsRepository with UiLoggy {
 
   ResultsRepository(this.clubId, this.selectedRaces) {
     // Compute unique series Ids for selected races.
-    // TODO - Should I load results for all series in progress.  Remove dependeny on selected races.
+    // TODO - Should I load results for all series in progress. Remove dependeny on selected races.
     seriesIds = selectedRaces.map((race) => race.seriesId).toSet().toList();
   }
 
@@ -48,7 +48,7 @@ class ResultsRepository with UiLoggy {
     try {
       final snapshot = await doc.get();
       if (snapshot.exists) {
-        final json = snapshot as Map<String, Object?>;
+        final json = snapshot.data() as Map<String, Object?>;
         return SeriesResults.fromJson(json);
       } else {
         return null;

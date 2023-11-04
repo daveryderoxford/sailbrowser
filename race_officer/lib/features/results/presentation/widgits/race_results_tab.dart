@@ -13,7 +13,7 @@ class RaceResultsTab extends ConsumerWidget with UiLoggy {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final races = (results != null) ? results!.results : <RaceResult>[];
+    final races = (results != null) ? results!.results! : <RaceResult>[];
  
     return Column(
       children: [

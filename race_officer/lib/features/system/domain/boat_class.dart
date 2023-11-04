@@ -13,7 +13,7 @@ enum BoatClassSource {
 class BoatClass  with _$BoatClass {
   const factory BoatClass({
    required String name,
-   required num handicap,
+   required double handicap,
    required BoatClassSource source,
   }) = _BoatClass;
  

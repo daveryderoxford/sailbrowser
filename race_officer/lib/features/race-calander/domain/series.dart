@@ -1,6 +1,6 @@
 import 'package:flutter/foundation.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
-import 'package:sailbrowser_flutter/features/results/scoring/series_scoring.dart';
+import 'package:sailbrowser_flutter/features/results/scoring/series_scoring_data.dart';
 import 'package:sailbrowser_flutter/firebase/timestamp_serialiser.dart';
 import 'package:uuid/uuid.dart';
 

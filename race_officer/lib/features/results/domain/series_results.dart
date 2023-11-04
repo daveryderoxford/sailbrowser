@@ -2,7 +2,7 @@ import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:sailbrowser_flutter/features/race-calander/domain/series.dart';
 import 'package:sailbrowser_flutter/features/race/domain/result_code.dart';
 import 'package:sailbrowser_flutter/features/results/domain/race_result.dart';
-import 'package:sailbrowser_flutter/features/results/scoring/series_scoring.dart';
+import 'package:sailbrowser_flutter/features/results/scoring/series_scoring_data.dart';
 import 'package:sailbrowser_flutter/firebase/timestamp_serialiser.dart';
 
 part 'series_results.freezed.dart';
@@ -28,9 +28,11 @@ class SeriesResults with _$SeriesResults {
     required SeriesScoringData scoringScheme,
     required List<RaceResults> races, // Cant use default and allow to add to the list
     required List<SeriesCompetitor> competitors,  // Cant use default and allow to add to the list
+    @Default(true) bool dirty
   }) = _SeriesResults;
 
-  const SeriesResults._();
+  SeriesResults._();
+  
 
   factory SeriesResults.fromSeries(Series series) {
     return SeriesResults(
@@ -50,7 +52,7 @@ class SeriesResults with _$SeriesResults {
       _$SeriesResultsFromJson(json);
 }
 
-@Freezed(addImplicitFinal: false, makeCollectionsUnmodifiable: false)
+@unfreezed
 class SeriesCompetitor with _$SeriesCompetitor {
   factory SeriesCompetitor({
     required String helm,
@@ -58,10 +60,10 @@ class SeriesCompetitor with _$SeriesCompetitor {
     required String boatClass,
     required int sailNumber,
     @Default('') String name,
-    @Default(99999) num totalPoints,
-    @Default(99999) num netPoints,
+    @Default(99999) double totalPoints,
+    @Default(99999) double netPoints,
     @Default(99999) int position,
-    num? handicap,
+    double? handicap,
     /// List of results for each race, ordered by the race
     @Default([]) List<SeriesResultData> results,
   }) = _SeriesCompetitor;
@@ -82,8 +84,17 @@ class SeriesCompetitor with _$SeriesCompetitor {
       _$SeriesCompetitorFromJson(json);
 }
 
-typedef SeriesResultData = ({
-  num points,
-  ResultCode resultCode,
-  bool isDiscard,
-});
+@unfreezed
+class SeriesResultData with _$SeriesResultData {
+  factory SeriesResultData({
+      required double points,
+      required ResultCode resultCode,
+      required bool isDiscard,
+
+  }) = _SeriesResultData;
+
+  SeriesResultData._();
+
+  factory SeriesResultData.fromJson(Map<String, Object?> json) =>
+      _$SeriesResultDataFromJson(json);
+}

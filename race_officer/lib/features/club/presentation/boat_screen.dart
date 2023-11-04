@@ -31,9 +31,10 @@ class BoatsScreen extends ConsumerWidget {
           Navigator.push(
             context,
             MaterialPageRoute(
-                builder: (context) => const EditBoat(
-                      id: '',
-                    )),
+              builder: (context) => const EditBoat(
+                id: '',
+              ),
+            ),
           );
         },
       ),

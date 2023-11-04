@@ -14,8 +14,8 @@ enum RatingSystem {
   get handicapSchemes => RatingSystem.values.where((e) => e.index != 0);
 
   final String displayName;
-  final num max;
-  final num min;
+  final double max;
+  final double min;
 }
 
 enum HandicapScheme {

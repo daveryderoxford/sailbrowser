@@ -10,7 +10,7 @@ import 'package:sailbrowser_flutter/common_widgets/will_pop_form.dart';
 import 'package:sailbrowser_flutter/features/club/domain/clubs_service.dart';
 import 'package:sailbrowser_flutter/features/race-calander/domain/series.dart';
 import 'package:sailbrowser_flutter/features/race-calander/domain/series_service.dart';
-import 'package:sailbrowser_flutter/features/results/scoring/series_scoring.dart';
+import 'package:sailbrowser_flutter/features/results/scoring/series_scoring_data.dart';
 
 class EditSeries extends ConsumerStatefulWidget {
   final String id;

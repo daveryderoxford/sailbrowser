@@ -7,7 +7,7 @@ import 'package:sailbrowser_flutter/features/results/scoring/race_scorer.dart';
 import 'package:sailbrowser_flutter/features/results/scoring/rating_system.dart';
 
 RaceCompetitor _makeComp(
-  num handicap,
+  double handicap,
   int? manualLaps,
   DateTime finishTime,
   List<DateTime> laps,
@@ -35,7 +35,7 @@ RaceResult _makeRaceResult(
   ResultCode code,
     Duration corrected, 
    Duration  elapsed,
-   num points, 
+   double points, 
    String position,
 ) {
   var comp = RaceResult(

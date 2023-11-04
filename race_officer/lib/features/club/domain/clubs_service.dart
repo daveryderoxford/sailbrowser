@@ -5,7 +5,7 @@ import 'package:rxdart/rxdart.dart';
 import 'package:sailbrowser_flutter/common_widgets/snackbar_service.dart';
 import 'package:sailbrowser_flutter/features/club/domain/fleet.dart';
 import 'package:sailbrowser_flutter/features/results/scoring/rating_system.dart';
-import 'package:sailbrowser_flutter/features/results/scoring/series_scoring.dart';
+import 'package:sailbrowser_flutter/features/results/scoring/series_scoring_data.dart';
 import 'package:sailbrowser_flutter/features/system/domain/boat_class.dart';
 import 'package:sailbrowser_flutter/features/system/domain/boat_class_list.dart';
 import 'package:sailbrowser_flutter/features/system/domain/syatem_data_service.dart';
