@@ -6,11 +6,13 @@ import 'package:sailbrowser_flutter/features/race/domain/result_code.dart';
 import 'package:sailbrowser_flutter/features/race/finish/domain/finish_lists.dart';
 
 class FinishController with UiLoggy {
-  PinnedCompetitors pinned;
-  RaceCompetitorService compService;
-  CompFilterNotifier filterNotifier;
+  get pinned => ref.read(pinnedCompetitorsProvider.notifier);
+  get compService => ref.read(raceCompetitorRepositoryProvider);
+  get filterNotifier => ref.read(compFilterProvider.notifier);
 
-  FinishController(this.pinned, this.compService, this.filterNotifier);
+  ProviderRef ref;
+
+  FinishController(this.ref);
 
   _log(String action, RaceCompetitor comp) {
     loggy.info('$action: ${comp.id} ${comp.helm}');
@@ -62,9 +64,4 @@ class FinishController with UiLoggy {
   }
 }
 
-final finshControllerProvider = Provider(
-  (ref) => FinishController(
-      ref.watch(pinnedCompetitorsProvider.notifier),
-      ref.watch(raceCompetitorRepositoryProvider),
-      ref.watch(compFilterProvider.notifier)),
-);
+final finshControllerProvider = Provider((ref) => FinishController( ref ));

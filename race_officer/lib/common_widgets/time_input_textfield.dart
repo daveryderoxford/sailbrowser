@@ -5,7 +5,7 @@ import 'dart:math' as math;
 import 'package:intl/intl.dart';
 
 class TimeInputField extends StatefulWidget {
-  const TimeInputField({this.onChanged, this.initialValue, Key? key}) : super(key: key);
+  const TimeInputField({this.onChanged, this.initialValue, super.key});
 
   final ValueChanged<DateTime?>? onChanged;
   final DateTime? initialValue;

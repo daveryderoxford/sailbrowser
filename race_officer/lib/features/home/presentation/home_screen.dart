@@ -8,6 +8,8 @@ import 'package:sailbrowser_flutter/features/race-calander/domain/series_service
 import 'package:sailbrowser_flutter/features/race/domain/selected_races.dart';
 import 'package:sailbrowser_flutter/routing/app_router.dart';
 
+import 'eager_initialisation.dart';
+
 enum UserMenuOptions { logout, profile }
 
 class HomeScreen extends ConsumerWidget {
@@ -21,13 +23,15 @@ class HomeScreen extends ConsumerWidget {
     /// Early initilaised providers
     ref.watch(allRacesProvider);
 
-    return Scaffold(
-      appBar: AppBar(title: const Text('Home'), actions: <Widget>[
-        _buildUserMenuButton(context, ref),
-      ]),
-      body: ResponsiveCenter(
-        maxContentWidth: 600,
-        child: SelectedRacesCard(context: context, ref: ref),
+    return EagerInitialization(
+      child: Scaffold(
+        appBar: AppBar(title: const Text('Home'), actions: <Widget>[
+          _buildUserMenuButton(context, ref),
+        ]),
+        body: ResponsiveCenter(
+          maxContentWidth: 600,
+          child: SelectedRacesCard(context: context, ref: ref),
+        ),
       ),
     );
   }
@@ -73,7 +77,7 @@ class SelectedRacesCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final raceData = ref.watch(selectedRacesProvider); 
+    final raceData = ref.watch(selectedRacesProvider);
 
     return Card(
       child: Column(
@@ -81,7 +85,8 @@ class SelectedRacesCard extends StatelessWidget {
           ListTile(
             title: const Center(child: Text('Races Today')),
             trailing: IconButton(
-              onPressed: () {}, // TODO impleemnt dialog to allow additional races ot be added to the current races
+              onPressed:
+                  () {}, // TODO impleemnt dialog to allow additional races ot be added to the current races
               icon: const Icon(Icons.add),
             ),
           ),

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:loggy/loggy.dart';
 import 'package:sailbrowser_flutter/common_widgets/time_display.dart';
+import 'package:sailbrowser_flutter/features/race/domain/race_competitor_service.dart';
 import 'package:sailbrowser_flutter/features/race/start/domain/start_controller.dart';
 import 'package:sailbrowser_flutter/features/race/start/domain/start_sequence.dart';
 import 'package:sailbrowser_flutter/features/race/start/domain/start_sequence_controller.dart';
@@ -13,9 +14,8 @@ class StartScreen extends ConsumerWidget with UiLoggy {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    //  final ButtonStyle textButtonStyle = TextButton.styleFrom(
-    //   foregroundColor: Theme.of(context).colorScheme.onPrimary,
-    //  );
+    ref.watch(currentCompetitors);  // to ensure it is initialised and has passed through loading state before it read. 
+
     final startStatus =
         ref.watch(startSequenceProvider.select((value) => value.startStatus));
 

@@ -196,7 +196,7 @@ final allSeriesProvider = StreamProvider<List<Series>>((ref) {
 /// Find series based on its Id
 final seriesProvider = Provider.autoDispose.family<Series?, String>((ref, id) {
   final series = ref.watch(allSeriesProvider);
-  return series.valueOrNull?.firstWhere((s) => s.id == id);
+  return series.requireValue.firstWhere((s) => s.id == id);
 });
 
 /// Find a races based on its Id

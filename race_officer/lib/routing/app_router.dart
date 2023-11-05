@@ -51,18 +51,19 @@ GoRouter goRouter(GoRouterRef ref) {
       navigatorKey: _rootNavigatorKey,
       debugLogDiagnostics: true,
       redirect: (context, state) {
+        final path = state.uri.path;
         final isLoggedIn = authRepository.currentUser != null;
         if (isLoggedIn) {
-          if (state.location.startsWith('/signIn')) {
+          if (path.startsWith('/signIn')) {
             return '/home';
           }
         } else {
-          if (state.location.startsWith('/home') ||
-              state.location.startsWith('/entry') ||
-              state.location.startsWith('/start') ||
-              state.location.startsWith('/finish') ||
-              state.location.startsWith('/results') ||
-              state.location.startsWith('/admin')) {
+          if (path.startsWith('/home') ||
+              path.startsWith('/entry') ||
+              path.startsWith('/start') ||
+              path.startsWith('/finish') ||
+              path.startsWith('/results') ||
+              path.startsWith('/admin')) {
             return '/signIn';
           }
         }

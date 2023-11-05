@@ -29,7 +29,7 @@ class NumericKeyPad extends StatefulWidget {
   final MainAxisAlignment mainAxisAlignment;
 
   const NumericKeyPad(
-      {Key? key,
+      {super.key,
       required this.onKeyboardTap,
       this.textStyle = const TextStyle(color: Colors.black),
       this.rightButtonFn,
@@ -37,8 +37,7 @@ class NumericKeyPad extends StatefulWidget {
       this.rightIcon,
       this.leftButtonFn,
       this.leftIcon,
-      this.mainAxisAlignment = MainAxisAlignment.spaceBetween})
-      : super(key: key);
+      this.mainAxisAlignment = MainAxisAlignment.spaceBetween});
       
   @override
   State<StatefulWidget> createState() {

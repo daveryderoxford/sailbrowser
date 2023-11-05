@@ -41,13 +41,13 @@ class RaceCompetitorService with UiLoggy {
     (snap) {
       final comps =
           snap.docs.map((doc) => RaceCompetitor.fromJson(doc.data())).toList();
-      final changes = snap.docChanges
-          .map<RaceCompetitorChangers>((change) => (
+    /*  final changes = snap.docChanges  TODO fix chnages 
+         .map<RaceCompetitorChangers>((change) => (
                 type: change.type,
                 competitor: change.doc.data() as RaceCompetitor
               ))
           .toList();
-      _changes$.add(changes);
+      _changes$.add(changes); */
       return comps;
     },
   ).shareReplay();
