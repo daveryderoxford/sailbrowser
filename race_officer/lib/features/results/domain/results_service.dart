@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:loggy/loggy.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
@@ -148,9 +149,13 @@ final competitorsDirty = Provider((ref) {
       data: (changes) {
         final res = ref.watch(resultsService.notifier);
         for (var change in changes) {
+          // Only mark if changed or removed.
+          // Newly added results should have dirty set 
+          if (change.type != DocumentChangeType.added) {
           final comp = change.competitor;
           res.markRaceAsDirty(comp.raceId, comp.seriesId);
           res.markSeriesAsDirty(comp.seriesId);
+          }
         }
       },
       error: (Object error, StackTrace stackTrace) =>

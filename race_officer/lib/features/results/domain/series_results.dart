@@ -54,21 +54,26 @@ class SeriesResults with _$SeriesResults {
 
 @unfreezed
 class SeriesCompetitor with _$SeriesCompetitor {
+
+  static const unsetPoints = 99999;
+
   factory SeriesCompetitor({
     required String helm,
     String? crew,
     required String boatClass,
     required int sailNumber,
     @Default('') String name,
-    @Default(99999) double totalPoints,
-    @Default(99999) double netPoints,
-    @Default(99999) int position,
+    @Default(unsetPoints) double totalPoints,
+    @Default(unsetPoints) double netPoints,
+    @Default(unsetPoints) int position,
     double? handicap,
     /// List of results for each race, ordered by the race
     @Default([]) List<SeriesResultData> results,
   }) = _SeriesCompetitor;
 
   SeriesCompetitor._();
+
+
 
   factory SeriesCompetitor.fromRaceResult(RaceResult comp) {
     return SeriesCompetitor(

@@ -12,9 +12,13 @@ class RacesDropDown extends ConsumerWidget {
     final races = ref.watch(raceResultsProvider);
 
     return DropdownMenu<RaceResults>(
-      /// must not cause rebild for initial state 
+      // Workaround to menu no being refreshed when item chamnge see 
+      // https://github.com/flutter/flutter/issues/127568
+      key: ValueKey(Object.hashAll(races)),
+      // must not cause rebild for initial state 
       initialSelection: ref.read(resultsController).displayedRace,
       textStyle: const TextStyle(fontSize: 15),
+     // width: 400,
       label: const Text('Select Race'),
       dropdownMenuEntries: races
           .map((race) => DropdownMenuEntry<RaceResults>(value: race, label: race.name))
