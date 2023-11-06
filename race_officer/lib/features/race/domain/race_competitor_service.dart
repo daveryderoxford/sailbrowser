@@ -17,50 +17,42 @@ typedef RaceCompetitorChangers = ({
 
 /// Competitors for selected races
 class RaceCompetitorService with UiLoggy {
-  final FirebaseFirestore _firestore = FirebaseFirestore.instance;
-
-  final String clubId;
-  final List<Race> selectedRaces;
-  late final List<String> seriesIds;
-
-  CollectionReference _compCollection(String seriesId) {
-    return _firestore
-        .collection('/clubs/$clubId/series/$seriesId/race_competitors')
-        .withConverter<RaceCompetitor>(
-          fromFirestore: (snapshot, _) =>
-              RaceCompetitor.fromJson(snapshot.data()!),
-          toFirestore: (RaceCompetitor competitor, _) => competitor.toJson(),
-        );
-  }
-
-  late final ReplayStream<List<RaceCompetitor>> currectCompetitors$ = _firestore
-      .collectionGroup("race_competitors")
-      .where('raceId', whereIn: selectedRaces.map((race) => race.id))
-      .snapshots()
-      .map(
-    (snap) {
-      final comps =
-          snap.docs.map((doc) => RaceCompetitor.fromJson(doc.data())).toList();
-    /*  final changes = snap.docChanges  TODO fix chnages 
-         .map<RaceCompetitorChangers>((change) => (
-                type: change.type,
-                competitor: change.doc.data() as RaceCompetitor
-              ))
-          .toList();
-      _changes$.add(changes); */
-      return comps;
-    },
-  ).shareReplay();
-
-  final _changes$ = BehaviorSubject<List<RaceCompetitorChangers>>.seeded([]);
-
-  /// Stream of changes to currect competitors.  May be used to invalidate
-  get changes$ => _changes$.stream;
-
   RaceCompetitorService(this.clubId, this.selectedRaces) {
     // compute unique series Ids for selected races
     seriesIds = selectedRaces.map((race) => race.seriesId).toSet().toList();
   }
+
+  final FirebaseFirestore _firestore = FirebaseFirestore.instance;
+  final String clubId;
+  final List<Race> selectedRaces;
+  late final List<String> seriesIds;
+
+  late final ReplayStream<List<RaceCompetitor>> _currectCompetitors$ =
+      _firestore
+          .collectionGroup("race_competitors")
+          .where('raceId', whereIn: selectedRaces.map((race) => race.id))
+          .snapshots()
+          .map(
+    (snap) {
+      final comps =
+          snap.docs.map((doc) => RaceCompetitor.fromJson(doc.data())).toList();
+      final changes = snap.docChanges.map<RaceCompetitorChangers>((change) {
+        final comp = RaceCompetitor.fromJson(change.doc.data()!);
+        return (type: change.type, competitor: comp);
+      }).toList();
+      _changes$.add(changes);
+      return comps;
+    },
+  ).shareReplay();
+
+  /// Stream of competitors for the currectly selected races
+  get currectCompetitors$ =>
+      (selectedRaces.isEmpty) ? Stream.value([]) : _currectCompetitors$;
+
+  final _changes$ = BehaviorSubject<List<RaceCompetitorChangers>>.seeded([]);
+
+  /// Stream of changes to currect competitors.
+  get changes$ => _changes$.stream;
 
   add(RaceCompetitor comp, String seriesId) {
     _compCollection(seriesId).doc(comp.id).set(comp).onError(
@@ -98,6 +90,16 @@ class RaceCompetitorService with UiLoggy {
         resultCode: resultCode);
 
     update(c, id, seriesId);
+  }
+
+  CollectionReference _compCollection(String seriesId) {
+    return _firestore
+        .collection('/clubs/$clubId/series/$seriesId/race_competitors')
+        .withConverter<RaceCompetitor>(
+          fromFirestore: (snapshot, _) =>
+              RaceCompetitor.fromJson(snapshot.data()!),
+          toFirestore: (RaceCompetitor competitor, _) => competitor.toJson(),
+        );
   }
 
   _errorHandler(Object? error, StackTrace stackTrace, String func) {

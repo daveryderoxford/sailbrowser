@@ -131,11 +131,10 @@ class StartSequence extends StateNotifier<StartSequenceState> with UiLoggy {
         actualStart: startTime,
       );
 
-    //  final series = ref.read(seriesProvider(race.seriesId));  Ptoblerms with autodispose - 
        final allSeries = ref.read(allSeriesProvider);
        final series = allSeries.requireValue.firstWhere((s) => s.id == race.seriesId);
 
-      ref.read(seriesRepositoryProvider).updateRace(series!, race.id, race);
+      ref.read(seriesRepositoryProvider).updateRace(series, race.id, race);
 
       // Write start time for each competitor. 
       final competitors = ref.read(currentCompetitors).value!.where((comp) => comp.raceId == race.id);

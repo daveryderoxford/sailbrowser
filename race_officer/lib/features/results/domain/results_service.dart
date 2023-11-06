@@ -90,8 +90,8 @@ class ResultsService extends AsyncNotifier<List<SeriesResults>> with UiLoggy {
     final race = ref.read(raceProvider(raceResults.raceId));
     final series = ref.read(seriesProvider(race!.seriesId));
 
-    final compResults = raceScorer.calculateRaceResults(
-        raceCompetitors, RatingSystem.py, race);
+    final compResults =
+        raceScorer.calculateRaceResults(raceCompetitors, RatingSystem.py, race);
     final upddate = raceResults.copyWith(results: compResults);
 
     upddate.dirty = false;
@@ -109,13 +109,14 @@ class ResultsService extends AsyncNotifier<List<SeriesResults>> with UiLoggy {
     final series = ref.read(seriesProvider(seriesResults.seriesId));
 
     // Compute series results
-    final update = seriesScorer.calculateSeriesResults(
+    seriesScorer.calculateSeriesResults(
         seriesResults, seriesResults.races, series!);
-    update!.dirty = false;
+    seriesResults.dirty = false;
 
     // Save updated state for the series
     state = AsyncValue.data(state.value!
-        .map<SeriesResults>((s) => (s.seriesId == update.seriesId) ? update : s)
+        .map<SeriesResults>(
+            (s) => (s.seriesId == seriesResults.seriesId) ? seriesResults : s)
         .toList());
   }
 }
@@ -139,7 +140,7 @@ final raceResultsProvider = Provider((ref) {
 });
 
 /// If a competitor is modified, added or removed then mark
-/// seriesn and race as diretly so results are re-computed.
+/// series and race as dirty so results are re-computed.
 final competitorsDirty = Provider((ref) {
   final changed = ref.watch(changedCompetitors);
   changed.when(
