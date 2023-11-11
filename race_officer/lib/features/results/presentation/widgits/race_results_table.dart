@@ -79,17 +79,20 @@ class RaceResultsTable extends StatelessWidget {
   Widget _nameCell(BuildContext context, RaceResult res, int index) {
     return Text('${res.helm}\n${res.crew}');
   }
-
-  ///
   Widget _boatCell(BuildContext context, RaceResult res) {
     return (Text('${res.boatClass}\n${res.sailNumber}'));
   }
 
   Widget _pointsCell(BuildContext context, RaceResult res) {
     if (res.resultCode != ResultCode.ok) {
-      return Center(child: Text('${res.points}\n${res.resultCode}'));
+      return Center(child: Text('${_roundedPointsStr(res.points)}\n${res.resultCode.displayName}'));
     } else {
-      return Center(child: (Text(res.points.toString())));
+      return Center(child: (Text(_roundedPointsStr(res.points))));
     }
+  }
+    String _roundedPointsStr(double points) {
+    return (points.toInt() == points)
+        ? points.toStringAsFixed(0)
+        : points.toStringAsFixed(1);
   }
 }

@@ -75,7 +75,7 @@ void main() {
 
           final times = scorer.calculateResultTimes(
             comp: res,
-            scheme: RatingSystem.py,
+            scheme: HandicapScheme.py,
             isAverageLap: true,
             startTime: startTime,
             maxLaps: 1,
@@ -99,7 +99,7 @@ void main() {
 
           final times = scorer.calculateResultTimes(
             comp: comp,
-            scheme: RatingSystem.py,
+            scheme: HandicapScheme.py,
             isAverageLap: true,
             startTime: startTime,
             maxLaps: 1,
@@ -124,7 +124,7 @@ void main() {
 
           final times = scorer.calculateResultTimes(
               comp: comp,
-              scheme: RatingSystem.py,
+              scheme: HandicapScheme.py,
               isAverageLap: true,
               startTime: startTime,
               maxLaps: 1);
@@ -146,7 +146,7 @@ void main() {
 
           final times = scorer.calculateResultTimes(
             comp: res,
-            scheme: RatingSystem.py,
+            scheme: HandicapScheme.py,
             isAverageLap: true,
             startTime: startTime,
             maxLaps: 5,
@@ -167,7 +167,7 @@ void main() {
 
           final times = scorer.calculateResultTimes(
             comp: comp,
-            scheme: RatingSystem.py,
+            scheme: HandicapScheme.py,
             isAverageLap: false,
             startTime: startTime,
             maxLaps: 5,
@@ -189,7 +189,7 @@ void main() {
 
           final times = scorer.calculateResultTimes(
             comp: comp,
-            scheme: RatingSystem.py,
+            scheme: HandicapScheme.py,
             isAverageLap: true,
             startTime: startTime,
             maxLaps: 7,

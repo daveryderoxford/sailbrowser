@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:meta/meta.dart';
-import 'package:sailbrowser_flutter/features/race-calander/domain/series.dart';
 import 'package:sailbrowser_flutter/features/race/domain/result_code.dart';
 import 'package:sailbrowser_flutter/features/results/domain/race_result.dart';
 import 'package:sailbrowser_flutter/features/results/domain/series_results.dart';
@@ -127,10 +126,10 @@ class SeriesScorer {
   /// * Current partial series results,  List of race results.
   /// * for races where race results are supplied then updated data will replace existing races.
  calculateSeriesResults(SeriesResults seriesResults,
-      List<RaceResults> updatedRaces, Series series) {
+      List<RaceResults> updatedRaces, SeriesScoringData scoringScheme) {
     // Add race data to the series results, defining new race competitors
     addRaceResults(
-        seriesResults, updatedRaces, series.scoringScheme.entryAlgorithm);
+        seriesResults, updatedRaces, scoringScheme.entryAlgorithm);
 
     // points for series dependent
     //

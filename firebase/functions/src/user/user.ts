@@ -17,6 +17,7 @@ export const createUser = functions.region('europe-west1').auth.user().onCreate(
     const userdata = createUserData();
     userdata.id = user.uid;
     userdata.email = user.email;
+   // const tenantId = context.auth?.token.tenantId as stringd;
     try {
         await admin.firestore().doc('users/' + user.uid).set(userdata);
         console.log('Creating user data for ' + user.uid);

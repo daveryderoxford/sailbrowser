@@ -1,30 +1,19 @@
 
 /// Enumeration of supported handicap schemes
-enum RatingSystem {
+enum HandicapScheme {
   levelRating(displayName: 'Level rating', max: 0, min: 0),
-  py(displayName: 'RYA Portmouth Yardstick', max: 2000, min: 500),
-  irc(displayName: 'IRC', max: 2000, min: 500);
+  py(displayName: 'RYA Portmouth Yardstick', max: 1800, min: 500),
+  irc(displayName: 'IRC', max: 2.000, min: 0.750);
 
-  const RatingSystem({
+  const HandicapScheme({
     required this.displayName,
     required this.max,
     required this.min,
   });
 
-  get handicapSchemes => RatingSystem.values.where((e) => e.index != 0);
+  static get nonLevelRatingSchemes => HandicapScheme.values.where((e) => e.index != 0);
 
   final String displayName;
   final double max;
   final double min;
 }
-
-enum HandicapScheme {
-   py('PY'),
-   nhc('NHC'),
-   irc('IRC');
-
-  final String displayName;
-  const HandicapScheme(this.displayName);
-}
-
-

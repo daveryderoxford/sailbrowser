@@ -35,7 +35,7 @@ class _EditSeriesState extends ConsumerState<EditSeries> with UiLoggy {
 
   _submit()  {
     final form = _formKey.currentState!;
-    form.validate();
+    form.saveAndValidate();
 
     final raceSeriesService = ref.read(seriesRepositoryProvider);
 
@@ -129,7 +129,7 @@ class _EditSeriesState extends ConsumerState<EditSeries> with UiLoggy {
 
   List<Widget> _buildFormChildren() {
     final currentClub = ref.read(currentClubProvider);
-    final initialSeriesScoring = series == null
+    final initialSeriesScoring = (series == null)
         ? currentClub.current.defaultScoringData
         : series!.scoringScheme;
 

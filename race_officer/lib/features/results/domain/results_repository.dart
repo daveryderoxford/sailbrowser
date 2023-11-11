@@ -21,7 +21,7 @@ class ResultsRepository with UiLoggy {
       );
 
   /// Stream of saved results for races currently selected
-  late final ReplayStream<List<SeriesResults>> savedResults$ =
+  late final ReplayStream<List<SeriesResults>> _seriesResults$ =
       _resultsCollection.snapshots().map(
     (snap) {
       final seriesResults = snap.docs
@@ -31,16 +31,19 @@ class ResultsRepository with UiLoggy {
       return seriesResults;
     },
   ).shareReplay();
-
+  
   final String clubId;
   final List<Race> selectedRaces;
   late final List<String> seriesIds;
 
   ResultsRepository(this.clubId, this.selectedRaces) {
     // Compute unique series Ids for selected races.
-    // TODO - Should I load results for all series in progress. Remove dependeny on selected races.
     seriesIds = selectedRaces.map((race) => race.seriesId).toSet().toList();
   }
+
+    /// Stream of series results for selected races
+  get seriesResults$ =>
+      (selectedRaces.isEmpty) ? Stream.value([]) : _seriesResults$;
 
   // Read a series result.
   Future<SeriesResults?> read(String seriesId) async {
@@ -77,5 +80,5 @@ final resultsRepositoryProvider = Provider((ref) {
   return ResultsRepository(clubId, races);
 });
 
-final savedResults =
-    StreamProvider((ref) => ref.watch(resultsRepositoryProvider).savedResults$);
+final seriesResults =
+    StreamProvider((ref) => ref.watch(resultsRepositoryProvider).seriesResults$);

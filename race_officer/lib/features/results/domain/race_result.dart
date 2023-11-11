@@ -2,6 +2,7 @@ import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:sailbrowser_flutter/features/race-calander/domain/series.dart';
 import 'package:sailbrowser_flutter/features/race/domain/result_code.dart';
 import 'package:sailbrowser_flutter/features/results/domain/series_results.dart';
+import 'package:sailbrowser_flutter/firebase/timestamp_serialiser.dart';
 
 part 'race_result.freezed.dart';
 part 'race_result.g.dart';
@@ -10,7 +11,7 @@ part 'race_result.g.dart';
 class RaceResults with _$RaceResults {
 
   factory RaceResults({
-    DateTime? publishedOn,
+    @TimestampSerializer() DateTime? publishedOn,
     @Default(ResultsStatus.provisional) ResultsStatus status,
     required String name,
     required DateTime date,
@@ -42,8 +43,8 @@ class RaceResults with _$RaceResults {
 class RaceResult with _$RaceResult {
   factory RaceResult({
     required String helm,
-    @Default("") String crew,
-    @Default("") String boatClass,
+    String? crew,
+    required String boatClass,
     required int sailNumber,
     String? name,
     required String position,
@@ -52,6 +53,7 @@ class RaceResult with _$RaceResult {
     required ResultCode resultCode,
     required Duration elapsed,
     required Duration corrected,
+    @Default(1) numLaps,
   }) = _RaceResult;
 
   const RaceResult._();

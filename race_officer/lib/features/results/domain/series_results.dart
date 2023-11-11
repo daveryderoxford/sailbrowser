@@ -16,23 +16,24 @@ enum ResultsStatus {
 /// Read-only class representing results for a series.
 @unfreezed
 class SeriesResults with _$SeriesResults {
-  factory SeriesResults({
-    DateTime? publishedOn,
-    @Default(ResultsStatus.provisional) ResultsStatus status,
-    required String season,
-    required String name,
-    required String seriesId,
-    required String fleetId,
-    @TimestampSerializer() required DateTime startDate,
-    @TimestampSerializer() required DateTime endDate,
-    required SeriesScoringData scoringScheme,
-    required List<RaceResults> races, // Cant use default and allow to add to the list
-    required List<SeriesCompetitor> competitors,  // Cant use default and allow to add to the list
-    @Default(true) bool dirty
-  }) = _SeriesResults;
+  factory SeriesResults(
+      {
+      @TimestampSerializer() DateTime? publishedOn,
+      @Default(ResultsStatus.provisional) ResultsStatus status,
+      required String season,
+      required String name,
+      required String seriesId,
+      required String fleetId,
+      @TimestampSerializer() required DateTime startDate,
+      @TimestampSerializer() required DateTime endDate,
+      required SeriesScoringData scoringScheme,
+      required List<RaceResults>
+          races, // Cant use default and allow to add to the list
+      required List<SeriesCompetitor>
+          competitors, // Cant use default and allow to add to the list
+      @Default(true) bool dirty}) = _SeriesResults;
 
   SeriesResults._();
-  
 
   factory SeriesResults.fromSeries(Series series) {
     return SeriesResults(
@@ -55,25 +56,22 @@ class SeriesResults with _$SeriesResults {
 @unfreezed
 class SeriesCompetitor with _$SeriesCompetitor {
 
-  static const unsetPoints = 99999;
-
   factory SeriesCompetitor({
     required String helm,
     String? crew,
     required String boatClass,
     required int sailNumber,
-    @Default('') String name,
-    @Default(unsetPoints) double totalPoints,
-    @Default(unsetPoints) double netPoints,
-    @Default(unsetPoints) int position,
+    String? name,
+    @Default(99999) double totalPoints,
+    @Default(99999) double netPoints,
+    @Default(99999) int position,
     double? handicap,
+
     /// List of results for each race, ordered by the race
     @Default([]) List<SeriesResultData> results,
   }) = _SeriesCompetitor;
 
   SeriesCompetitor._();
-
-
 
   factory SeriesCompetitor.fromRaceResult(RaceResult comp) {
     return SeriesCompetitor(
@@ -81,6 +79,7 @@ class SeriesCompetitor with _$SeriesCompetitor {
       crew: comp.crew,
       boatClass: comp.boatClass,
       sailNumber: comp.sailNumber,
+      name: comp.name,
       handicap: comp.handicap,
     );
   }
@@ -92,10 +91,9 @@ class SeriesCompetitor with _$SeriesCompetitor {
 @unfreezed
 class SeriesResultData with _$SeriesResultData {
   factory SeriesResultData({
-      required double points,
-      required ResultCode resultCode,
-      required bool isDiscard,
-
+    required double points,
+    required ResultCode resultCode,
+    required bool isDiscard,
   }) = _SeriesResultData;
 
   SeriesResultData._();

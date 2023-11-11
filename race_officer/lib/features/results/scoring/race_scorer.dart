@@ -23,14 +23,14 @@ class RaceScorer {
   @visibleForTesting
   ({Duration corrected, Duration elapsed}) calculateResultTimes(
       {required RaceCompetitor comp,
-      required RatingSystem scheme,
+      required HandicapScheme scheme,
       required bool isAverageLap,
       required DateTime startTime,
       required int maxLaps}) {
     var corrected = 0.0;
     var elapsed = 0.0;
 
-    if (comp.finishTime != null) {
+    if (comp.finishTime != null && comp.startTime != null) {
       final diff = comp.finishTime!.difference(startTime).inSeconds.toDouble();
 
       // If start time is before finish time return defaults of zero
@@ -41,13 +41,15 @@ class RaceScorer {
       elapsed = isAverageLap ? diff / comp.numLaps * maxLaps : diff;
 
       switch (scheme) {
-        case RatingSystem.py:
+        case HandicapScheme.py:
           corrected = elapsed * 1000.0 / comp.handicap;
-        case RatingSystem.irc:
+        case HandicapScheme.irc:
           corrected = elapsed / comp.handicap;
-        case RatingSystem.levelRating:
+        case HandicapScheme.levelRating:
           corrected = elapsed;
-      }
+      } 
+    } else {
+      return (corrected: const Duration(), elapsed: const Duration());
     }
 
     return (
@@ -179,7 +181,7 @@ class RaceScorer {
   /// Calculates positions for a list of race competitors.
   /// Returns a list of race results ordered by points.
   List<RaceResult> calculateRaceResults(
-      List<RaceCompetitor> competitors, RatingSystem scheme, Race race) {
+      List<RaceCompetitor> competitors, HandicapScheme scheme, Race race) {
     final laps = maxLaps(competitors);
 
     final results = competitors.map((comp) {
@@ -192,12 +194,15 @@ class RaceScorer {
 
       final res = RaceResult(
         helm: comp.helm,
+        crew: comp.crew,
+        boatClass: comp.boatClass,
         sailNumber: comp.sailNumber,
         position: '0',
         points: 0,
         resultCode: comp.resultCode,
         elapsed: times.elapsed,
         corrected: times.corrected,
+        numLaps: comp.numLaps, 
       );
       return res;
     }).toList();

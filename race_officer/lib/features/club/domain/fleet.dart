@@ -14,7 +14,7 @@ class Fleet with _$Fleet {
     @Default(Fleet.unsetId) String id,
     required String shortName,
     required String name,
-    @Default(RatingSystem.py) handicapScheme,
+    @Default(HandicapScheme.py) handicapScheme,
     @Default("") String classFlag,
     @Default(0) int startOrder, 
   }) = _Fleet;

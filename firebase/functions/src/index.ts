@@ -1,9 +1,7 @@
 
 import * as admin from "firebase-admin";
-import * as user from "./user/user";
+// Note initilaise app must be called before exporting other functions
+admin.initializeApp(); 
 
-admin.initializeApp();
-
-export const createUsder = user.createUser;
-export const deleteUsder = user.deleteUser;
-
+export {createUser, deleteUser} from "./user/user";
+export {seriesChanged, seriesCreated}  from "./results/results";

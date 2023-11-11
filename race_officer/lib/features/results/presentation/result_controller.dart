@@ -39,9 +39,9 @@ class ResultsController extends Notifier<ResultsState> {
   /// Set the race to display results for
   /// The series displayed is set to the series the race part of
   displayRace(RaceResults r) {
-    //final series = ref.read(seriesProvider(r.seriesId));
+
     final results = ref.read(resultsService);
-   //final series = results.requireValue.firstWhereOrNull((res) => res.seriesId == r.seriesId)
+   // final series = results.requireValue.where((res) => res.seriesId == r.seriesId);
 
     state = state.copyWith(
       displayedRace: r,
