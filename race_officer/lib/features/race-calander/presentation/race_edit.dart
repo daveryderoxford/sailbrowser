@@ -131,7 +131,7 @@ class _EditSeriesState extends ConsumerState<EditRace> with UiLoggy {
           appBar: AppBar(
             title: Text(widget.race == null ? 'New Race' : 'Edit Race Details'),
             actions: <Widget>[
-              TextButton(
+              FilledButton(
                 onPressed: _submit,
                 child: const Text(
                   'Save',

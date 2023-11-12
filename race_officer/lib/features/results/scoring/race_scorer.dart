@@ -197,6 +197,7 @@ class RaceScorer {
         crew: comp.crew,
         boatClass: comp.boatClass,
         sailNumber: comp.sailNumber,
+        finishTime: comp.finishTime!,
         position: '0',
         points: 0,
         resultCode: comp.resultCode,

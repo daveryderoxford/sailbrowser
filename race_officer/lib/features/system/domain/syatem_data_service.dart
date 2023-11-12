@@ -35,8 +35,8 @@ class SystemDataService with UiLoggy {
   }
 
   _errorHandler(Object? error, StackTrace stackTrace, String func) {
-    final s =
-        (error == null) ? error.toString() : 'Error encountered Series.  $func';
+    var s = 'Error encountered in system data. $func';
+    s = (error == null) ? s : '$s\n${error.toString()}';
     SnackBarService.showErrorSnackBar(content: s);
     loggy.error(s);
   }

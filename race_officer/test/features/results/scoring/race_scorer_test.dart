@@ -41,6 +41,7 @@ RaceResult _makeRaceResult(
   var comp = RaceResult(
     helm: "helm;",
     boatClass: 'class',
+    finishTime: DateTime(0,0,0),
     sailNumber: 123,
     resultCode: code, 
     corrected: corrected, 

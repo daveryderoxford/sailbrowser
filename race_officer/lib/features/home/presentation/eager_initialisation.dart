@@ -4,7 +4,7 @@ import 'package:loggy/loggy.dart';
 import 'package:sailbrowser_flutter/features/race-calander/domain/series_service.dart';
 
 /// Eager in itialistyion of async providers
-/// that are always expected to return a valid valie
+/// that are always expected to return a valid value
 class EagerInitialization extends ConsumerWidget with UiLoggy {
   EagerInitialization({super.key, required this.child});
   final Widget child;

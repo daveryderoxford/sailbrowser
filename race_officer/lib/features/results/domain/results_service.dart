@@ -48,6 +48,8 @@ class ResultsService extends AsyncNotifier<List<SeriesResults>> with UiLoggy {
         // If the serieds result is not stored then create it
         seriesResult = SeriesResults.fromSeries(raceData.series);
         results.add(seriesResult);
+        // TO TEMP c
+        await ref.read(resultsRepositoryProvider).publish(seriesResult, ResultsStatus.provisional);
       }
 
       /// If race result does not exist create it

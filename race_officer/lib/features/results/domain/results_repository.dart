@@ -3,6 +3,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:loggy/loggy.dart';
 import 'package:rxdart/rxdart.dart';
+import 'package:sailbrowser_flutter/common_widgets/snackbar_service.dart';
 import 'package:sailbrowser_flutter/features/club/domain/clubs_service.dart';
 import 'package:sailbrowser_flutter/features/race-calander/domain/series.dart';
 import 'package:sailbrowser_flutter/features/race/domain/selected_races.dart';
@@ -31,7 +32,7 @@ class ResultsRepository with UiLoggy {
       return seriesResults;
     },
   ).shareReplay();
-  
+
   final String clubId;
   final List<Race> selectedRaces;
   late final List<String> seriesIds;
@@ -41,7 +42,7 @@ class ResultsRepository with UiLoggy {
     seriesIds = selectedRaces.map((race) => race.seriesId).toSet().toList();
   }
 
-    /// Stream of series results for selected races
+  /// Stream of series results for selected races
   get seriesResults$ =>
       (selectedRaces.isEmpty) ? Stream.value([]) : _seriesResults$;
 
@@ -68,7 +69,15 @@ class ResultsRepository with UiLoggy {
     seriesResults.status = status;
     final doc =
         _firestore.doc('/clubs/$clubId/results/${seriesResults.seriesId}');
-    doc.set(seriesResults.toJson());
+    doc.set(seriesResults.toJson()).onError(
+        (error, stackTrace) => _errorHandler(error, stackTrace, 'Publish'));
+  }
+
+  _errorHandler(Object? error, StackTrace stackTrace, String func) {
+    var s = 'Error encountered in. $func';
+    s = (error == null) ? s : '$s\n${error.toString()}';
+    SnackBarService.showErrorSnackBar(content: s);
+    loggy.error(s);
   }
 }
 
@@ -80,5 +89,5 @@ final resultsRepositoryProvider = Provider((ref) {
   return ResultsRepository(clubId, races);
 });
 
-final seriesResults =
-    StreamProvider((ref) => ref.watch(resultsRepositoryProvider).seriesResults$);
+final seriesResults = StreamProvider(
+    (ref) => ref.watch(resultsRepositoryProvider).seriesResults$);
