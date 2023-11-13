@@ -39,26 +39,29 @@ class ResultsService extends AsyncNotifier<List<SeriesResults>> with UiLoggy {
     final selected = ref.watch(selectedRacesProvider);
 
     for (var raceData in selected) {
-      /// Read/create series results if they do not exist
+      // Read series - Series results are managed on the server
+      // They maust exist and be successfully read  
       var seriesResult =
           results!.firstWhereOrNull((s) => raceData.series.id == s.seriesId);
       if (seriesResult == null) {
         seriesResult =
               await ref.read(resultsRepositoryProvider).read(raceData.series.id);
-        // If the serieds result is not stored then create it
-        seriesResult = SeriesResults.fromSeries(raceData.series);
-        results.add(seriesResult);
-        // TO TEMP c
-        await ref.read(resultsRepositoryProvider).publish(seriesResult, ResultsStatus.provisional);
+        if (seriesResult == null) {
+          logWarning('Series result read from database - Do not allow results to be published until we can read'); 
+          break;
+        } else {
+          results.add(seriesResult);
+        }
       }
 
-      /// If race result does not exist create it
-      final raceResult = seriesResult.races
+      /// If race result for selected race does not exist for the series then create it
+      var raceResult = seriesResult.races
           .firstWhereOrNull((r) => r.raceId == raceData.race.id);
       if (raceResult == null) {
-        final raceResult = RaceResults.fromRace(raceData.race);
+        raceResult = RaceResults.fromRace(raceData.race);
         seriesResult.races.add(raceResult);
       }
+      raceResult.dirty = true;  // TODO change to selected and dont include in serialised output
     }
     return (results!);
   }
@@ -104,13 +107,15 @@ class ResultsService extends AsyncNotifier<List<SeriesResults>> with UiLoggy {
         raceCompetitors, raceData!.fleet.handicapScheme, raceData.race);
 
     raceResults.results = compResults;
-    raceResults.dirty = false;
+   // raceResults.dirty = false;  // TODO being used as selected currently - so removed 
 
     return raceResults;
 
   }
 
   computeSeriesResults(SeriesResults seriesResults) {
+    final selectedRaces = ref.watch(selectedRacesProvider);
+    
     // Compute race results for all dirty races
     final races = seriesResults.races
         .map<RaceResults>(

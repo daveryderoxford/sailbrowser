@@ -21,7 +21,7 @@ class RaceScorer {
   /// Calculates the corrected time taking into account any time penalty.
   /// The number of laps is scaled up to the maximum number of laps
   @visibleForTesting
-  ({Duration corrected, Duration elapsed}) calculateResultTimes(
+  ({Duration corrected, Duration elapsed, String error}) calculateResultTimes(
       {required RaceCompetitor comp,
       required HandicapScheme scheme,
       required bool isAverageLap,
@@ -35,8 +35,12 @@ class RaceScorer {
 
       // If start time is before finish time return defaults of zero
       if (diff < 0) {
-        return (corrected: const Duration(), elapsed: const Duration());
+        return (corrected: const Duration(), elapsed: const Duration(), error: 'Start time before finish time');
       }
+
+      if (isAverageLap && (comp.numLaps == 0)) {
+        return (corrected: const Duration(), elapsed: const Duration(), error: 'Number of laps 0 for average lap race');
+      } 
 
       elapsed = isAverageLap ? diff / comp.numLaps * maxLaps : diff;
 
@@ -49,13 +53,14 @@ class RaceScorer {
           corrected = elapsed;
       } 
     } else {
-      return (corrected: const Duration(), elapsed: const Duration());
+      return (corrected: const Duration(), elapsed: const Duration(), error: '');
     }
 
     return (
       // Round to nearest second rather than integer part
       corrected: Duration(seconds: corrected.round()),
-      elapsed: Duration(seconds: elapsed.round())
+      elapsed: Duration(seconds: elapsed.round()),
+      error: ''
     );
   }
 
@@ -103,7 +108,7 @@ class RaceScorer {
     final resultsByTime = results.groupBy((res) => res.corrected);
 
     var times = resultsByTime.keys.toList();
-    times.sort(); // Map does not garentee order of keys
+    times.sort(); // Map does not garantee order of keys
 
     var pos = 1.0;
     var updated = <RaceResult>[];
@@ -138,9 +143,6 @@ class RaceScorer {
       final algorithm = shortSeries
           ? resultCode.shortSeriesAlgorithm
           : resultCode.longSeriesAlgorithm;
-      final factor = shortSeries
-          ? resultCode.shortSeriesFactor
-          : resultCode.longSeriesFactor;
 
       // Assign the times
       switch (algorithm) {
@@ -149,30 +151,26 @@ class RaceScorer {
           if (starters == -1) {
             starters = startersInRace(results);
           }
-          res.points = (starters + factor) as double;
+          res.points = starters + 1.0;
         case ResultCodeAlgorithm.scoringPenalty:
         // TODO Scoring penalties are applied after all other positions have been determined - so require a second loop (zpf/scp)
         case ResultCodeAlgorithm.compInSeries:
-          throw Error.safeToString(
-              "Competitirs in series  handled part of series scoring");
         case ResultCodeAlgorithm.avgBefore:
-          throw Error.safeToString(
-              "Average before handled part of series scoring");
         case ResultCodeAlgorithm.avgAll:
-          throw Error.safeToString(
-              "Average of all handled part of series scoring");
+        case ResultCodeAlgorithm.na:
+          break;
         case ResultCodeAlgorithm.setByHand:
           throw Error.safeToString(
               "Set by hand handled part of series scoring");
-        case ResultCodeAlgorithm.na:
           //  NA is either NoFinished or OK
           break;
       }
     }
   }
 
-  /// Scoring penalty appliey.  This is 20% for zfp and default of 20% for scp
+  /// Scoring penalty applied.  This is 20% for zfp and default of 20% for scp
   /// This is applied after the points and order have been calculated.
+  /// It can not be larger than the number of  
   @visibleForTesting
   applyScoringPenalties() {
     //
@@ -197,12 +195,13 @@ class RaceScorer {
         crew: comp.crew,
         boatClass: comp.boatClass,
         sailNumber: comp.sailNumber,
-        finishTime: comp.finishTime!,
+        finishTime: comp.finishTime,
         position: '0',
         points: 0,
         resultCode: comp.resultCode,
         elapsed: times.elapsed,
         corrected: times.corrected,
+        error: times.error,
         numLaps: comp.numLaps, 
       );
       return res;
@@ -213,7 +212,7 @@ class RaceScorer {
 
     assignPointsForFinishers(results);
 
-    // assignPointsForNonFinishers(results);
+    assignPointsForNonFinishers(results, false);
     // sortByPoints(results);
     // results = applyScoringPenaties(results);
     // handSetOverrides(res);

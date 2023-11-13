@@ -9,18 +9,16 @@ part 'race_result.g.dart';
 
 @unfreezed
 class RaceResults with _$RaceResults {
-
-  factory RaceResults({
-    @TimestampSerializer() DateTime? publishedOn,
-    @Default(ResultsStatus.provisional) ResultsStatus status,
-    required String name,
-    @TimestampSerializer() required DateTime date,
-    required String fleet,
-    required int index,
-    required String raceId,
-    List<RaceResult>? results,
-    @Default(true) bool dirty
-  }) = _RaceResults;
+  factory RaceResults(
+      {@TimestampSerializer() DateTime? publishedOn,
+      @Default(ResultsStatus.provisional) ResultsStatus status,
+      required String name,
+      @TimestampSerializer() required DateTime date,
+      required String fleet,
+      required int index,
+      required String raceId,
+      List<RaceResult>? results,
+      @Default(true) bool dirty}) = _RaceResults;
 
   RaceResults._();
 
@@ -51,10 +49,12 @@ class RaceResult with _$RaceResult {
     required double points,
     @Default(0) double handicap,
     required ResultCode resultCode,
-     @TimestampSerializer() required DateTime finishTime,
+    // Finish time is optional when competitor has not finished (eg ret)
+    @TimestampSerializer() DateTime? finishTime,
     required Duration elapsed,
     required Duration corrected,
     @Default(1) numLaps,
+    @Default('') error,
   }) = _RaceResult;
 
   const RaceResult._();

@@ -19,8 +19,6 @@ class ResultCodeScoring extends _ResultCodeScoringBase {
   ResultCodeScoring({
     required this.longSeriesAlgorithm, 
     required this.shortSeriesAlgorithm, 
-    required this.shortSeriesFactor, 
-    required this.longSeriesFactor, 
     required this.isDiscardable, 
     required this.isStartAreaComp,
     required this.isStartedComp, 
@@ -29,8 +27,6 @@ class ResultCodeScoring extends _ResultCodeScoringBase {
 
   final ResultCodeAlgorithm longSeriesAlgorithm; 
   final ResultCodeAlgorithm shortSeriesAlgorithm; 
-  final num shortSeriesFactor; 
-  final num longSeriesFactor; 
   final bool isDiscardable;
   final bool isStartAreaComp; 
   final bool isStartedComp; 
@@ -60,8 +56,6 @@ Map<ResultCode, _ResultCodeScoringBase> _resultCodes = {
   ResultCode.notFinished: ResultCodeScoring(
     longSeriesAlgorithm: ResultCodeAlgorithm.na,
     shortSeriesAlgorithm: ResultCodeAlgorithm.na,
-    shortSeriesFactor: 0,
-    longSeriesFactor: 0,
     isDiscardable: true,
     isStartAreaComp: true,
     isStartedComp: false,
@@ -69,9 +63,7 @@ Map<ResultCode, _ResultCodeScoringBase> _resultCodes = {
   ),
   ResultCode.ok: ResultCodeScoring(
     shortSeriesAlgorithm: ResultCodeAlgorithm.na,
-    shortSeriesFactor: 0,
     longSeriesAlgorithm: ResultCodeAlgorithm.na,
-    longSeriesFactor: 0,
     isDiscardable: true,
     isStartAreaComp: true,
     isStartedComp: true,
@@ -79,9 +71,7 @@ Map<ResultCode, _ResultCodeScoringBase> _resultCodes = {
   ),
   ResultCode.dnc: ResultCodeScoring(
     shortSeriesAlgorithm: ResultCodeAlgorithm.compInSeries,
-    shortSeriesFactor: 1,
     longSeriesAlgorithm: ResultCodeAlgorithm.compInSeries,
-    longSeriesFactor: 1,
     isDiscardable: true,
     isStartAreaComp: false,
     isStartedComp: false,
@@ -89,9 +79,7 @@ Map<ResultCode, _ResultCodeScoringBase> _resultCodes = {
   ),
   ResultCode.dnf: ResultCodeScoring(
     shortSeriesAlgorithm: ResultCodeAlgorithm.compInSeries,
-    shortSeriesFactor: 1,
     longSeriesAlgorithm: ResultCodeAlgorithm.compInStartArea,
-    longSeriesFactor: 1,
     isDiscardable: true,
     isStartAreaComp: true,
     isStartedComp: true,
@@ -102,9 +90,7 @@ Map<ResultCode, _ResultCodeScoringBase> _resultCodes = {
   ),
   ResultCode.dns: ResultCodeScoring(
     shortSeriesAlgorithm: ResultCodeAlgorithm.compInSeries,
-    shortSeriesFactor: 1,
     longSeriesAlgorithm: ResultCodeAlgorithm.compInStartArea,
-    longSeriesFactor: 1,
     isDiscardable: true,
     isStartAreaComp: false,
     isStartedComp: false,
@@ -112,9 +98,7 @@ Map<ResultCode, _ResultCodeScoringBase> _resultCodes = {
   ),
   ResultCode.ood: ResultCodeScoring(
     shortSeriesAlgorithm: ResultCodeAlgorithm.avgAll,
-    shortSeriesFactor: 0,
     longSeriesAlgorithm: ResultCodeAlgorithm.avgAll,
-    longSeriesFactor: 0,
     isDiscardable: true,
     isStartAreaComp: false,
     isStartedComp: false,
@@ -128,9 +112,7 @@ Map<ResultCode, _ResultCodeScoringBase> _resultCodes = {
   ),
   ResultCode.dgm: ResultCodeScoring(
     shortSeriesAlgorithm: ResultCodeAlgorithm.compInSeries,
-    shortSeriesFactor: 1,
     longSeriesAlgorithm: ResultCodeAlgorithm.compInStartArea,
-    longSeriesFactor: 1,
     isDiscardable: false,
     isStartAreaComp: true,
     isStartedComp: true,
@@ -141,9 +123,7 @@ Map<ResultCode, _ResultCodeScoringBase> _resultCodes = {
   ),
   ResultCode.zfp: ResultCodeScoring(
     shortSeriesAlgorithm: ResultCodeAlgorithm.scoringPenalty,
-    shortSeriesFactor: 1.2,
     longSeriesAlgorithm: ResultCodeAlgorithm.scoringPenalty,
-    longSeriesFactor: 1.2,
     isDiscardable: true,
     isStartAreaComp: true,
     isStartedComp: true,
@@ -154,9 +134,7 @@ Map<ResultCode, _ResultCodeScoringBase> _resultCodes = {
   ),
   ResultCode.xpa: ResultCodeScoring(
     shortSeriesAlgorithm: ResultCodeAlgorithm.scoringPenalty,
-    shortSeriesFactor: 1.2,
     longSeriesAlgorithm: ResultCodeAlgorithm.scoringPenalty,
-    longSeriesFactor: 1.2,
     isDiscardable: true,
     isStartAreaComp: true,
     isStartedComp: true,
@@ -164,9 +142,7 @@ Map<ResultCode, _ResultCodeScoringBase> _resultCodes = {
   ),
   ResultCode.scp: ResultCodeScoring(
     shortSeriesAlgorithm: ResultCodeAlgorithm.scoringPenalty,
-    shortSeriesFactor: 1.2,
     longSeriesAlgorithm: ResultCodeAlgorithm.scoringPenalty,
-    longSeriesFactor: 1.2,
     isDiscardable: true,
     isStartAreaComp: true,
     isStartedComp: true,
@@ -174,9 +150,7 @@ Map<ResultCode, _ResultCodeScoringBase> _resultCodes = {
   ),
   ResultCode.dpi: ResultCodeScoring(
     shortSeriesAlgorithm: ResultCodeAlgorithm.setByHand,
-    shortSeriesFactor: 0,
     longSeriesAlgorithm: ResultCodeAlgorithm.setByHand,
-    longSeriesFactor: 0,
     isDiscardable: true,
     isStartAreaComp: true,
     isStartedComp: true,
@@ -184,9 +158,7 @@ Map<ResultCode, _ResultCodeScoringBase> _resultCodes = {
   ),
   ResultCode.rdg: ResultCodeScoring(
     shortSeriesAlgorithm: ResultCodeAlgorithm.setByHand,
-    shortSeriesFactor: 0,
     longSeriesAlgorithm: ResultCodeAlgorithm.setByHand,
-    longSeriesFactor: 0,
     isDiscardable: true,
     isStartAreaComp: true,
     isStartedComp: true,
@@ -194,9 +166,7 @@ Map<ResultCode, _ResultCodeScoringBase> _resultCodes = {
   ),
   ResultCode.rdga: ResultCodeScoring(
     shortSeriesAlgorithm: ResultCodeAlgorithm.avgAll,
-    shortSeriesFactor: 0,
     longSeriesAlgorithm: ResultCodeAlgorithm.avgAll,
-    longSeriesFactor: 0,
     isDiscardable: true,
     isStartAreaComp: true,
     isStartedComp: true,
@@ -204,9 +174,7 @@ Map<ResultCode, _ResultCodeScoringBase> _resultCodes = {
   ),
   ResultCode.rdgb: ResultCodeScoring(
     shortSeriesAlgorithm: ResultCodeAlgorithm.avgBefore,
-    shortSeriesFactor: 0,
     longSeriesAlgorithm: ResultCodeAlgorithm.avgBefore,
-    longSeriesFactor: 0,
     isDiscardable: true,
     isStartAreaComp: true,
     isStartedComp: true,
@@ -214,9 +182,7 @@ Map<ResultCode, _ResultCodeScoringBase> _resultCodes = {
   ),
   ResultCode.rdgc: ResultCodeScoring(
     shortSeriesAlgorithm: ResultCodeAlgorithm.setByHand,
-    shortSeriesFactor: 0,
     longSeriesAlgorithm: ResultCodeAlgorithm.setByHand,
-    longSeriesFactor: 0,
     isDiscardable: true,
     isStartAreaComp: true,
     isStartedComp: true,
