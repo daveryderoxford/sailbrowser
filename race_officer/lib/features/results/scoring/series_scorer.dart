@@ -1,3 +1,4 @@
+import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:meta/meta.dart';
 import 'package:sailbrowser_flutter/features/race/domain/result_code.dart';
@@ -10,6 +11,9 @@ import 'package:sailbrowser_flutter/util/list_extensions.dart';
 /// Functions related to calculating series points.
 class SeriesScorer {
   SeriesScorer();
+
+  /// TODO - needs to be modified to handle draws countback
+  _sortByPoints(SeriesCompetitor a, b) => (a.netPoints - b.netPoints).toInt();
 
   /// Finds is a race competitor is present in series.
   @visibleForTesting
@@ -62,8 +66,8 @@ class SeriesScorer {
   /// For long series, DNC races are excluded.
   /// In the case that no races are avaalible for calculation then DNC is scored. TODO - check assumption
   @visibleForTesting
-  double averagePoints(
-      List<SeriesResultData> results, SeriesScoringScheme algorithm, int maxCompetitors) {
+  double averagePoints(List<SeriesResultData> results,
+      SeriesScoringScheme algorithm, int maxCompetitors) {
     final comps = (algorithm == SeriesScoringScheme.shortSeries2017)
         ? results.where((comp) =>
                 (comp.resultCode != ResultCode.notFinished) &&
@@ -93,47 +97,92 @@ class SeriesScorer {
   // Average before
   @visibleForTesting
   seriesDependentResultsCode(
-      List<SeriesResults> seriesResults, SeriesScoringScheme scheme) {
-    for (var series in seriesResults) {
-      for (var comp in series.competitors) {
-        for (var res in comp.results) {
-          final resultCode = getScoringData(res.resultCode)!;
+      SeriesResults seriesResults, SeriesScoringScheme scheme) {
+    for (var comp in seriesResults.competitors) {
+      for (var res in comp.results) {
+        final resultCode = getScoringData(res.resultCode)!;
 
-          final algorithm = (scheme == SeriesScoringScheme.shortSeries2017)
-              ? resultCode.shortSeriesAlgorithm
-              : resultCode.longSeriesAlgorithm;
+        final algorithm = (scheme == SeriesScoringScheme.shortSeries2017)
+            ? resultCode.shortSeriesAlgorithm
+            : resultCode.longSeriesAlgorithm;
 
-          switch (algorithm) {
-            case ResultCodeAlgorithm.compInSeries:
-              res.points = series.competitors.length + 1;
-            case ResultCodeAlgorithm.avgBefore:
-             //  final races = comp.results.take(comp.)  //TODO get previous races
-              res.points = averagePoints(comp.results, scheme, series.competitors.length);
-            case ResultCodeAlgorithm.avgAll:
-              res.points = averagePoints(comp.results, scheme, series.competitors.length);
-            case ResultCodeAlgorithm.setByHand ||
-                  ResultCodeAlgorithm.compInStartArea ||
-                  ResultCodeAlgorithm.scoringPenalty ||
-                  ResultCodeAlgorithm.na:
-              break;
-          }
+        switch (algorithm) {
+          case ResultCodeAlgorithm.compInSeries:
+            res.points = seriesResults.competitors.length + 1;
+          case ResultCodeAlgorithm.avgBefore:
+            //  final races = comp.results.take(comp.)  // TODO get previous races
+            res.points = averagePoints(
+                comp.results, scheme, seriesResults.competitors.length);
+          case ResultCodeAlgorithm.avgAll:
+            res.points = averagePoints(
+                comp.results, scheme, seriesResults.competitors.length);
+          case ResultCodeAlgorithm.setByHand ||
+                ResultCodeAlgorithm.compInStartArea ||
+                ResultCodeAlgorithm.scoringPenalty ||
+                ResultCodeAlgorithm.na:
+            break;
         }
       }
+    }
+  }
+
+  @visibleForTesting
+  /// Updates series result with the discards net and total points
+  netPoints(SeriesResults seriesResults, int initialDiscardAfter,
+      int subsequentDiscardsEveryN) {
+    final numRacesSailed =
+        seriesResults.races.length; // TODO - check rules for treating as a race
+
+    final numDiscards = (numRacesSailed < initialDiscardAfter)
+        ? 0
+        : 1 +
+            (numRacesSailed - initialDiscardAfter) ~/ subsequentDiscardsEveryN;
+
+    for (var comp in seriesResults.competitors) {
+      // Determine score to be discarded
+      // toList copies the list and .. gte a refreence to the list itself.  More efficient than ...
+      // Note that insertionSort is stable so, for a given number of points, the first races will the ordered first
+      final orderedByPoints = comp.results.toList();
+      insertionSort(orderedByPoints,
+          compare: (a, b) => (a.points - b.points).toInt());
+
+      // Go through results ordered by points/race order, setting discarded races. 
+      var index = 0;
+      var discardCount = 0;
+
+      while (index < orderedByPoints.length && discardCount < numDiscards) {
+        final res = orderedByPoints[index];
+        final algorithm = getScoringData(res.resultCode)!;
+        if (algorithm.isDiscardable) {
+          res.isDiscard = true;
+          discardCount++;
+        }
+        index++;
+      }
+
+      comp.netPoints = comp.results
+          .fold<double>(0.0, (sum, c) => c.isDiscard ? sum : sum + c.points);
+      comp.totalPoints =
+          comp.results.fold<double>(0.0, (sum, c) => sum + c.points);
     }
   }
 
   /// Calculates series results based on:
   /// * Current partial series results,  List of race results.
   /// * for races where race results are supplied then updated data will replace existing races.
- calculateSeriesResults(SeriesResults seriesResults,
+  calculateSeriesResults(SeriesResults seriesResults,
       List<RaceResults> updatedRaces, SeriesScoringData scoringScheme) {
     // Add race data to the series results, defining new race competitors
-    addRaceResults(
-        seriesResults, updatedRaces, scoringScheme.entryAlgorithm);
+    addRaceResults(seriesResults, updatedRaces, scoringScheme.entryAlgorithm);
 
-    // points for series dependent
-    //
-    // Identify discards
+    // points for series dependent result code
+    seriesDependentResultsCode(seriesResults, scoringScheme.scheme);
+
+    // Caclulate net and total points for each competitor
+    netPoints(seriesResults, scoringScheme.initialDiscardAfter,
+        scoringScheme.subsequentDiscardsEveryN);
+
     // Order by points
+    seriesResults.competitors.sort((a, b) => _sortByPoints(a, b));
   }
 }

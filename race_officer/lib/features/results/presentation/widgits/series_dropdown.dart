@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:loggy/loggy.dart';
 import 'package:sailbrowser_flutter/common_widgets/null_widget.dart';
 import 'package:sailbrowser_flutter/features/results/domain/results_service.dart';
 import 'package:sailbrowser_flutter/features/results/domain/series_results.dart';
 import 'package:sailbrowser_flutter/features/results/presentation/result_controller.dart';
 
-class SeriesDropDown extends ConsumerWidget {
+class SeriesDropDown extends ConsumerWidget with UiLoggy{
   const SeriesDropDown({super.key});
 
   @override
@@ -25,8 +26,10 @@ class SeriesDropDown extends ConsumerWidget {
                 }
               },
             ),
-        error: (e, stacktrace) =>
-            const Center(child: Text('Error occurred building dropdown')),
+        error: (e, stacktrace) {
+            logError('Error occured building dropdown ${e.toString()}');
+            return const Center(child: Text('Error occurred building dropdown'));
+          },
         loading: () => const NullWidget());
   }
 }

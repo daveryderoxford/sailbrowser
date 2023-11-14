@@ -1,6 +1,7 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:sailbrowser_flutter/features/race-calander/domain/series.dart';
 import 'package:sailbrowser_flutter/features/race/domain/race_competitor.dart';
+import 'package:sailbrowser_flutter/features/race/domain/result_code.dart';
 import 'package:sailbrowser_flutter/features/results/domain/race_result.dart';
 import 'package:sailbrowser_flutter/features/results/scoring/rating_system.dart';
 import 'package:sailbrowser_flutter/util/list_extensions.dart';
@@ -35,12 +36,20 @@ class RaceScorer {
 
       // If start time is before finish time return defaults of zero
       if (diff < 0) {
-        return (corrected: const Duration(), elapsed: const Duration(), error: 'Start time before finish time');
+        return (
+          corrected: const Duration(),
+          elapsed: const Duration(),
+          error: 'Start time before finish time'
+        );
       }
 
       if (isAverageLap && (comp.numLaps == 0)) {
-        return (corrected: const Duration(), elapsed: const Duration(), error: 'Number of laps 0 for average lap race');
-      } 
+        return (
+          corrected: const Duration(),
+          elapsed: const Duration(),
+          error: 'Number of laps 0 for average lap race'
+        );
+      }
 
       elapsed = isAverageLap ? diff / comp.numLaps * maxLaps : diff;
 
@@ -51,9 +60,13 @@ class RaceScorer {
           corrected = elapsed / comp.handicap;
         case HandicapScheme.levelRating:
           corrected = elapsed;
-      } 
+      }
     } else {
-      return (corrected: const Duration(), elapsed: const Duration(), error: '');
+      return (
+        corrected: const Duration(),
+        elapsed: const Duration(),
+        error: ''
+      );
     }
 
     return (
@@ -105,29 +118,30 @@ class RaceScorer {
   @visibleForTesting
   assignPointsForFinishers(List<RaceResult> results) {
     /// Group competitors by their finish time
-    final resultsByTime = results.groupBy((res) => res.corrected);
+    final resultsByTime = results
+        .where((res) => res.resultCode == ResultCode.ok)
+        .groupBy((res) => res.corrected);
 
     var times = resultsByTime.keys.toList();
-    times.sort(); // Map does not garantee order of keys
+    times.sort(); // Map does not garantee order of keys so sort them
 
     var pos = 1.0;
-    var updated = <RaceResult>[];
 
     for (var time in times) {
       var resultsAtTime = resultsByTime[time]!;
       if (resultsAtTime.length == 1) {
-        updated.add(
-            resultsAtTime[0].copyWith(position: pos.toString(), points: pos));
+        resultsAtTime[0].points = pos;
+        resultsAtTime[0].position = pos.toStringAsFixed(0);
       } else {
-        var posStr = '$pos=';
+        var posStr = '${pos.toStringAsFixed(0)}=';
         var avgPoints = pos - 1 + (resultsAtTime.length + 1) / 2;
         for (var res in resultsAtTime) {
-          updated.add(res.copyWith(position: posStr, points: avgPoints));
+          res.points = avgPoints;
+          res.position = posStr;
         }
-        pos = pos + resultsAtTime.length;
       }
+      pos = pos + resultsAtTime.length;
     }
-    return pos;
   }
 
   /// Assigns points for non-finishers depending on race data.
@@ -170,11 +184,9 @@ class RaceScorer {
 
   /// Scoring penalty applied.  This is 20% for zfp and default of 20% for scp
   /// This is applied after the points and order have been calculated.
-  /// It can not be larger than the number of  
+  /// It can not be larger than the number of
   @visibleForTesting
-  applyScoringPenalties() {
-    //
-  }
+  applyScoringPenalties(List<RaceResult> results) {}
 
   /// Calculates positions for a list of race competitors.
   /// Returns a list of race results ordered by points.
@@ -196,30 +208,31 @@ class RaceScorer {
         boatClass: comp.boatClass,
         sailNumber: comp.sailNumber,
         finishTime: comp.finishTime,
+        handicap: comp.handicap,
         position: '0',
         points: 0,
         resultCode: comp.resultCode,
         elapsed: times.elapsed,
         corrected: times.corrected,
         error: times.error,
-        numLaps: comp.numLaps, 
+        numLaps: comp.numLaps,
       );
       return res;
     }).toList();
 
     // Assign points for race.
     results.sort((a, b) => sortByCorrectedTime(a, b));
-
     assignPointsForFinishers(results);
-
-    assignPointsForNonFinishers(results, false);
-    // sortByPoints(results);
+    assignPointsForNonFinishers(results, false); // TODO - set long/short series
+    results.sort((a, b) => _sortByPoints(a, b));
     // results = applyScoringPenaties(results);
     // handSetOverrides(res);
     // sortByPoints(results);
 
     return results;
   }
+
+  int _sortByPoints(RaceResult a, b) => (a.points - b.points).toInt();
 }
 
 final raceScorerProvider = Provider((ref) {

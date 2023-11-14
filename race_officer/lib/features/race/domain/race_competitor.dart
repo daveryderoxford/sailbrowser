@@ -16,7 +16,7 @@ class RaceCompetitor with _$RaceCompetitor {
     String? crew,
     required String boatClass,
     required int sailNumber,
-    required num handicap,
+    required double handicap,
 
     /// Finish time recored when competitor finishes.
     /// If a manual finish time set by hand is specified it is used in preference.

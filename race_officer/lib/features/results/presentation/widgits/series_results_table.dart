@@ -140,12 +140,15 @@ class SeriesResultsTable extends ConsumerWidget with UiLoggy {
   Widget _racePointsCell(BuildContext context, SeriesResultData res) {
     var pointsStr = _roundedPointsStr(res.points);
     pointsStr = (res.isDiscard) ? '($pointsStr)' : pointsStr;
-    final str = (res.resultCode != ResultCode.ok)
-        ? '$pointsStr\n${res.resultCode.displayName}'
-        : pointsStr;
-    return Center(
-      child: Text(str),
-    );
+
+     if (res.resultCode != ResultCode.ok) {
+      return Column(crossAxisAlignment: CrossAxisAlignment.center, children: [
+        Text(res.resultCode.displayName),
+        Text(pointsStr),
+      ]);
+    } else {
+      return Center(child: (Text(pointsStr)));
+    }
   }
 
   Widget _raceHeading(
