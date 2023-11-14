@@ -114,7 +114,6 @@ class ResultsService extends AsyncNotifier<List<SeriesResults>> with UiLoggy {
   }
 
   computeSeriesResults(SeriesResults seriesResults) {
-    final selectedRaces = ref.watch(selectedRacesProvider);
     
     // Compute race results for all dirty races
     final races = seriesResults.races

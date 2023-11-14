@@ -37,8 +37,6 @@ class _EditSeriesState extends ConsumerState<EditSeries> with UiLoggy {
     final form = _formKey.currentState!;
     form.saveAndValidate();
 
-    final raceSeriesService = ref.read(seriesRepositoryProvider);
-
     if (form.isValid) {
       final formData = _formKey.currentState!.value;
 
@@ -54,7 +52,7 @@ class _EditSeriesState extends ConsumerState<EditSeries> with UiLoggy {
           fleetId: formData['fleetId'],
           scoringScheme: scoringScheme,
         );
-        raceSeriesService.add(update);
+        ref.read(seriesRepositoryProvider).add(update);
       } else {
         final update = series!.copyWith(
           name: formData['name'],
@@ -62,7 +60,7 @@ class _EditSeriesState extends ConsumerState<EditSeries> with UiLoggy {
           scoringScheme: scoringScheme,
         );
 
-        raceSeriesService.update(update, update.id);
+        ref.read(seriesRepositoryProvider).update(update, update.id);
       }
 
       if (context.mounted) {
