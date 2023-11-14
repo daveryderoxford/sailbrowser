@@ -1,4 +1,4 @@
-import { Timestamp, getFirestore } from "firebase-admin/firestore";
+import { getFirestore } from "firebase-admin/firestore";
 import { onDocumentUpdated, onDocumentCreated } from "firebase-functions/v2/firestore";
 
 /** Subset of SeriesResult properties copied from a series 
@@ -9,8 +9,8 @@ interface CommonData {
     name: string;
     seriesId: String;
     fleetId: string;
-    startDate: Timestamp;
-    endDate: Timestamp;
+    startDate: string;
+    endDate: string;
     scoringScheme: Object;
 }
 
@@ -19,8 +19,8 @@ interface Series {
     name: string;
     id: String;
     fleetId: string;
-    startDate: Timestamp;
-    endDate: Timestamp;
+    startDate: string;
+    endDate: string;
     scoringScheme: Object;
 }
 
@@ -39,7 +39,7 @@ export const seriesCreated = onDocumentCreated(
     const path = makePath(event.params);
 
     const update = {
-        publishedOn: new Timestamp(0,0),
+        publishedOn: '',
         status: 'provisional',
         races: [],
         competitors: [],

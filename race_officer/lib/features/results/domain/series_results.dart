@@ -3,12 +3,12 @@ import 'package:sailbrowser_flutter/features/race-calander/domain/series.dart';
 import 'package:sailbrowser_flutter/features/race/domain/result_code.dart';
 import 'package:sailbrowser_flutter/features/results/domain/race_result.dart';
 import 'package:sailbrowser_flutter/features/results/scoring/series_scoring_data.dart';
-import 'package:sailbrowser_flutter/firebase/timestamp_serialiser.dart';
 
 part 'series_results.freezed.dart';
 part 'series_results.g.dart';
 
 enum ResultsStatus {
+  draft,
   provisional,
   published,
 }
@@ -18,14 +18,14 @@ enum ResultsStatus {
 class SeriesResults with _$SeriesResults {
   factory SeriesResults(
       {
-      @TimestampSerializer() DateTime? publishedOn,
+     DateTime? publishedOn,
       @Default(ResultsStatus.provisional) ResultsStatus status,
       required String season,
       required String name,
       required String seriesId,
       required String fleetId,
-      @TimestampSerializer() required DateTime startDate,
-      @TimestampSerializer() required DateTime endDate,
+      required DateTime startDate,
+      required DateTime endDate,
       required SeriesScoringData scoringScheme,
       required List<RaceResults>
           races, // Cant use default and allow to add to the list

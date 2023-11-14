@@ -9,11 +9,11 @@ part 'race_result.g.dart';
 
 @unfreezed
 class RaceResults with _$RaceResults {
-  factory RaceResults(
-      {@TimestampSerializer() DateTime? publishedOn,
+  factory RaceResults({
+      DateTime? publishedOn,
       @Default(ResultsStatus.provisional) ResultsStatus status,
       required String name,
-      @TimestampSerializer() required DateTime date,
+      required DateTime date,
       required String fleet,
       required int index,
       required String raceId,
@@ -50,7 +50,7 @@ class RaceResult with _$RaceResult {
     @Default(0) double handicap,
     required ResultCode resultCode,
     // Finish time is optional when competitor has not finished (eg ret)
-    @TimestampSerializer() DateTime? finishTime,
+    DateTime? finishTime,
     required Duration elapsed,
     required Duration corrected,
     @Default(1) numLaps,
