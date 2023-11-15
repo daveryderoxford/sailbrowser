@@ -46,9 +46,10 @@ class SeriesScorer {
             findSeriesCompetitor(comp, seriesResults.competitors, algorithm);
         if (seriesComp == null) {
           seriesComp = SeriesCompetitor.fromRaceResult(comp);
-          seriesComp.results = List.filled(
+          // List.generate generates new instances for each entry.  List.filled points to the same object. 
+          seriesComp.results = List.generate(
             seriesResults.races.length,
-            SeriesResultData(
+            (index) => SeriesResultData(
                 points: 9999, resultCode: ResultCode.dns, isDiscard: false),
           );
           seriesResults.competitors.add(seriesComp);
@@ -127,6 +128,7 @@ class SeriesScorer {
   }
 
   @visibleForTesting
+
   /// Updates series result with the discards net and total points
   netPoints(SeriesResults seriesResults, int initialDiscardAfter,
       int subsequentDiscardsEveryN) {
@@ -144,9 +146,9 @@ class SeriesScorer {
       // Note that insertionSort is stable so, for a given number of points, the first races will the ordered first
       final orderedByPoints = comp.results.toList();
       insertionSort(orderedByPoints,
-          compare: (a, b) => (a.points - b.points).toInt());
+          compare: (a, b) => (b.points - a.points).toInt());
 
-      // Go through results ordered by points/race order, setting discarded races. 
+      // Go through results ordered by points/race order, setting discarded races.
       var index = 0;
       var discardCount = 0;
 
@@ -167,6 +169,18 @@ class SeriesScorer {
     }
   }
 
+  /// Calculate the position based on net points.
+  /// TODO need to implement countback for ties. 
+  position(SeriesResults seriesResults) {
+
+    seriesResults.competitors.sort((a, b) => _sortByPoints(a, b));
+
+    for (var (index, result) in seriesResults.competitors.indexed) {
+      result.position = index+1;
+    }
+  }
+
+
   /// Calculates series results based on:
   /// * Current partial series results,  List of race results.
   /// * for races where race results are supplied then updated data will replace existing races.
@@ -182,7 +196,7 @@ class SeriesScorer {
     netPoints(seriesResults, scoringScheme.initialDiscardAfter,
         scoringScheme.subsequentDiscardsEveryN);
 
-    // Order by points
-    seriesResults.competitors.sort((a, b) => _sortByPoints(a, b));
+    // Order competitors and calculate position  
+    position(seriesResults);
   }
 }
