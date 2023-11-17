@@ -24,9 +24,17 @@ enum PublishResultsOptions {
   selectedRace,
 }
 
-/// State for results display. 
+/// State for results display.
 class ResultsController extends Notifier<ResultsState> {
-  ResultsController(this.seriesScorer, this.raceScorer);
+  ResultsController(this.seriesScorer, this.raceScorer) {
+/*    ref.listen(appShellStateProvider, (oldTab, newTab) {
+      if (newTab == 4 && state.displayedSeries != null) {
+        ref
+            .read(resultsService.notifier)
+            .computeSeriesResults(state.displayedSeries!);
+      }
+    }); */
+  }
 
   final RaceScorer raceScorer;
   final SeriesScorer seriesScorer;
@@ -39,13 +47,12 @@ class ResultsController extends Notifier<ResultsState> {
   /// Set the race to display results for
   /// The series displayed is set to the series the race part of
   displayRace(RaceResults r) {
-
     final results = ref.read(resultsService);
-   // final series = results.requireValue.where((res) => res.seriesId == r.seriesId);
+    //  final series = results.requireValue.where((res) => res.seriesId == r.seriesId);
 
     state = state.copyWith(
       displayedRace: r,
-    //  displayedSeries: series,
+      //  displayedSeries: series,
     );
   }
 
@@ -55,12 +62,18 @@ class ResultsController extends Notifier<ResultsState> {
     state = state.copyWith(displayedRace: null, displayedSeries: s);
     ref.read(resultsService.notifier).computeSeriesResults(s);
   }
+  
+  calcResults() {
+          ref
+            .read(resultsService.notifier)
+            .computeSeriesResults(state.displayedSeries!);
+}
 
   /// Publish race
   publishResults(ResultsStatus status) {
-     ref.read(resultsRepositoryProvider).publish(state.displayedSeries!, status);
+    ref.read(resultsRepositoryProvider).publish(state.displayedSeries!, status);
   }
 }
 
-final resultsController =
-    NotifierProvider<ResultsController, ResultsState>( () => ResultsController(SeriesScorer(), RaceScorer()));
+final resultsController = NotifierProvider<ResultsController, ResultsState>(
+    () => ResultsController(SeriesScorer(), RaceScorer()));

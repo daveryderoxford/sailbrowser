@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:loggy/loggy.dart';
+import 'package:sailbrowser_flutter/app_shell/app_shell.dart';
+import 'package:sailbrowser_flutter/features/results/domain/results_service.dart';
 import 'package:sailbrowser_flutter/features/results/domain/series_results.dart';
 import 'package:sailbrowser_flutter/features/results/presentation/widgits/publish_results_dialog.dart';
 import 'package:sailbrowser_flutter/features/results/presentation/widgits/series_results_tab.dart';
@@ -76,6 +78,9 @@ class ResultsScreen extends ConsumerWidget with UiLoggy {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final controller = ref.watch(resultsController);
+    ref.watch(resultsService);
+
+    ref.watch(resultsTabListener);
 
     return DefaultTabController(
       length: 2,
@@ -114,3 +119,11 @@ class ResultsScreen extends ConsumerWidget with UiLoggy {
     );
   }
 }
+
+final resultsTabListener = Provider((ref) {
+      ref.listen(appShellStateProvider, (oldTab, newTab) {
+      if (newTab == 4) {
+        ref.read(resultsController.notifier).calcResults();
+      }
+    });
+});

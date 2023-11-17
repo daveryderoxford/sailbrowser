@@ -48,7 +48,7 @@ class ResultsService extends AsyncNotifier<List<SeriesResults>> with UiLoggy {
               await ref.read(resultsRepositoryProvider).read(raceData.series.id);
         if (seriesResult == null) {
           logWarning('Series result read from database - Do not allow results to be published until we can read'); 
-          break;
+          continue;
         } else {
           results.add(seriesResult);
         }
@@ -168,7 +168,6 @@ final competitorsDirty = Provider((ref) {
           // Newly added  should have dirty set
           if (change.type != DocumentChangeType.added) {
             final comp = change.competitor;
-            res.markRaceAsDirty(comp.raceId, comp.seriesId);
             res.markSeriesAsDirty(comp.seriesId);
           }
         }

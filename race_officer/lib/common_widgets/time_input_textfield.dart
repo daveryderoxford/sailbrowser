@@ -18,7 +18,6 @@ class TimeInputFieldState extends State<TimeInputField> {
   final TextEditingController _txtTimeController = TextEditingController();
 
   late final ValueChanged<DateTime?>? onChanged;
-  late final DateTime? initialValue;
 
   final format = DateFormat('HH:mm:ss');
 
@@ -26,12 +25,19 @@ class TimeInputFieldState extends State<TimeInputField> {
   void initState() {
     super.initState();
     onChanged = widget.onChanged;
-    initialValue = widget.initialValue;
+    if (widget.initialValue != null) {
+      final initialStr = format.format(widget.initialValue!);
+      _txtTimeController.value = TextEditingValue(
+        text: initialStr,
+        selection: TextSelection.fromPosition(
+          TextPosition(offset: initialStr.length),
+        ),
+      );
+    }
   }
 
   @override
   Widget build(BuildContext context) {
-    
     return TextFormField(
       onChanged: (value) {
         DateTime? date;
@@ -47,8 +53,12 @@ class TimeInputFieldState extends State<TimeInputField> {
       },
       controller: _txtTimeController,
       keyboardType: const TextInputType.numberWithOptions(decimal: false),
-      decoration: const InputDecoration(
+      decoration:  InputDecoration(
         hintText: '00:00:00',
+        suffixIcon: IconButton(
+          onPressed: () => _txtTimeController.clear(),
+          icon: const Icon(Icons.clear),
+        ),
       ),
       inputFormatters: <TextInputFormatter>[
         TimeTextInputFormatter() // This input formatter will do the job

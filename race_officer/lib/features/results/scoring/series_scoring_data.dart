@@ -12,13 +12,16 @@ enum SeriesScoringScheme {
   const SeriesScoringScheme(this.displayName);
 }
 
-/// How entries for a series shall be  generated entries for a series.  
+/// How entries for a series shall be  generated entries for a series.
 /// Allows clubs to combine results for a single helm sailing different classes
 /// or keep then separate.
 enum SeriesEntryAlgorithm {
-  classSailNumberHelm('Class, Sail number, Helm', 'Entries for a boat with different helms will be separated' ),
-  classSailNumber('Class, Sail number', 'Entries for a boat with different helmms will be merged'),
-  helm('Helm name', 'Entries for helm saing different boats in series will be merged');
+  classSailNumberHelm('Class, Sail number, Helm',
+      'Entries for a boat with different helms will be separated'),
+  classSailNumber('Class, Sail number',
+      'Entries for a boat with different helmms will be merged'),
+  helm('Helm name',
+      'Entries for helm saing different boats in series will be merged');
 
   final String displayName;
   final String hint;
@@ -40,9 +43,9 @@ class SeriesScoringData with _$SeriesScoringData {
       _$SeriesScoringDataFromJson(json);
 
   static SeriesScoringData defaultScheme = SeriesScoringData(
-      scheme: SeriesScoringScheme.longSeries2017,
-      initialDiscardAfter: 3,
-      subsequentDiscardsEveryN: 2,
-      entryAlgorithm: SeriesEntryAlgorithm.classSailNumberHelm,
+    scheme: SeriesScoringScheme.longSeries2017,
+    initialDiscardAfter: 3,
+    subsequentDiscardsEveryN: 2,
+    entryAlgorithm: SeriesEntryAlgorithm.classSailNumberHelm,
   );
 }

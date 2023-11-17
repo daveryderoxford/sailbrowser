@@ -1,12 +1,14 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:loggy/loggy.dart';
 import 'bottom_navbar.dart';
 import 'navrail.dart';
 
 // Stateful navigation based on:
 // https://github.com/flutter/packages/blob/main/packages/go_router/example/lib/stateful_shell_route.dart
-class AppShell extends StatelessWidget {
-  const AppShell({
+class AppShell extends ConsumerWidget with UiLoggy{
+   AppShell({
     Key? key,
     required this.navigationShell,
   }) : super(
@@ -21,7 +23,9 @@ class AppShell extends StatelessWidget {
   }
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    ref.watch(appShellStateProvider);
+
     final size = MediaQuery.sizeOf(context);
     final wideScreen = size.width > 600;
     final colorScheme = Theme.of(context).colorScheme;
@@ -31,13 +35,33 @@ class AppShell extends StatelessWidget {
       return AppNavigationRail(
           selectedIndex: navigationShell.currentIndex,
           backgroundColor: backgroundColor,
-          onDestinationSelected: _goBranch,
+          onDestinationSelected: (index) {
+            ref.read(appShellStateProvider.notifier)._setTabChanged(index);
+            _goBranch(index);
+          },
           body: navigationShell);
     } else {
       return AppBottomNavigationBar(
           selectedIndex: navigationShell.currentIndex,
-          onDestinationSelected: _goBranch,
+          onDestinationSelected: (index) {
+            ref.read(appShellStateProvider.notifier)._setTabChanged(index);
+            _goBranch(index);
+          },
           body: navigationShell);
     }
   }
+}
+
+/// Selected application tab index ()
+final appShellStateProvider = NotifierProvider<AppShellNotiifer, int>(AppShellNotiifer.new);
+
+class AppShellNotiifer extends Notifier<int> {
+
+  @override
+  build() => 0;
+
+  _setTabChanged(int index) {
+    state = index;
+  }
+
 }

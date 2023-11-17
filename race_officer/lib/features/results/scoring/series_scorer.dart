@@ -12,8 +12,9 @@ import 'package:sailbrowser_flutter/util/list_extensions.dart';
 class SeriesScorer {
   SeriesScorer();
 
-  /// TODO - needs to be modified to handle draws countback
-  _sortByPoints(SeriesCompetitor a, b) => (a.netPoints - b.netPoints).toInt();
+  SeriesResultData _createDNCSeriesComp() => 
+    SeriesResultData( points: 9999, resultCode: ResultCode.dns, isDiscard: false);
+  
 
   /// Finds is a race competitor is present in series.
   @visibleForTesting
@@ -36,21 +37,28 @@ class SeriesScorer {
     });
   }
 
+  /// Resets the  series results date for a given race index
+  _resetSeriesResultData(SeriesResults seriesResults, int raceIndex) {
+    for (var scomp in seriesResults.competitors) {
+      scomp.results[raceIndex] = _createDNCSeriesComp();
+    }
+   }
+
   /// Adds race results to the series, creating race competitors as required.
   @visibleForTesting
   addRaceResults(SeriesResults seriesResults, List<RaceResults> updatedRaces,
       SeriesEntryAlgorithm algorithm) {
-    for (var race in updatedRaces) {
+    for (var race in updatedRaces) {   
+      _resetSeriesResultData(seriesResults, race.index);
       for (var comp in race.results!) {
         var seriesComp =
             findSeriesCompetitor(comp, seriesResults.competitors, algorithm);
         if (seriesComp == null) {
           seriesComp = SeriesCompetitor.fromRaceResult(comp);
-          // List.generate generates new instances for each entry.  List.filled points to the same object. 
+          // List.generate generates new instances for each entry.  List.filled points to the same object.
           seriesComp.results = List.generate(
             seriesResults.races.length,
-            (index) => SeriesResultData(
-                points: 9999, resultCode: ResultCode.dns, isDiscard: false),
+            (index) => _createDNCSeriesComp() 
           );
           seriesResults.competitors.add(seriesComp);
         }
@@ -170,22 +178,21 @@ class SeriesScorer {
   }
 
   /// Calculate the position based on net points.
-  /// TODO need to implement countback for ties. 
+  /// TODO need to implement countback for ties.
   position(SeriesResults seriesResults) {
-
-    seriesResults.competitors.sort((a, b) => _sortByPoints(a, b));
+    seriesResults.competitors.sort((a, b) => (a.netPoints - b.netPoints).toInt());
 
     for (var (index, result) in seriesResults.competitors.indexed) {
-      result.position = index+1;
+      result.position = index + 1;
     }
   }
-
 
   /// Calculates series results based on:
   /// * Current partial series results,  List of race results.
   /// * for races where race results are supplied then updated data will replace existing races.
   calculateSeriesResults(SeriesResults seriesResults,
       List<RaceResults> updatedRaces, SeriesScoringData scoringScheme) {
+    
     // Add race data to the series results, defining new race competitors
     addRaceResults(seriesResults, updatedRaces, scoringScheme.entryAlgorithm);
 
@@ -196,7 +203,7 @@ class SeriesScorer {
     netPoints(seriesResults, scoringScheme.initialDiscardAfter,
         scoringScheme.subsequentDiscardsEveryN);
 
-    // Order competitors and calculate position  
+    // Order competitors and calculate position
     position(seriesResults);
   }
 }

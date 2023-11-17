@@ -50,7 +50,13 @@ class _FinishManualEntryState extends ConsumerState<FinishManualEntry>
       final formData = _formKey.currentState!.value;
 
       var code = formData['resultCode'];
-      final manualFinish = formData['finishTime'];
+      final manTime = formData['finishTime'];
+      final d = competitor.startTime!;
+
+      // Add day of race to manual time
+      final manualFinish = (manTime != null)
+          ? DateTime(d.year, d.month, d.day, manTime.hour, manTime.minute, manTime.second)
+          : null;
 
       // If manual finish time is speciifed chnage status of unfinished to OK
       if (code == ResultCode.notFinished && manualFinish != null) {
@@ -100,7 +106,7 @@ class _FinishManualEntryState extends ConsumerState<FinishManualEntry>
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
             Center(child: FinishedListItem(competitor, showButtons: false)),
-         /*   Row(
+            /*   Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
         Text(competitor.boatClass, textScaleFactor: 1.2),
@@ -129,7 +135,6 @@ class _FinishManualEntryState extends ConsumerState<FinishManualEntry>
       child: Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: [
         FormBuilderField<DateTime?>(
           name: "finishTime",
-          initialValue: competitor.finishTime,
           builder: (FormFieldState<DateTime?> field) {
             return InputDecorator(
               decoration: InputDecoration(
@@ -138,7 +143,8 @@ class _FinishManualEntryState extends ConsumerState<FinishManualEntry>
                 border: InputBorder.none,
                 errorText: field.errorText,
               ),
-              child:  TimeInputField(
+              child: TimeInputField(
+                initialValue: competitor.finishTime,
                 onChanged: (value) => field.didChange(value),
               ),
             );
@@ -174,7 +180,6 @@ class _FinishManualEntryState extends ConsumerState<FinishManualEntry>
                 .toList(),
           ),
         ),
-       
       ]),
     );
   }

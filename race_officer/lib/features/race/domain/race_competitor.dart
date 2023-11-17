@@ -1,6 +1,5 @@
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:sailbrowser_flutter/features/race/domain/result_code.dart';
-import 'package:sailbrowser_flutter/firebase/timestamp_serialiser.dart';
 
 part 'race_competitor.freezed.dart';
 part 'race_competitor.g.dart';
