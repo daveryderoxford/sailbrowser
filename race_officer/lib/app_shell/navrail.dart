@@ -24,19 +24,8 @@ class AppNavigationRail extends StatelessWidget {
         children: [
           NavigationRail(
             selectedIndex: selectedIndex,
-            //    backgroundColor: backgroundColor,
             onDestinationSelected: onDestinationSelected,
             labelType: NavigationRailLabelType.all,
-            leading: Column(
-              children: [
-                IconButton(
-                  onPressed: () {},
-                  icon: const Icon(Icons.menu),
-                ),
-                const SizedBox(height: 8),
-                _buildLeadingActionButton(colorScheme)
-              ],
-            ),
             groupAlignment: -0.85,
             destinations: destinations.map((d) {
               return NavigationRailDestination(

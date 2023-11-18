@@ -13,7 +13,7 @@ import 'package:sailbrowser_flutter/features/results/scoring/race_scorer.dart';
 import 'package:sailbrowser_flutter/features/results/scoring/series_scorer.dart';
 import 'package:sailbrowser_flutter/util/list_extensions.dart';
 
-/// Results currently being
+/// Results for currently selected races.
 class ResultsService extends AsyncNotifier<List<SeriesResults>> with UiLoggy {
   ResultsService(this.seriesScorer, this.raceScorer);
 
@@ -64,18 +64,6 @@ class ResultsService extends AsyncNotifier<List<SeriesResults>> with UiLoggy {
       raceResult.dirty = true;  // TODO change to selected and dont include in serialised output
     }
     return (results!);
-  }
-
-  /// Mark race as dirty so results get regenerated
-  markRaceAsDirty(String raceId, String seriesId) {
-    if (state.hasValue) {
-      final seriesResult = _getSeriesResult(seriesId);
-      final raceResult =
-          seriesResult!.races.firstWhereOrNull((race) => race.raceId == raceId);
-      raceResult!.dirty = true;
-    } else {
-      logWarning('Setting dirty flag ingored as no state value');
-    }
   }
 
   /// Merk series as dirty.

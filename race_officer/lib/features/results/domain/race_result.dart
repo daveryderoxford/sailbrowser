@@ -16,6 +16,7 @@ class RaceResults with _$RaceResults {
       required String fleet,
       required int index,
       required String raceId,
+      required String seriesId,
       List<RaceResult>? results,
       @Default(true) bool dirty}) = _RaceResults;
 
@@ -31,6 +32,7 @@ class RaceResults with _$RaceResults {
       index: race.index,
       name: race.name,
       raceId: race.id,
+      seriesId: race.seriesId,
       results: [],
     );
   }

@@ -43,7 +43,7 @@ class FinishController with UiLoggy {
   }
 
   retired(RaceCompetitor comp) {
-    final update = comp.copyWith(resultCode: ResultCode.rdg);
+    final update = comp.copyWith(resultCode: ResultCode.ret);
     compService.update(update, update.id, comp.seriesId);
     _reset(comp);
     _log('retired', comp);

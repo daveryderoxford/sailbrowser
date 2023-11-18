@@ -37,7 +37,7 @@ class SeriesScorer {
     });
   }
 
-  /// Resets the  series results date for a given race index
+  /// Resets the series results date for a given race index
   _resetSeriesResultData(SeriesResults seriesResults, int raceIndex) {
     for (var scomp in seriesResults.competitors) {
       scomp.results[raceIndex] = _createDNCSeriesComp();
@@ -69,7 +69,7 @@ class SeriesScorer {
     }
   }
 
-  /// calculate the averge of an array of
+  /// Calculate the averge of an array of
   /// Average of races rounded to the nearest 0.1 points.
   /// For short series, the averge of all races (including DNC is used).  Only races not finished are excluded.
   /// For long series, DNC races are excluded.
@@ -100,7 +100,7 @@ class SeriesScorer {
     return avg;
   }
 
-  // Set points for series dependent results codes:
+  // Set points for series-dependent results codes:
   // DNC
   // Average all
   // Average before

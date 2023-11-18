@@ -26,15 +26,7 @@ enum PublishResultsOptions {
 
 /// State for results display.
 class ResultsController extends Notifier<ResultsState> {
-  ResultsController(this.seriesScorer, this.raceScorer) {
-/*    ref.listen(appShellStateProvider, (oldTab, newTab) {
-      if (newTab == 4 && state.displayedSeries != null) {
-        ref
-            .read(resultsService.notifier)
-            .computeSeriesResults(state.displayedSeries!);
-      }
-    }); */
-  }
+  ResultsController(this.seriesScorer, this.raceScorer);
 
   final RaceScorer raceScorer;
   final SeriesScorer seriesScorer;
@@ -45,29 +37,31 @@ class ResultsController extends Notifier<ResultsState> {
   }
 
   /// Set the race to display results for
-  /// The series displayed is set to the series the race part of
+  /// The series displayed is set to the series the race part of.
   displayRace(RaceResults r) {
     final results = ref.read(resultsService);
-    //  final series = results.requireValue.where((res) => res.seriesId == r.seriesId);
+    final series =
+        results.requireValue.firstWhere((res) => res.seriesId == r.seriesId);
 
     state = state.copyWith(
       displayedRace: r,
-      //  displayedSeries: series,
+      displayedSeries: series,
     );
+    calcResults();
   }
 
   /// Set the series to display results for.
   /// The race displayed is cleared
   displaySeries(SeriesResults s) {
     state = state.copyWith(displayedRace: null, displayedSeries: s);
-    ref.read(resultsService.notifier).computeSeriesResults(s);
+    calcResults();
   }
-  
+
   calcResults() {
-          ref
-            .read(resultsService.notifier)
-            .computeSeriesResults(state.displayedSeries!);
-}
+    ref
+        .read(resultsService.notifier)
+        .computeSeriesResults(state.displayedSeries!);
+  }
 
   /// Publish race
   publishResults(ResultsStatus status) {

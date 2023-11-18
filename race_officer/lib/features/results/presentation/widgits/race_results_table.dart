@@ -27,7 +27,7 @@ class RaceResultsTable extends StatelessWidget {
         child: DataTable2(
           columnSpacing: 12,
           horizontalMargin: 12,
-          minWidth: 600,
+          minWidth: 630,
           fixedLeftColumns: 2,
           empty: const Center(
               child: Text(textScaleFactor: 1.2, 'No results to display')),
@@ -46,15 +46,15 @@ class RaceResultsTable extends StatelessWidget {
             ),
             DataColumn2(
               label: Text('Elapsed\nFinish'),
-              fixedWidth: 100,
+              fixedWidth: 80,
             ),
             DataColumn2(
               label: Text('Corrected'),
-              fixedWidth: 100,
+              fixedWidth: 80,
             ),
             DataColumn2(
               label: Text('Points'),
-              fixedWidth: 50,
+              fixedWidth: 60,
             ),
             DataColumn2(
               label: Text("H'cap\nLaps"),
@@ -93,10 +93,10 @@ class RaceResultsTable extends StatelessWidget {
 
   Widget _pointsCell(BuildContext context, RaceResult res) {
     if (res.resultCode != ResultCode.ok) {
-      return Column(crossAxisAlignment: CrossAxisAlignment.center, children: [
+      return Center( child: Column(crossAxisAlignment: CrossAxisAlignment.center, children: [
         Text(res.resultCode.displayName),
         Text(_roundedPointsStr(res.points)),
-      ]);
+      ]));
     } else {
       return Center(child: (Text(_roundedPointsStr(res.points))));
     }

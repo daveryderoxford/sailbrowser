@@ -62,9 +62,9 @@ class SeriesCompetitor with _$SeriesCompetitor {
     required String boatClass,
     required int sailNumber,
     String? name,
-    @Default(99999) double totalPoints,
-    @Default(99999) double netPoints,
-    @Default(99999) int position,
+    @Default(999) double totalPoints,
+    @Default(999) double netPoints,
+    @Default(999) int position,
     double? handicap,
 
     /// List of results for each race, ordered by the race

@@ -53,10 +53,10 @@ class SeriesResultsTable extends ConsumerWidget with UiLoggy {
     } else {
       final stripe1 = Theme.of(context).colorScheme.primary.tone(92);
       final stripe2 = Theme.of(context).colorScheme.primary.tone(95);
-      final minWidth = 370 + results!.races.length * _sizeResult;
+      final minWidth = 410 + results!.races.length * _sizeResult;
       final headerFormat = _getRaceHeaderFormat(results!.races);
       return ResponsiveCenter(
-        maxContentWidth: 800,
+        maxContentWidth: 850,
         child: Padding(
           padding: const EdgeInsets.all(16),
           child: DataTable2(
@@ -77,7 +77,7 @@ class SeriesResultsTable extends ConsumerWidget with UiLoggy {
               ),
               const DataColumn2(
                 label: Text('Boat'),
-                size: ColumnSize.S,
+                size: ColumnSize.L,
               ),
               ...results!.races.map((raceResult) => DataColumn2(
                   label: _raceHeading(context, raceResult, headerFormat),
@@ -141,13 +141,15 @@ class SeriesResultsTable extends ConsumerWidget with UiLoggy {
     var pointsStr = _roundedPointsStr(res.points);
     pointsStr = (res.isDiscard) ? '($pointsStr)' : pointsStr;
 
-     if (res.resultCode != ResultCode.ok) {
-      return Column(crossAxisAlignment: CrossAxisAlignment.center, children: [
-        Text(res.resultCode.displayName),
-        Text(pointsStr),
-      ]);
+    if (res.resultCode != ResultCode.ok) {
+      return Center( child: Column(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            Text(res.resultCode.displayName),
+            Text(pointsStr),
+          ]));
     } else {
-      return Center(child: (Text(pointsStr)));
+      return Center( child: Text(pointsStr));
     }
   }
 

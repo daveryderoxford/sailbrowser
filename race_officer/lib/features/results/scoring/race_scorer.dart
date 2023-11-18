@@ -177,7 +177,6 @@ class RaceScorer {
           throw Error.safeToString(
               "Set by hand handled part of series scoring");
           //  NA is either NoFinished or OK
-          break;
       }
     }
   }
