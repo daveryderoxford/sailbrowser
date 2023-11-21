@@ -42,7 +42,7 @@ class RaceCompetitor with _$RaceCompetitor {
   factory RaceCompetitor.fromJson(Map<String, Object?> json) =>
       _$RaceCompetitorFromJson(json);
 
-  /// the number of laps, manual value if set, otherwise the number of lap times recorded
+  /// The number of laps, manual value if set, otherwise the number of lap times recorded.
   int get numLaps {
     if (manualLaps != 0) {
       return manualLaps;
@@ -52,9 +52,13 @@ class RaceCompetitor with _$RaceCompetitor {
     }
   }
 
+  /// Gets the finish time using a manually entered time in preference to 
+  /// a recorded one.  Returns null if no finish time is avalaible.
   DateTime? get finishTime =>
       (manualFinishTime != null) ? manualFinishTime : recordedFinishTime;
 
+  /// Returns the total time taken (finish - start).   
+  /// This is not the same as the elapsed time that is 
   Duration get totalTime => (finishTime != null && startTime != null)
       ? finishTime!.difference(startTime!)
       : const Duration();

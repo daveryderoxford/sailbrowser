@@ -18,7 +18,7 @@ class AppNavigationRail extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final colorScheme = Theme.of(context).colorScheme;
+   // final colorScheme = Theme.of(context).colorScheme;
     return Scaffold(
       body: Row(
         children: [
@@ -44,7 +44,7 @@ class AppNavigationRail extends StatelessWidget {
     );
   }
 
-  Widget _buildLeadingActionButton(colorScheme) {
+/*  Widget _buildLeadingActionButton(colorScheme) {
     return FloatingActionButton(
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.all(
@@ -56,5 +56,5 @@ class AppNavigationRail extends StatelessWidget {
       onPressed: () {},
       child: const Icon(Icons.add),
     );
-  }
+  } */
 }

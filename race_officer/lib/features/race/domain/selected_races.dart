@@ -6,7 +6,7 @@ import 'package:sailbrowser_flutter/features/race-calander/domain/series_service
 import 'package:sailbrowser_flutter/util/list_extensions.dart';
 
 /// Races selected to run.
-/// This always includes races scheduled for today plus any manualled added by the user.
+/// This always includes races scheduled for today plus any manually added by the user.
 class SelectedRaceIds extends StateNotifier<Iterable<String>> {
   SelectedRaceIds() : super([]);
 
@@ -51,7 +51,7 @@ bool _isToday(DateTime test) {
 
 /// Emits when
 /// * stream is created
-/// * at 00:00 on the netx day
+/// * at 00:00 on the next day
 /// * at 00:00 thereafter
 final dateChangeProvider = StreamProvider<int>((ref) async* {
   // Fire first event immidatly

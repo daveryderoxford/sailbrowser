@@ -47,7 +47,7 @@ class RaceCompetitorService with UiLoggy {
 
   /// Stream of competitors for the currectly selected races
   get currectCompetitors$ =>
-      (selectedRaces.isEmpty) ? Stream.value([]) : _currectCompetitors$;
+      (selectedRaces.isEmpty) ? Stream<List<RaceCompetitor>>.value([]) : _currectCompetitors$;
 
   final _changes$ = BehaviorSubject<List<RaceCompetitorChangers>>.seeded([]);
 

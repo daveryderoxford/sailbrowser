@@ -1,4 +1,4 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
+ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/foundation.dart';
@@ -15,21 +15,25 @@ class FirebaseConfig with UiLoggy {
 
   FirebaseConfig();
 
-  Future<FirebaseApp> startup() async {
+  Future<FirebaseApp> startup(bool useEmulator) async {
     try {
       final app = await Firebase.initializeApp(
           options: DefaultFirebaseOptions.currentPlatform);
 
-      await useEmulators();
+      if (useEmulator) {
+        await useEmulators();
+      }
 
-      loggy.info("Firebase app: ${app.toString()}");
+     logInfo("Firebase app: ${app.toString()}");
 
       // Enable Firestore persistance for web.  Enabled on ios/aidroid by default
       final db = FirebaseFirestore.instance;
       if (kIsWeb) {
         await db.enablePersistence(
             const PersistenceSettings(synchronizeTabs: true));
-        FirebaseAuth.instance.setPersistence(Persistence.SESSION);
+        // Persist auth session to DB.  For true web platform this should be a user controlled option
+        // to avoid saving session data on public platforms
+        FirebaseAuth.instance.setPersistence(Persistence.INDEXED_DB);
       }
 
       // Wait for first logon event before displaying app to ensure saved login is applied
@@ -38,11 +42,11 @@ class FirebaseConfig with UiLoggy {
       final msg = (user != null)
           ? "Using saved login details. ${user.displayName}"
           : "No saved login details";
-      loggy.info(msg);
+      logInfo(msg);
 
       return app;
     } catch (e) {
-      loggy.error(e.toString());
+      logError(e.toString());
       rethrow;
     }
   }
@@ -50,6 +54,6 @@ class FirebaseConfig with UiLoggy {
   useEmulators() async {
     await FirebaseAuth.instance.useAuthEmulator('localhost', 9099);
     FirebaseFirestore.instance.useFirestoreEmulator('localhost', 8080);
-    loggy.info('Using Firebase emulators');
+    logInfo('Using Firebase emulators');
   }
 }

@@ -58,9 +58,11 @@ class ResultsController extends Notifier<ResultsState> {
   }
 
   calcResults() {
-    ref
-        .read(resultsService.notifier)
-        .computeSeriesResults(state.displayedSeries!);
+    if (state.displayedSeries != null) {
+      ref
+          .read(resultsService.notifier)
+          .computeSeriesResults(state.displayedSeries!);
+    }
   }
 
   /// Publish race
