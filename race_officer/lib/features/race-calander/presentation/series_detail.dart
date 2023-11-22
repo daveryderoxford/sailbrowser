@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:sailbrowser_flutter/common_widgets/delete_button.dart';
+import 'package:sailbrowser_flutter/common_widgets/responsive_center.dart';
 import 'package:sailbrowser_flutter/features/club/domain/clubs_service.dart';
 import 'package:sailbrowser_flutter/features/club/domain/fleet.dart';
 import 'package:sailbrowser_flutter/features/race-calander/domain/series.dart';
@@ -48,25 +49,28 @@ class SeriesDetailScreen extends ConsumerWidget {
             tooltip: 'Copy Series',
           ),
         ]),
-        body: Column(
-          children: [
-            _seriesCard(context, series!, club.fleets),
-            _racesHeader(context, series!),
-            _racesList(series!),
-            DeleteButton(
-              title: 'Delete Series',
-              itemName: 'series',
-              visible: true,
-              onDelete: () async {
-                final raceSeriesService = ref.read(seriesRepositoryProvider);
-                await raceSeriesService.remove(series!.id);
-
-                if (context.mounted) {
-                  context.pop();
-                }
-              },
-            ),
-          ],
+        body: ResponsiveCenter(
+          maxContentWidth: 850,
+          child: Column(
+            children: [
+              _seriesCard(context, series!, club.fleets),
+              _racesHeader(context, series!),
+              _racesList(series!),
+              DeleteButton(
+                title: 'Delete Series',
+                itemName: 'series',
+                visible: true,
+                onDelete: () async {
+                  final raceSeriesService = ref.read(seriesRepositoryProvider);
+                  await raceSeriesService.remove(series!.id);
+        
+                  if (context.mounted) {
+                    context.pop();
+                  }
+                },
+              ),
+            ],
+          ),
         ),
       );
     }
