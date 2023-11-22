@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:sailbrowser_flutter/common_widgets/responsive_center.dart';
 import 'package:sailbrowser_flutter/features/race/start/domain/start_sequence.dart';
 import 'package:sailbrowser_flutter/features/race/start/domain/start_sequence_controller.dart';
 import 'package:sailbrowser_flutter/util/date_time_extensions.dart';
@@ -11,43 +12,46 @@ class StartSequenceDisplay extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final sequence = ref.watch(startSequenceProvider);
-    return Column(
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        Text('Next Start:  ${sequence.timeToNextStart.asHourMinSec()}',
-            textScaleFactor: 1.7,
-            style: const TextStyle(fontWeight: FontWeight.bold)),
-        const SizedBox(height: 20),
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceAround,
-          children:  _actionButtons(context, ref, sequence.startStatus),
-        ),
-        const SizedBox(height: 20),
-        Expanded(
-          child: ListView.separated(
-              separatorBuilder: (context, index) => const Divider(),
-              itemCount: sequence.races.length,
-              itemBuilder: (context, index) {
-                final race = sequence.races[index];
-                return ListTile(
-                  title: Row(
-                    children: [
-                      Text(race.name),
-                      const SizedBox(width: 20),
-                      Text('Start ${race.actualStart.asHourMin()}'),
-                    ],
-                  ),
-                  subtitle: Row(
-                    children: [
-                      Text('Fleet: ${race.fleetId}'),
-                      const SizedBox(width: 20),
-                      Text('Race : ${race.raceOfDay.toString()}')
-                    ],
-                  ),
-                );
-              }),
-        ),
-      ],
+    return ResponsiveCenter(
+      maxContentWidth: 850,
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Text('Next Start:  ${sequence.timeToNextStart.asHourMinSec()}',
+              textScaleFactor: 1.7,
+              style: const TextStyle(fontWeight: FontWeight.bold)),
+          const SizedBox(height: 20),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceAround,
+            children:  _actionButtons(context, ref, sequence.startStatus),
+          ),
+          const SizedBox(height: 20),
+          Expanded(
+            child: ListView.separated(
+                separatorBuilder: (context, index) => const Divider(),
+                itemCount: sequence.races.length,
+                itemBuilder: (context, index) {
+                  final race = sequence.races[index];
+                  return ListTile(
+                    title: Row(
+                      children: [
+                        Text(race.name),
+                        const SizedBox(width: 20),
+                        Text('Start ${race.actualStart.asHourMin()}'),
+                      ],
+                    ),
+                    subtitle: Row(
+                      children: [
+                        Text('Fleet: ${race.fleetId}'),
+                        const SizedBox(width: 20),
+                        Text('Race : ${race.raceOfDay.toString()}')
+                      ],
+                    ),
+                  );
+                }),
+          ),
+        ],
+      ),
     );
   }
 

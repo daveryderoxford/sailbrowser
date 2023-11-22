@@ -62,7 +62,7 @@ class BoatService with UiLoggy {
     var s = 'Error encountered in. $func';
     s = (error == null) ? s : '$s\n${error.toString()}';
     SnackBarService.showErrorSnackBar(content: s);
-    loggy.error(s);
+    logError(s);
   }
 }
 

@@ -13,10 +13,10 @@ import 'firebase/firebase_config.dart';
 const testEnviroment = bool.fromEnvironment("TEST");
 
 Duration clockOffset = const Duration();
-/// Gert the clock to use for system time
-/// in debug mode always initialise to 15 sept 2023 at 10:00
+/// Get the clock to use for system time
+/// In test mode always initialise to 15 Sept 2023 at 10:00. 
 Clock getClock(bool testEnviroment) {
-  if (testEnviroment) {
+  if (true) {  // TODO 
     logInfo("Print using test clock,  Initialsie to 2023-09-10 (10 Sept) 10:00:00");
     if (clockOffset.inMicroseconds == 0) {
       final startTime = DateTime(2023, 09, 10, 10, 0, 0);

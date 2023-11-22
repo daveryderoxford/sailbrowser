@@ -30,7 +30,7 @@ class EagerInitialization extends ConsumerWidget with UiLoggy {
     _handleState(ref.watch(allSeriesProvider), "allSeriesProvider");
     _handleState(ref.watch(allRacesProvider), "allRacesProvider");
     _handleState(ref.watch(allRaceDataProvider), "allRaceDataProvider");
-   // _handleState(ref.watch(resultsService), "resultsService");
+    // _handleState(ref.watch(resultsService), "resultsService");
 
     if (isLoading) {
       return const CircularProgressIndicator();
