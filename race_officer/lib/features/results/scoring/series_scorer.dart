@@ -12,9 +12,8 @@ import 'package:sailbrowser_flutter/util/list_extensions.dart';
 class SeriesScorer {
   SeriesScorer();
 
-  SeriesResultData _createDNCSeriesComp() => 
-    SeriesResultData( points: 9999, resultCode: ResultCode.dns, isDiscard: false);
-  
+  SeriesResultData _createDNCSeriesComp() => SeriesResultData(
+      points: 9999, resultCode: ResultCode.dns, isDiscard: false);
 
   /// Finds is a race competitor is present in series.
   @visibleForTesting
@@ -42,13 +41,13 @@ class SeriesScorer {
     for (var scomp in seriesResults.competitors) {
       scomp.results[raceIndex] = _createDNCSeriesComp();
     }
-   }
+  }
 
   /// Adds race results to the series, creating race competitors as required.
   @visibleForTesting
   addRaceResults(SeriesResults seriesResults, List<RaceResults> updatedRaces,
       SeriesEntryAlgorithm algorithm) {
-    for (var race in updatedRaces) {   
+    for (var race in updatedRaces) {
       _resetSeriesResultData(seriesResults, race.index);
       for (var comp in race.results!) {
         var seriesComp =
@@ -57,9 +56,7 @@ class SeriesScorer {
           seriesComp = SeriesCompetitor.fromRaceResult(comp);
           // List.generate generates new instances for each entry.  List.filled points to the same object.
           seriesComp.results = List.generate(
-            seriesResults.races.length,
-            (index) => _createDNCSeriesComp() 
-          );
+              seriesResults.races.length, (index) => _createDNCSeriesComp());
           seriesResults.competitors.add(seriesComp);
         }
 
@@ -69,7 +66,7 @@ class SeriesScorer {
     }
   }
 
-  /// Calculate the averge of an array of
+  /// Calculate the avdrage points from  an array of races.
   /// Average of races rounded to the nearest 0.1 points.
   /// For short series, the averge of all races (including DNC is used).  Only races not finished are excluded.
   /// For long series, DNC races are excluded.
@@ -136,7 +133,6 @@ class SeriesScorer {
   }
 
   @visibleForTesting
-
   /// Updates series result with the discards net and total points
   netPoints(SeriesResults seriesResults, int initialDiscardAfter,
       int subsequentDiscardsEveryN) {
@@ -150,13 +146,13 @@ class SeriesScorer {
 
     for (var comp in seriesResults.competitors) {
       // Determine score to be discarded
-      // toList copies the list and .. gte a refreence to the list itself.  More efficient than ...
+      // toList copies the list. More efficient than copying with [...arr]
       // Note that insertionSort is stable so, for a given number of points, the first races will the ordered first
       final orderedByPoints = comp.results.toList();
       insertionSort(orderedByPoints,
           compare: (a, b) => (b.points - a.points).toInt());
 
-      // Go through results ordered by points/race order, setting discarded races.
+      // Loop through results ordered by points/race order, setting discarded races.
       var index = 0;
       var discardCount = 0;
 
@@ -180,7 +176,8 @@ class SeriesScorer {
   /// Calculate the position based on net points.
   /// TODO need to implement countback for ties.
   position(SeriesResults seriesResults) {
-    seriesResults.competitors.sort((a, b) => (a.netPoints - b.netPoints).toInt());
+    seriesResults.competitors
+        .sort((a, b) => (a.netPoints - b.netPoints).toInt());
 
     for (var (index, result) in seriesResults.competitors.indexed) {
       result.position = index + 1;
@@ -192,7 +189,6 @@ class SeriesScorer {
   /// * for races where race results are supplied then updated data will replace existing races.
   calculateSeriesResults(SeriesResults seriesResults,
       List<RaceResults> updatedRaces, SeriesScoringData scoringScheme) {
-    
     // Add race data to the series results, defining new race competitors
     addRaceResults(seriesResults, updatedRaces, scoringScheme.entryAlgorithm);
 

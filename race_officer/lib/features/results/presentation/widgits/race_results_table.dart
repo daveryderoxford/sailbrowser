@@ -15,10 +15,15 @@ class RaceResultsTable extends StatelessWidget {
 
   final List<RaceResult> results;
 
+  /// Returns the row colow.   
+  /// This is red if there is an error in the results and stripe color otherwise. 
+  Color _getRowColor(int stripeIndex, String? error, BuildContext context) {
+    if (error != null && error.isNotEmpty) return const Color.fromARGB(255, 241, 134, 134);
+    return stripeIndex % 2 == 1 ? Theme.of(context).colorScheme.primary.tone(92) : Theme.of(context).colorScheme.primary.tone(95);
+  }
+
   @override
   Widget build(BuildContext context) {
-    final stripe1 = Theme.of(context).colorScheme.primary.tone(92);
-    final stripe2 = Theme.of(context).colorScheme.primary.tone(95);
 
     return ResponsiveCenter(
       maxContentWidth: 800,
@@ -65,7 +70,7 @@ class RaceResultsTable extends StatelessWidget {
               .mapIndexed<DataRow>(
                 (index, result) => DataRow(
                     color: MaterialStateColor.resolveWith(
-                        (states) => index % 2 == 1 ? stripe1 : stripe2),
+                        (states) => _getRowColor( index, result.error, context)),
                     cells: [
                       DataCell(Text(result.position.toString())),
                       DataCell(_nameCell(context, result, index)),

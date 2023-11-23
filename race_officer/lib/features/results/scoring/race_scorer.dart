@@ -1,3 +1,4 @@
+import 'package:collection/collection.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:sailbrowser_flutter/features/race-calander/domain/series.dart';
 import 'package:sailbrowser_flutter/features/race/domain/race_competitor.dart';
@@ -112,14 +113,18 @@ class RaceScorer {
     }
   }
 
+  /// Has a competitor finished.
+  bool _isFinishedComp(RaceResult res) => getScoringData(res.resultCode)!.isFinishedComp;
+
   /// Assign posiiton and points for finishers
   /// Competitors with the same ellapsed time get average of the two positions.
-  /// This funciton assumes that the competitor list is sorted into corrected time order
+  /// This funciton assumes that the competitor list is sorted into corrected time order.
+  /// Competitors with scoring penalties are included here. 
   @visibleForTesting
   assignPointsForFinishers(List<RaceResult> results) {
     /// Group competitors by their finish time
     final resultsByTime = results
-        .where((res) => res.resultCode == ResultCode.ok)
+        .where((res) => _isFinishedComp(res))
         .groupBy((res) => res.corrected);
 
     var times = resultsByTime.keys.toList();
@@ -146,7 +151,7 @@ class RaceScorer {
 
   /// Assigns points for non-finishers depending on race data.
   /// Result codes depending on competitors in the series will be determined when
-  /// series points are calculated.
+  /// series points are calculated.  RET/DSQ.  These competitors are not considered in ordering. 
   @visibleForTesting
   assignPointsForNonFinishers(List<RaceResult> results, bool shortSeries) {
     var starters = -1; // Lazily calculated
@@ -183,9 +188,25 @@ class RaceScorer {
 
   /// Scoring penalty applied.  This is 20% for zfp and default of 20% for scp
   /// This is applied after the points and order have been calculated.
-  /// It can not be larger than the number of
+  /// It can not be larger than the number of  // TODO check
+  /// When a boat is disqualified or retires after finishing, each boat finishing behind her is moved up one place (rule A6.1). 
+ //// Where a boat is given redress which adjusts her score, the position of other boats does not change unless the
+ /// protest committee directs to the contrary (rule A6.2).
   @visibleForTesting
-  applyScoringPenalties(List<RaceResult> results) {}
+  applyScoringPenalties(List<RaceResult> results , bool shortSeries) {
+
+    for (var res in results) {
+      final resultCode = getScoringData(res.resultCode)!;
+
+      final algorithm = shortSeries
+          ? resultCode.shortSeriesAlgorithm
+          : resultCode.longSeriesAlgorithm;
+
+      if (algorithm == ResultCodeAlgorithm.scoringPenalty) {
+          res.points = [res.points * 1.2, 99999].min.toDouble();  // TODO check what the max for scoring penatlhy should be
+      }
+    }
+  }
 
   /// Calculates positions for a list of race competitors.
   /// Returns a list of race results ordered by points.
@@ -224,7 +245,7 @@ class RaceScorer {
     assignPointsForFinishers(results);
     assignPointsForNonFinishers(results, false); // TODO - set long/short series
     results.sort((a, b) => _sortByPoints(a, b));
-    // results = applyScoringPenaties(results);
+    applyScoringPenalties(results, false ); // TODO - set long/short series
     // handSetOverrides(res);
     // sortByPoints(results);
 
@@ -237,3 +258,5 @@ class RaceScorer {
 final raceScorerProvider = Provider((ref) {
   return RaceScorer();
 });
+
+

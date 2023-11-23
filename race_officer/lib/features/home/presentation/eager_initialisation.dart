@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:loggy/loggy.dart';
 import 'package:sailbrowser_flutter/features/race-calander/domain/series_service.dart';
+import 'package:sailbrowser_flutter/features/race/domain/race_competitor_service.dart';
 
 /// Eager in itialistyion of async providers
 /// that are always expected to return a valid value
@@ -30,10 +31,18 @@ class EagerInitialization extends ConsumerWidget with UiLoggy {
     _handleState(ref.watch(allSeriesProvider), "allSeriesProvider");
     _handleState(ref.watch(allRacesProvider), "allRacesProvider");
     _handleState(ref.watch(allRaceDataProvider), "allRaceDataProvider");
+    ref.watch(currentCompetitors); // TODO - not sure why this gets caught in loading state if I handle state
+
     // _handleState(ref.watch(resultsService), "resultsService");
 
     if (isLoading) {
-      return const CircularProgressIndicator();
+      return const Center(
+        child: SizedBox(
+          width: 50,
+          height: 50,
+          child: CircularProgressIndicator(),
+        ),
+      );
     }
     if (errorString != '') {
       return (Text(errorString));

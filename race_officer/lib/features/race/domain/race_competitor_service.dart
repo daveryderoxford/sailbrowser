@@ -43,11 +43,12 @@ class RaceCompetitorService with UiLoggy {
       _changes$.add(changes);
       return comps;
     },
-  ).shareReplay();
+  ).startWith(<RaceCompetitor>[]).shareReplay();
 
   /// Stream of competitors for the currectly selected races
-  get currectCompetitors$ =>
-      (selectedRaces.isEmpty) ? Stream<List<RaceCompetitor>>.value([]) : _currectCompetitors$;
+  get currectCompetitors$ => (selectedRaces.isEmpty)
+      ? Stream<List<RaceCompetitor>>.value(<RaceCompetitor>[])
+      : _currectCompetitors$;
 
   final _changes$ = BehaviorSubject<List<RaceCompetitorChangers>>.seeded([]);
 

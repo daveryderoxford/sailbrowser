@@ -3,7 +3,7 @@ import 'package:freezed_annotation/freezed_annotation.dart';
 part 'series_scoring_data.freezed.dart';
 part 'series_scoring_data.g.dart';
 
-/// Map of all possible handicap schemes
+/// Scoring scheme as defined by rules of racing
 enum SeriesScoringScheme {
   shortSeries2017('ISAF 2017 Short Series'),
   longSeries2017('ISAF 2017 LongSeries');
@@ -12,7 +12,7 @@ enum SeriesScoringScheme {
   const SeriesScoringScheme(this.displayName);
 }
 
-/// How entries for a series shall be  generated entries for a series.
+/// How entries for a series shall be generated from race entries.
 /// Allows clubs to combine results for a single helm sailing different classes
 /// or keep then separate.
 enum SeriesEntryAlgorithm {
@@ -21,7 +21,7 @@ enum SeriesEntryAlgorithm {
   classSailNumber('Class, Sail number',
       'Entries for a boat with different helmms will be merged'),
   helm('Helm name',
-      'Entries for helm saing different boats in series will be merged');
+      'Entries for helm sailing different boats during series will be merged');
 
   final String displayName;
   final String hint;
