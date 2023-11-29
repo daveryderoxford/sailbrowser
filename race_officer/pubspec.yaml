@@ -38,6 +38,7 @@ dependencies:
   meta: ^1.9.1
   riverpod_annotation: ^2.1.1
   rxdart: ^0.27.7
+  shared_preferences: ^2.2.2
   stack_trace: ^1.11.0
   uuid: ^4.1.0
 

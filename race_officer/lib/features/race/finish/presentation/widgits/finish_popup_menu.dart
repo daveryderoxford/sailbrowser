@@ -29,6 +29,7 @@ class FinishPopupMenu extends StatelessWidget {
         builder:
             (BuildContext context, MenuController controller, Widget? child) {
           return IconButton(
+            visualDensity: VisualDensity.compact,
             icon: const Icon(Icons.more_vert),
             onPressed: () {
               if (controller.isOpen) {

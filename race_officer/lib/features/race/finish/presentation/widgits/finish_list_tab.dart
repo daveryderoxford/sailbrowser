@@ -23,6 +23,7 @@ class FinishListTab extends ConsumerWidget with UiLoggy {
             child: Text(textScaleFactor: 1.2, 'No Competitors found'),
           )
         : ListView.separated(
+            padding: const EdgeInsets.only(left: 0.0, right: 0.0),
             itemCount: competitors.length,
             itemBuilder: (context, index) => racing
                 ? FinishListItem(competitors[index])

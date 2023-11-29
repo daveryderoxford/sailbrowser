@@ -50,10 +50,11 @@ class _NumericKeyPadState extends State<NumericKeyPad> {
   Widget build(BuildContext context) {
     return ResponsiveCenter(
       maxContentWidth: 400,
-      padding: const EdgeInsets.only(left: 32, right: 32, top: 20),
+      padding: const EdgeInsets.only(left: 32, right: 32),
       child: Column(
         children: <Widget>[
           ButtonBar(
+            buttonPadding: const EdgeInsets.all(5),
             alignment: widget.mainAxisAlignment,
             children: <Widget>[
               _textButton('1'),
@@ -63,6 +64,7 @@ class _NumericKeyPadState extends State<NumericKeyPad> {
           ),
           ButtonBar(
             alignment: widget.mainAxisAlignment,
+            buttonPadding: const EdgeInsets.all(3),
             children: <Widget>[
               _textButton('4'),
               _textButton('5'),
@@ -71,6 +73,7 @@ class _NumericKeyPadState extends State<NumericKeyPad> {
           ),
           ButtonBar(
             alignment: widget.mainAxisAlignment,
+            buttonPadding: const EdgeInsets.all(3),
             children: <Widget>[
               _textButton('7'),
               _textButton('8'),
@@ -78,6 +81,7 @@ class _NumericKeyPadState extends State<NumericKeyPad> {
             ],
           ),
           ButtonBar(
+            buttonPadding: const EdgeInsets.all(3),
             alignment: widget.mainAxisAlignment,
             children: <Widget>[
               _iconButton('clear', const Icon(Icons.clear_outlined)),
@@ -99,8 +103,8 @@ class _NumericKeyPadState extends State<NumericKeyPad> {
         },
         child: Container(
           alignment: Alignment.center,
-          width: 50,
-          height: 50,
+          width: 45,
+          height: 45,
           child: Text(
             value,
             style: widget.textStyle,
@@ -117,8 +121,8 @@ class _NumericKeyPadState extends State<NumericKeyPad> {
         },
         child: Container(
           alignment: Alignment.center,
-          width: 50,
-          height: 50,
+          width: 45,
+          height: 45,
           child: icon,
         ),
       );

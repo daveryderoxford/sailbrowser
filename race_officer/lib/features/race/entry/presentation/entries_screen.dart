@@ -28,7 +28,7 @@ class EntriesScreen extends ConsumerWidget with UiLoggy {
         child: competitorsProvider.when(
           loading: () => const CircularProgressIndicator(),
           error: (error, stackTrace) {
-            loggy.error(
+            logError(
                 'Error reading competiors:  $error stack trace : ${stackTrace.toString()}');
             return Text(error.toString());
           },

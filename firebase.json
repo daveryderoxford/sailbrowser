@@ -3,19 +3,34 @@
     "source": "firebase/functions",
     "predeploy": "npm --prefix firebase/functions run build"
   },
-  "firestore": {
-    "rules": "firebase/firestore.rules",
-    "indexes": "firebase/firestore.indexes.json"
-  },
+  "firestore": [
+    {
+      "database": "(default)",
+      "rules": "firebase/firestore_default.rules",
+      "indexes": "firebase/firestore.indexes.json"
+    },
+    {
+      "database": "ibrsc-z6xbt",
+      "rules": "firebase/firestore_club.rules",
+      "indexes": "firebase/firestore.indexes.json"
+    },
+    {
+      "database": "demo-rvj2t",
+      "rules": "firebase/firestore_club.rules",
+      "indexes": "firebase/firestore.indexes.json"
+    },
+    {
+      "database": "test-80a5u",
+      "rules": "firebase/firestore_club.rules",
+      "indexes": "firebase/firestore.indexes.json"
+    }
+  ],
   "storage": {
     "rules": "firebase/storage.rules"
   },
   "emulators": {
     "auth": {
       "port": "9099"
-    },
-    "hosting": {
-      "port": 5000
     },
     "functions": {
       "port": 5001

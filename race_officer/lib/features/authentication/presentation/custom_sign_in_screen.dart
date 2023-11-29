@@ -2,7 +2,6 @@ import 'package:firebase_ui_auth/firebase_ui_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:sailbrowser_flutter/common_widgets/null_widget.dart';
-import '../data/firebase_auth_repository.dart';
 import 'auth_providers.dart';
 
 class CustomSignInScreen extends ConsumerWidget {
@@ -17,6 +16,7 @@ class CustomSignInScreen extends ConsumerWidget {
       ),
       body: SignInScreen(
         providers: authProviders,
+        showPasswordVisibilityToggle: true, 
         footerBuilder: (context, action) => const NullWidget()
       ),
     );

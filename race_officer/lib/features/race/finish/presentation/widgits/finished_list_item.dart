@@ -37,11 +37,19 @@ class FinishedListItem extends ConsumerWidget {
         mainAxisSize: MainAxisSize.min,
         children: [
           TextButton(
+             style: TextButton.styleFrom(
+    visualDensity: VisualDensity.compact,
+    tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+  ),
             onPressed: () =>
                 ref.read(finshControllerProvider).stillRacing(competitor),
             child: const Text('Undo'),
           ),
           TextButton(
+                         style: TextButton.styleFrom(
+    visualDensity: VisualDensity.compact,
+    tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+  ),
             onPressed: () => Navigator.push(
               context,
               MaterialPageRoute(

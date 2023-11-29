@@ -20,6 +20,8 @@ class FinishListItem extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
 
     return ListTile(
+      contentPadding: const EdgeInsets.only(left: 15, right: 5.0),
+      visualDensity: VisualDensity.compact,
       title: Row(children: [
         Text(competitor.boatClass),
         const SizedBox(width: 25),
@@ -30,10 +32,18 @@ class FinishListItem extends ConsumerWidget {
         mainAxisSize: MainAxisSize.min,
         children: [
           TextButton(
+                         style: TextButton.styleFrom(
+    visualDensity: VisualDensity.compact,
+    tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+  ),
             onPressed: () => ref.read(finshControllerProvider).finish(competitor),
             child: const Text('Finish'),
           ),
           TextButton(
+                         style: TextButton.styleFrom(
+    visualDensity: VisualDensity.compact,
+    tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+  ),
             onPressed: () => ref.read(finshControllerProvider).lap(competitor),
             child: const Text('Lap'),
           ), 

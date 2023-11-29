@@ -1,8 +1,10 @@
- import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/foundation.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:loggy/loggy.dart';
+import 'package:sailbrowser_flutter/features/authentication/data/selected_tenant.dart';
 
 import 'firebase_options.dart';
 
@@ -24,7 +26,7 @@ class FirebaseConfig with UiLoggy {
         await useEmulators();
       }
 
-     logInfo("Firebase app: ${app.toString()}");
+      logInfo("Firebase app: ${app.toString()}");
 
       // Enable Firestore persistance for web.  Enabled on ios/aidroid by default
       final db = FirebaseFirestore.instance;
@@ -57,3 +59,9 @@ class FirebaseConfig with UiLoggy {
     logInfo('Using Firebase emulators');
   }
 }
+
+final firestoreProvider = Provider<FirebaseFirestore>((ref) {
+  final selectedTenant = ref.watch(selectedTenantProvider);
+  return FirebaseFirestore.instanceFor(
+      app: Firebase.app(), databaseURL: selectedTenant);
+});
