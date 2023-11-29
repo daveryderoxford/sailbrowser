@@ -13,6 +13,7 @@ class TenantSelectScreen extends ConsumerWidget with UiLoggy {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final tenants = ref.watch(tenantListProvider);
+    ref.watch(selectedTenantProvider);
     return Scaffold(
       appBar: AppBar(
         title: const Text('Select Club'),
@@ -32,7 +33,8 @@ class TenantSelectScreen extends ConsumerWidget with UiLoggy {
                     );
                   }).toList(),
                   onChanged: (value) {
-                    ref.read(selectedTenantProvider.notifier).set(value!.tenant);
+                    String t = value!.tenant;
+                    ref.read(selectedTenantProvider.notifier).set(t);
                     context.goNamed(AppRoute.signIn.name);
                   },
                 ),

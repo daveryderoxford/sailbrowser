@@ -1,22 +1,23 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:sailbrowser_flutter/util/shared_prefs.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-final sharedPrefs =
-    FutureProvider<SharedPreferences>((_) async => await SharedPreferences.getInstance());
-
 class SelectedTenant extends Notifier<String?> {
+  final SharedPreferences prefs;
+
+  SelectedTenant(this.prefs);
 
   @override
   String? build() {
-    // Shared preferences shall be initilaised on startup
-    final pref = ref.watch(sharedPrefs).requireValue;
-    return pref.getString('tenant');
+    return prefs.getString('tenant');
   }
 
   set(String id) {
-    ref.read(sharedPrefs).requireValue.setString('tenant', id);
+    prefs.setString('tenant', id);
     state = id;
   }
 }
 
-final selectedTenantProvider = NotifierProvider( SelectedTenant.new );
+/// Selected tenant.
+/// Initialsed from shared preference storage. 
+final selectedTenantProvider = NotifierProvider<SelectedTenant, String?>( () => SelectedTenant(SharedPrefsSingleton.instance) );

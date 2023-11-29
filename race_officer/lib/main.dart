@@ -5,6 +5,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:loggy/loggy.dart';
 import 'package:sailbrowser_flutter/common_widgets/snackbar_service.dart';
 import 'package:sailbrowser_flutter/routing/app_router.dart';
+import 'package:sailbrowser_flutter/util/shared_prefs.dart';
 import 'package:stack_trace/stack_trace.dart';
 import 'firebase/firebase_config.dart';
 
@@ -51,6 +52,8 @@ main() async {
         }
         return stack;
       };
+
+      await SharedPrefsSingleton.init();
 
       await FirebaseConfig.instance().startup(testEnviroment);
 

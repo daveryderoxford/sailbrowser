@@ -3,6 +3,7 @@ import 'package:go_router/go_router.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:sailbrowser_flutter/app_shell/app_shell.dart';
 import 'package:sailbrowser_flutter/features/admin/admin_screen.dart';
+import 'package:sailbrowser_flutter/features/authentication/presentation/tenant_select_screen.dart';
 import 'package:sailbrowser_flutter/features/club/presentation/boat_screen.dart';
 import 'package:sailbrowser_flutter/features/race-calander/presentation/series_detail.dart';
 import 'package:sailbrowser_flutter/features/race-calander/presentation/series_screen.dart';
@@ -28,7 +29,7 @@ final _resultsNavigatorKey = GlobalKey<NavigatorState>(debugLabel: 'results');
 final _adminNavigatorKey = GlobalKey<NavigatorState>(debugLabel: 'admin');
 
 enum AppRoute {
-  onboarding,
+  tenantSelection,
   signIn,
   home,
   entry,
@@ -47,14 +48,14 @@ enum AppRoute {
 GoRouter goRouter(GoRouterRef ref) {
   final authRepository = ref.watch(authRepositoryProvider);
   return GoRouter(
-      initialLocation: '/signIn',
+      initialLocation: '/tenantSelection',
       navigatorKey: _rootNavigatorKey,
       debugLogDiagnostics: true,
       redirect: (context, state) {
         final path = state.uri.path;
         final isLoggedIn = authRepository.currentUser != null;
         if (isLoggedIn) {
-          if (path.startsWith('/signIn')) {
+          if (path.startsWith('/signIn') || path.startsWith('/tenantSelection')) {
             return '/home';
           }
         } else {
@@ -64,7 +65,7 @@ GoRouter goRouter(GoRouterRef ref) {
               path.startsWith('/finish') ||
               path.startsWith('/results') ||
               path.startsWith('/admin')) {
-            return '/signIn';
+            return '/tenantSelection';
           }
         }
         return null;
@@ -72,6 +73,13 @@ GoRouter goRouter(GoRouterRef ref) {
       refreshListenable:
           GoRouterRefreshStream(authRepository.authStateChanges()),
       routes: [
+         GoRoute(
+          path: '/tenantSelection',
+          name: AppRoute.tenantSelection.name,
+          pageBuilder: (context, state) => const NoTransitionPage(
+            child: TenantSelectScreen(),
+          ),
+        ),
         GoRoute(
           path: '/signIn',
           name: AppRoute.signIn.name,

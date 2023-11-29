@@ -39,7 +39,7 @@ class HomeScreen extends ConsumerWidget {
   _doLogout(BuildContext context, WidgetRef ref) async {
     await ref.read(firebaseAuthProvider).signOut();
     // ignore: use_build_context_synchronously
-    context.goNamed(AppRoute.signIn.name);
+    context.goNamed(AppRoute.tenantSelection.name);
   }
 
   Widget _buildUserMenuButton(BuildContext context, WidgetRef ref) {
