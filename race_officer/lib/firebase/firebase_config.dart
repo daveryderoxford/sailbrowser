@@ -17,8 +17,12 @@ class FirebaseConfig with UiLoggy {
 
   FirebaseConfig();
 
-  Future<FirebaseApp> startup(bool useEmulator) async {
+ // Future<FirebaseApp> startup(bool useEmulator, String tenant) async {
+   Future<FirebaseApp> startup(bool useEmulator) async {
+
     try {
+
+      
       final app = await Firebase.initializeApp(
           options: DefaultFirebaseOptions.currentPlatform);
 
@@ -30,6 +34,7 @@ class FirebaseConfig with UiLoggy {
 
       // Enable Firestore persistance for web.  Enabled on ios/aidroid by default
       final db = FirebaseFirestore.instance;
+  //    final db = FirebaseFirestore.instanceFor(app: Firebase.app(), databaseURL: tenant);
       if (kIsWeb) {
         await db.enablePersistence(
             const PersistenceSettings(synchronizeTabs: true));
@@ -60,6 +65,7 @@ class FirebaseConfig with UiLoggy {
   }
 }
 
+/// Provider for firestore database
 final firestoreProvider = Provider<FirebaseFirestore>((ref) {
   final selectedTenant = ref.watch(selectedTenantProvider);
   return FirebaseFirestore.instanceFor(

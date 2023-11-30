@@ -19,5 +19,6 @@ class SelectedTenant extends Notifier<String?> {
 }
 
 /// Selected tenant.
-/// Initialsed from shared preference storage. 
-final selectedTenantProvider = NotifierProvider<SelectedTenant, String?>( () => SelectedTenant(SharedPrefsSingleton.instance) );
+/// Initialsed from shared preference storage.
+final selectedTenantProvider = NotifierProvider<SelectedTenant, String?>(
+    () => SelectedTenant(SharedPrefsSingleton.instance));

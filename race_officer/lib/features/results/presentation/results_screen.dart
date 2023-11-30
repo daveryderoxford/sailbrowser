@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 import 'package:loggy/loggy.dart';
 import 'package:sailbrowser_flutter/app_shell/app_shell.dart';
 import 'package:sailbrowser_flutter/features/results/domain/results_service.dart';
@@ -8,6 +9,7 @@ import 'package:sailbrowser_flutter/features/results/presentation/widgits/publis
 import 'package:sailbrowser_flutter/features/results/presentation/widgits/series_results_tab.dart';
 import 'package:sailbrowser_flutter/features/results/presentation/widgits/race_results_tab.dart';
 import 'package:sailbrowser_flutter/features/results/presentation/result_controller.dart';
+import 'package:sailbrowser_flutter/routing/app_router.dart';
 
 class ResultsScreen extends ConsumerWidget with UiLoggy {
   ResultsScreen({super.key});
@@ -36,6 +38,13 @@ class ResultsScreen extends ConsumerWidget with UiLoggy {
                 }
               },
               child: const Text("Publish"),
+            ),
+            FilledButton(
+              onPressed: () {
+                context.goNamed(AppRoute.resultsSlideShow.name);
+                }
+                ,
+              child: const Text("Slides"),
             ),
           ],
           bottom: const TabBar(

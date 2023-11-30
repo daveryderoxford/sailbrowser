@@ -65,6 +65,16 @@ class ResultsController extends Notifier<ResultsState> {
     }
   }
 
+  // Re-calculate all results
+  calcAllResults() {
+      final results = ref.read(resultsService).requireValue;
+      for (var result in results) {
+       ref
+          .read(resultsService.notifier)
+          .computeSeriesResults(result);    
+      }
+  }
+
   /// Publish race
   publishResults(ResultsStatus status) {
     ref.read(resultsRepositoryProvider).publish(state.displayedSeries!, status);

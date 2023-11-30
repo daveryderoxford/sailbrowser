@@ -129,7 +129,7 @@ final resultsService =
     AsyncNotifierProvider<ResultsService, List<SeriesResults>>(
         () => ResultsService(SeriesScorer(), RaceScorer()));
 
-final raceResultsProvider = Provider((ref) {
+final raceResultsProvider = Provider<List<RaceResults>>((ref) {
   List<RaceResults> allRaces = [];
 
   final seriesResults = ref.watch(resultsService).valueOrNull;

@@ -10,6 +10,7 @@ import 'package:sailbrowser_flutter/features/race-calander/presentation/series_s
 import 'package:sailbrowser_flutter/features/home/presentation/home_screen.dart';
 import 'package:sailbrowser_flutter/features/race/entry/presentation/entries_screen.dart';
 import 'package:sailbrowser_flutter/features/results/presentation/results_screen.dart';
+import 'package:sailbrowser_flutter/features/results/presentation/results_slideshow.dart';
 import '../features/race/finish/presentation/finish_screen.dart';
 import '../features/race/start/presentation/start_screen.dart';
 import './go_router_refresh_stream.dart';
@@ -36,6 +37,7 @@ enum AppRoute {
   start,
   finish,
   results,
+  resultsSlideShow,
   admin,
   profile,
   boats,
@@ -55,7 +57,8 @@ GoRouter goRouter(GoRouterRef ref) {
         final path = state.uri.path;
         final isLoggedIn = authRepository.currentUser != null;
         if (isLoggedIn) {
-          if (path.startsWith('/signIn') || path.startsWith('/tenantSelection')) {
+          if (path.startsWith('/signIn') ||
+              path.startsWith('/tenantSelection')) {
             return '/home';
           }
         } else {
@@ -73,7 +76,7 @@ GoRouter goRouter(GoRouterRef ref) {
       refreshListenable:
           GoRouterRefreshStream(authRepository.authStateChanges()),
       routes: [
-         GoRoute(
+        GoRoute(
           path: '/tenantSelection',
           name: AppRoute.tenantSelection.name,
           pageBuilder: (context, state) => const NoTransitionPage(
@@ -158,22 +161,33 @@ startRoutes() {
 finishRoutes() {
   return [
     GoRoute(
-        path: '/finish',
-        name: AppRoute.finish.name,
-        pageBuilder: (context, state) => const NoTransitionPage(
-              child: FinishScreen(),
-            ))
+      path: '/finish',
+      name: AppRoute.finish.name,
+      pageBuilder: (context, state) => const NoTransitionPage(
+        child: FinishScreen(),
+      ),
+    )
   ];
 }
 
 resultsRoutes() {
   return [
     GoRoute(
-        path: '/results',
-        name: AppRoute.results.name,
-        pageBuilder: (context, state) => NoTransitionPage(
-              child: ResultsScreen(),
-            ))
+      path: '/results',
+      name: AppRoute.results.name,
+      pageBuilder: (context, state) => NoTransitionPage(
+        child: ResultsScreen(),
+      ),
+      routes: [
+        GoRoute(
+          path: 'resultsslideShow',
+          name: AppRoute.resultsSlideShow.name,
+          pageBuilder: (context, state) => const NoTransitionPage(
+            child: ResultsSlideShow(),
+          ),
+        )
+      ],
+    )
   ];
 }
 
