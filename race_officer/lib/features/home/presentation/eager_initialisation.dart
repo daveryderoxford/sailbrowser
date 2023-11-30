@@ -1,6 +1,7 @@
 // ignore_for_file: must_be_immutable
 // isLoading/errorString just used within build method. State not retained over build invocations.
 
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:loggy/loggy.dart';
