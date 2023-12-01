@@ -8,11 +8,12 @@ extension DurationExtensions on Duration {
   /// Formats duration as a string in form hh:mm:ss. 
   /// Limited to dureations of less than 99hours
   String asHourMinSec() {
+
     String twoDigitMinutes = _twoDigits(inMinutes.remainder(60));
     String twoDigitSeconds = _twoDigits(inSeconds.remainder(60));
 
     if (inHours > 10 ) {
-          return "$inHours}:$twoDigitMinutes:$twoDigitSeconds";
+       return "$inHours}:$twoDigitMinutes:$twoDigitSeconds";
     } else {
       return "${_twoDigits(inHours)}:$twoDigitMinutes:$twoDigitSeconds";
     }

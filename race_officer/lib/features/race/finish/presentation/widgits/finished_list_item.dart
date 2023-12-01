@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:sailbrowser_flutter/common_widgets/null_widget.dart';
 import 'package:sailbrowser_flutter/common_widgets/sail_number.dart';
+import 'package:sailbrowser_flutter/constants/app_sizes.dart';
 import 'package:sailbrowser_flutter/features/race/domain/race_competitor.dart';
 import 'package:sailbrowser_flutter/features/race/finish/presentation/finish_controller.dart';
 import 'package:sailbrowser_flutter/features/race/finish/presentation/finsh_manual_entry.dart';
@@ -16,9 +17,10 @@ class FinishedListItem extends ConsumerWidget {
     final finishTime = (comp.finishTime == null)
         ? ""
         : 'Finish:  ${comp.finishTime?.asHourMinSec()}';
-    final totalTime = 'Total time: ${comp.totalTime.asHourMinSec()}';
+    final totalTime = 'Total: ${comp.totalTime.asHourMinSec()}';
     final status = 'Status:  ${comp.resultCode.displayName}';
-    return ('${comp.helmCrew}    $status\n$finishTime   $totalTime  ');
+    final laps = comp.numLaps > 1 ? '${comp.numLaps} laps' : '${comp.numLaps} lap';
+    return ('${comp.helmCrew}\n$finishTime   $totalTime   \n$laps     $status');
   }
 
   const FinishedListItem(this.competitor, {this.showButtons= true, super.key});
@@ -29,7 +31,7 @@ class FinishedListItem extends ConsumerWidget {
       isThreeLine: true,
       title: Row(children: [
         Text(competitor.boatClass),
-        const SizedBox(width: 25),
+        gapH20,
         SailNumber(num: competitor.sailNumber),
       ]),
       subtitle: Text(_subTitle(competitor)),

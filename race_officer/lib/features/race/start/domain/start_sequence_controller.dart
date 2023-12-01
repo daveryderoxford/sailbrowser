@@ -47,7 +47,10 @@ class StartSequence extends StateNotifier<StartSequenceState> with UiLoggy {
 
     DateTime firstStartTime;
 
-    final baseTime = _roundNextMinute(clock.now());
+    // TO DO temp boadge before I port flag sequence - IBRSC only - will not work for 5,4,1,0
+    final timeFromFirstFlag = Duration(seconds: state.intervalBetweenStarts.inSeconds*2);
+
+    final baseTime = _roundNextMinute(clock.now()).add(timeFromFirstFlag);
 
     switch (option) {
       case StartWhen.nextMinute:
@@ -55,7 +58,7 @@ class StartSequence extends StateNotifier<StartSequenceState> with UiLoggy {
         break;
 
       case StartWhen.now:
-        firstStartTime = baseTime;
+        firstStartTime = baseTime.add(state.intervalBetweenStarts);
         break;
 
       case StartWhen.scheduledStartTime:
@@ -167,6 +170,7 @@ class StartSequence extends StateNotifier<StartSequenceState> with UiLoggy {
 
   List<Race> _calculateRaceStartTimes(
       DateTime firstStartTime, List<Race> races) {
+
     final updated = races.map((race) {
       final r = race.copyWith(actualStart: firstStartTime);
       firstStartTime = firstStartTime.add(state.intervalBetweenStarts);

@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:form_builder_validators/form_builder_validators.dart';
 import 'package:go_router/go_router.dart';
 import 'package:loggy/loggy.dart';
+import 'package:sailbrowser_flutter/common_widgets/form_builder_double_field.dart';
 import 'package:sailbrowser_flutter/common_widgets/form_builder_integer_field.dart';
 import 'package:sailbrowser_flutter/common_widgets/responsive_center.dart';
 import 'package:sailbrowser_flutter/common_widgets/time_input_textfield.dart';
@@ -51,11 +52,14 @@ class _FinishManualEntryState extends ConsumerState<FinishManualEntry>
 
       var code = formData['resultCode'];
       final manTime = formData['finishTime'];
+      final manLaps = formData['manualLaps'];
+
       final d = competitor.startTime!;
 
       // Add day of race to manual time
       final manualFinish = (manTime != null)
-          ? DateTime(d.year, d.month, d.day, manTime.hour, manTime.minute, manTime.second)
+          ? DateTime(d.year, d.month, d.day, manTime.hour, manTime.minute,
+              manTime.second)
           : null;
 
       // If manual finish time is speciifed chnage status of unfinished to OK
@@ -63,9 +67,21 @@ class _FinishManualEntryState extends ConsumerState<FinishManualEntry>
         code = ResultCode.ok;
       }
 
+      // Set start time - TODO ideally.
+      // 1. the time widget would always retuen and value
+      // 2. the time editor widget would also retrun the date
+      var startTime = competitor.startTime!;
+      if (formData['startTime'] != null) {
+        startTime = DateTime(d.year, d.month, d.day, formData['startTime'].hour,
+            formData['startTime'].minute, formData['startTime'].second);
+      }
+
       final update = competitor.copyWith(
         manualFinishTime: manualFinish,
+        manualLaps: manLaps,
         resultCode: code,
+        startTime: startTime,
+        handicap: formData['handicap'],
       );
       final race = ref.watch(raceProvider(competitor.raceId));
       competitorService.update(update, update.id, race!.seriesId);
@@ -150,10 +166,13 @@ class _FinishManualEntryState extends ConsumerState<FinishManualEntry>
             );
           },
         ),
-        const FormBuilderIntegerField(
+        FormBuilderIntegerField(
           name: 'manualLaps',
           initialValue: 0,
-          decoration: InputDecoration(label: Text('Laps')),
+          decoration: InputDecoration(
+              label: const Text('Laps'),
+              helperText:
+                  '0 to use recorded number of laps (${competitor.lapTimes.length + 1})'),
         ),
         SizedBox(
           height: 100,
@@ -179,6 +198,30 @@ class _FinishManualEntryState extends ConsumerState<FinishManualEntry>
                     ))
                 .toList(),
           ),
+        ),
+        FormBuilderDoubleField(
+          name: 'handicap',
+          initialValue: competitor.handicap,
+          decoration: const InputDecoration(
+            label: Text('Handicap'),
+          ),
+        ),
+        FormBuilderField<DateTime?>(
+          name: "startTime",
+          builder: (FormFieldState<DateTime?> field) {
+            return InputDecorator(
+              decoration: InputDecoration(
+                labelText: "Start time",
+                contentPadding: const EdgeInsets.only(top: 10.0, bottom: 0.0),
+                border: InputBorder.none,
+                errorText: field.errorText,
+              ),
+              child: TimeInputField(
+                initialValue: competitor.startTime,
+                onChanged: (value) => field.didChange(value),
+              ),
+            );
+          },
         ),
       ]),
     );

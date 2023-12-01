@@ -1,5 +1,6 @@
 import 'package:data_table_2/data_table_2.dart';
 import 'package:flutter/material.dart';
+import 'package:sailbrowser_flutter/util/date_time_extensions.dart';
 import 'package:sailbrowser_flutter/common_widgets/responsive_center.dart';
 import 'package:sailbrowser_flutter/features/race/domain/result_code.dart';
 import 'package:sailbrowser_flutter/features/results/domain/race_result.dart';
@@ -15,16 +16,19 @@ class RaceResultsTable extends StatelessWidget {
 
   final List<RaceResult> results;
 
-  /// Returns the row colow.   
-  /// This is red if there is an error in the results and stripe color otherwise. 
+  /// Returns the row colow.
+  /// This is red if there is an error in the results and stripe color otherwise.
   Color _getRowColor(int stripeIndex, String? error, BuildContext context) {
-    if (error != null && error.isNotEmpty) return const Color.fromARGB(255, 241, 134, 134);
-    return stripeIndex % 2 == 1 ? Theme.of(context).colorScheme.primary.tone(92) : Theme.of(context).colorScheme.primary.tone(95);
+    if (error != null && error.isNotEmpty) {
+      return Theme.of(context).colorScheme.errorContainer;
+    }
+    return stripeIndex % 2 == 1
+        ? Theme.of(context).colorScheme.primary.tone(92)
+        : Theme.of(context).colorScheme.primary.tone(95);
   }
 
   @override
   Widget build(BuildContext context) {
-
     return ResponsiveCenter(
       maxContentWidth: 800,
       child: Padding(
@@ -32,7 +36,7 @@ class RaceResultsTable extends StatelessWidget {
         child: DataTable2(
           columnSpacing: 12,
           horizontalMargin: 12,
-          minWidth: 630,
+          minWidth: 670,
           fixedLeftColumns: 2,
           empty: const Center(
               child: Text(textScaleFactor: 1.2, 'No results to display')),
@@ -50,10 +54,6 @@ class RaceResultsTable extends StatelessWidget {
               size: ColumnSize.L,
             ),
             DataColumn2(
-              label: Text('Elapsed\nFinish'),
-              fixedWidth: 80,
-            ),
-            DataColumn2(
               label: Text('Corrected'),
               fixedWidth: 80,
             ),
@@ -62,25 +62,33 @@ class RaceResultsTable extends StatelessWidget {
               fixedWidth: 60,
             ),
             DataColumn2(
+              label: Text('Elapsed\nFinish'),
+              fixedWidth: 80,
+            ),
+            DataColumn2(
               label: Text("H'cap\nLaps"),
-              fixedWidth: 50,
+              fixedWidth: 60,
+            ),
+            DataColumn2(
+              label: Text("Notes"),
             ),
           ],
           rows: results
               .mapIndexed<DataRow>(
                 (index, result) => DataRow(
-                    color: MaterialStateColor.resolveWith(
-                        (states) => _getRowColor( index, result.error, context)),
-                    cells: [
-                      DataCell(Text(result.position.toString())),
-                      DataCell(_nameCell(context, result, index)),
-                      DataCell(_boatCell(context, result)),
-                      DataCell(Center(child: Text(result.elapsed.asMinSec()))),
-                      DataCell(
-                          Center(child: Text(result.corrected.asMinSec()))),
-                      DataCell(_pointsCell(context, result)),
-                      DataCell(_hcapCell(context, result)),
-                    ]),
+                  color: MaterialStateColor.resolveWith(
+                      (states) => _getRowColor(index, result.error, context)),
+                  cells: [
+                    DataCell(Text(result.position.toString())),
+                    DataCell(_nameCell(context, result, index)),
+                    DataCell(_boatCell(context, result)),
+                    DataCell(Center(child: Text(result.corrected.asMinSec()))),
+                    DataCell(_pointsCell(context, result)),
+                    DataCell(_elapsedCell(context, result)),
+                    DataCell(_hcapCell(context, result)),
+                    DataCell(_notesCell(context, result)),
+                  ],
+                ),
               )
               .toList(),
         ),
@@ -96,9 +104,19 @@ class RaceResultsTable extends StatelessWidget {
     return (Text('${res.boatClass}\n${res.sailNumber}'));
   }
 
+  Widget _elapsedCell(BuildContext context, RaceResult res) {
+    return Column(children: [
+      Center(child: Text(res.elapsed.asMinSec())),
+      if (res.finishTime != null)
+        Center(child: Text(res.finishTime!.asHourMinSec())),
+    ]);
+  }
+
   Widget _pointsCell(BuildContext context, RaceResult res) {
     if (res.resultCode != ResultCode.ok) {
-      return Center( child: Column(crossAxisAlignment: CrossAxisAlignment.center, children: [
+      return Center(
+          child:
+              Column(crossAxisAlignment: CrossAxisAlignment.center, children: [
         Text(res.resultCode.displayName),
         Text(_roundedPointsStr(res.points)),
       ]));
@@ -115,6 +133,10 @@ class RaceResultsTable extends StatelessWidget {
         ? '${res.numLaps.toString()} lap'
         : '${res.numLaps.toString()} laps';
     return (Text('$hCapStr\n$lapStr'));
+  }
+
+  Widget _notesCell(BuildContext context, RaceResult res) {
+    return (res.error == null) ? const Text('') : Text(res.error);
   }
 
   String _roundedPointsStr(double points) {

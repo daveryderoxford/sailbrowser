@@ -6,15 +6,16 @@ import 'package:sailbrowser_flutter/features/results/domain/results_service.dart
 import 'package:sailbrowser_flutter/features/results/domain/series_results.dart';
 import 'package:sailbrowser_flutter/features/results/presentation/result_controller.dart';
 
-class SeriesDropDown extends ConsumerWidget with UiLoggy{
+class SeriesDropDown extends ConsumerWidget with UiLoggy {
   const SeriesDropDown({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     return ref.watch(resultsService).when(
         data: (series) => DropdownMenu<SeriesResults>(
-              /// must not cause rebild for initial state
+              // must not cause rebild for initial state
               initialSelection: ref.read(resultsController).displayedSeries,
+              width: 350,
               textStyle: const TextStyle(fontSize: 15),
               label: const Text('Select Series'),
               dropdownMenuEntries: series
@@ -27,9 +28,9 @@ class SeriesDropDown extends ConsumerWidget with UiLoggy{
               },
             ),
         error: (e, stacktrace) {
-            logError('Error occured building dropdown ${e.toString()}');
-            return const Center(child: Text('Error occurred building dropdown'));
-          },
+          logError('Error occured building dropdown ${e.toString()}');
+          return const Center(child: Text('Error occurred building dropdown'));
+        },
         loading: () => const NullWidget());
   }
 }

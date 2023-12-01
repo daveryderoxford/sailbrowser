@@ -4,9 +4,8 @@ import 'package:flutter_form_builder/flutter_form_builder.dart';
 import 'package:form_builder_validators/form_builder_validators.dart';
 
 // Positive integer form field
-
-class FormBuilderIntegerField extends StatelessWidget {
-  const FormBuilderIntegerField({
+class FormBuilderDoubleField extends StatelessWidget {
+  const FormBuilderDoubleField({
     super.key,
     required this.name,
     required this.initialValue,
@@ -16,10 +15,10 @@ class FormBuilderIntegerField extends StatelessWidget {
   });
 
   final String name;
-  final int? initialValue;
+  final double? initialValue;
   final InputDecoration decoration;
-  final int? minValue;
-  final int? maxValue;
+  final double? minValue;
+  final double? maxValue;
 
   @override
   Widget build(BuildContext context) {
@@ -30,17 +29,17 @@ class FormBuilderIntegerField extends StatelessWidget {
       valueTransformer: (text) => text != null ? num.tryParse(text) : null,
       validator: FormBuilderValidators.compose([
         FormBuilderValidators.required(),
-        FormBuilderValidators.integer(),
+        FormBuilderValidators.numeric(),
         if (minValue != null) FormBuilderValidators.min(minValue!),
         if (maxValue != null) FormBuilderValidators.max(maxValue!),
       ]),
       initialValue: initialValue?.toString(),
       keyboardType: const TextInputType.numberWithOptions(
         signed: false,
-        decimal: false,
+        decimal: true,
       ),
       inputFormatters: <TextInputFormatter>[
-        FilteringTextInputFormatter.digitsOnly
+        FilteringTextInputFormatter.allow(RegExp('(^\\d*.?\\d{0,2})'))
       ],
       textInputAction: TextInputAction.next,
       textAlign: TextAlign.start,

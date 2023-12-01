@@ -16,9 +16,9 @@ class RacesDropDown extends ConsumerWidget {
       // https://github.com/flutter/flutter/issues/127568
       key: ValueKey(Object.hashAll(races)),
       // must not cause rebild for initial state 
+      width: 350,
       initialSelection: ref.read(resultsController).displayedRace,
       textStyle: const TextStyle(fontSize: 15),
-     // width: 400,
       label: const Text('Select Race'),
       dropdownMenuEntries: races
           .map((race) => DropdownMenuEntry<RaceResults>(value: race, label: race.name))

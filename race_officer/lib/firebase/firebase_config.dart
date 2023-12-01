@@ -51,16 +51,11 @@ class FirebaseConfig with UiLoggy {
           : "No saved login details";
       logInfo(msg);
 
-      logInfo('Clearing Firebase cache');
-      FirebaseFirestore.instance.clearPersistence();
-
       return app;
     } catch (e) {
       logError(e.toString());
       rethrow;
     }
-
- 
   }
 
   useEmulators() async {
