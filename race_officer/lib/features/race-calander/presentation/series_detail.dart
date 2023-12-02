@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:sailbrowser_flutter/common_widgets/delete_button.dart';
 import 'package:sailbrowser_flutter/common_widgets/responsive_center.dart';
+import 'package:sailbrowser_flutter/constants/app_sizes.dart';
 import 'package:sailbrowser_flutter/features/club/domain/clubs_service.dart';
 import 'package:sailbrowser_flutter/features/club/domain/fleet.dart';
 import 'package:sailbrowser_flutter/features/race-calander/domain/series.dart';
@@ -146,7 +147,7 @@ class SeriesDetailScreen extends ConsumerWidget {
               itemBuilder: (BuildContext context, int index) {
                 final race = races[index];
                 final avgLap = race.isAverageLap ? 'Average lap' : '';
-                final date = race.scheduledStart.asDateString();
+                final date = race.scheduledStart.asDayDate();
                 final startTime =
                     'Start:  ${race.scheduledStart.asHourMin()}';
                 final status = race.status.displayName;
@@ -159,19 +160,24 @@ class SeriesDetailScreen extends ConsumerWidget {
                   title: Row(
                     children: [
                       Text(race.name),
-                      const SizedBox(width: 20),
+                      gapW20,
                       Text(date),
-                      const SizedBox(width: 20),
-                      Text(startTime)
+
                     ],
                   ),
-                  subtitle: Row(
+                  subtitle: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text(type),
-                      const SizedBox(width: 20),
-                      Text(status),
-                      const SizedBox(width: 20),
-                      Text(avgLap),
+                      Text(startTime),             
+                      Row(
+                        children: [
+                          Text(status),
+                          gapW20,
+                          Text(type),
+                          gapW20,
+                          Text(avgLap),
+                        ],
+                      ),
                     ],
                   ),
                   trailing: IconButton(

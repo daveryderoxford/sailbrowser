@@ -17,7 +17,7 @@ Duration clockOffset = const Duration();
 /// Get the clock to use for system time
 /// In test mode always initialise to 15 Sept 2023 at 10:00. 
 Clock getClock(bool testEnviroment) {
-  if (true) {  // TODO 
+  if (testEnviroment) {
     logInfo("Print using test clock,  Initialsie to 2023-09-10 (10 Sept) 10:00:00");
     if (clockOffset.inMicroseconds == 0) {
       final startTime = DateTime(2023, 09, 10, 10, 0, 0);
@@ -25,6 +25,7 @@ Clock getClock(bool testEnviroment) {
     }
     return Clock(() => DateTime.now().subtract(clockOffset));
   } else {
+    logInfo("Print using real time clock");
     const clock = Clock();
     return clock;
   }

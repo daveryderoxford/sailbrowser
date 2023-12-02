@@ -21,14 +21,8 @@ class ClubService with UiLoggy {
         toFirestore: (Club club, _) => club.toJson());
   }
 
-  Stream<List<Club>> get allClubs$ => _clubs.snapshots().map((snap) {
-        final clubs = snap.docs.map<Club>((doc) => doc.data() as Club).toList();
-        return clubs;
-      }).shareReplay();
-
-  add(Club club) {
-    final id = club.name.replaceAll(' ', '');
-    final update = club.copyWith(id: id);
+  add(Club club, String tenant) {
+    final update = club.copyWith(id: tenant);
     _clubs
        .doc(update.id)
        .set(update)
