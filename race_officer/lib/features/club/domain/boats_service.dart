@@ -1,4 +1,6 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:signals_flutter/signals_flutter.dart';
+import 'package:get_it/get_it.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:loggy/loggy.dart';
 import 'package:rxdart/rxdart.dart';
@@ -20,9 +22,27 @@ class BoatService with UiLoggy {
 
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
   final String clubId;
+  final ClubService _clubService = GetIt.I<ClubService>();
 
   late final CollectionReference _boatsCollection = _firestore
       .collection('/clubs/$clubId/boats')
+  late final StreamSignal<List<Boat>> allBoats = streamSignal(() {
+    final clubId = _clubService.currentClub().id;
+    return _firestore
+        .collection('/clubs/$clubId/boats')
+        .withConverter<Boat>(
+            fromFirestore: (snapshot, _) => Boat.fromJson(snapshot.data()!),
+            toFirestore: (Boat boat, _) => boat.toJson())
+        .snapshots()
+        .map((snap) {
+      final boats = snap.docs.map((doc) => doc.data()).toList();
+      boats.sort((a, b) => _boatsSort(a, b));
+      return boats;
+    });
+  });
+
+  CollectionReference<Boat> get _boatsCollection => _firestore
+      .collection('/clubs/${_clubService.currentClub.value.id}/boats')
       .withConverter<Boat>(
           fromFirestore: (snapshot, _) => Boat.fromJson(snapshot.data()!),
           toFirestore: (Boat boat, _) => boat.toJson());
@@ -34,6 +54,7 @@ class BoatService with UiLoggy {
       return boats;
     },
   ).shareReplay();
+  BoatService();
 
   BoatService(this.clubId);
 

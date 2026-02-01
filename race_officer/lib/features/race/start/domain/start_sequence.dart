@@ -18,6 +18,7 @@ class StartSequenceState with _$StartSequenceState {
     @Default([]) List<Race> races,
     @Default([]) List<Race> startedRaces,
     @Default(Duration(minutes: 2)) Duration intervalBetweenStarts,
+    required DateTime nextStartTime,
     @Default(Duration()) Duration timeToNextStart,
     @Default(Duration()) Duration firstStartTime,
   }) = _StartSequenceState;

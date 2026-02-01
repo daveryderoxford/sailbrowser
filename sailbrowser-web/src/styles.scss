@@ -1,0 +1,46 @@
+
+@use '@angular/material' as mat;
+
+@include mat.elevation-classes();
+@include mat.app-background();
+
+@mixin clipped-container {
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  overflow: hidden;
+}
+
+.clipped-container {
+  @include clipped-container;
+}
+
+html {
+  height: 100%;
+  @include mat.theme((
+    color: (
+      primary: mat.$azure-palette,
+      tertiary: mat.$blue-palette,
+    ),
+    typography: Roboto,
+    density: -1,
+    use-system-variable: true,
+    system-variables-prefix: sys,
+  ));
+
+    @include mat.toolbar-overrides((container-background-color: var(--mat-sys-primary-container),
+          container-text-color: var(--mat-sys-primary),
+        ));
+  
+}
+
+body {
+  color-scheme: light;
+  background-color: var(--mat-sys-secondary);
+  color: var(--mat-sys-on-surface);
+  font: var(--mat-sys-body-medium);
+
+  // Reset the user agent margin.
+  margin: 0;
+  height: 100%;
+}

@@ -158,7 +158,7 @@ const _json = '''
           "source": "standard"
         },
         {
-          "name": "ILCA 7/laser",
+          "name": "ILCA 7/Laser",
           "handicap": 1101,
           "source": "standard"
         },

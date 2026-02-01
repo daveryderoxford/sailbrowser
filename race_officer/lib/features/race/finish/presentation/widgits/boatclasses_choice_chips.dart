@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:sailbrowser_flutter/common_widgets/null_widget.dart';
 import 'package:sailbrowser_flutter/features/race/finish/domain/finish_lists.dart';
@@ -33,6 +34,7 @@ class BoatClassChoiceChip extends ConsumerWidget {
                       onSelected: (bool selected) {
                         ref.read(compFilterProvider.notifier).boatClass =
                             (selected ? bc : null);
+                        HapticFeedback.mediumImpact();
                       },
                     ),
                   )

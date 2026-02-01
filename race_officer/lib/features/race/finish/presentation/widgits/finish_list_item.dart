@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:sailbrowser_flutter/common_widgets/sail_number.dart';
 import 'package:sailbrowser_flutter/features/race/domain/race_competitor.dart';
@@ -14,11 +15,10 @@ class FinishListItem extends ConsumerWidget {
     return '${comp.helmCrew}  ${comp.numLaps.toString()} laps';
   }
 
-  const FinishListItem(this.competitor, {this.showButtons= true, super.key});
+  const FinishListItem(this.competitor, {this.showButtons = true, super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-
     return ListTile(
       contentPadding: const EdgeInsets.only(left: 15, right: 5.0),
       visualDensity: VisualDensity.compact,
@@ -32,37 +32,45 @@ class FinishListItem extends ConsumerWidget {
         mainAxisSize: MainAxisSize.min,
         children: [
           TextButton(
-                         style: TextButton.styleFrom(
-    visualDensity: VisualDensity.compact,
-    tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-  ),
-            onPressed: () => ref.read(finshControllerProvider).finish(competitor),
+            style: TextButton.styleFrom(
+              visualDensity: VisualDensity.compact,
+              tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+            ),
+            onPressed: () {
+              ref.read(finshControllerProvider).finish(competitor);
+              HapticFeedback.mediumImpact();
+            },
             child: const Text('Finish'),
           ),
           TextButton(
-                         style: TextButton.styleFrom(
-    visualDensity: VisualDensity.compact,
-    tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-  ),
-            onPressed: () => ref.read(finshControllerProvider).lap(competitor),
+            style: TextButton.styleFrom(
+              visualDensity: VisualDensity.compact,
+              tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+            ),
+            onPressed: () {
+              ref.read(finshControllerProvider).lap(competitor);
+              HapticFeedback.mediumImpact();
+            },
             child: const Text('Lap'),
-          ), 
-          FinishPopupMenu( onSelected: (action) {
-             final controller = ref.read(finshControllerProvider);
-            switch (action) {
-              case FinishPopupMenuItems.DidNotStart:
-                controller.didNotStart(competitor);
-              case FinishPopupMenuItems.Finish:
-                 controller.finish(competitor);
-             case FinishPopupMenuItems.Lap:
-                 controller.lap(competitor);
-             case FinishPopupMenuItems.Pin:
-                 controller.pin(competitor);
-             case FinishPopupMenuItems.Retired:
-                 controller.retired(competitor);
-              default:
-            }
-          },),
+          ),
+          FinishPopupMenu(
+            onSelected: (action) {
+              final controller = ref.read(finshControllerProvider);
+              switch (action) {
+                case FinishPopupMenuItems.DidNotStart:
+                  controller.didNotStart(competitor);
+                case FinishPopupMenuItems.Finish:
+                  controller.finish(competitor);
+                case FinishPopupMenuItems.Lap:
+                  controller.lap(competitor);
+                case FinishPopupMenuItems.Pin:
+                  controller.pin(competitor);
+                case FinishPopupMenuItems.Retired:
+                  controller.retired(competitor);
+                default:
+              }
+            },
+          ),
         ],
       ),
     );

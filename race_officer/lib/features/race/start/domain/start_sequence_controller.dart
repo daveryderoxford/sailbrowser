@@ -19,7 +19,7 @@ enum BeepDuration { short, long }
 
 class StartSequence extends StateNotifier<StartSequenceState> with UiLoggy {
   StartSequence(this.ref, [StartSequenceState? initialStartState])
-      : super(initialStartState ?? const StartSequenceState());
+      : super(initialStartState ?? StartSequenceState(nextStartTime: DateTime.now()));
 
   final _shortBeepTimes = [1, 2, 3, 4, 5, 10, 15, 30];
 
@@ -31,19 +31,18 @@ class StartSequence extends StateNotifier<StartSequenceState> with UiLoggy {
   configure(List<Race> races, Duration interalBetweenStarts) {
     state = StartSequenceState(
       races: races,
+      nextStartTime: DateTime.now(),
       intervalBetweenStarts: interalBetweenStarts,
       startStatus: StartStatus.waiting,
     );
   }
 
   reset() {
-    state = const StartSequenceState();
+    state =  StartSequenceState(nextStartTime: DateTime.now());
   }
 
   run(StartWhen option) {
     _beep();
-
-    _timer = Timer.periodic(const Duration(seconds: 1), _timerTickHandler);
 
     DateTime firstStartTime;
 
@@ -68,11 +67,16 @@ class StartSequence extends StateNotifier<StartSequenceState> with UiLoggy {
 
     final races = _calculateRaceStartTimes(firstStartTime, state.races);
 
+
     state = state.copyWith(
       startStatus: StartStatus.running,
       races: races,
+      nextStartTime: firstStartTime,
       timeToNextStart: firstStartTime.difference(clock.now()),
     );
+
+    _timer = Timer.periodic(const Duration(seconds: 1), _timerTickHandler);
+
   }
 
   stopStartSequence() {
@@ -107,6 +111,10 @@ class StartSequence extends StateNotifier<StartSequenceState> with UiLoggy {
 
   /// Handler for one second timer
   _timerTickHandler(Timer timer) {
+    // We need  use datetime to determine the time to the start rather than just decrement the time 
+    // to account for the timer process not running in the backgroud.
+
+
     final secondstoStart = state.timeToNextStart.inSeconds - 1;
     // loggy.info(
     //     'Time to next start:  ${state.timeToNextStart.inSeconds}  Race start: ${state.races[0].raceOfDay.toString()}');

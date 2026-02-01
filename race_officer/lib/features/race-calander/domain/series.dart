@@ -8,7 +8,6 @@ part 'series.g.dart';
 
 @freezed
 class Series with _$Series {
-
   factory Series.def({
     required String season,
     required String id,
@@ -23,7 +22,7 @@ class Series with _$Series {
   }) = _Series;
 
   /// Public Series constructor.
-  /// the series Id will be populated 
+  /// the series Id will be populated
   factory Series({
     String? season,
     required String name,
@@ -31,7 +30,7 @@ class Series with _$Series {
     DateTime? startDate,
     DateTime? endDate,
     SeriesScoringData? scoringScheme,
-    String? note, 
+    String? note,
   }) {
     return _Series(
       id: const Uuid().v1(),
@@ -42,15 +41,14 @@ class Series with _$Series {
       endDate: endDate,
       races: [],
       archived: false,
-      scoringScheme:  scoringScheme ?? SeriesScoringData.defaultScheme,
+      scoringScheme: scoringScheme ?? SeriesScoringData.defaultScheme,
       note: note ?? "",
     );
   }
 
   const Series._();
 
-  factory Series.fromJson(Map<String, Object?> json) =>
-      _$SeriesFromJson(json);
+  factory Series.fromJson(Map<String, Object?> json) => _$SeriesFromJson(json);
 }
 
 /// Type of race conventional/pursuit
@@ -62,7 +60,7 @@ enum RaceType {
   const RaceType(this.displayName);
 }
 
-/// Status of the race - future/in progess etc. 
+/// Status of the race - future/in progess etc.
 enum RaceStatus {
   future('Future'),
   inProgress('In progress'),
@@ -120,6 +118,11 @@ class Race with _$Race {
 
   String get name => '$seriesName - Race $index';
   String get shortname => 'Race $index';
+
+  /// Date the race is run.  Obtained from the actual start time if specified or the scheduled start if not.
+  DateTime get date => (actualStart != DateTime.fromMicrosecondsSinceEpoch(0))
+      ? DateTime(actualStart.year, actualStart.month, actualStart.day)
+      : DateTime(scheduledStart.year, scheduledStart.month, scheduledStart.day);
 
   const Race._();
 

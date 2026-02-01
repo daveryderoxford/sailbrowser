@@ -5,6 +5,8 @@ import 'package:go_router/go_router.dart';
 import 'package:loggy/loggy.dart';
 import 'package:sailbrowser_flutter/common_widgets/responsive_center.dart';
 import 'package:sailbrowser_flutter/common_widgets/will_pop_form.dart';
+import 'package:sailbrowser_flutter/features/club/domain/boat.dart';
+import 'package:sailbrowser_flutter/features/club/domain/boats_service.dart';
 import 'package:sailbrowser_flutter/features/club/domain/clubs_service.dart';
 import 'package:sailbrowser_flutter/features/club/presentation/widgets/boat_form_fields.dart';
 import 'package:sailbrowser_flutter/features/race-calander/domain/series_service.dart';
@@ -40,8 +42,11 @@ class _AddSeriesState extends ConsumerState<AddEntry> with UiLoggy {
     if (form.isValid) {
       final formData = _formKey.currentState!.value;
 
-      final boatClasses = ref.read(allBoatClassesProvider(HandicapScheme.py)); // TO DO to add suppor for multiple handicap schemes
-      final handicap = boatClasses.firstWhere((bs) => bs.name == formData['boatClass']).handicap;  
+      final boatClasses = ref.read(allBoatClassesProvider(HandicapScheme
+          .py)); // TO DO to add suppor for multiple handicap schemes
+      final handicap = boatClasses
+          .firstWhere((bs) => bs.name == formData['boatClass'])
+          .handicap;
 
       for (var race in formData['races']) {
         RaceCompetitor update;
@@ -72,6 +77,20 @@ class _AddSeriesState extends ConsumerState<AddEntry> with UiLoggy {
         }
 
         competitorService.add(update, race.seriesId);
+      }
+
+      if (entryMode == AddEntryMode.newBoat && formData['saveBoat']) {
+        // TO DO more to baotform to avoid repeating this.
+        final boat = Boat(
+          boatClass: formData['boatClass'],
+          type: BoatType.values.byName(formData['type']),
+          sailNumber: formData['sailNumber'],
+          name: formData['name'],
+          owner: formData['owner'],
+          helm: formData['helm'],
+          crew: formData['crew'],
+        );
+        ref.read(boatsProvider).add(boat);
       }
 
       if (context.mounted) {
@@ -146,18 +165,18 @@ class _AddSeriesState extends ConsumerState<AddEntry> with UiLoggy {
       },
       child: Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: [
         if (entryMode == AddEntryMode.existingBoat)
-           EntryFormFields(competitor: null, formKey: _formKey)
+          EntryFormFields(competitor: null, formKey: _formKey)
         else
           Column(
             children: [
               const BoatFormFields(),
               FormBuilderSwitch(
-                name: 'saveBoat',
-                title: const Text('Save Boat details'),
-                subtitle: const Text('If selected boat details will be saved to database of boats'),
-                initialValue: false,
-                controlAffinity: ListTileControlAffinity.leading
-              )
+                  name: 'saveBoat',
+                  title: const Text('Save Boat details'),
+                  subtitle: const Text(
+                      'If selected boat details will be saved to database of boats'),
+                  initialValue: false,
+                  controlAffinity: ListTileControlAffinity.leading)
             ],
           ),
         const SelectRacesFilterChip(competitor: null),

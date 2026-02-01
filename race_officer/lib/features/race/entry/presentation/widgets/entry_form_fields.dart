@@ -50,17 +50,17 @@ class EntryFormFields extends ConsumerWidget with UiLoggy {
             onChanged: (val) {
               ref.read(classBoatFilter.notifier).state = val;
               formKey.currentState?.patchValue({'sailNumber1': 0});
-            }),
+            }), 
         SailNumberTypeAhead(
           name: 'sailNumber1',
-          sailNumbers: sailNumbers,
-          initialValue: competitor != null ? competitor!.sailNumber : 0,
+          boats: filtered,
+          initialValue: null, // competitor != null ? competitor!.sailNumber : 0,
           onChanged: (val) {
-            if (val != 0) {
-              final boat =
-                  filtered.firstWhere((boat) => boat.sailNumber == val);
+            if (val != null) {
+              //final boat =
+              //    filtered.firstWhere((boat) => boat.sailNumber == val);
               formKey.currentState
-                  ?.patchValue({'helm': boat.helm, 'crew': boat.crew});
+                  ?.patchValue({'helm': val.helm, 'crew': val.crew});
             }
           },
         ),

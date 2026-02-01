@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:sailbrowser_flutter/common_widgets/responsive_center.dart';
 
 typedef KeyboardTapCallback = void Function(String text);
@@ -100,6 +101,7 @@ class _NumericKeyPadState extends State<NumericKeyPad> {
         borderRadius: BorderRadius.circular(45),
         onTap: () {
           widget.onKeyboardTap(value);
+          HapticFeedback.mediumImpact();
         },
         child: Container(
           alignment: Alignment.center,
@@ -118,6 +120,7 @@ class _NumericKeyPadState extends State<NumericKeyPad> {
         borderRadius: BorderRadius.circular(45),
         onTap: () {
           widget.onKeyboardTap(value);
+          HapticFeedback.mediumImpact();
         },
         child: Container(
           alignment: Alignment.center,
