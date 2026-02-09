@@ -6,7 +6,35 @@
 
 .content {
   flex: 1;
+  padding: 24px;
+  max-width: 600px;
+  margin: 0 auto;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.actions {
   display: flex;
-  align-items: center;
+  gap: 16px;
   justify-content: center;
+  margin-bottom: 24px;
+  flex-wrap: wrap;
+
+  a {
+    text-decoration: none;
+  }
+
+  span {
+    margin-left: 8px;
+  }
+}
+
+h2 {
+  text-align: center;
+}
+
+.placeholder {
+  padding: 15px;
+  text-align: center;
+  font: var(--mat-sys-body-large);
 }

@@ -12,7 +12,7 @@ import { MatInputModule } from '@angular/material/input';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { debounceTime, distinctUntilChanged, startWith } from 'rxjs';
 import { Toolbar } from 'app/shared/components/toolbar';
-import { boatFilter, BoatsService } from '../@store/boats.service';
+import { boatFilter, BoatsStore } from '../@store/boats.store';
 import { LoadingCentered } from "app/shared/components/loading-centered";
 
 @Component({
@@ -36,7 +36,7 @@ import { LoadingCentered } from "app/shared/components/loading-centered";
   `
 })
 export class BoatsPage {
-  bs = inject(BoatsService);
+  bs = inject(BoatsStore);
 
   searchControl = new FormControl('');
   searchTerm = toSignal(

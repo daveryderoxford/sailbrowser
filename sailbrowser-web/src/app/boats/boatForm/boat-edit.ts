@@ -4,7 +4,7 @@ import { Router } from '@angular/router';
 import { BoatForm } from './boat-form';
 import { DialogsService } from '../../shared';
 import { Toolbar } from 'app/shared/components/toolbar';
-import { BoatsService } from '../@store/boats.service';
+import { BoatsStore } from '../@store/boats.store';
 
 @Component({
    selector: 'app-boat-edit',
@@ -18,7 +18,7 @@ import { BoatsService } from '../@store/boats.service';
    styles: [],
 })
 export class BoatEdit {
-   private bs = inject(BoatsService);
+   private bs = inject(BoatsStore);
    private router = inject(Router);
    private snackbar = inject(MatSnackBar);
    private ds = inject(DialogsService);
@@ -44,7 +44,7 @@ export class BoatEdit {
       if (ok) {
          try {
             await this.bs.delete(boat.id);
-            this.router.navigate(["/tasks"]);
+            this.router.navigate(["/boats"]);
          } catch (error: any) {
             this.snackbar.open("Error encountered deleting task", "Error encountered deleting task", { duration: 3000 });
             console.log('UpdateTask. Error deleting task: ' + error.toString());

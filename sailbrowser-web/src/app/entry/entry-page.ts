@@ -1,5 +1,5 @@
 import { DatePipe } from '@angular/common';
-import { ChangeDetectionStrategy, Component, computed, effect, inject, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, effect, inject, signal, viewChild } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { FormBuilder, FormControl, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatAutocompleteModule, MatAutocompleteSelectedEvent } from '@angular/material/autocomplete';
@@ -9,13 +9,15 @@ import { MatInputModule } from '@angular/material/input';
 import { MatListModule } from '@angular/material/list';
 import { MatStepperModule } from '@angular/material/stepper';
 import { debounceTime, map, startWith } from 'rxjs';
-import { boatFilter, BoatsService } from 'app/boats/@store/boats.service';
+import { boatFilter, BoatsStore } from 'app/boats/@store/boats.service';
 import { RaceCalendarStore } from '../race-calender/@store/full-race-calander';
 import { Race } from '../race-calender/@store/race';
 import { EntryService } from './@store/entry.service';
 import { Toolbar } from "app/shared/components/toolbar";
 import { ClubService } from 'app/club/@store/club.service';
 import { MatSelectModule } from '@angular/material/select';
+import { SelectedRaces } from 'app/race/selected-races-store';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-entry',
@@ -36,10 +38,10 @@ import { MatSelectModule } from '@angular/material/select';
     <mat-stepper class="content" orientation="horizontal" [linear]="true" #stepper>
       <mat-step [stepControl]="raceSelectionGroup">
         <form [formGroup]="raceSelectionGroup">
-          <ng-template matStepLabel>Select Races</ng-template>
+          <ng-template matStepLabel>Races</ng-template>
 
           @if (todaysRaces().length > 0) {
-            <mat-selection-list formControlName="selectedRaces">
+            <mat-selection-list formControlName="enteredRaces">
               @for (race of todaysRaces(); track race.id) {
                 <mat-list-option [value]="race">
                   <span matListItemTitle>{{ race.seriesName }} - Race {{ race.raceOfDay }}</span>
@@ -59,11 +61,11 @@ import { MatSelectModule } from '@angular/material/select';
 
       <mat-step [stepControl]="competitorDetailsGroup">
         <form [formGroup]="competitorDetailsGroup">
-          <ng-template matStepLabel>Competitor Details</ng-template>
+          <ng-template matStepLabel>Details</ng-template>
 
           <div class="boat-selection">
-            <mat-form-field class="search-field">
-              <mat-label>Search Boat</mat-label>
+            <mat-form-field appearance="outline" class="search-field">
+              <mat-label>Search For Boat</mat-label>
               <input matInput [formControl]="boatSearchControl" [matAutocomplete]="auto" placeholder="Class, Helm or Sail No">
               <mat-autocomplete #auto="matAutocomplete" [displayWith]="displayBoatFn" (optionSelected)="onBoatSelected($event)">
                 @for (boat of filteredBoats(); track boat.id) {
@@ -78,12 +80,21 @@ import { MatSelectModule } from '@angular/material/select';
                 }
               </mat-autocomplete>
             </mat-form-field>
-            <button matButton="tonal" type="button" (click)="createNewBoat()">New Boat</button>
+            <button matButton="tonal" type="button" class="dense-button" (click)="createNewBoat()">New Boat</button>
           </div>
 
           @if (showForm()) {
-     
 
+          <mat-form-field>
+            <mat-label>Helm Name</mat-label>
+            <input matInput formControlName="helm" placeholder="Helm Name">
+          </mat-form-field>
+
+          <mat-form-field>
+            <mat-label>Crew Name</mat-label>
+            <input matInput formControlName="crew" placeholder="Crew Name (Optional)">
+          </mat-form-field>
+     
            <mat-form-field>
             <mat-label>Class</mat-label>
             <mat-select formControlName="boatClass">
@@ -100,27 +111,23 @@ import { MatSelectModule } from '@angular/material/select';
           </mat-form-field>
 
           <mat-form-field>
-            <mat-label>Helm Name</mat-label>
-            <input matInput formControlName="helm" placeholder="Helm Name">
-          </mat-form-field>
-
-          <mat-form-field>
-            <mat-label>Crew Name</mat-label>
-            <input matInput formControlName="crew" placeholder="Crew Name (Optional)">
-          </mat-form-field>
-
-          <mat-form-field>
             <mat-label>Handicap</mat-label>
             <input matInput type="number" formControlName="handicap" placeholder="Handicap (Optional)">
           </mat-form-field>
           } @else {
-            <div class="placeholder">Select boat or create a New Boat</div>
+            <div class="placeholder"><p>
+              <b>Search for boat</b> <br>Enter class, helm or sail number to search
+            </p>
+            <p>
+              press <b>New Boat</b><br>to enter new details
+            </p>
+          </div>
           }
 
           <div class="actions">
             <button matButton="outlined" matStepperPrevious>Back</button>
             @if (showForm()) {
-            <button matButton="filled" (click)="onSubmit()" [disabled]="competitorDetailsGroup.invalid">Submit</button>
+            <button matButton="filled" (click)="onSubmit()" [disabled]="competitorDetailsGroup.invalid">Enter</button>
             }
           </div>
         </form>
@@ -130,7 +137,7 @@ import { MatSelectModule } from '@angular/material/select';
   styles: [`
     @use "mixins" as mix;
 
-    @include mix.centered-column-page(".content", 600px);
+    @include mix.centered-column-page(".content", 480px);
 
     .actions {
       margin-top: 5px;
@@ -146,14 +153,14 @@ import { MatSelectModule } from '@angular/material/select';
     .boat-selection {
       display: flex;
       align-items: baseline;
-      gap: 10px;
+      gap: 5px;
       margin-top: 10px;
     }
     .search-field {
       flex-grow: 1;
     }
     .placeholder {
-      padding: 20px;
+      padding: 15px;
       text-align: center;
       font: var(--mat-sys-body-large);
     }
@@ -164,8 +171,10 @@ export class EntryPage {
   private readonly formBuilder = inject(FormBuilder);
   private readonly raceStore = inject(RaceCalendarStore);
   private readonly _entryService = inject(EntryService);
-  private readonly bs = inject(BoatsService);
+  private readonly bs = inject(BoatsStore);
   protected readonly cs = inject(ClubService);
+  protected readonly seletedRacesStore = inject(SelectedRaces);
+  private readonly router = inject(Router);
 
   selectedBoat = signal<any>(null);
   isNewBoat = signal(false);
@@ -217,14 +226,10 @@ export class EntryPage {
     this.bs.boats().filter(boat => boatFilter(boat, this.searchTerm()))
   );
 
-  readonly todaysRaces = computed(() => {
-    const races = this.raceStore.allRaces();
-    const todayStr = new Date().toDateString();
-    return races.filter(race => race.scheduledStart.toDateString() === todayStr);
-  });
+  todaysRaces = this.seletedRacesStore.selectedRaces;
 
   readonly raceSelectionGroup = this.formBuilder.group({
-    selectedRaces: [[] as Race[], Validators.required],
+    enteredRaces: [[] as Race[], Validators.required],
   });
 
   readonly competitorDetailsGroup = this.formBuilder.group({
@@ -258,7 +263,7 @@ export class EntryPage {
   async onSubmit() {
     if (this.raceSelectionGroup.invalid || this.competitorDetailsGroup.invalid) return;
 
-    const races = this.raceSelectionGroup.value.selectedRaces as Race[];
+    const races = this.raceSelectionGroup.value.enteredRaces as Race[];
     const details = this.competitorDetailsGroup.getRawValue();
 
     await this._entryService.enterRaces({
@@ -269,5 +274,11 @@ export class EntryPage {
       crew: details.crew || undefined,
       handicap: details.handicap || undefined,
     });
+
+    this.router.navigate(['entry', 'entries']);
+  }
+
+  public canDeactivate(): boolean {
+    return !this.raceSelectionGroup.dirty && !this.raceSelectionGroup.dirty;
   }
 }

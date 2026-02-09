@@ -3,7 +3,7 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 import { Router } from '@angular/router';
 import { BoatForm } from './boat-form';
 import { Toolbar } from 'app/shared/components/toolbar';
-import { BoatsService } from '../@store/boats.service';
+import { BoatsStore } from '../@store/boats.store';
 
 @Component({
   selector: 'app-boat-add',
@@ -16,7 +16,7 @@ import { BoatsService } from '../@store/boats.service';
   styles: [],
 })
 export class BoatAdd {
-  private bs = inject(BoatsService);
+  private bs = inject(BoatsStore);
   private router = inject(Router);
   private snackbar = inject(MatSnackBar);
 

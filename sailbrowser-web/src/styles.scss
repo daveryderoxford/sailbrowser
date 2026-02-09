@@ -40,3 +40,15 @@ body {
   margin: 0;
   height: 100%;
 }
+
+.dense-form-field {
+  @include mat.form-field-density(-2);
+}
+
+.dense-list {
+  @include mat.list-density(-5);
+}
+
+.dense-button {
+  @include mat.button-density(-1);
+}

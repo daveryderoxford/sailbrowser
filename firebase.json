@@ -50,14 +50,17 @@
     "template": "remoteconfig.template.json"
   },
   "hosting": {
-    "source": "race_officer",
+    "public": "sailbrowser-web/dist/sailbrowser-web/browser",
     "ignore": [
       "firebase.json",
       "**/.*",
       "**/node_modules/**"
     ],
-    "frameworksBackend": {
-      "region": "europe-west1"
-    }
+    "rewrites": [
+      {
+        "source": "**",
+        "destination": "/index.html"
+      }
+    ]
   }
 }

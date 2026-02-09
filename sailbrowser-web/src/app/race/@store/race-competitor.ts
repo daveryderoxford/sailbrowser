@@ -108,3 +108,15 @@ export class RaceCompetitor {
     return this.resultCode === ResultCode.Ok;
   }
 }
+
+import { Pipe, PipeTransform } from "@angular/core";
+
+@Pipe({
+  name: 'helmcrew',
+})
+export class HelmCrew implements PipeTransform {
+  transform(comp: RaceCompetitor | null) {
+    if (!comp) return;
+    return comp.crew && comp.crew.trim().length > 0 ? `${comp.helm} / ${comp.crew}` : comp.helm;
+  }
+}
