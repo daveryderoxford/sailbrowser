@@ -1,0 +1,55 @@
+
+<app-toolbar title="Login"/>
+
+<div fxLayout="column" fxLayoutAlign="start center" fxFlexFill>
+
+   <mat-card>
+
+      <mat-card-content>
+
+         <div fxLayout="column" fxLayoutAlign="space-around center" fxLayoutGap=10px>
+
+            <div fxLayout="column" fxLayoutAlign="space-around center" fxLayoutGap=10px>
+
+               <form [formGroup]="loginForm" (ngSubmit)="loginFormSubmit()">
+
+                  <div fxLayout="column" fxFlexFill fxLayoutAlign="center" fxLayoutGap=10px>
+
+                     <mat-form-field>
+                        <mat-label>Email</mat-label>
+                        <input matInput formControlName="email" type="email" autocomplete="on">
+                        <mat-error>Invalid email</mat-error>
+                     </mat-form-field>
+
+                     <mat-form-field>
+                        <mat-label>Password</mat-label>
+                        <input matInput formControlName="password" type="password" autocomplete="on">
+                        <mat-error>Password required</mat-error>
+                     </mat-form-field>
+
+                     <div fxLayout="row" fxLayoutAlign="center">
+                        <button mat-flat-button type="submit" [disabled]="loading()" aria-label="login">Sign In</button>
+                     </div>
+
+                     <div fxLayout="row" fxLayoutAlign="space-between">
+                        <a mat-button routerLink='/auth/recover'>Forgot password?</a>
+                        <a mat-button routerLink='/auth/signup'>Create account?</a>
+                     </div>
+
+                  </div>
+
+               </form>
+            </div>
+
+         <div class="horizontal_rule"></div>
+
+            <span class="mat-title-medium">OR LOGIN USING</span>
+
+            <button mat-flat-button (click)="signInWith('Google')" [disabled]="loading()" fxFlexAlign="stretch">GOOGLE</button>
+            <button mat-flat-button  (click)="signInWith('Facebook')" [disabled]="loading()"
+               fxFlexAlign="stretch">FACEBOOK</button>
+
+         </div>
+      </mat-card-content>
+   </mat-card>
+</div>

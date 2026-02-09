@@ -1,0 +1,5 @@
+@use "mixins" as mix;
+
+@include mix.form-page("form", 400px);
+
+

@@ -1,0 +1,31 @@
+<app-toolbar title="Splitsbrowser - Signup"></app-toolbar>
+
+<form [formGroup]="signupForm" (ngSubmit)="signup()">
+
+   <mat-form-field>
+      <mat-label>Email</mat-label>
+      <input matInput formControlName="email" type="email">
+      <mat-error>Invalid email</mat-error>
+   </mat-form-field>
+
+   <mat-form-field>
+      <mat-label>Password</mat-label>
+      <input matInput formControlName="password" type="password">
+      <mat-error>Password of 6 or more characters required</mat-error>
+   </mat-form-field>
+
+   <mat-form-field>
+      <mat-label>Confirm Password</mat-label>
+      <input matInput formControlName="confirmPassword" type="password">
+      <mat-error>Confirm password required</mat-error>
+      @if(signupForm.errors && signupForm.errors['passwordMissMatch']) {
+         <mat-hint class=error>Passwords do not match</mat-hint>
+      }
+   </mat-form-field>
+
+   <div fxLayout="row" fxLayoutAlign="space-between center">
+      <button [disabled]="signupForm.invalid || loading()" mat-flat-button type="submit" aria-label="Signup">Sign up</button>
+      <a mat-button routerLink="/auth/login">Already have user name</a>
+   </div>
+
+</form>

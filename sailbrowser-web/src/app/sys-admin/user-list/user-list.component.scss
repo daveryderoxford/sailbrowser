@@ -1,0 +1,3 @@
+@use "mixins" as mix;
+
+@include mix.centered-column-page("mat-list", 600px);

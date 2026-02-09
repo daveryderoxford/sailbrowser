@@ -1,0 +1,24 @@
+<app-toolbar title="User Details"></app-toolbar>
+
+<form (ngSubmit)="save()" novalidate [formGroup]="userForm">
+
+  <div fxFlexLayout=row fxLayoutAlign="space-between" fxLayoutGap=20px>
+
+    <mat-form-field fxFlex="calc(50%-20px)">
+      <mat-label>First Name</mat-label>
+      <input matInput required formControlName="firstname">
+    </mat-form-field>
+
+    <mat-form-field fxFlex="calc(50%-20px)">
+      <mat-label>Last Name</mat-label>
+      <input matInput required formControlName="surname">
+    </mat-form-field>
+
+  </div>
+
+  <div fxLayout="row" fxLayoutAlign="space-between center">
+    <button [disabled]="userForm.invalid || !userForm.dirty || busy()" mat-flat-button type="submit"
+      aria-label="Save user details">Save</button>
+  </div>
+
+</form>

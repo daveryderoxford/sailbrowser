@@ -1,0 +1,59 @@
+@mixin centered-column-page($column-element, $maxwidth) {
+   :host {
+      overflow: hidden;
+      height: 100%;
+      width: 100%;
+      display: grid;
+      grid-template-columns: 1fr minmax(0, #{$maxwidth}) 1fr;
+      grid-template-rows: auto 1fr;
+      grid-template-areas:
+         "toolbar toolbar toolbar"
+         "  ...     list    ... ";
+      background-color: var(--mat-sys-surface-container-low);
+   }
+
+   app-toolbar {
+      grid-area: toolbar;
+   }
+
+   #{$column-element} {
+      grid-area: list;
+      background-color: white;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+   }
+}
+
+@mixin form-page($form-element, $maxwidth) {
+   :host {
+      overflow: hidden;
+      height: 100%;
+      width: 100%;
+      display: grid;
+      grid-template-columns: 1fr minmax(0, #{$maxwidth}) 1fr;
+      grid-template-rows: auto auto 1fr;
+      grid-template-areas:
+         "toolbar toolbar toolbar"
+         "  ...   content    ... " 
+         " ...       ...    ...  ";
+      background-color: var(--mat-sys-surface-container-high);
+   }
+
+   app-toolbar {
+      grid-area: toolbar;
+   }
+
+   #{$form-element} {
+      grid-area: content;
+      background-color: white;
+      padding: 20px;
+      margin: 16px;
+      border-radius: var(--mat-sys-corner-medium);
+      box-shadow: var(--mat-sys-level1);
+
+      display: flex;
+      flex-direction: column;
+      overflow-y: auto;
+   }
+}

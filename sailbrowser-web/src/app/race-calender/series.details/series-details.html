@@ -1,0 +1,89 @@
+@if (rc.isLoading()) {
+<app-loading-centered />
+} @else if (rc.error()) {
+<app-loading-centered message="Error encountered" />
+} @else if (!series()) {
+Series not found
+} @else {
+@let s = series();
+
+<app-toolbar title="Series Details">
+   <button matIconButton (click)="copySeries(series())">
+      <mat-icon>content_copy</mat-icon>
+   </button>
+</app-toolbar>
+
+<div class="content">
+
+   <mat-card appearance="outlined">
+      <mat-card-header>
+         <mat-card-title>
+            <span>{{ series().name }}</span>
+         </mat-card-title>
+         <mat-card-subtitle>
+            <span>{{fleet()?.name}}</span>
+            @if (s.startDate && s.endDate) {
+            <span>{{ s.startDate| date:'MMM d, y' }} to {{ s.endDate | date:'MMM d, y' }}</span>
+            }
+         </mat-card-subtitle>
+      </mat-card-header>
+
+      <mat-card-actions align="end">
+         <button matButton (click)="editSeries(s.id)" title="Edit Series">
+            Edit Details
+         </button>
+
+         <button matButton (click)="deleteSeries(s.id)">
+            Delete Series
+         </button>
+      </mat-card-actions>
+   </mat-card>
+
+   <!-- Races Header -->
+   <div class="race-header">
+      <h2>Races</h2>
+      <span class="spacer"></span>
+      <button matIconButton (click)="addRace(s.id)">
+         <mat-icon>add_circle_outline</mat-icon>
+      </button>
+   </div>
+
+   <!-- Races List -->
+   @if (this.rc.racesLoading()) {
+   <app-loading-centered />
+   }
+   @if (this.races().length === 0) {
+   <span>`Add races to the series"</span>
+   } @else {
+   <mat-list>
+      @for (race of races(); track race.id;) {
+      <mat-list-item>
+         <span matListItemTitle>
+            Race {{race.index}}
+            <span class="gap"></span>
+            {{ race.scheduledStart | date:'MMM d, y'}}
+         </span>
+         <span>{{ race.status }}</span>
+         <span class="gap"></span>
+         @if (race.type !== 'Conventional') {
+         <span> {{ race.type }} </span>
+         <span class="gap"></span>
+         }
+
+         @if (race.isAverageLap) {
+         <span>Average lap</span>
+         }
+         <span matListItemMeta>
+            <button matIconButton (click)="deleteRace(race)">
+               <mat-icon>edit</mat-icon>
+            </button>
+         </span>
+
+      </mat-list-item>
+      }
+
+   </mat-list>
+
+   }
+</div>
+}

@@ -1,0 +1,69 @@
+<mat-action-list>
+
+   <mat-list-item mat-list-item (click)='closeSidenav(["/home"])'>
+      <mat-icon matListItemIcon>home</mat-icon>
+      <span matListItemTitle>Home</span>
+   </mat-list-item>
+
+   <button mat-list-item (click)='closeSidenav(["/entry"])'>
+      <mat-icon matListItemIcon>assignment</mat-icon>
+      <span matListItemTitle>Entries</span>
+   </button>
+
+   <button mat-list-item (click)='closeSidenav(["/race-results"])'>
+      <mat-icon matListItemIcon>schedule</mat-icon>
+      <span matListItemTitle>Results Entry</span>
+   </button>
+
+   <button mat-list-item (click)='closeSidenav(["/series-results"])'>
+      <mat-icon matListItemIcon>emoji_events</mat-icon>
+      <span matListItemTitle>Series Results</span>
+   </button>
+
+   <mat-divider />
+
+   <mat-accordion>
+      <mat-expansion-panel class="mat-elevation-z0">
+         <mat-expansion-panel-header>
+            <mat-panel-title>User</mat-panel-title>
+         </mat-expansion-panel-header>
+         
+         <mat-nav-list>
+            @if (auth.user()) {
+               <button mat-list-item (click)='closeSidenav(["/user"])'>User details</button>
+               <button mat-list-item (click)='closeSidenav(["/auth/change-password"])'>Change password</button>
+               <button mat-list-item (click)="logout()">Logout</button>
+            } @else {
+               <button mat-list-item (click)='closeSidenav(["/auth/login"])'>Login</button>
+            }
+   
+            @if (auth.isSysAdmin()) {
+               <button mat-list-item (click)='closeSidenav(["/sys-admin"])'>System Admin</button>
+            }
+         </mat-nav-list>
+      </mat-expansion-panel>
+   </mat-accordion>
+
+   <mat-accordion>
+      <mat-expansion-panel class="mat-elevation-z0">
+         <mat-expansion-panel-header>
+            <mat-panel-title>System Admin </mat-panel-title>
+         </mat-expansion-panel-header>
+   
+         <mat-nav-list>
+            @if (auth.user()) {
+            <button mat-list-item (click)='closeSidenav(["/boats"])'>Boats</button>
+            <button mat-list-item (click)='closeSidenav(["/race-calender"])'>Race calendar</button>
+            }
+            @if (auth.isSysAdmin()) {
+            <button mat-list-item (click)='closeSidenav(["/sys-admin"])'>System Admin</button>
+            }
+         </mat-nav-list>
+      </mat-expansion-panel>
+   </mat-accordion>
+
+   <mat-divider />
+   <button mat-list-item (click)='closeSidenav(["/about"])'>About</button>
+   <button mat-list-item (click)='contact()'>Contact</button>
+
+</mat-action-list>

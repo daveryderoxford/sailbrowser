@@ -1,0 +1,121 @@
+[
+  {
+    "id": "clubdata",
+    "name": "Island Barn Sailing Club",
+    "fleets": [
+      {
+        "id": "fhc",
+        "name": "Fast handicap",
+        "shortname": "Fast Hcap",
+        "startOrder": 1,
+        "classFlag": "H",
+        "handicapScheme": "PY"
+      },
+      {
+        "id": "shc",
+        "name": "Slow handicap",
+        "shortname": "Slow Hcap",
+        "startOrder": 2,
+        "classFlag": "H",
+        "handicapScheme": "PY"
+      },
+      {
+        "id": "ghc",
+        "name": "General handicap",
+        "shortname": "handicap",
+        "startOrder": 1,
+        "classFlag": "H",
+        "handicapScheme": "PY"
+      },
+      {
+        "id": "topper",
+        "name": "Topper",
+        "shortname": "Topper",
+        "startOrder": 1,
+        "classFlag": "H",
+        "handicapScheme": "Level Rating"
+      },
+      {
+        "id": "Laser",
+        "name": "Laser",
+        "shortname": "Laser",
+        "startOrder": 1,
+        "classFlag": "H",
+        "handicapScheme": "Level Rating"
+      }
+    ],
+    "classes": [
+      {
+        "name": "29er",
+        "handicap": 900
+      },
+      {
+        "name": "Aero 6",
+        "handicap": 1099
+      },
+      {
+        "name": "Aero 9",
+        "handicap": 1005
+      },
+      {
+        "name": "Areo 5",
+        "handicap": 1139
+      },
+      {
+        "name": "Areo 7",
+        "handicap": 1063
+      },
+      {
+        "name": "Blaze",
+        "handicap": 1030
+      },
+      {
+        "name": "Blaze Fire",
+        "handicap": 1050
+      },
+      {
+        "name": "ILCA 4",
+        "handicap": 1216
+      },
+      {
+        "name": "ILCA 6",
+        "handicap": 1154
+      },
+      {
+        "name": "ILCA 7",
+        "handicap": 1104
+      },
+      {
+        "name": "Mirror",
+        "handicap": 1368
+      },
+      {
+        "name": "Optimist",
+        "handicap": 1631
+      },
+      {
+        "name": "RS400",
+        "handicap": 942
+      },
+      {
+        "name": "RS600",
+        "handicap": 921
+      },
+      {
+        "name": "Topper ",
+        "handicap": 1363
+      },
+      {
+        "name": "Topper 4.2",
+        "handicap": 1440
+      },
+      {
+        "name": "Vision",
+        "handicap": 1145
+      }
+    ]
+  },
+  {
+    "id": "systemdata"
+  }
+]

@@ -1,0 +1,58 @@
+import { ChangeDetectionStrategy, Component, computed, inject, input, viewChild } from '@angular/core';
+import { MatSnackBar } from '@angular/material/snack-bar';
+import { Router } from '@angular/router';
+import { BoatForm } from './boat-form';
+import { DialogsService } from '../../shared';
+import { Toolbar } from 'app/shared/components/toolbar';
+import { BoatsService } from '../@store/boats.service';
+
+@Component({
+   selector: 'app-boat-edit',
+   imports: [BoatForm, Toolbar],
+   changeDetection: ChangeDetectionStrategy.OnPush,
+   template: `
+   <app-toolbar title="Edit Boat" showBack/>
+
+    <app-boat-form [boat]="boat()" (submitted)="submitted($event)" (deleted)="deleted($event)"></app-boat-form>
+  `,
+   styles: [],
+})
+export class BoatEdit {
+   private bs = inject(BoatsService);
+   private router = inject(Router);
+   private snackbar = inject(MatSnackBar);
+   private ds = inject(DialogsService);
+
+   id = input.required<string>();   // Route parameter
+
+   boat = computed(() => this.bs.boats().find(l => l.id === this.id())!);
+
+   readonly form = viewChild.required(BoatForm);
+
+   async submitted(data: Partial<Boat>) {
+      try {
+         await this.bs.update(this.id(), data);
+         this.router.navigate(["/boats"]);
+      } catch (error: any) {
+         this.snackbar.open("Error encountered updating boat details", "Error encountered updating task", { duration: 3000 });
+         console.log('UpdateBoat. Error updating boat details: ' + error.toString());
+      }
+   }
+
+   async deleted(boat: Boat) {
+      const ok = await this.ds.confirm("Delete boat", "Delete boat");
+      if (ok) {
+         try {
+            await this.bs.delete(boat.id);
+            this.router.navigate(["/tasks"]);
+         } catch (error: any) {
+            this.snackbar.open("Error encountered deleting task", "Error encountered deleting task", { duration: 3000 });
+            console.log('UpdateTask. Error deleting task: ' + error.toString());
+         }
+      }
+   }
+
+   canDeactivate(): boolean {
+      return this.form().canDeactivate();
+   }
+}

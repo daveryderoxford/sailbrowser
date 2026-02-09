@@ -1,0 +1,53 @@
+<app-toolbar title="Boats">
+   <a mat-icon-button matTooltip="New boat" [routerLink]="['/boats/add']">
+      <mat-icon>add</mat-icon>
+   </a>
+</app-toolbar>
+
+<div class="content">
+
+   <mat-form-field appearance="outline" class="search">
+      <mat-label>Search</mat-label>
+      <input matInput [formControl]="searchControl" placeholder="Search">
+      @if(searchControl.value) {
+      <button mat-icon-button matSuffix (click)="searchControl.setValue('')" aria-label="Clear search">
+         <mat-icon>close</mat-icon>
+      </button>
+      }
+   </mat-form-field>
+
+   <mat-divider />
+
+   @if (bs.isLoading()) { 
+      <app-loading-centered/>
+   } @else {
+      <mat-list>
+         @for (boat of filteredBoats(); track boat.id) {
+         <mat-list-item>
+            <span matListItemTitle>{{boat.boatClass}} {{boat.sailNumber}} </span>
+            @if (boat.name) {
+               <span matListItemLine>{{boat.name}}</span>
+            }
+            <span matListItemLine>
+               Helm: {{boat.helm}}
+               @if (boat.crew) {
+               Crew: {{boat.crew}}
+               }
+            </span>
+
+            <span matListItemMeta>
+               <button matIconButton aria-label="Edit" [routerLink]="['/boats/edit/'+boat.id]">
+                  <mat-icon>edit</mat-icon>
+               </button>
+            </span>
+
+         </mat-list-item>
+         <mat-divider />
+         } @empty {
+         <mat-list-item>
+            <span matListItemTitle>No Boats displayed</span>
+         </mat-list-item>
+         }
+      </mat-list>
+   }
+</div>

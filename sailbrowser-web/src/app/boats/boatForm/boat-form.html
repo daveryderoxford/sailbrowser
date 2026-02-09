@@ -1,0 +1,45 @@
+<form (ngSubmit)="submit()" [formGroup]="form" novalidate fxLayout="column" fxLayoutAlign="space-around"
+  fxLayoutGap=10px>
+
+  <mat-form-field>
+    <mat-label>Class</mat-label>
+    <mat-select formControlName="boatClass">
+      @for (c of cs.club().classes; track c.name) {
+        <mat-option [value]="c.name">{{c.name}}</mat-option>
+      }
+    </mat-select>
+    <mat-error>Boat class required</mat-error>
+  </mat-form-field>
+
+  <mat-form-field>
+    <mat-label>Sail number</mat-label>
+    <input matInput type="number" inputmode="numeric" pattern="[0-9]*" formControlName="sailNumber">
+    <mat-error>Sail number must be a number greater than zero</mat-error>
+  </mat-form-field>
+
+  <mat-form-field>
+    <mat-label>Name</mat-label>
+    <input matInput formControlName="name">
+  </mat-form-field>
+
+  <mat-form-field>
+    <mat-label>Normal helm</mat-label>
+    <input matInput formControlName="helm">
+  </mat-form-field>
+
+  <mat-form-field>
+    <mat-label>Normal crew</mat-label>
+    <input matInput formControlName="crew">
+  </mat-form-field>
+
+  <mat-checkbox formControlName="isClub">Club boat</mat-checkbox>
+
+  <div fxLayout="row" fxLayoutAlign="space-between center">
+    <button [disabled]="form.invalid || !form.dirty" mat-flat-button type="submit" aria-label="submit">Save</button>
+    @if (boat()) {
+    <button mat-flat-button class='warning' type="button" (click)="deleted.emit(boat()!)"
+      aria-label="delete">Delete</button>
+    }
+  </div>
+
+</form>

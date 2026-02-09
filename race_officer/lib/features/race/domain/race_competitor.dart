@@ -24,7 +24,7 @@ class RaceCompetitor with _$RaceCompetitor {
 
     /// Manually specified finsih time.
     /// Used in preference to the recorded finish time if specified.
-    /// The manula finish time may be set to null to disable it.
+    /// The manual finish time may be set to null to disable it.
     DateTime? manualFinishTime,
 
     /// Start time for the competitor - set based on the race at start and finish

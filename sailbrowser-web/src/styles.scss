@@ -1,4 +1,3 @@
-
 @use '@angular/material' as mat;
 
 @include mat.elevation-classes();
@@ -17,21 +16,18 @@
 
 html {
   height: 100%;
-  @include mat.theme((
-    color: (
-      primary: mat.$azure-palette,
-      tertiary: mat.$blue-palette,
-    ),
-    typography: Roboto,
-    density: -1,
-    use-system-variable: true,
-    system-variables-prefix: sys,
-  ));
+  @include mat.theme((color: (primary: mat.$azure-palette,
+        tertiary: mat.$blue-palette,
+      ),
+      typography: Roboto,
+      density: -1,
+      use-system-variable: true,
+      system-variables-prefix: sys,
+    ));
 
-    @include mat.toolbar-overrides((container-background-color: var(--mat-sys-primary-container),
-          container-text-color: var(--mat-sys-primary),
-        ));
-  
+  @include mat.toolbar-overrides((container-background-color: var(--mat-sys-primary-container),
+      container-text-color: var(--mat-sys-primary),
+    ));
 }
 
 body {

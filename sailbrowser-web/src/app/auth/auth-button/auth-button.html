@@ -1,0 +1,12 @@
+
+  @if (authService.loggedIn()) {
+    <button mat-icon-button [matMenuTriggerFor]="menu" aria-label="Auth details">
+      <mat-icon>person</mat-icon>
+    </button>
+
+    <mat-menu #menu="matMenu">
+      <button mat-menu-item (click)="logout()">Logout</button>
+     <button mat-menu-item [routerLink]="['/user']">User settings</button>
+      <button mat-menu-item [routerLink]="['/auth/change-password']">Change password</button>
+    </mat-menu>
+}
