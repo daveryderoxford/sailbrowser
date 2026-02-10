@@ -1,24 +1,24 @@
 <app-toolbar title="Sail browser"></app-toolbar>
 <div class="content">
   <div class="actions">
-    <a mat-stroked-button routerLink="/entry/enter">
+    <a matButton="outlined" routerLink="/entry/enter">
       <mat-icon>assignment</mat-icon>
       <span>Enter a Race</span>
     </a>
-    <a mat-stroked-button routerLink="/entry/entries">
+    <a matButton="outlined" routerLink="/entry/entries">
       <mat-icon>list_alt</mat-icon>
       <span>View Entries</span>
     </a>
-    <a mat-stroked-button routerLink="/series-results">
+    <a matButton="outlined" routerLink="/series-results">
       <mat-icon>emoji_events</mat-icon>
       <span>View Results</span>
     </a>
   </div>
 
-  @if (selectedRacesStore.selectedRaces().length > 0) {
+  @if (currentRacesStore.selectedRaces().length > 0) {
     <h2>Races Today</h2>
     <mat-list>
-      @for (race of selectedRacesStore.selectedRaces(); track race.id) {
+      @for (race of currentRacesStore.selectedRaces(); track race.id) {
         <mat-list-item>
           <span matListItemTitle>{{ race.seriesName }} - Race {{ race.raceOfDay }}</span>
           <span matListItemLine>{{ race.scheduledStart | date:'shortTime' }}</span>

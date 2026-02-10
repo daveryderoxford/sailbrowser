@@ -9,7 +9,7 @@ import { map, of, switchMap, tap } from 'rxjs';
 import { mappedCollectionRef, mappedConverter, mappedDoc } from 'app/shared/firebase/firestore-helper';
 import { RaceCompetitor } from './race-competitor';
 import { rxResource, toObservable } from '@angular/core/rxjs-interop';
-import { SelectedRaces } from '../selected-races-store';
+import { CurrentRaces } from './current-races-store';
 
 export interface ResultsPathData {
   raceId: string;
@@ -27,7 +27,7 @@ export interface ResultsCollectionData {
 })
 export class RaceCompetitorStore {
   private readonly firestore = getFirestore(inject(FirebaseApp));
-  private selectedRaces = inject(SelectedRaces);
+  private selectedRaces = inject(CurrentRaces);
 
   private ref = (pd: ResultsPathData) => mappedDoc<RaceCompetitor>(
     this.firestore,

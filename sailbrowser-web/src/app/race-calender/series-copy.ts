@@ -20,6 +20,11 @@ import { Series } from './@store/series';
     <app-toolbar title="Copy Series" showBack/>
     <form (ngSubmit)="submit()" [formGroup]="form" novalidate>
 
+       <p class=header>
+        Copy exsiting series and races <br>
+        Specify new series name and fleet
+       </p>
+
       <mat-form-field>
         <mat-label>Name</mat-label>
         <input matInput formControlName="name">
@@ -47,6 +52,10 @@ import { Series } from './@store/series';
     @use "mixins" as mix;
 
     @include mix.form-page("form", 350px);
+
+    .header {
+      font: var(--mat-sys-title-medium);
+    }
   `
 })
 export class SeriesCopy {

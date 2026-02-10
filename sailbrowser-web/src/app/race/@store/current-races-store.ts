@@ -4,7 +4,7 @@ import { RaceCalendarStore } from 'app/race-calender/@store/full-race-calander';
 @Injectable({
    providedIn: 'root',
 })
-export class SelectedRaces {
+export class CurrentRaces {
   private readonly raceStore = inject(RaceCalendarStore);
   readonly selectedRaceIds = signal<string[]>([]);
 

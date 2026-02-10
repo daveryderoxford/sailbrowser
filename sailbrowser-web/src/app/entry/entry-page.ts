@@ -9,15 +9,15 @@ import { MatInputModule } from '@angular/material/input';
 import { MatListModule } from '@angular/material/list';
 import { MatStepperModule } from '@angular/material/stepper';
 import { debounceTime, map, startWith } from 'rxjs';
-import { boatFilter, BoatsStore } from 'app/boats/@store/boats.service';
 import { RaceCalendarStore } from '../race-calender/@store/full-race-calander';
 import { Race } from '../race-calender/@store/race';
 import { EntryService } from './@store/entry.service';
 import { Toolbar } from "app/shared/components/toolbar";
 import { ClubService } from 'app/club/@store/club.service';
 import { MatSelectModule } from '@angular/material/select';
-import { SelectedRaces } from 'app/race/selected-races-store';
+import { CurrentRaces } from 'app/race/@store/current-races-store';
 import { Router } from '@angular/router';
+import { BoatsStore, boatFilter } from 'app/boats/@store/boats.store';
 
 @Component({
   selector: 'app-entry',
@@ -173,7 +173,7 @@ export class EntryPage {
   private readonly _entryService = inject(EntryService);
   private readonly bs = inject(BoatsStore);
   protected readonly cs = inject(ClubService);
-  protected readonly seletedRacesStore = inject(SelectedRaces);
+  protected readonly currentRacesStore = inject(CurrentRaces);
   private readonly router = inject(Router);
 
   selectedBoat = signal<any>(null);
@@ -226,7 +226,7 @@ export class EntryPage {
     this.bs.boats().filter(boat => boatFilter(boat, this.searchTerm()))
   );
 
-  todaysRaces = this.seletedRacesStore.selectedRaces;
+  todaysRaces = this.currentRacesStore.selectedRaces;
 
   readonly raceSelectionGroup = this.formBuilder.group({
     enteredRaces: [[] as Race[], Validators.required],

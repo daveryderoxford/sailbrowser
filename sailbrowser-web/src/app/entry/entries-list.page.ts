@@ -5,7 +5,7 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { ReactiveFormsModule, FormControl } from '@angular/forms';
 import { Toolbar } from 'app/shared/components/toolbar';
 import { RaceCompetitorStore } from 'app/race/@store/race-competitor-store';
-import { SelectedRaces } from 'app/race/selected-races-store';
+import { CurrentRaces } from 'app/race/@store/current-races-store';
 import { RaceCalendarStore } from 'app/race-calender/@store/full-race-calander';
 import { ClubService } from 'app/club/@store/club.service';
 import { LoadingCentered } from 'app/shared/components/loading-centered';
@@ -14,7 +14,7 @@ import { RaceCompetitor, HelmCrew } from 'app/race/@store/race-competitor';
 import { RouterLink } from "@angular/router";
 import { MatButtonModule } from '@angular/material/button';
 import { DialogsService } from 'app/shared';
-import { MatIcon, MatIconModule } from "@angular/material/icon";
+import {  MatIconModule } from "@angular/material/icon";
 import { MatSnackBar } from '@angular/material/snack-bar';
 
 @Component({
@@ -40,7 +40,7 @@ import { MatSnackBar } from '@angular/material/snack-bar';
         <mat-label>Select Race</mat-label>
         <mat-select [formControl]="raceSelector">
           <mat-option [value]="'all'">All Races</mat-option>
-          @for (race of selectedRaces.selectedRaces(); track race.id) {
+          @for (race of currentRaces.selectedRaces(); track race.id) {
             <mat-option [value]="race.id">
               {{ race.seriesName }} - Race {{ race.raceOfDay }}
             </mat-option>
@@ -100,7 +100,7 @@ export class EntriesListPage {
   protected readonly competitorStore = inject(RaceCompetitorStore);
   private readonly clubService = inject(ClubService);
   private readonly raceCalendarStore = inject(RaceCalendarStore);
-  protected selectedRaces = inject(SelectedRaces);
+  protected currentRaces = inject(CurrentRaces);
   protected ds = inject(DialogsService);
   protected snackbar = inject(MatSnackBar);
 

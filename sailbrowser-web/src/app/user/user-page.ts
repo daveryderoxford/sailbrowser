@@ -32,8 +32,6 @@ export class UserPage {
   userForm = new FormGroup({
     firstname: new FormControl('', { validators: [Validators.required] }),
     surname: new FormControl('', { validators: [Validators.required] }),
-    club: new FormControl('', { validators: [Validators.minLength(2), Validators.maxLength(10)] }),
-    nationality: new FormControl('', { validators: [Validators.required] }),
   });
 
   busy = signal(false);

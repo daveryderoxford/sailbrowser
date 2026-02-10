@@ -7,6 +7,7 @@ export const APP_ROUTES: Routes = [
    { path: "entry", loadChildren: () => import('./entry/entries.routes').then(r => r.ENTERIES_ROUTES) },
    { path: "boats", loadChildren: () => import('./boats/boats.routes').then(r => r.BOATS_ROUTES) },
    { path: "race-calender", loadChildren: () => import('./race-calender/race-calender.routes').then(r => r.RACE_CALENDER_ROUTES) },
+   { path: "race-results", loadChildren: () => import('./results/race-results.routes').then(r => r.RACE_RESULTS_ROUTES) },
    { path: "sys-admin", loadChildren: () => import('./sys-admin/sys-admin.routes').then(r => r.SYS_ADMIN_ROUTES) },
    { path: "auth", loadChildren: () => import('./auth/auth.routes').then(r => r.AUTH_ROUTES) },
    { path: "user", loadChildren: () => import('./user/user.routes').then(r => r.USER_ROUTES) },
