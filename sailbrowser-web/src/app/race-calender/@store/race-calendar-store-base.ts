@@ -55,6 +55,10 @@ export class RaceCalendarStoreBase {
     await addDoc(this.racesCollection(race.seriesId),race);
   }
 
+  async updateRace(seriesId: string, raceId: string, data: Partial<Race>): Promise<void> {
+    await setDoc(this.raceRef(seriesId, raceId), data, { merge: true });
+  }
+
   async deleteRace(seriesId: string, race: Race): Promise<void> {
     await deleteDoc(this.raceRef(seriesId, race.id));
   }

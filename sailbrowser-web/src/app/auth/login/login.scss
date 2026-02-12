@@ -1,6 +1,20 @@
-
 .horizontal_rule {
-  border-bottom:1px solid rgb(209, 209, 209);
-  width:100%;
-  text-align:center;
+  border-bottom: 1px solid rgb(209, 209, 209);
+  width: 100%;
+  text-align: center;
+}
+
+.error-banner {
+  background-color: var(--mat-sys-error);
+  color: var(--mat-sys-on-error);
+  padding: 5px;
+  border-radius: 8px;
+  font-size: 14px;
+  margin-bottom: 10px;
+  text-align: center;
+}
+
+mat-spinner {
+  display: inline-block;
+  vertical-align: middle;
 }

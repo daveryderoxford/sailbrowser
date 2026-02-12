@@ -9,7 +9,6 @@ import { MatInputModule } from '@angular/material/input';
 import { MatListModule } from '@angular/material/list';
 import { MatStepperModule } from '@angular/material/stepper';
 import { debounceTime, map, startWith } from 'rxjs';
-import { RaceCalendarStore } from '../race-calender/@store/full-race-calander';
 import { Race } from '../race-calender/@store/race';
 import { EntryService } from './@store/entry.service';
 import { Toolbar } from "app/shared/components/toolbar";
@@ -18,6 +17,7 @@ import { MatSelectModule } from '@angular/material/select';
 import { CurrentRaces } from 'app/race/@store/current-races-store';
 import { Router } from '@angular/router';
 import { BoatsStore, boatFilter } from 'app/boats/@store/boats.store';
+import { MatSnackBar } from '@angular/material/snack-bar';
 
 @Component({
   selector: 'app-entry',
@@ -169,12 +169,12 @@ import { BoatsStore, boatFilter } from 'app/boats/@store/boats.store';
 })
 export class EntryPage {
   private readonly formBuilder = inject(FormBuilder);
-  private readonly raceStore = inject(RaceCalendarStore);
   private readonly _entryService = inject(EntryService);
   private readonly bs = inject(BoatsStore);
   protected readonly cs = inject(ClubService);
   protected readonly currentRacesStore = inject(CurrentRaces);
   private readonly router = inject(Router);
+  private readonly snackbar = inject(MatSnackBar);
 
   selectedBoat = signal<any>(null);
   isNewBoat = signal(false);
@@ -266,19 +266,29 @@ export class EntryPage {
     const races = this.raceSelectionGroup.value.enteredRaces as Race[];
     const details = this.competitorDetailsGroup.getRawValue();
 
-    await this._entryService.enterRaces({
+    const entryData = {
       races,
       boatClass: details.boatClass!,
       sailNumber: details.sailNumber!,
       helm: details.helm!,
       crew: details.crew || undefined,
       handicap: details.handicap || undefined,
-    });
+    };
 
+    if (this._entryService.isDuplicateEntry(entryData)) {
+      this.snackbar.open("Duplicate entry for race", "Dismiss", { duration: 3000 });
+      return;
+    }
+
+    await this._entryService.enterRaces(entryData);
+
+    this.raceSelectionGroup.reset();
+    this.competitorDetailsGroup.reset();
+    this.selectedBoat.set(null);
     this.router.navigate(['entry', 'entries']);
   }
 
   public canDeactivate(): boolean {
-    return !this.raceSelectionGroup.dirty && !this.raceSelectionGroup.dirty;
+    return !this.raceSelectionGroup.dirty && !this.competitorDetailsGroup.dirty;
   }
 }

@@ -22,7 +22,7 @@ export class CurrentRaces {
         .filter(race => new Date(race.scheduledStart).toDateString() === todayStr)
         .map(race => race.id);
       this.selectedRaceIds.set(todaysRaceIds);
-    }, { allowSignalWrites: true });
+    });
   }
 
   addRaceId = (raceId: string) => this.selectedRaceIds.update(races => [...races, raceId]);

@@ -10,12 +10,12 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
-import { MatSnackBar } from '@angular/material/snack-bar';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { Router, RouterLink } from '@angular/router';
-import { FlexModule } from '@ngbracket/ngx-layout/flex';
 import { Toolbar } from 'app/shared/components/toolbar';
 import { DialogsService } from 'app/shared/dialogs/dialogs.service';
 import { getFirebaseErrorMessage } from '../firebase-error-messages';
+import { FlexModule } from '@ngbracket/ngx-layout/flex';
 
 export type AuthType = "EmailAndPassword" | "Google" | "Facebook";
 
@@ -29,16 +29,15 @@ const isInStandaloneMode = () =>
 
 @Component({
    selector: 'app-login',
-   templateUrl: './login.html',
-   styleUrls: ['./login.scss'],
-   imports: [MatCardModule, Toolbar, FlexModule, ReactiveFormsModule, MatFormFieldModule, MatInputModule, MatButtonModule, RouterLink],
+   templateUrl: 'login.html',
+   styleUrls: ['login.scss'],
+   imports: [MatCardModule, Toolbar, FlexModule,  ReactiveFormsModule, MatFormFieldModule, MatInputModule, MatButtonModule, RouterLink, MatProgressSpinnerModule],
    changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class LoginComponent {
    private router = inject(Router);
    private formBuilder = inject(NonNullableFormBuilder);
    private afAuth = inject(Auth);
-   private snackBar = inject(MatSnackBar);
    private dialogs = inject(DialogsService);
 
    loginForm = this.formBuilder.group({
@@ -46,9 +45,19 @@ export class LoginComponent {
       password: ['', Validators.required]
    });
 
-   loading = signal(false);
+   protected loading = signal(false);
+
+   protected errorMessage = signal('');
 
    returnUrl = input(''); //Route parameter
+
+   constructor() {
+      getRedirectResult(this.afAuth).then((result) => {
+         if (result) {
+            this._handleSignInSuccess();
+         }
+      }).catch((err) => this._handleSigninError(err));
+   }
 
    async loginFormSubmit() {
       if (this.loginForm.valid) {
@@ -57,6 +66,7 @@ export class LoginComponent {
    }
 
    async signInWith(provider: AuthType, credentials?: { email: string, password: string; }) {
+      this.errorMessage.set('');
 
       try {
          this.loading.set(true);
@@ -77,7 +87,11 @@ export class LoginComponent {
                userDetails = await this._thirdPartySignIn(facebookAuthProvider);
                break;
          }
-         this._handleSignInSuccess();
+
+         // Note in the case of sign with redirect the user detils 
+         if (userDetails) {
+            this._handleSignInSuccess();
+         }
       } catch (err) {
          this._handleSigninError(err);
       } finally {
@@ -90,13 +104,11 @@ export class LoginComponent {
     * TODO Review which method is better for mobile devices where popups are not handled as well
    */
    private async _thirdPartySignIn(provider: GoogleAuthProvider | FacebookAuthProvider): Promise<UserCredential | null> {
-      if (isInStandaloneMode()) {
+      // Use redirect for mobile devices and PWA standalone mode to avoid popup blockers
+      const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+      if (isInStandaloneMode() || isMobile) {
          await signInWithRedirect(this.afAuth, provider);
-         const result = await getRedirectResult(this.afAuth);
-         if (result === null || result.user === null) {
-            return null;
-         }
-         return result;
+         return null;
       } else {
          return await signInWithPopup(this.afAuth, provider);
       }
@@ -123,7 +135,7 @@ export class LoginComponent {
       } else {
          console.log('LoginComponent: unexpected error');
       }
-      this.snackBar.open(errorMessage, 'Close', { duration: 5000 });
+      this.errorMessage.set(errorMessage);
    }
 
    private _handleSignInSuccess() {

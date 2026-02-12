@@ -2,14 +2,14 @@
 * Results Management
 * Operations on the 'results' subcollection of a specific race.
 */
-import { inject, Injectable, Injector } from '@angular/core';
+import { inject, Injectable } from '@angular/core';
+import { rxResource } from '@angular/core/rxjs-interop';
 import { FirebaseApp } from '@angular/fire/app';
 import { addDoc, collectionData, collectionGroup, deleteDoc, doc, getFirestore, query, updateDoc, where } from '@angular/fire/firestore';
-import { map, of, switchMap, tap } from 'rxjs';
 import { mappedCollectionRef, mappedConverter, mappedDoc } from 'app/shared/firebase/firestore-helper';
-import { RaceCompetitor } from './race-competitor';
-import { rxResource, toObservable } from '@angular/core/rxjs-interop';
+import { map, of, tap } from 'rxjs';
 import { CurrentRaces } from './current-races-store';
+import { RaceCompetitor } from './race-competitor';
 
 export interface ResultsPathData {
   raceId: string;

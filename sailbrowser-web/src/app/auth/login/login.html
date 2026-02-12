@@ -1,5 +1,4 @@
-
-<app-toolbar title="Login"/>
+<app-toolbar title="Login" />
 
 <div fxLayout="column" fxLayoutAlign="start center" fxFlexFill>
 
@@ -12,6 +11,12 @@
             <div fxLayout="column" fxLayoutAlign="space-around center" fxLayoutGap=10px>
 
                <form [formGroup]="loginForm" (ngSubmit)="loginFormSubmit()">
+
+                  @if (errorMessage()) {
+                  <div class="error-banner">
+                     {{ errorMessage() }}
+                  </div>
+                  }
 
                   <div fxLayout="column" fxFlexFill fxLayoutAlign="center" fxLayoutGap=10px>
 
@@ -28,7 +33,13 @@
                      </mat-form-field>
 
                      <div fxLayout="row" fxLayoutAlign="center">
-                        <button mat-flat-button type="submit" [disabled]="loading()" aria-label="login">Sign In</button>
+                        <button mat-flat-button type="submit" [disabled]="loading()" aria-label="login">
+                           @if (loading()) {
+                              <mat-spinner diameter="24" color="accent"></mat-spinner>
+                           } @else {
+                              Login
+                           }
+                        </button>
                      </div>
 
                      <div fxLayout="row" fxLayoutAlign="space-between">
@@ -41,12 +52,13 @@
                </form>
             </div>
 
-         <div class="horizontal_rule"></div>
+            <div class="horizontal_rule"></div>
 
             <span class="mat-title-medium">OR LOGIN USING</span>
 
-            <button mat-flat-button (click)="signInWith('Google')" [disabled]="loading()" fxFlexAlign="stretch">GOOGLE</button>
-            <button mat-flat-button  (click)="signInWith('Facebook')" [disabled]="loading()"
+            <button mat-flat-button (click)="signInWith('Google')" [disabled]="loading()"
+               fxFlexAlign="stretch">GOOGLE</button>
+            <button mat-flat-button (click)="signInWith('Facebook')" [disabled]="loading()"
                fxFlexAlign="stretch">FACEBOOK</button>
 
          </div>

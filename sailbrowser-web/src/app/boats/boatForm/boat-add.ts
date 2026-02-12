@@ -4,6 +4,7 @@ import { Router } from '@angular/router';
 import { BoatForm } from './boat-form';
 import { Toolbar } from 'app/shared/components/toolbar';
 import { BoatsStore } from '../@store/boats.store';
+import { DuplicateBoatCheck } from '../duplicate-boat-check/duplicate-check-service';
 
 @Component({
   selector: 'app-boat-add',
@@ -19,18 +20,27 @@ export class BoatAdd {
   private bs = inject(BoatsStore);
   private router = inject(Router);
   private snackbar = inject(MatSnackBar);
+  private dupCheck = inject(DuplicateBoatCheck);
 
   readonly form = viewChild.required(BoatForm);
 
   async submitted(boat: Partial<Boat>) {
     try {
-      await this.bs.add(boat);
-      this.router.navigate(["/boats"]);
+
+      const save = await this.dupCheck.duplicateCheck(boat);
+
+      if (save) {
+        await this.bs.add(boat);
+        this.router.navigate(["/boats"]);
+      }
     } catch (error: any) {
       this.snackbar.open("Error encountered adding Boat", "Error encountered adding Boat", { duration: 3000 });
       console.log('AddBoat.  Error adding Boat: ' + error.toString());
     }
+
   }
+
+
 
   canDeactivate(): boolean {
     return this.form().canDeactivate();
