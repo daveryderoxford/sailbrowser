@@ -25,10 +25,10 @@ interface ProcessedCompetitor extends RaceCompetitor {
         <td mat-cell *matCellDef="let element"> {{element.sailNumber}} </td>
       </ng-container>
 
-          <ng-container matColumnDef="helm">
-            <th mat-header-cell *matHeaderCellDef> Helm </th>
-            <td mat-cell *matCellDef="let element"> {{element.helm}} </td>
-          </ng-container>
+      <ng-container matColumnDef="helm">
+        <th mat-header-cell *matHeaderCellDef> Helm </th>
+        <td mat-cell *matCellDef="let element"> {{element.helm}} </td>
+      </ng-container>
 
       <ng-container matColumnDef="finishTime">
         <th mat-header-cell *matHeaderCellDef> Finish Time </th>
@@ -84,6 +84,8 @@ export class ManualResultsTable {
   competitors = input.required<RaceCompetitor[]>();
   rowClicked = output<RaceCompetitor>();
 
+  protected displayedColumns = ['boatClass', 'sailNumber', 'helm', 'finishTime', 'laps', 'elapsedTime', 'avgLapTime'];
+
   processedCompetitors = computed<ProcessedCompetitor[]>(() => {
     const processed = this.competitors().map(c => {
       const competitor: ProcessedCompetitor = { ...c };
@@ -114,7 +116,6 @@ export class ManualResultsTable {
     });
   });
 
-  readonly displayedColumns = ['helm', 'boatClass', 'sailNumber', 'finishTime', 'laps', 'elapsedTime', 'avgLapTime'];
 
   onRowClick(row: RaceCompetitor) {
     this.rowClicked.emit(row);

@@ -56,6 +56,11 @@
           </mat-option>
           }
         </mat-autocomplete>
+        @if(searchControl.value) {
+          <button mat-icon-button matSuffix (click)="searchControl.setValue('')" aria-label="Clear search">
+            <mat-icon>close</mat-icon>
+          </button>
+        }
       </mat-form-field>
 
       <mat-form-field appearance="outline">

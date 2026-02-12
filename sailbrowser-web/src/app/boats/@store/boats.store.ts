@@ -66,5 +66,3 @@ export function boatFilter(boat: Boat, search: string | null): boolean {
     boat.boatClass.toLowerCase().includes(filter) ||
     boat.isClub && 'club'.includes(filter);
 }
-
-

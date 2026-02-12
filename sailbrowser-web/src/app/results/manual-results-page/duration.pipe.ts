@@ -2,7 +2,7 @@ import { Pipe, PipeTransform } from '@angular/core';
 
 @Pipe({
   name: 'duration',
-  standalone: true,
+  pure: true,
 })
 export class DurationPipe implements PipeTransform {
   transform(milliseconds: number | null | undefined): string | null {

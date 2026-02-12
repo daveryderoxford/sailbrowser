@@ -18,6 +18,8 @@ import { CurrentRaces } from 'app/race/@store/current-races-store';
 import { Router } from '@angular/router';
 import { BoatsStore, boatFilter } from 'app/boats/@store/boats.store';
 import { MatSnackBar } from '@angular/material/snack-bar';
+import { MatCheckboxModule } from '@angular/material/checkbox';
+import { MatIcon } from "@angular/material/icon";
 
 @Component({
   selector: 'app-entry',
@@ -31,8 +33,10 @@ import { MatSnackBar } from '@angular/material/snack-bar';
     DatePipe,
     MatAutocompleteModule,
     Toolbar,
-    MatSelectModule
-  ],
+    MatSelectModule,
+    MatCheckboxModule,
+    MatIcon
+],
   template: `
     <app-toolbar title="Enter"></app-toolbar>
     <mat-stepper class="content" orientation="horizontal" [linear]="true" #stepper>
@@ -79,6 +83,11 @@ import { MatSnackBar } from '@angular/material/snack-bar';
                   </mat-option>
                 }
               </mat-autocomplete>
+              @if(boatSearchControl.value) {
+                <button mat-icon-button matSuffix (click)="boatSearchControl.setValue('')" aria-label="Clear search">
+                  <mat-icon>close</mat-icon>
+                </button>
+              }
             </mat-form-field>
             <button matButton="tonal" type="button" class="dense-button" (click)="createNewBoat()">New Boat</button>
           </div>
@@ -114,6 +123,10 @@ import { MatSnackBar } from '@angular/material/snack-bar';
             <mat-label>Handicap</mat-label>
             <input matInput type="number" formControlName="handicap" placeholder="Handicap (Optional)">
           </mat-form-field>
+
+          @if (isNewBoat()) {
+            <mat-checkbox formControlName="saveBoat" class="save-boat-cb">Save boat details for next time</mat-checkbox>
+          }
           } @else {
             <div class="placeholder"><p>
               <b>Search for boat</b> <br>Enter class, helm or sail number to search
@@ -163,6 +176,10 @@ import { MatSnackBar } from '@angular/material/snack-bar';
       padding: 15px;
       text-align: center;
       font: var(--mat-sys-body-large);
+    }
+    .save-boat-cb {
+      display: block;
+      margin-bottom: 15px;
     }
   `],
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -238,6 +255,7 @@ export class EntryPage {
     helm: ['', Validators.required],
     crew: [''],
     handicap: [null as number | null],
+    saveBoat: [false],
   });
 
   displayBoatFn(boat: any): string {
@@ -265,6 +283,18 @@ export class EntryPage {
 
     const races = this.raceSelectionGroup.value.enteredRaces as Race[];
     const details = this.competitorDetailsGroup.getRawValue();
+
+    if (this.isNewBoat() && details.saveBoat) {
+      const newBoat = {
+        boatClass: details.boatClass!,
+        sailNumber: details.sailNumber!,
+        helm: details.helm!,
+        crew: details.crew || '',
+        name: details.helm!,
+        isClub: false,
+      };
+      await this.bs.add(newBoat);
+    }
 
     const entryData = {
       races,
