@@ -6,6 +6,9 @@
     }
   </mat-sidenav>
 
-  <mat-sidenav-content class="clipped-container">
-    <router-outlet />
-  </mat-sidenav-content>
+<mat-sidenav-content class="clipped-container">
+  @if (isLazyLoading()) {
+    <mat-progress-bar  mode="indeterminate" class="route-loader"/>
+  }
+  <router-outlet />
+</mat-sidenav-content>
