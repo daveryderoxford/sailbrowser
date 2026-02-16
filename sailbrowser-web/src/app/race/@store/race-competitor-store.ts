@@ -58,18 +58,35 @@ export class RaceCompetitorStore {
     defaultValue: []
   });
 
+  /** Time string fields if they exist on the update object */
+  private tidyString(comp: Partial<RaceCompetitor>): Partial<RaceCompetitor> {
+    const update = { ...comp };
+    if (update.helm) {
+      update.helm = update.helm.trim();
+    }
+    if (update.crew) {
+      update.crew = update.crew.trim();
+    }
+    if (update.boatClass) {
+      update.boatClass = update.boatClass.trim();
+    }
+    return update;
+  }
+
   readonly selectedCompetitors = this.selectedCompResource.value.asReadonly();
   readonly loading = this.selectedCompResource.isLoading;
   readonly error = this.selectedCompResource.error;
 
   async addResult(pd: { seriesId: string, raceId: string; }, result: Partial<RaceCompetitor>): Promise<string> {
-    const ref = await addDoc(this.collection(pd), result);
+    const update = this.tidyString(result);
+    const ref = await addDoc(this.collection(pd), update);
     return ref.id;
   }
 
   async updateResult(pd: ResultsPathData, changes: Partial<RaceCompetitor>) {
     const path = `series/${pd.seriesId}/races/${pd.raceId}/results/${pd.id}`;
-    await updateDoc(doc(this.firestore, path), changes);
+    const update = this.tidyString(changes);
+    await updateDoc(doc(this.firestore, path), update);
   }
 
   async deleteResult(pd: ResultsPathData) {

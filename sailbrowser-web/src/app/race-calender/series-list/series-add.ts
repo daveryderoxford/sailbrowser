@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, inject, viewChild } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject, signal, viewChild } from '@angular/core';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { Router } from '@angular/router';
 import { Toolbar } from 'app/shared/components/toolbar';
@@ -21,13 +21,18 @@ export class SeriesAdd {
   private snackbar = inject(MatSnackBar);
   readonly form = viewChild.required(SeriesForm);
 
+  busy = signal(false);
+
   async submitted(series: Partial<Series>) {
     try {
+      this.busy.set(true);
       await this.rcs.addSeries(series);
-      this.router.navigate(['/race-calender']);
     } catch (error: any) {
       this.snackbar.open('Error adding Series', 'Close', { duration: 3000 });
+    } finally  {
+      this.busy.set(false);
     }
+    this.router.navigate(['/race-calender']);
   }
 
   canDeactivate = () => this.form().canDeactivate();

@@ -1,9 +1,9 @@
 @if (rc.isLoading()) {
-<app-loading-centered />
+   <app-loading-centered />
 } @else if (rc.error()) {
-<app-loading-centered message="Error encountered" />
+   <app-loading-centered message="Error encountered" />
 } @else if (!series()) {
-Series not found
+   Series not found
 } @else {
 @let s = series();
 
@@ -50,36 +50,18 @@ Series not found
 
    <!-- Races List -->
    @if (this.rc.racesLoading()) {
-   <app-loading-centered />
+      <app-loading-centered />
    }
    @if (this.races().length === 0) {
-   <span>`Add races to the series"</span>
+      <span>`Add races to the series"</span>
    } @else {
    <mat-list>
       @for (race of races(); track race.id;) {
       <mat-list-item>
-         <span matListItemTitle>
-            Race {{race.index}}
-            <span class="gap"></span>
-            {{ race.scheduledStart | date:'MMM d, y'}}
-         </span>
-         <span>{{ race.status }}</span>
-         <span class="gap"></span>
-         @if (race.type !== 'Conventional') {
-         <span> {{ race.type }} </span>
-         <span class="gap"></span>
-         }
-
-         @if (race.isAverageLap) {
-         <span>Average lap</span>
-         }
-         <span matListItemMeta>
-            <button matIconButton (click)="deleteRace(race)">
-               <mat-icon>edit</mat-icon>
-            </button>
-         </span>
-
-      </mat-list-item>
+         <app-race-list-item 
+           [race]="race" 
+           (edit)="editRace(race)"
+           (delete)="deleteRace(race)"/>
       }
 
    </mat-list>

@@ -1,5 +1,5 @@
 
-import { ChangeDetectionStrategy, Component, effect, inject, input, output } from '@angular/core';
+import { ChangeDetectionStrategy, Component, effect, inject, input, output, signal } from '@angular/core';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCheckboxModule } from '@angular/material/checkbox';
@@ -7,13 +7,16 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
 import { ClubService } from 'app/club/@store/club.service';
+import { SubmitButton } from 'app/shared/components/submit-button';
+import { DeleteButton } from 'app/shared/components/delete-button';
 
 @Component({
   selector: 'app-boat-form',
   templateUrl: './boat-form.html',
   styleUrl: 'boat-form.scss',
+  standalone: true,
   imports: [ReactiveFormsModule, MatFormFieldModule, MatInputModule,
-    MatSelectModule, MatButtonModule, MatCheckboxModule],
+    MatSelectModule, MatButtonModule, MatCheckboxModule, SubmitButton, DeleteButton],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class BoatForm {
@@ -21,6 +24,7 @@ export class BoatForm {
   cs = inject(ClubService);
 
   boat = input<Boat | undefined>();
+  busy = input<boolean>(false);
   submitted = output<Partial<Boat>>();
   deleted = output<Boat>();
 

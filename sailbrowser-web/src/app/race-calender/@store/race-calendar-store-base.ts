@@ -1,6 +1,6 @@
 import { inject, Injectable } from '@angular/core';
 import { FirebaseApp } from '@angular/fire/app';
-import { addDoc, deleteDoc, getDocs, getFirestore, setDoc, writeBatch } from '@angular/fire/firestore';
+import { addDoc, deleteDoc, getDocs, getFirestore, setDoc, writeBatch, doc } from '@angular/fire/firestore';
 import { mappedCollectionRef, mappedDoc } from '../../shared/firebase/firestore-helper';
 import { Race } from './race';
 import { Series } from './series';
@@ -44,8 +44,8 @@ export class RaceCalendarStoreBase {
     await batch.commit();
   }
 
-  private raceRef = (seriesId: string, id: string) => mappedDoc<Race>(this.firestore, `/series/${seriesId}/races`, id);
-  private racesCollection = (seriesId: string) => mappedCollectionRef<Race>(this.firestore, `/series/${seriesId}/races`);
+  protected raceRef = (seriesId: string, id: string) => mappedDoc<Race>(this.firestore, `/series/${seriesId}/races`, id);
+  protected racesCollection = (seriesId: string) => mappedCollectionRef<Race>(this.firestore, `/series/${seriesId}/races`);
 
   async addRace(seriesDetails: RaceSeriesDetails, race: Partial<Race>): Promise<void> {
     race.seriesId = seriesDetails.id;

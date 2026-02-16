@@ -3,6 +3,7 @@ import { HandicapScheme } from 'app/race/@store/handicap-scheme';
 import { RaceCompetitor } from 'app/race/@store/race-competitor';
 import { ResultCode } from 'app/race/@store/result-code';
 import { Race } from 'app/race-calender/@store/race';
+import { differenceInSeconds } from 'date-fns';
 
 @Injectable({
   providedIn: 'root',
@@ -82,7 +83,8 @@ export class RaceScorer {
     const compStartTime = comp.startTime || startTime;
 
     if (finishTime && compStartTime) {
-      const diff = (finishTime.getTime() - compStartTime.getTime()) / 1000.0; // Seconds
+      
+      const diff = differenceInSeconds(finishTime.getTime(), compStartTime.getTime());
 
       if (diff < 0) {
         return { corrected: 0, elapsed: 0, error: 'Start time before finish time' };

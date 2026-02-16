@@ -21,12 +21,17 @@ export class EntryService {
   private clubService = inject(ClubService);
   private raceResultsService = inject(RaceCompetitorStore);
 
-  /** Enter a race */
-  async enterRaces(details: EntryDetails): Promise<boolean> {
+  /** Enter a race 
+   * throws a *** exception if the entry is a duplicate. 
+   * @
+  */
+  async enterRaces(details: EntryDetails): Promise<void> {
     let handicap = details.handicap;
 
+    console.log("Calling enter races");
+
     if (this.isDuplicateEntry(details)) {
-      return false;
+      throw new Error("Duplicate entry");
     }
 
     // Populate handicap based on the classes handicap if not provided
@@ -47,6 +52,9 @@ export class EntryService {
         resultCode: ResultCode.NotFinished
       };
 
+      console.log("Adding competiotot");
+
+
       return this.raceResultsService.addResult({
         seriesId: race.seriesId,
         raceId: race.id,
@@ -54,8 +62,6 @@ export class EntryService {
     });
 
     await Promise.all(promises);
-
-    return true;
   }
 
   /** 

@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, computed, inject, input, viewChild } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, inject, input, signal, viewChild } from '@angular/core';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { Router } from '@angular/router';
 import { DialogsService } from 'app/shared';
@@ -26,14 +26,22 @@ export class SeriesEdit {
 
   id = input.required<string>();
 
+  busy = signal(false);
+
   series = this.rcs.getSeries(this.id);
   readonly form = viewChild(SeriesForm);
 
   async submitted(data: Partial<Series>) {
     try {
+      this.busy.set(true);
       await this.rcs.updateSeries(this.id(), data);
-      this.router.navigate(['race-calender/series-details', this.id() ]);
-    } catch (e) { this.snackbar.open('Error updating Series', 'Close', { duration: 3000 }); }
+    } catch (e) { 
+      this.snackbar.open('Error updating Series', 'Dismiss', { duration: 3000 }); 
+    } finally {
+      this.busy.set(false);
+    }
+    this.router.navigate(['race-calender/series-details', this.id()]);
+
   }
 
   canDeactivate = () => this.form()?.canDeactivate() ?? true;

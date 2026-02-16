@@ -1,9 +1,15 @@
 import { ResultCode } from './result-code';
 
+export const RESULTS_UNSET_VALUE = 9999;
+
 export interface ResultData {
-  elapsedTime: number; // milliseconds
-  correctedTime: number; // milliseconds
+  /** Ellapsed time in seconds */
+  elapsedTime: number;
+  /** Corrected time in seconds */
+  correctedTime: number; 
+  /** Position if two competitors */
   position: number;
+  /** Points alloccated  */
   points: number;
   isDiscarded: boolean;
   isDiscardable: boolean;

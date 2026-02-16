@@ -35,10 +35,15 @@
   <mat-checkbox formControlName="isClub">Club boat</mat-checkbox>
 
   <div fxLayout="row" fxLayoutAlign="space-between center">
-    <button [disabled]="form.invalid || !form.dirty" mat-flat-button type="submit" aria-label="submit">Save</button>
+
+    <app-submit-button [disabled]="form.invalid || !form.dirty" [busy]="busy()">
+      Save
+    </app-submit-button>
+    
     @if (boat()) {
-    <button mat-flat-button class='warning' type="button" (click)="deleted.emit(boat()!)"
-      aria-label="delete">Delete</button>
+    <app-delete-button (click)="deleted.emit(boat()!)" [busy]="busy()">
+      Delete
+    </app-delete-button>
     }
   </div>
 

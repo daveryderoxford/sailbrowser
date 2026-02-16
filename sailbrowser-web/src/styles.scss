@@ -52,3 +52,11 @@ body {
 .dense-button {
   @include mat.button-density(-1);
 }
+
+.green {
+  color: rgb(9, 208, 9);
+}
+
+.warning {
+  color: var(--mat-sys-error);
+}

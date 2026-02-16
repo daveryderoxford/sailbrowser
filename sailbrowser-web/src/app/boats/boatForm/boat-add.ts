@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, inject, viewChild } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject, signal, viewChild } from '@angular/core';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { Router } from '@angular/router';
 import { BoatForm } from './boat-form';
@@ -12,7 +12,7 @@ import { DuplicateBoatCheck } from '../duplicate-boat-check/duplicate-check-serv
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
    <app-toolbar title="Add Boat" showBack/>
-    <app-boat-form (submitted)="submitted($event)"></app-boat-form>
+    <app-boat-form (submitted)="submitted($event)" [busy]="busy()"/>
   `,
   styles: [],
 })
@@ -22,10 +22,13 @@ export class BoatAdd {
   private snackbar = inject(MatSnackBar);
   private dupCheck = inject(DuplicateBoatCheck);
 
+  busy = signal(false);
+
   readonly form = viewChild.required(BoatForm);
 
   async submitted(boat: Partial<Boat>) {
     try {
+      this.busy.set(true);
 
       const save = await this.dupCheck.duplicateCheck(boat);
 
@@ -34,9 +37,12 @@ export class BoatAdd {
         this.router.navigate(["/boats"]);
       }
     } catch (error: any) {
-      this.snackbar.open("Error encountered adding Boat", "Error encountered adding Boat", { duration: 3000 });
+      this.snackbar.open("Error encountered adding Boat", "Dismiss", { duration: 3000 });
       console.log('AddBoat.  Error adding Boat: ' + error.toString());
+    } finally {
+      this.busy.set(false);
     }
+  
 
   }
 

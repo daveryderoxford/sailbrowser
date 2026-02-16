@@ -9,11 +9,12 @@ import { MatSelectModule } from '@angular/material/select';
 import { ClubService } from 'app/club/@store/club.service';
 import { Series } from '../@store/series';
 import { provideNativeDateAdapter } from '@angular/material/core';
+import { SubmitButton } from "app/shared/components/submit-button";
 
 @Component({
   selector: 'app-series-form',
   imports: [ReactiveFormsModule, MatFormFieldModule, MatInputModule, MatSelectModule,
-    MatButtonModule, MatCheckboxModule, MatDatepickerModule],
+    MatButtonModule, MatCheckboxModule, MatDatepickerModule, SubmitButton],
   providers: [provideNativeDateAdapter()],
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
@@ -55,9 +56,10 @@ import { provideNativeDateAdapter } from '@angular/material/core';
       </mat-form-field>
 
       <div class="actions">
-        <button [disabled]="form.invalid || !form.dirty" matButton="tonal" type="submit">
+
+        <app-submit-button [disabled]="form.invalid || !form.dirty" [busy]="busy()">
           Save
-        </button>
+        </app-submit-button>
       </div>
     </form>
   `,
@@ -71,6 +73,7 @@ export class SeriesForm {
   cs = inject(ClubService);
 
   series = input<Series | undefined>();
+  busy = input(false);
   submitted = output<Partial<Series>>();
 
   form = new FormGroup({

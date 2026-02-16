@@ -9,8 +9,8 @@ import { MatInputModule } from '@angular/material/input';
 import { MatListModule } from '@angular/material/list';
 import { MatStepperModule } from '@angular/material/stepper';
 import { debounceTime, map, startWith } from 'rxjs';
-import { Race } from '../race-calender/@store/race';
-import { EntryService } from './@store/entry.service';
+import { Race } from '../../race-calender/@store/race';
+import { EntryService } from '../@store/entry.service';
 import { Toolbar } from "app/shared/components/toolbar";
 import { ClubService } from 'app/club/@store/club.service';
 import { MatSelectModule } from '@angular/material/select';
@@ -20,6 +20,7 @@ import { BoatsStore, boatFilter } from 'app/boats/@store/boats.store';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatIcon } from "@angular/material/icon";
+import { BusyButton } from "app/shared/components/busy-button";
 
 @Component({
   selector: 'app-entry',
@@ -35,118 +36,10 @@ import { MatIcon } from "@angular/material/icon";
     Toolbar,
     MatSelectModule,
     MatCheckboxModule,
-    MatIcon
+    MatIcon,
+    BusyButton
 ],
-  template: `
-    <app-toolbar title="Enter"></app-toolbar>
-    <mat-stepper class="content" orientation="horizontal" [linear]="true" #stepper>
-      <mat-step [stepControl]="raceSelectionGroup">
-        <form [formGroup]="raceSelectionGroup">
-          <ng-template matStepLabel>Races</ng-template>
-
-          @if (todaysRaces().length > 0) {
-            <mat-selection-list formControlName="enteredRaces">
-              @for (race of todaysRaces(); track race.id) {
-                <mat-list-option [value]="race">
-                  <span matListItemTitle>{{ race.seriesName }} - Race {{ race.raceOfDay }}</span>
-                  <span matListItemLine>{{ race.scheduledStart | date:'shortTime' }}</span>
-                </mat-list-option>
-              }
-            </mat-selection-list>
-          } @else {
-            <p>No races found for today.</p>
-          }
-
-          <div class="actions">
-            <button matButton="tonal" matStepperNext [disabled]="raceSelectionGroup.invalid">Next</button>
-          </div>
-        </form>
-      </mat-step>
-
-      <mat-step [stepControl]="competitorDetailsGroup">
-        <form [formGroup]="competitorDetailsGroup">
-          <ng-template matStepLabel>Details</ng-template>
-
-          <div class="boat-selection">
-            <mat-form-field appearance="outline" class="search-field">
-              <mat-label>Search For Boat</mat-label>
-              <input matInput [formControl]="boatSearchControl" [matAutocomplete]="auto" placeholder="Class, Helm or Sail No">
-              <mat-autocomplete #auto="matAutocomplete" [displayWith]="displayBoatFn" (optionSelected)="onBoatSelected($event)">
-                @for (boat of filteredBoats(); track boat.id) {
-                  <mat-option [value]="boat">
-                    @if (boat.isClub) {
-                      Club {{ boat.boatClass }} {{ boat.sailNumber }}
-                    } @else {
-                      {{ boat.boatClass }}  {{ boat.sailNumber }} - ({{ boat.helm }})
-                    }
-    
-                  </mat-option>
-                }
-              </mat-autocomplete>
-              @if(boatSearchControl.value) {
-                <button mat-icon-button matSuffix (click)="boatSearchControl.setValue('')" aria-label="Clear search">
-                  <mat-icon>close</mat-icon>
-                </button>
-              }
-            </mat-form-field>
-            <button matButton="tonal" type="button" class="dense-button" (click)="createNewBoat()">New Boat</button>
-          </div>
-
-          @if (showForm()) {
-
-          <mat-form-field>
-            <mat-label>Helm Name</mat-label>
-            <input matInput formControlName="helm" placeholder="Helm Name">
-          </mat-form-field>
-
-          <mat-form-field>
-            <mat-label>Crew Name</mat-label>
-            <input matInput formControlName="crew" placeholder="Crew Name (Optional)">
-          </mat-form-field>
-     
-           <mat-form-field>
-            <mat-label>Class</mat-label>
-            <mat-select formControlName="boatClass">
-              @for (c of cs.club().classes; track c.name) {
-                <mat-option [value]="c.name">{{c.name}}</mat-option>
-              }
-            </mat-select>
-            <mat-error>Boat class required</mat-error>
-          </mat-form-field>
-
-          <mat-form-field>
-            <mat-label>Sail Number</mat-label>
-            <input matInput type="number" formControlName="sailNumber" placeholder="e.g. 12345">
-          </mat-form-field>
-
-          <mat-form-field>
-            <mat-label>Handicap</mat-label>
-            <input matInput type="number" formControlName="handicap" placeholder="Handicap (Optional)">
-          </mat-form-field>
-
-          @if (isNewBoat()) {
-            <mat-checkbox formControlName="saveBoat" class="save-boat-cb">Save boat details for next time</mat-checkbox>
-          }
-          } @else {
-            <div class="placeholder"><p>
-              <b>Search for boat</b> <br>Enter class, helm or sail number to search
-            </p>
-            <p>
-              press <b>New Boat</b><br>to enter new details
-            </p>
-          </div>
-          }
-
-          <div class="actions">
-            <button matButton="outlined" matStepperPrevious>Back</button>
-            @if (showForm()) {
-            <button matButton="filled" (click)="onSubmit()" [disabled]="competitorDetailsGroup.invalid">Enter</button>
-            }
-          </div>
-        </form>
-      </mat-step>
-    </mat-stepper>
-  `,
+  templateUrl: 'entry-page.html',
   styles: [`
     @use "mixins" as mix;
 
@@ -195,6 +88,8 @@ export class EntryPage {
 
   selectedBoat = signal<any>(null);
   isNewBoat = signal(false);
+
+  busy = signal(false);
 
   showForm = computed(() => !!this.selectedBoat() || this.isNewBoat());
 
@@ -279,21 +174,15 @@ export class EntryPage {
   }
 
   async onSubmit() {
+
+    console.log("OnoSubmit triggered");
     if (this.raceSelectionGroup.invalid || this.competitorDetailsGroup.invalid) return;
 
     const races = this.raceSelectionGroup.value.enteredRaces as Race[];
     const details = this.competitorDetailsGroup.getRawValue();
 
     if (this.isNewBoat() && details.saveBoat) {
-      const newBoat = {
-        boatClass: details.boatClass!,
-        sailNumber: details.sailNumber!,
-        helm: details.helm!,
-        crew: details.crew || '',
-        name: details.helm!,
-        isClub: false,
-      };
-      await this.bs.add(newBoat);
+      await this.saveNewBoat(details as Partial<Boat>)
     }
 
     const entryData = {
@@ -310,15 +199,45 @@ export class EntryPage {
       return;
     }
 
-    await this._entryService.enterRaces(entryData);
+    try {
+      this.busy.set(true);
+      await this._entryService.enterRaces(entryData);
+    } catch (error: any) {
+      this.snackbar.open("Error encountered adding entries", "Dismiss", { duration: 3000 });
+      console.log('EntryPage:  Error adding entris: ' + error.toString());
+    } finally {
+      this.busy.set(false);
+    }
 
     this.raceSelectionGroup.reset();
     this.competitorDetailsGroup.reset();
     this.selectedBoat.set(null);
+
     this.router.navigate(['entry', 'entries']);
   }
 
   public canDeactivate(): boolean {
     return !this.raceSelectionGroup.dirty && !this.competitorDetailsGroup.dirty;
+  }
+
+  async saveNewBoat(details: Partial<Boat>) {
+    const newBoat = {
+      boatClass: details.boatClass!,
+      sailNumber: details.sailNumber!,
+      helm: details.helm!,
+      crew: details.crew || '',
+      name: '',
+      isClub: false,
+    };
+
+    try {
+      this.busy.set(true);
+      await this.bs.add(newBoat);
+    } catch (error: any) {
+      this.snackbar.open("Error encountered adding new boat", "Dismiss", { duration: 3000 });
+      console.log('EntryPage.  Error adding new boat: ' + error.toString());
+    } finally {
+      this.busy.set(false);
+    }
   }
 }

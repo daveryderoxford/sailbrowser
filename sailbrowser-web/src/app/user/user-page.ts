@@ -16,12 +16,13 @@ import { UserDataService } from "app/user/user-data.service";
 import { Toolbar } from "../shared/components/toolbar";
 import { AuthService } from 'app/auth/auth.service';
 import { MatSnackBar } from '@angular/material/snack-bar';
+import { SubmitButton } from "app/shared/components/submit-button";
 
 @Component({
   selector: "app-user",
   templateUrl: "./user-page.html",
   styleUrls: ["./user-page.scss"],
-  imports: [Toolbar, FlexModule, ReactiveFormsModule, MatProgressBarModule, MatFormFieldModule, MatInputModule, MatSelectModule, MatOptionModule, MatButtonModule, MatIconModule, MatCheckboxModule]
+  imports: [Toolbar, FlexModule, ReactiveFormsModule, MatProgressBarModule, MatFormFieldModule, MatInputModule, MatSelectModule, MatOptionModule, MatButtonModule, MatIconModule, MatCheckboxModule, SubmitButton]
 })
 export class UserPage {
   private afAuth = inject(AuthService);

@@ -1,5 +1,5 @@
 
-import { ChangeDetectionStrategy, Component, inject, input } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject, input, signal } from '@angular/core';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatFormFieldModule } from '@angular/material/form-field';
@@ -70,6 +70,8 @@ export class SeriesCopy {
   series = this.rcs.getSeries(this.id);
   races = this.rcs.getSeriesRaces(this.id);
 
+  busy = signal(false);
+
   form = new FormGroup({
     name: new FormControl('', { validators: [Validators.required] }),
     fleetId: new FormControl('', { validators: [Validators.required] }),
@@ -77,24 +79,23 @@ export class SeriesCopy {
 
   async submit() {
     try {
+      this.busy.set(true);
 
       const newSeries: Series = {
         ...this.series()!, 
         name: this.form.value.name!, 
         fleetId: this.form.value.fleetId!, 
       }
+
       const newSeriesId = await this.rcs.addSeries(newSeries);
 
-      for (const race of this.races()) {
-
-        const seriesDetails = {
-          id: newSeriesId,
-          name: this.form.value.name!,
-          fleetId: this.form.value.fleetId!
+      const seriesDetails = {
+        id: newSeriesId,
+        name: this.form.value.name!,
+        fleetId: this.form.value.fleetId!
       };
 
-        this.rcs.addRace(seriesDetails, race);
-      }
+      this.rcs.addRaces(seriesDetails, this.races());
 
       this.form.reset();
 
@@ -102,6 +103,8 @@ export class SeriesCopy {
       this.router.navigate(['race-calender', this.id()]);
     } catch (error: any) {
       this.snackbar.open('Error adding Series', 'Close', { duration: 3000 });
+    } finally {
+      this.busy.set(false);
     }
   }
 

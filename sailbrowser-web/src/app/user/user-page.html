@@ -17,8 +17,9 @@
   </div>
 
   <div fxLayout="row" fxLayoutAlign="space-between center">
-    <button [disabled]="userForm.invalid || !userForm.dirty || busy()" mat-flat-button type="submit"
-      aria-label="Save user details">Save</button>
+
+    <app-submit-button [disabled]="userForm.invalid || !userForm.dirty" [busy]="busy()" 
+      aria-label="Save user details">Save</app-submit-button>
   </div>
 
 </form>

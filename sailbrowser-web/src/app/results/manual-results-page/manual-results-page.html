@@ -2,14 +2,14 @@
   <mat-form-field appearance="outline" class="race-selector dense-form-field" subscriptSizing="dynamic">
     <mat-select [formControl]="raceFilterControl" placeholder="Select Race">
       @for (race of currentRacesStore.selectedRaces(); track race.id) {
-      <mat-option [value]="race.id">{{ race.seriesName }} - {{race.scheduledStart | date: "dd/mm/yy"}} Race {{
+      <mat-option [value]="race">{{ race.seriesName }} - {{race.scheduledStart | date: "dd/mm/yy"}} Race {{
         race.raceOfDay }}</mat-option>
       }
     </mat-select>
   </mat-form-field>
 
-  @if (resultsRaceIds().length === 1) {
-    <button matButton="outlined" (click)="setStartTime()">Set Start Time</button>
+  @if (selectedRace()) {
+    <button matButton="outlined" (click)="setStartTime(selectedRace()!)">Set Start Time</button>
   }
 
 </app-toolbar>
@@ -17,7 +17,7 @@
 <div class="container">
   <div class="table-section">
     <app-manual-results-table [competitors]="sortedCompetitors()"
-      (rowClicked)="onRowClick($event)"></app-manual-results-table>
+      (rowClicked)="onRowClick($event)"/>
   </div>
 
   <div class="input-section mat-elevation-z2">
@@ -38,8 +38,8 @@
     @let stats = calculatedStats();
     <div class="stats-display" [class.suspicious]="stats?.isSuspicious">
       <div class="stat-row">
-        <span>Elapsed: <b>{{ stats ? (stats.elapsedSeconds * 1000 | date:'hh:mm:ss') : ''}}</b></span>
-        <span>Avg Lap: <b>{{ stats ? (stats.avgLapTime * 1000 | date:'hh:mm:ss') : ''}}</b></span>
+        <span>Elapsed: <b>{{ stats ? (stats.elapsedSeconds | duration) : ''}}</b></span>
+        <span>Avg Lap: <b>{{ stats ? (stats.avgLapTime | duration) : ''}}</b></span>
       </div>
     </div>
 

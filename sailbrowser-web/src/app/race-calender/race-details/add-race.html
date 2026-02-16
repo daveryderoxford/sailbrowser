@@ -1,0 +1,73 @@
+<app-toolbar title="Add Races"></app-toolbar>
+
+<mat-stepper class="content" orientation="horizontal" [linear]="true">
+
+  <!-- Race scheduling step  -->
+
+  <mat-step [stepControl]="schedForm">
+    <ng-template matStepLabel>Race schedule</ng-template>
+    <form [formGroup]="schedForm">
+
+      <mat-form-field>
+        <mat-label>First race date</mat-label>
+        <input matInput [matDatepicker]="startPicker" formControlName="scheduledStart">
+        <mat-datepicker-toggle matIconSuffix [for]="startPicker"></mat-datepicker-toggle>
+        <mat-datepicker #startPicker></mat-datepicker>
+      </mat-form-field>
+
+      <mat-form-field>
+        <mat-label>Races per day</mat-label>
+        <input matInput type="number" inputmode="numeric" pattern="[0-9]*" formControlName="racesPerDay">
+        <mat-error>Number of races required</mat-error>
+        <mat-hint>Number of races on each day</mat-hint>
+      </mat-form-field>
+
+      <mat-form-field>
+        <mat-label>Repeat on other days</mat-label>
+        <mat-select #rep formControlName="repeatInterval">
+          @for (c of intervals; track c.name) {
+            <mat-option [value]="c">{{c.name}}</mat-option>
+          }
+        </mat-select>
+      </mat-form-field>
+
+      @if (schedForm.value.repeatInterval?.increment) {
+        <mat-form-field>
+          <mat-label>Number of repeats</mat-label>
+          <input matInput type="number" inputmode="numeric" pattern="[0-9]*" formControlName="repeatNumber">
+          <mat-error>Number of repeats required</mat-error>
+          <mat-hint>Number of days to </mat-hint>
+        </mat-form-field>
+      }
+
+    </form>
+    <div class="actions">
+      <button matButton="filled" matStepperNext [disabled]="schedForm.invalid">Next</button>
+    </div>
+  </mat-step>
+
+  <!-- Race Details step -->
+  <mat-step [stepControl]="detailsForm">
+
+    <ng-template matStepLabel>Race Details</ng-template>
+    <form [formGroup]="detailsForm">
+      <mat-form-field>
+        <mat-label>Race type</mat-label>
+        <mat-select formControlName="type">
+          @for (type of raceTypes; track type) {
+            <mat-option [value]="type">{{type}}</mat-option>
+          }
+        </mat-select>
+        <mat-error>Type required</mat-error>
+      </mat-form-field>
+
+      <mat-checkbox formControlName="isDiscardable">Discardable</mat-checkbox>
+      <mat-checkbox formControlName="isAverageLap">Average lap</mat-checkbox>
+
+      <div class="actions">
+        <button matButton="outlined" matStepperPrevious>Back</button>
+        <button matButton="filled" (click)="onSave()">Save</button>
+      </div>
+    </form>
+  </mat-step>
+</mat-stepper>

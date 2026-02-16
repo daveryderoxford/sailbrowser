@@ -4,16 +4,11 @@ import { MatTableModule } from '@angular/material/table';
 import { RaceCompetitor } from 'app/race/@store/race-competitor';
 import { DurationPipe } from './duration.pipe';
 
-interface ProcessedCompetitor extends RaceCompetitor {
-  elapsedTime?: number;
-  avgLapTime?: number;
-}
-
 @Component({
   selector: 'app-manual-results-table',
   imports: [MatTableModule, DatePipe, DurationPipe],
   template: `
-    <table mat-table [dataSource]="processedCompetitors()" class="mat-elevation-z0">
+    <table mat-table [dataSource]="competitors()" class="mat-elevation-z0">
       
       <ng-container matColumnDef="boatClass">
         <th mat-header-cell *matHeaderCellDef> Class </th>
@@ -35,19 +30,18 @@ interface ProcessedCompetitor extends RaceCompetitor {
         <td mat-cell *matCellDef="let element"> {{element.manualFinishTime | date:'HH:mm:ss'}} </td>
       </ng-container>
 
-      <ng-container matColumnDef="laps">
-        <th mat-header-cell *matHeaderCellDef> Laps </th>
-        <td mat-cell *matCellDef="let element"> {{element.manualLaps}} </td>
-      </ng-container>
-
       <ng-container matColumnDef="elapsedTime">
         <th mat-header-cell *matHeaderCellDef> Elapsed </th>
-        <td mat-cell *matCellDef="let element"> {{element.elapsedTime | duration}} </td>
+        <td mat-cell *matCellDef="let element"> 
+          @if (element.result) {
+             {{element.result.elapsedTime | duration}} ({{element.manualLaps}})
+          }
+        </td>
       </ng-container>
 
       <ng-container matColumnDef="avgLapTime">
         <th mat-header-cell *matHeaderCellDef> Avg Lap </th>
-        <td mat-cell *matCellDef="let element"> {{element.avgLapTime | duration}} </td>
+        <td mat-cell *matCellDef="let element"> {{averageLap(element) | duration}} </td>
       </ng-container>
 
       <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
@@ -84,40 +78,17 @@ export class ManualResultsTable {
   competitors = input.required<RaceCompetitor[]>();
   rowClicked = output<RaceCompetitor>();
 
-  protected displayedColumns = ['boatClass', 'sailNumber', 'helm', 'finishTime', 'laps', 'elapsedTime', 'avgLapTime'];
-
-  processedCompetitors = computed<ProcessedCompetitor[]>(() => {
-    const processed = this.competitors().map(c => {
-      const competitor: ProcessedCompetitor = { ...c };
-      if (c.manualFinishTime && c.startTime) {
-        competitor.elapsedTime = c.manualFinishTime.getTime() - c.startTime.getTime();
-        if (c.manualLaps > 0) {
-          competitor.avgLapTime = competitor.elapsedTime / c.manualLaps;
-        }
-      }
-      return competitor;
-    });
-
-    return processed.sort((a, b) => {
-      const aHasTime = a.avgLapTime !== undefined;
-      const bHasTime = b.avgLapTime !== undefined;
-
-      if (aHasTime && bHasTime) {
-        return a.avgLapTime! - b.avgLapTime!;
-      }
-      if (aHasTime) {
-        return -1; // a comes first
-      }
-      if (bHasTime) {
-        return 1; // b comes first
-      }
-      // sort by helm if no time
-      return a.helm.localeCompare(b.helm);
-    });
-  });
-
+  protected displayedColumns = ['boatClass', 'sailNumber', 'helm', 'finishTime', 'elapsedTime', 'avgLapTime'];
 
   onRowClick(row: RaceCompetitor) {
     this.rowClicked.emit(row);
+  }
+
+  averageLap(comp: RaceCompetitor): number | undefined {
+    if (comp.result) {
+      return  comp.result!.elapsedTime / comp.manualLaps
+    } else {
+      return undefined
+    }
   }
 }

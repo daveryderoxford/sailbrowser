@@ -7,6 +7,7 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatRadioModule } from '@angular/material/radio';
 import { Race } from 'app/race-calender/@store/race';
+import { format } from 'date-fns';
 
 export interface RaceStartTimeResult {
   mode: 'tod' | 'elapsed';
@@ -53,27 +54,30 @@ export class RaceStartTimeDialog {
   });
 
   constructor() {
-    if (this.form.controls.mode.value === 'elapsed') {
-      this.form.controls.time.setValue('00:00:00');
+    const { race } = this.data;
+    const mode = race.timeInputMode || 'tod';
+
+    if (race.actualStart) {
+      this.form.controls.time.setValue(format(new Date(race.actualStart), 'HH:mm:ss'));
     }
 
     this.form.controls.mode.valueChanges.pipe(takeUntilDestroyed()).subscribe(mode => {
       if (mode === 'elapsed' && !this.form.controls.time.value) {
-        this.form.controls.time.setValue('00:00:00');
+        this.form.controls.time.setValue('00:00');
       }
     });
   }
 
   save() {
-    if (this.form.invalid) return;
-    const { mode, time } = this.form.getRawValue();
-    
-    // Construct the start date based on the race scheduled date + entered time
-    const dateStr = new Date(this.data.race.scheduledStart).toDateString();
-    // If stopwatch mode (elapsed), we still use the race date as the base, 
-    // effectively setting the "zero" point or the specific start time on that day.
-    const startTime = new Date(`${dateStr} ${time}`);
+    if (this.form.valid) {
+      const { mode, time } = this.form.getRawValue();
+      
+      // For both 'tod' and 'elapsed', the start time is stored as a Date on the day of the race.
+      // For 'elapsed', the time part represents the duration from midnight.
+      const dateStr = new Date(this.data.race.scheduledStart).toDateString();
+      const startTime = new Date(`${dateStr} ${time}`);
 
-    this.dialogRef.close({ mode, startTime } as RaceStartTimeResult);
+      this.dialogRef.close({ mode, startTime } as RaceStartTimeResult);
+    }
   }
 }

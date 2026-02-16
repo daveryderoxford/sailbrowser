@@ -12,17 +12,20 @@ import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
 import { MatTableModule } from '@angular/material/table';
 import { RaceCalendarStore } from 'app/race-calender/@store/full-race-calander';
+import { Race } from 'app/race-calender/@store/race';
+import { CurrentRaces } from 'app/race/@store/current-races-store';
 import { RaceCompetitor, ResultData } from 'app/race/@store/race-competitor';
 import { RaceCompetitorStore, sortEntries } from 'app/race/@store/race-competitor-store';
 import { ResultCode, ResultCodeDefinitions } from 'app/race/@store/result-code';
-import { CurrentRaces } from 'app/race/@store/current-races-store';
 import { Toolbar } from 'app/shared/components/toolbar';
+import { normaliseString } from 'app/shared/utils/string-utils';
+import { differenceInSeconds } from 'date-fns';
 import { map, startWith } from 'rxjs';
 import { RaceStartTimeDialog, RaceStartTimeResult } from '../race-start-time-dialog';
 import { RaceScorer } from '../scoring/race-scorer';
-import { RaceTimeInput } from './race-time-input';
+import { DurationPipe } from './duration.pipe';
 import { ManualResultsTable } from './manual-results-table';
-import { differenceInSeconds } from 'date-fns';
+import { RaceTimeInput } from './race-time-input';
 
 @Component({
   selector: 'app-manual-results-page',
@@ -43,6 +46,7 @@ import { differenceInSeconds } from 'date-fns';
     MatDialogModule,
     RaceTimeInput,
     ManualResultsTable,
+    DurationPipe,
   ],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
@@ -53,7 +57,7 @@ export class ManualResultsPage {
   protected readonly currentRacesStore = inject(CurrentRaces);
   private readonly raceScorer = inject(RaceScorer);
 
-  readonly raceFilterControl = new FormControl<string | null>(null);
+  readonly raceFilterControl = new FormControl<Race | null>(null);
 
   readonly resultCodes = Object.values(ResultCodeDefinitions).sort((a, b) => a.displayName.localeCompare(b.displayName));
 
@@ -68,7 +72,9 @@ export class ManualResultsPage {
   readonly resultCodeValue = toSignal(this.form.controls.resultCode.valueChanges, { initialValue: ResultCode.Ok });
   readonly resultCodeDescription = computed(() => ResultCodeDefinitions[this.resultCodeValue()]?.description);
 
-  readonly selectedCompetitor = signal<RaceCompetitor | null>(null);
+  readonly selectedCompetitor = signal<RaceCompetitor | undefined>(undefined);
+
+  readonly selectedRace = toSignal(this.raceFilterControl.valueChanges);
 
   // Search control for autocomplete
   readonly searchControl = new FormControl<string | RaceCompetitor | null>('');
@@ -78,16 +84,6 @@ export class ManualResultsPage {
       map(value => (typeof value === 'string' ? value : ''))
     ), { initialValue: '' }
   );
-
-  protected readonly resultsRaceIds = toSignal(
-    this.raceFilterControl.valueChanges.pipe(map(val => val ? [val] : [])), 
-    { initialValue: [] }
-  );
-
-  readonly selectedRace = computed(() => {
-    const ids = this.resultsRaceIds();
-    return ids.length === 1 ? this.currentRacesStore.selectedRaces().find(r => r.id === ids[0]) : undefined;
-  });
 
   readonly timeInputContext = computed(() => {
     const race = this.selectedRace();
@@ -108,19 +104,17 @@ export class ManualResultsPage {
   readonly calculatedStats = computed(() => {
     const finishTime = this.enteredFinishTime();
     const laps = this.enteredLapsValue() || 1;
-    const competitor = this.selectedCompetitor();
-    const race = this.selectedRace();
- 
-    if (!finishTime || !competitor || !race) return null;
+    const raceStartTime = this.selectedRace()?.actualStart;
 
-    const startTime = race.actualStart ?? new Date();
-    
-    const elapsedSeconds = differenceInSeconds(finishTime, startTime);
+    if (!finishTime || !raceStartTime) return null;
+
+    // Both finishTime and raceStartTime are Date objects on the same day.
+    const elapsedSeconds = differenceInSeconds(finishTime, raceStartTime);
 
     if (elapsedSeconds <= 0) return null;
 
     const avgLapTime = elapsedSeconds / laps;
-    
+
     // Simple heuristic: Highlight if avg lap < 2 mins (120s) or > 60 mins (3600s)
     // This can be tuned or made configurable per class/race
     const isSuspicious = avgLapTime < 120 || avgLapTime > 3600;
@@ -133,34 +127,19 @@ export class ManualResultsPage {
 
   // Competitors list sorted: Unfinished first, then Finished (at bottom)
   readonly sortedCompetitors = computed(() => {
-    const raceIds = this.resultsRaceIds();
-    const comps = this.store.selectedCompetitors().filter( comp => raceIds.includes(comp.raceId));
-    return [...comps].sort((a, b) => {
-      const aFinished = !!a.manualFinishTime;
-      const bFinished = !!b.manualFinishTime;
-
-      // If one is finished and the other isn't, unfinished goes first
-      if (aFinished !== bFinished) {
-        return aFinished ? 1 : -1;
-      }
-
-      // If both finished, sort by corrected time (fastest first) or finish time if no result
-      if (aFinished) {
-        const aTime = a.result?.correctedTime ?? a.manualFinishTime?.getTime() ?? 0;
-        const bTime = b.result?.correctedTime ?? b.manualFinishTime?.getTime() ?? 0;
-        return aTime - bTime;
-      }
-
-      // If both unfinished, standard sort (Class/SailNo)
-      return sortEntries(a, b);
-    });
+    const raceId = this.selectedRace()?.id || 'xxxxx';
+    const comps = this.store.selectedCompetitors().filter(comp => raceId === comp.raceId);
+    console.log('***competitors. ' + comps.length);
+    console.log('raceId' + raceId);
+    return [...comps].sort((a, b) => manualRaceEntrySort(a,b));
   });
 
   // Filtered competitors for autocomplete
   readonly filteredCompetitors = computed(() => {
-    const term = this.searchTerm()?.toLowerCase() || '';
+    const term = normaliseString(this.searchTerm());
+
     return this.sortedCompetitors().filter(c => {
-      const searchStr = `${c.boatClass} ${c.sailNumber} ${c.helm}`.toLowerCase();
+      const searchStr = normaliseString(`${c.boatClass} ${c.sailNumber} ${c.helm}`);
       return searchStr.includes(term);
     });
   });
@@ -185,31 +164,14 @@ export class ManualResultsPage {
       }
     });
 
-    // Update validators based on result code
-    // If results codes is not OK then time is not mandatory
-    const resultCodeValidatorEffect = effect(() => {
-      const code = this.resultCodeValue();
-      if (code === ResultCode.Ok) {
-        this.form.controls.finishTime.setValidators(Validators.required);
-      } else {
-        this.form.controls.finishTime.clearValidators();
-      }
-      this.form.controls.finishTime.updateValueAndValidity();
-    });
-
-    // Auto-prompt for start time if a single race is selected and has no start time
     const startTimePromptEffect = effect(() => {
-      const selectedIds = this.resultsRaceIds();
-      if (selectedIds.length === 1) {
-        const raceId = selectedIds[0];
-        const race = this.currentRacesStore.selectedRaces().find(r => r.id === raceId);
-        if (race) {
+      const race = this.selectedRace();
+      if (race) {
         untracked(() => {
           if (!race.actualStart) {
-            this.setStartTime();
+            this.setStartTime(race);
           }
         });
-        }
       }
     });
   }
@@ -226,14 +188,8 @@ export class ManualResultsPage {
     this.selectedCompetitor.set(row);
   }
 
-  setStartTime() {
-    const selectedIds = this.resultsRaceIds();
-    if (selectedIds.length !== 1) return;
-    const raceId = selectedIds[0];
-    const race = this.currentRacesStore.selectedRaces().find(r => r.id === raceId);
-    if (!race) return;
-
-    this.dialog.open<RaceStartTimeDialog, { race: typeof race }, RaceStartTimeResult>(RaceStartTimeDialog, {
+  setStartTime(race: Race) {
+    this.dialog.open<RaceStartTimeDialog, { race: typeof race; }, RaceStartTimeResult>(RaceStartTimeDialog, {
       data: { race }
     }).afterClosed().subscribe(result => {
       if (result) {
@@ -256,13 +212,13 @@ export class ManualResultsPage {
 
     // If Result is OK, we expect a finish date. If not OK, we proceed without one.
     if (finishDate || resultCode !== ResultCode.Ok) {
-      
+
       // Check if data actually changed to avoid unnecessary writes
       if (competitor.manualFinishTime?.getTime() === finishDate?.getTime() &&
-          competitor.manualLaps === laps &&
-          competitor.resultCode === resultCode) {
-            this.resetForm();
-            return;
+        competitor.manualLaps === laps &&
+        competitor.resultCode === resultCode) {
+        this.resetForm();
+        return;
       }
 
       // Calculate result data (corrected time) for sorting
@@ -276,18 +232,18 @@ export class ManualResultsPage {
 
         // Calculate max laps including this update
         let maxLaps = currentLaps;
-   /*     if (race.isAverageLap) {
-          maxLaps = competitors.reduce((max, c) => {
-            const cLaps = c.id === competitor.id ? currentLaps : (c.manualLaps || c.lapTimes.length || 0);
-            return Math.max(max, cLaps);
-          }, 0);
-        } */
+        /*     if (race.isAverageLap) {
+               maxLaps = competitors.reduce((max, c) => {
+                 const cLaps = c.id === competitor.id ? currentLaps : (c.manualLaps || c.lapTimes.length || 0);
+                 return Math.max(max, cLaps);
+               }, 0);
+             } */
 
         const times = this.raceScorer.calculateResultTimes({
           comp: { ...competitor, manualFinishTime: finishDate, manualLaps: currentLaps } as RaceCompetitor,
           scheme: (race as any).handicapScheme || 'PY',
           isAverageLap: race.isAverageLap,
-          startTime: competitor.startTime || (race.actualStart ? new Date(race.actualStart) : new Date(race.scheduledStart)),
+          startTime: race.actualStart!,
         });
 
         resultData = {
@@ -295,44 +251,23 @@ export class ManualResultsPage {
           correctedTime: times.corrected,
           position: 0, // Placeholder, requires full fleet scoring
           points: 0,   // Placeholder
-          isDiscarded: false,
+          isDiscarded: false,  // Placeholder
           isDiscardable: true
         };
       }
 
-      // Optimistic update / Local calculation could happen here, but we rely on the store update for now.
-      await this.store.updateResult({
-        seriesId: competitor.seriesId,
-        raceId: competitor.raceId,
-        id: competitor.id
-      }, {
+      await this.store.updateResult(competitor, {
         manualFinishTime: finishDate,
         manualLaps: laps || 1,
         resultCode: resultCode,
         ...(resultData ? { result: resultData } : {})
       });
 
-      // Trigger a recalculation of results for this race to update positions immediately
-      // This assumes the backend or a separate process might also do this, but doing it here updates the UI
-      if (race) {
-        const raceCompetitors = this.store.selectedCompetitors().filter(c => c.raceId === race.id);
-        // We need to re-fetch or use the updated list. Since store updates are async, 
-        // we might need to wait or rely on the subscription. 
-        // For now, the sortedCompetitors computed will handle the sorting once the store emits.
-      }
-
       // Remember laps for next entry
       if (laps) this.lastEnteredLaps.set(laps);
-      
-      // Reset for next entry
+
       this.resetForm();
     }
-  }
-
-  private getRaceStartTime(raceId: string): Date | undefined {
-    const race = this.currentRacesStore.selectedRaces().find(r => r.id === raceId);
-    if (!race) return undefined;
-    return race.actualStart ? new Date(race.actualStart) : new Date(race.scheduledStart);
   }
 
   resetForm() {
@@ -341,6 +276,26 @@ export class ManualResultsPage {
     this.form.controls.laps.setValue(lastLaps); // now set it to the last entered value
     this.searchControl.setValue('');
     this.form.controls.resultCode.setValue(ResultCode.Ok);
-    this.selectedCompetitor.set(null);
+    this.selectedCompetitor.set(undefined);
   }
+}
+
+export function manualRaceEntrySort(a: RaceCompetitor, b: RaceCompetitor): number {
+
+  const aFinished = !!a.result;
+  const bFinished = !!b.result;
+
+  // If one is finished and the other isn't, unfinished goes first
+  if (aFinished !== bFinished) {
+    return aFinished ? 1 : -1;
+  }
+  // If both finished, sort by corrected time (fastest first) or finish time if no result
+  if (aFinished && bFinished) {
+    const aTime = a.result!.correctedTime;
+    const bTime = b.result!.correctedTime;
+    return aTime - bTime;
+  }
+
+  // If both unfinished, standard sort (Class/SailNo)
+  return sortEntries(a, b);
 }

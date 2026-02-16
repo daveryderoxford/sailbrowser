@@ -1,14 +1,14 @@
 import { Component, computed, ElementRef, forwardRef, inject, input, OnInit } from '@angular/core';
 import { AbstractControl, FormControl, NG_VALIDATORS, NG_VALUE_ACCESSOR, ReactiveFormsModule, ValidationErrors, Validator } from '@angular/forms';
-import { MatFormFieldControl } from '@angular/material/form-field';
+import { MatFormFieldControl, MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
-import { addSeconds, differenceInSeconds, format, isValid, parse } from 'date-fns';
+import { format, isValid, parse } from 'date-fns';
 import { FormFieldBase } from './form-field.base';
 
 @Component({
   selector: 'app-race-time-input',
   standalone: true,
-  imports: [MatInputModule, ReactiveFormsModule],
+  imports: [MatInputModule, ReactiveFormsModule, MatFormFieldModule],
   providers: [
     {
       provide: NG_VALUE_ACCESSOR,
@@ -47,8 +47,8 @@ import { FormFieldBase } from './form-field.base';
 })
 export class RaceTimeInput extends FormFieldBase<Date> implements Validator, OnInit {
   // --- Component-specific properties ---
-  mode = input.required<'tod' | 'elapsed'>();
-  baseTime = input<Date>(); // Reference time: Race Date (TOD) or Start Time (Elapsed)
+  mode = input.required<'tod' | 'elapsed' | undefined>();
+  baseTime = input.required<Date>(); // Reference time: Race Date (TOD) or Start Time (Elapsed)
 
   inputPlaceholder = computed(() => this.mode() === 'elapsed' ? 'mm:ss' : 'hh:mm:ss');
   inputControl = new FormControl<string>('', { nonNullable: true });
@@ -84,15 +84,7 @@ export class RaceTimeInput extends FormFieldBase<Date> implements Validator, OnI
       this.inputControl.setValue('', { emitEvent: false });
       return;
     }
-    if (this.mode() === 'tod') {
-      this.inputControl.setValue(format(value, 'HH:mm:ss'), { emitEvent: false });
-    } else {
-      const start = this.baseTime();
-      if (start) {
-        const diff = differenceInSeconds(value, start);
-        this.inputControl.setValue(this.formatDuration(diff), { emitEvent: false });
-      }
-    }
+    this.inputControl.setValue(format(value, 'HH:mm:ss'), { emitEvent: false });
   }
 
   // --- Validator implementation ---
@@ -113,38 +105,14 @@ export class RaceTimeInput extends FormFieldBase<Date> implements Validator, OnI
   private processInput(val: string) {
     let newDate: Date | null = null;
     if (val) {
-      if (this.mode() === 'tod') {
-        const base = this.baseTime() || new Date();
-        let date = parse(val, 'HH:mm:ss', base);
-        if (!isValid(date)) date = parse(val, 'HH:mm', base);
-        if (isValid(date)) newDate = date;
-      } else {
-        const seconds = this.parseDuration(val);
-        const start = this.baseTime();
-        if (start && seconds !== null) {
-          newDate = addSeconds(start, seconds);
-        }
-      }
+      const base = this.baseTime();
+      // Try parsing with seconds, then without, to be more flexible.
+      let date = parse(val, 'HH:mm:ss', base);
+      if (!isValid(date)) date = parse(val, 'HH:mm', base);
+      if (isValid(date)) newDate = date;
     }
     // Update the value in the base class and notify forms API
     this.value = newDate;
     this._onChange(this.value);
-  }
-
-  private formatDuration(seconds: number): string {
-    const h = Math.floor(seconds / 3600);
-    const m = Math.floor((seconds % 3600) / 60);
-    const s = seconds % 60;
-    const pad = (n: number) => n.toString().padStart(2, '0');
-    return h > 0 ? `${pad(h)}:${pad(m)}:${pad(s)}` : `${pad(m)}:${pad(s)}`;
-  }
-
-  private parseDuration(str: string): number | null {
-    const parts = str.split(':').map(Number);
-    if (parts.some(isNaN)) return null;
-    if (parts.length === 3) return parts[0] * 3600 + parts[1] * 60 + parts[2];
-    if (parts.length === 2) return parts[0] * 60 + parts[1];
-    if (parts.length === 1) return parts[0];
-    return null;
   }
 }
