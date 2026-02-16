@@ -11,10 +11,11 @@ import { RaceCalendarStore } from '../@store/full-race-calander';
 import { Race } from '../@store/race';
 import { Router } from '@angular/router';
 import { MatSnackBar } from '@angular/material/snack-bar';
+import { SubmitButton } from "app/shared/components/submit-button";
 
 @Component({
-  selector: 'app-race-details-edit',
-  templateUrl: 'race-details-edit.html',
+  selector: 'app-race-edit',
+  templateUrl: 'race-edit.html',
   styles: [`
     @use "mixins" as mix;
     @include mix.form-page("form", 350px);
@@ -31,10 +32,9 @@ import { MatSnackBar } from '@angular/material/snack-bar';
   `],
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [ReactiveFormsModule, MatFormFieldModule, MatInputModule,
-    MatCheckboxModule, MatButtonModule, MatSelectModule, Toolbar
-  ],
+    MatCheckboxModule, MatButtonModule, MatSelectModule, Toolbar, SubmitButton],
 })
-export class RaceDetails {
+export class RaceEdit {
   private readonly fb = inject(FormBuilder);
   private rcs = inject(RaceCalendarStore);
   private readonly router = inject(Router);
@@ -67,14 +67,14 @@ export class RaceDetails {
       try {
         this.busy.set(true);
         await this.rcs.updateRace(race.seriesId, race.id, update);
+        this.form.reset();
+        this.router.navigate(['/race-calender/series-details/', race.seriesId]);
       } catch (error: any) {
         this.snackbar.open("Error encountered adding races", "Dismiss", { duration: 3000 });
         console.log('AddRace: Error adding races ' + error.toString());
       } finally {
         this.busy.set(false);
       }
-
-      this.router.navigate(['/race-calender/series-details/', this.raceId()]);
     }
   }
 

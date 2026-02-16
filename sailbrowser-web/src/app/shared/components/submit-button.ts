@@ -19,13 +19,7 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
   `,
   styles: [
     `
-      :host {
-        display: block;
-      }
 
-      button {
-        width: 100%;
-      }
     `,
   ],
   imports: [MatButtonModule, MatProgressSpinnerModule],

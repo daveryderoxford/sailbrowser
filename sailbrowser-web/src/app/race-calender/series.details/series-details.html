@@ -56,8 +56,7 @@
       <span>`Add races to the series"</span>
    } @else {
    <mat-list>
-      @for (race of races(); track race.id;) {
-      <mat-list-item>
+      @for (race of races(); track race.id) {
          <app-race-list-item 
            [race]="race" 
            (edit)="editRace(race)"

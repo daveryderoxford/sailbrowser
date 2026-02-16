@@ -1,0 +1,26 @@
+// _loading-directive.mixin.scss
+
+@mixin loading-button-styles() {
+   .mat-button-loading {
+      position: relative;
+      pointer-events: none; // Prevent interactions during loading
+
+      // Hide original text and icons
+      .mdc-button__label,
+      .mat-icon,
+      .mat-mdc-button-touch-target {
+         visibility: hidden !important;
+      }
+
+      // Spinner positioning
+      mat-progress-spinner {
+         position: absolute;
+         top: 50%;
+         left: 50%;
+         transform: translate(-50%, -50%);
+
+         // M3 Color token for spinners in tonal buttons
+         --mdc-circular-progress-active-indicator-color: var(--mat-sys-on-secondary-container);
+      }
+   }
+}

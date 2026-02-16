@@ -6,7 +6,7 @@ import { SeriesEdit } from './series-list/series-edit';
 import { SeriesList } from './series-list/series-list';
 import { SeriesDetails } from './series.details/series-details';
 import { SeriesCopy } from './series-copy';
-import { RaceDetails } from './race-details/race-details-edit';
+import { RaceEdit } from './race-details/race-edit';
 import { RaceAdd } from './race-details/add-race';
 
 
@@ -17,5 +17,5 @@ export const RACE_CALENDER_ROUTES: Routes = [
    { path: 'edit/:id', component: SeriesEdit, canDeactivate: [pendingChangesGuard], canActivate: [authGuard] },
    { path: 'copy/:id', component: SeriesCopy, canDeactivate: [pendingChangesGuard], canActivate: [authGuard] },
    { path: 'series-details/:seriesId/add-race', component: RaceAdd, canDeactivate: [pendingChangesGuard], canActivate: [authGuard] },
-   { path: 'series-details/:seriesId/edit-race/:raceId', component: RaceDetails, canDeactivate: [pendingChangesGuard], canActivate: [authGuard] },
+   { path: 'series-details/:seriesId/edit-race/:raceId', component: RaceEdit, canDeactivate: [pendingChangesGuard], canActivate: [authGuard] },
 ];

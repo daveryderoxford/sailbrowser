@@ -1,5 +1,5 @@
 <app-toolbar title="Edit race details" showBack />
-<form [formGroup]="form" novalidate>
+<form (ngSubmit)="submit()" [formGroup]="form" novalidate>
   <mat-form-field>
     <mat-label>Race type</mat-label>
     <mat-select formControlName="type">
@@ -14,7 +14,9 @@
   <mat-checkbox formControlName="isAverageLap">Is the race an average lap race</mat-checkbox>
 
   <div>
-    <button matButtom="filled"  [disabled]="form.invalid || !form.dirty" type="submit" aria-label="submit">Save</button>
+    <app-submit-button [disabled]="form.invalid || !form.dirty" [busy]="busy()">
+      Save
+    </app-submit-button>
   </div>
 
 </form>
