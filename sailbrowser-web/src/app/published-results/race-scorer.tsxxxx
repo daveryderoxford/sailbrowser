@@ -1,42 +1,54 @@
 import { Injectable } from '@angular/core';
-import { HandicapScheme } from 'app/race/@store/handicap-scheme';
-import { RaceCompetitor } from 'app/race/@store/race-competitor';
-import { ResultCode } from 'app/race/@store/result-code';
+
 import { Race } from 'app/race-calender/@store/race';
+import { SeriesScoringScheme } from 'app/race-calender/@store/series-scoring-data';
+import { HandicapScheme } from 'app/results-input/@store/handicap-scheme';
+import { RaceCompetitor, RESULTS_UNSET_VALUE } from 'app/results-input/@store/race-competitor';
+import { ResultCode } from 'app/results-input/@store/result-code';
 import { differenceInSeconds } from 'date-fns';
+
 
 @Injectable({
   providedIn: 'root',
 })
 export class RaceScorer {
   /**
-   * Calculates positions for a list of race competitors.
-   * Returns a list of race competitors with updated results.
-   * Support multiple lap races and 
+   * Uses competitor start, finish. lap and status to calculate results for a single race. 
+   * All data in the ResultsData object is populated (elapsed/corrected times points and positions).
+   * 
+   * The exception is some results codes where the points are based on the number of competitors in the series.
+   * RESULTS_UNSET_VALUE.  This number is larger than the number of competitors
+   * event expected so will be sorted to the bottom of any lists. 
+   * 
+   * It is assumes all competitors in the race are supplied. 
+   * The maximum number of laps and number of starters is calculated based on all competitors. 
    */
-  calculateRaceResults(
+  scoreRace(
     competitors: RaceCompetitor[],
     scheme: HandicapScheme,
     race: Race,
-    shortSeries: boolean = false
+    seriesType: SeriesScoringScheme
   ): RaceCompetitor[] {
 
-    // 1. Calculate times
+    // 1. Calculate the maximum number of laps.
+    const maxLaps = competitors.reduce((count, comp) => {
+        return this.isStartAreaComp(comp.resultCode) ? count + 1 : count;
+      }, 0);
+
+
+    // 2. Calculate elapsed and corrected times, supporting average laps. 
+    // The corrected times are for the maximum numbr of laps that better reflects 
     const results = competitors.map((comp) => {
-      const times = this.calculateResultTimes({
-        comp,
-        scheme,
-        isAverageLap: race.isAverageLap,
-        startTime: comp.startTime!,
-      });
+
+    const times = this.getCorrectedTime(comp, scheme, race.isAverageLap, comp.startTime!);
 
       // Create a shallow copy with new result data
       const updatedComp = new RaceCompetitor({ ...comp });
       updatedComp.result = {
         elapsedTime: times.elapsed,
         correctedTime: times.corrected,
-        position: 0,
-        points: 0,
+        position: RESULTS_UNSET_VALUE,
+        points: RESULTS_UNSET_VALUE,
         isDiscarded: false,
         isDiscardable: true,
       };
@@ -45,19 +57,19 @@ export class RaceScorer {
     });
 
     // 2. Sort by corrected time (taking into account result code)
-    results.sort((a, b) => this.sortByCorrectedTime(a, b));
+    results.sort((a, b) => sortByCorrectedTime(a, b));
 
     // 3. Assign points for finishers
     this.assignPointsForFinishers(results);
 
     // 4. Assign points for non-finishers
-    this.assignPointsForNonFinishers(results, shortSeries);
+    this.assignPointsForNonFinishers(results, seriesType);
 
     // 5. Sort by points
     results.sort((a, b) => this.sortByPoints(a, b));
 
     // 6. Apply scoring penalties
-    this.applyScoringPenalties(results, shortSeries);
+    this.applyScoringPenalties(results, seriesType);
 
     // Re-sort if penalties changed order
     results.sort((a, b) => this.sortByPoints(a, b));
@@ -65,21 +77,13 @@ export class RaceScorer {
     return results;
   }
 
-  calculateResultTimes({
-    comp,
-    scheme,
-    isAverageLap,
-    startTime,
-  }: {
-    comp: RaceCompetitor;
-    scheme: HandicapScheme;
-    isAverageLap: boolean;
-    startTime: Date;
-  }): { corrected: number; elapsed: number; error: string } {
+  getCorrectedTime(comp: RaceCompetitor, scheme: HandicapScheme, isAverageLap: boolean, 
+    startTime: Date): { corrected: number; elapsed: number; error: string } {
+
     let corrected = 0.0;
     let elapsed = 0.0;
 
-    const finishTime = this.getFinishTime(comp);
+    const finishTime = comp.finishTime;
     const compStartTime = comp.startTime || startTime;
 
     if (finishTime && compStartTime) {
@@ -90,7 +94,7 @@ export class RaceScorer {
         return { corrected: 0, elapsed: 0, error: 'Start time before finish time' };
       }
 
-      const numLaps = this.getNumLaps(comp);
+      const numLaps = comp.numLaps;
       if (isAverageLap && numLaps === 0) {
         return { corrected: 0, elapsed: 0, error: 'Number of laps 0 for average lap race' };
       }
@@ -128,56 +132,43 @@ export class RaceScorer {
     }, 0);
   }
 
-  sortByCorrectedTime(a: RaceCompetitor, b: RaceCompetitor): number {
-    const aOk = this.isOk(a);
-    const bOk = this.isOk(b);
-
-    if (aOk && bOk) {
-      return (a.result?.correctedTime || 0) - (b.result?.correctedTime || 0);
-    } else if (aOk && !bOk) {
-      return -1;
-    } else if (!aOk && bOk) {
-      return 1;
-    } else {
-      return 0;
-    }
-  }
-
+  /** Assigns points for finishers in a race
+   * Competitors with the same corrected time are 
+   * score the averge of points for the time.
+   * A map of finish times created to implement this. 
+   */
   assignPointsForFinishers(results: RaceCompetitor[]) {
     const finishers = results.filter((res) => this.isFinishedComp(res.resultCode));
     const resultsByTime = new Map<number, RaceCompetitor[]>();
 
+    // Create map of competitors wuth a key of finish time
     finishers.forEach((res) => {
       const time = res.result?.correctedTime || 0;
       if (!resultsByTime.has(time)) resultsByTime.set(time, []);
       resultsByTime.get(time)!.push(res);
     });
 
+    // Itterate over ordered list of finish times calculating points
     const times = Array.from(resultsByTime.keys()).sort((a, b) => a - b);
     let pos = 1.0;
 
     for (const time of times) {
       const resultsAtTime = resultsByTime.get(time)!;
-      if (resultsAtTime.length === 1) {
-        const res = resultsAtTime[0];
+      // The average points for a group of tied competitors is the average of the positions they would have taken.
+      // For example, if 2 boats tie for 2nd, they take up positions 2 and 3, so they both get (2+3)/2 = 2.5 points.
+      const avgPoints = pos - 1 + (resultsAtTime.length + 1) / 2.0;
+
+      for (const res of resultsAtTime) {
         if (res.result) {
-          res.result.points = pos;
+          res.result.points = avgPoints;
           res.result.position = pos;
-        }
-      } else {
-        const avgPoints = pos - 1 + (resultsAtTime.length + 1) / 2.0;
-        for (const res of resultsAtTime) {
-          if (res.result) {
-            res.result.points = avgPoints;
-            res.result.position = pos;
-          }
         }
       }
       pos += resultsAtTime.length;
     }
   }
 
-  assignPointsForNonFinishers(results: RaceCompetitor[], shortSeries: boolean) {
+  assignPointsForNonFinishers(results: RaceCompetitor[], scheme: SeriesScoringScheme) {
     let starters = -1;
 
     for (const res of results) {
@@ -199,9 +190,9 @@ export class RaceScorer {
     }
   }
 
-  applyScoringPenalties(results: RaceCompetitor[], shortSeries: boolean) {
+  applyScoringPenalties(results: RaceCompetitor[], scheme: SeriesScoringScheme) {
     for (const res of results) {
-      if (res.resultCode === ResultCode.Scp && res.result) {
+      if (res.resultCode === 'SCP' && res.result) {
         res.result.points = Math.min(res.result.points * 1.2, 99999);
       }
     }
@@ -211,54 +202,59 @@ export class RaceScorer {
     return (a.result?.points || 9999) - (b.result?.points || 9999);
   }
 
-  private getFinishTime(comp: RaceCompetitor): Date | undefined {
-    return comp.manualFinishTime || comp.recordedFinishTime;
-  }
-
-  private getNumLaps(comp: RaceCompetitor): number {
-    if (comp.manualLaps && comp.manualLaps > 0) return comp.manualLaps;
-    const finishTime = this.getFinishTime(comp);
-    return finishTime ? (comp.lapTimes?.length || 0) + 1 : (comp.lapTimes?.length || 0);
-  }
-
-  private isOk(comp: RaceCompetitor): boolean {
-    return comp.resultCode === ResultCode.Ok;
-  }
-
   private isFinishedComp(code: ResultCode): boolean {
     return [
-      ResultCode.Ok,
-      ResultCode.Scp,
-      ResultCode.Zfp,
-      ResultCode.Xpa,
-      ResultCode.Rdg,
-      ResultCode.Rdga,
-      ResultCode.Rdgb,
-      ResultCode.Rdgc,
-      ResultCode.Dpi,
+      'OK',
+      'SCP',
+      'ZFP',
+      'XPA',
+      'RDG',
+      'RDGA',
+      'RDGB',
+      'RDGC',
+      'DPI',
     ].includes(code);
   }
 
   private isStartAreaComp(code: ResultCode): boolean {
     return [
-      ResultCode.Ok,
-      ResultCode.Ood,
-      ResultCode.Dnf,
-      ResultCode.Ret,
-      ResultCode.Dns,
-      ResultCode.Ocs,
-      ResultCode.Zfp,
-      ResultCode.Ufd,
-      ResultCode.Bfd,
-      ResultCode.Dgm,
-      ResultCode.Dsq,
-      ResultCode.Xpa,
-      ResultCode.Scp,
-      ResultCode.Rdg,
-      ResultCode.Rdga,
-      ResultCode.Rdgb,
-      ResultCode.Rdgc,
-      ResultCode.Dpi,
+      'OK',
+      'OOD',
+      'DNF',
+      'RET',
+      'DNS',
+      'OCS',
+      'ZFP',
+      'UFD',
+      'BFD',
+      'DGM',
+      'DSQ',
+      'XPA',
+      'SCP',
+      'RDG',
+      'RDGA',
+      'RDGB',
+      'RDGC',
+      'DPI',
     ].includes(code);
+  }
+}
+
+function isOk(comp: RaceCompetitor): boolean {
+  return comp.resultCode === 'OK';
+}
+
+export function sortByCorrectedTime(a: RaceCompetitor, b: RaceCompetitor): number {
+  const aOk = isOk(a);
+  const bOk = isOk(b);
+
+  if (aOk && bOk) {
+    return (a.result?.correctedTime || 0) - (b.result?.correctedTime || 0);
+  } else if (aOk && !bOk) {
+    return -1;
+  } else if (!aOk && bOk) {
+    return 1;
+  } else {
+    return 0;
   }
 }

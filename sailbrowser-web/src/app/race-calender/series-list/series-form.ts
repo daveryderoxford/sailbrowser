@@ -9,12 +9,14 @@ import { MatSelectModule } from '@angular/material/select';
 import { ClubService } from 'app/club/@store/club.service';
 import { Series } from '../@store/series';
 import { provideNativeDateAdapter } from '@angular/material/core';
+import { SeriesScoringSchemeDetails, SeriesEntryAlgorithmDetails, defaultSeriesScoringData } from 'app/race-calender/@store/series-scoring-data';
 import { SubmitButton } from "app/shared/components/submit-button";
+import { MatDivider } from "@angular/material/divider";
 
 @Component({
   selector: 'app-series-form',
   imports: [ReactiveFormsModule, MatFormFieldModule, MatInputModule, MatSelectModule,
-    MatButtonModule, MatCheckboxModule, MatDatepickerModule, SubmitButton],
+    MatButtonModule, MatCheckboxModule, MatDatepickerModule, SubmitButton, MatDivider],
   providers: [provideNativeDateAdapter()],
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
@@ -55,6 +57,40 @@ import { SubmitButton } from "app/shared/components/submit-button";
         <mat-datepicker #endPicker></mat-datepicker>
       </mat-form-field>
 
+      <mat-divider/>
+      
+      <h3>Scoring Algorithm</h3>
+
+      <div formGroupName="scoringScheme" class="form-group-section">
+        <mat-form-field>
+          <mat-label>Scoring Scheme</mat-label>
+          <mat-select formControlName="scheme">
+            @for (s of seriesScoringSchemes; track s.name) {
+              <mat-option [value]="s.name">{{s.displayName}}</mat-option>
+            }
+          </mat-select>
+        </mat-form-field>
+
+        <mat-form-field>
+          <mat-label>Entry Algorithm</mat-label>
+          <mat-select formControlName="entryAlgorithm">
+            @for (a of seriesEntryAlgorithms; track a.name) {
+              <mat-option [value]="a.name">{{a.displayName}}</mat-option>
+            }
+          </mat-select>
+          <mat-hint>Select how entries are grouped</mat-hint>
+        </mat-form-field>
+
+        <mat-form-field>
+          <mat-label>Initial discard after</mat-label>
+          <input matInput type="number" formControlName="initialDiscardAfter">
+        </mat-form-field>
+        <mat-form-field>
+          <mat-label>Subsequent discards every</mat-label>
+          <input matInput type="number" formControlName="subsequentDiscardsEveryN">
+        </mat-form-field>
+      </div>
+
       <div class="actions">
 
         <app-submit-button [disabled]="form.invalid || !form.dirty" [busy]="busy()">
@@ -66,11 +102,19 @@ import { SubmitButton } from "app/shared/components/submit-button";
   styles: `
     @use "mixins" as mix;
 
-    @include mix.form-page("form", 350px);
+    @include mix.form-page("form", 400px);
+
+    .form-group-section {
+      display: contents;
+    }
+
   `
 })
 export class SeriesForm {
   cs = inject(ClubService);
+  
+  seriesScoringSchemes = SeriesScoringSchemeDetails;
+  seriesEntryAlgorithms = SeriesEntryAlgorithmDetails;
 
   series = input<Series | undefined>();
   busy = input(false);
@@ -82,6 +126,12 @@ export class SeriesForm {
     fleetId: new FormControl('', { validators: [Validators.required] }),
     startDate: new FormControl<Date | null>(null),
     endDate: new FormControl<Date | null>(null),
+    scoringScheme: new FormGroup({
+      scheme: new FormControl(defaultSeriesScoringData.scheme, { nonNullable: true, validators: [Validators.required] }),
+      entryAlgorithm: new FormControl(defaultSeriesScoringData.entryAlgorithm, { nonNullable: true, validators: [Validators.required] }),
+      initialDiscardAfter: new FormControl(defaultSeriesScoringData.initialDiscardAfter, { nonNullable: true, validators: [Validators.required, Validators.min(0)] }),
+      subsequentDiscardsEveryN: new FormControl(defaultSeriesScoringData.subsequentDiscardsEveryN, { nonNullable: true, validators: [Validators.required, Validators.min(0)] }),
+    }),
   });
 
   constructor() {
@@ -102,4 +152,4 @@ export class SeriesForm {
   }
 
 }
-
+ 

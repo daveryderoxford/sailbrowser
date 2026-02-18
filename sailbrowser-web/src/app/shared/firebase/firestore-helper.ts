@@ -1,6 +1,5 @@
 
 import {
-   collection,
    PartialWithFieldValue,
    QueryDocumentSnapshot,
    SetOptions,
@@ -8,19 +7,15 @@ import {
    DocumentData,
    FirestoreDataConverter,
    FieldValue,
-   Firestore,
-   doc,
+   SnapshotOptions,
 } from '@angular/fire/firestore';
 
-/** Returns a collextion reference that includes a Firestore converter 
- * that @see  
- * 
-*/
-export const mappedCollectionRef = <T>(fs: Firestore, path: string) => collection(fs, path).withConverter(mappedConverter<T>());
-export const mappedDoc = <T>(fs: Firestore, path: string , id: string) => doc(fs, path, id).withConverter(mappedConverter<T>());
-
-/** Generic Firestore converter that converts to/from Dates/Timestamps and converts application  */
-export const mappedConverter = <T>(): FirestoreDataConverter<T> => ({
+/** Generic Firestore converter that converts data objects (that do not contain any methods)
+ * to/from Firebase. 
+ * It handles conversion of Date/Timestamps and null/undefined
+ * It performs a deep conversion and handles embedded array objects 
+ */
+export const dataObjectConverter = <T>(): FirestoreDataConverter<T> => ({
    toFirestore(data: PartialWithFieldValue<T>, options?: SetOptions): DocumentData {
       const partialObject = options !== undefined;
       return toDbModel(data, partialObject, true);
@@ -31,21 +26,25 @@ export const mappedConverter = <T>(): FirestoreDataConverter<T> => ({
    },
 });
 
-/** Returns a collextion reference that includes a Firestore converter that casts
- * the data to/from 
-*/
-export const typedCollectionRef = <T>(fs: Firestore, path: string) => collection(fs, path).withConverter(typedConverter<T>());
-
-/** Generic Firestore converter that converts to/from Dates/Timestamps and converts application  */
-const typedConverter = <T>(): FirestoreDataConverter<T> => ({
-   toFirestore(data: PartialWithFieldValue<T>, options?: SetOptions): DocumentData {
-      return data as DocumentData;
-   },
-   fromFirestore: (snap: QueryDocumentSnapshot): T => {
-      return snap.data() as T;
-   },
-});
-
+/**
+ * Creates a FirestoreDataConverter for a class `T`.
+ * @param constructor The class constructor, which must accept a partial object.
+ * @returns A FirestoreDataConverter that handles serialization (including stripping methods)
+ * and deserialization (re-instantiating the class).
+ */
+export function classInstanceConverter<T>(constructor: new (data: Partial<T>) => T): FirestoreDataConverter<T> {
+  return {
+    toFirestore(instance: T): DocumentData {
+      // toDbModel strips functions in addition to converting types.
+      return toDbModel(instance, false, true);
+    },
+    fromFirestore(snapshot: QueryDocumentSnapshot, options: SnapshotOptions): T {
+      const appData = toAppModel<Partial<T>>(snapshot.data(options));
+      // Re-hydrate the data into a class instance.
+      return new constructor({ ...appData, id: snapshot.id });
+    }
+  };
+}
 const isObject = (value: any) => (value !== null && typeof value === 'object' && !Array.isArray(value));
 
 /**
@@ -62,6 +61,9 @@ export function toDbModel<T>(data: PartialWithFieldValue<T>, partialUpdate: bool
       if (stripId && key === 'id') continue;
 
       value = value as any;
+
+      // Strip functions that should not be serialised. 
+      if (typeof value === 'function') continue;
 
       if (value === undefined) {
          if (partialUpdate) {
@@ -92,7 +94,7 @@ export function toDbModel<T>(data: PartialWithFieldValue<T>, partialUpdate: bool
    return result;
 }
 
-function toAppModel<T>(data: DocumentData): T {
+export function toAppModel<T>(data: DocumentData): T {
    return toAppModelRecursive(data) as T;
 }
 

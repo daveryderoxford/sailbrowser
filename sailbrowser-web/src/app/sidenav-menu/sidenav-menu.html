@@ -5,23 +5,22 @@
       <span matListItemTitle>Home</span>
    </mat-list-item>
 
-   <button mat-list-item (click)='closeSidenav(["/entry/enter"])'>
+   <button mat-list-item (click)='closeSidenav(["/entry/entries"])'>
       <mat-icon matListItemIcon>assignment</mat-icon>
       <span matListItemTitle>Entries</span>
    </button>
 
-   <button mat-list-item (click)='closeSidenav(["/race-results/entry"])'>
+   <button mat-list-item (click)='closeSidenav(["/results-input/manual"])'>
       <mat-icon matListItemIcon>schedule</mat-icon>
-      <span matListItemTitle>Results Entry</span>
+      <span matListItemTitle>Results Input</span>
    </button>
 
-   <button mat-list-item (click)='closeSidenav(["/series-results"])'>
+   <button mat-list-item (click)='closeSidenav(["/results/viewer"])'>
       <mat-icon matListItemIcon>emoji_events</mat-icon>
       <span matListItemTitle>Series Results</span>
    </button>
 
    <mat-divider />
-
 
    @if (auth.user()) {
    <mat-accordion>

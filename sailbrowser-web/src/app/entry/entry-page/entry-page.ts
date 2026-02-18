@@ -14,7 +14,7 @@ import { EntryService } from '../@store/entry.service';
 import { Toolbar } from "app/shared/components/toolbar";
 import { ClubService } from 'app/club/@store/club.service';
 import { MatSelectModule } from '@angular/material/select';
-import { CurrentRaces } from 'app/race/@store/current-races-store';
+import { CurrentRaces } from 'app/results-input/@store/current-races-store';
 import { Router } from '@angular/router';
 import { BoatsStore, boatFilter } from 'app/boats/@store/boats.store';
 import { MatSnackBar } from '@angular/material/snack-bar';

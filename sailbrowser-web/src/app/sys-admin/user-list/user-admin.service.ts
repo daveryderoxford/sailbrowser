@@ -1,9 +1,9 @@
 import { Injectable, inject, signal } from '@angular/core';
 import { rxResource } from '@angular/core/rxjs-interop';
 import { FirebaseApp } from '@angular/fire/app';
-import { collectionData, getFirestore } from '@angular/fire/firestore';
+import { collection, collectionData, getFirestore } from '@angular/fire/firestore';
 import { AuthService } from 'app/auth/auth.service';
-import { mappedCollectionRef } from 'app/shared/firebase/firestore-helper';
+import { dataObjectConverter } from 'app/shared/firebase/firestore-helper';
 import { UserData } from 'app/user/user';
 import { of } from 'rxjs';
 
@@ -14,7 +14,7 @@ export class UserAdminService {
    private fs = getFirestore(inject(FirebaseApp));
    private as = inject(AuthService);
 
-   private userCollection = mappedCollectionRef<UserData>(this.fs, 'users');
+   private userCollection = collection(this.fs, 'users').withConverter(dataObjectConverter<UserData>());
 
    private _load = signal(false);
 

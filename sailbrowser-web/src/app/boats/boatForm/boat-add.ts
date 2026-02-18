@@ -38,7 +38,7 @@ export class BoatAdd {
       }
     } catch (error: any) {
       this.snackbar.open("Error encountered adding Boat", "Dismiss", { duration: 3000 });
-      console.log('AddBoat.  Error adding Boat: ' + error.toString());
+      console.log('AddBoat:  Error adding Boat: ' + error.toString());
     } finally {
       this.busy.set(false);
     }

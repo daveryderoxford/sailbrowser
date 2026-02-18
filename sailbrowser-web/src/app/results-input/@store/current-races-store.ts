@@ -14,6 +14,14 @@ export class CurrentRaces {
     return races.filter(race => selectedIds.includes(race.id));
   });
 
+  readonly selectedSeries = computed(() => {
+    const selectedRaces = this.selectedRaces();
+    const seriesIds = [...new Set(selectedRaces.map(race => race.seriesId))];
+    const allSeries = this.raceStore.allSeries();
+    return allSeries.filter(series => seriesIds.includes(series.id));
+  });
+
+
   constructor() {
     effect(() => {
       // Initialize with today's races

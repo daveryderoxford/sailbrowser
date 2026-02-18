@@ -79,7 +79,7 @@ export class RaceAdd {
   });
 
   intervals: { name: string; increment: number; }[] = [
-    { name: 'One day only', increment: 0 },
+    { name: 'This date only', increment: 0 },
     { name: 'Consecutive days', increment: 1 },
     { name: 'Consecutive weeks', increment: 7 }
   ];

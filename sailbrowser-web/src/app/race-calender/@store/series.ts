@@ -1,3 +1,4 @@
+import { SeriesScoringData } from 'app/race-calender/@store/series-scoring-data';
 
 export interface Series {
    id: string;
@@ -7,5 +8,5 @@ export interface Series {
    startDate?: Date;
    endDate?: Date;
    archived: boolean;
-   scoringScheme: unknown; // TODO: Define SeriesScoringData
+   scoringScheme: SeriesScoringData;
 }

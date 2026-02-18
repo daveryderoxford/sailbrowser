@@ -102,7 +102,7 @@ export class SeriesCopy {
       // Navigate back to the series list
       this.router.navigate(['race-calender', this.id()]);
     } catch (error: any) {
-      this.snackbar.open('Error adding Series', 'Close', { duration: 3000 });
+      this.snackbar.open('Error adding Series', 'Dismiss', { duration: 3000 });
     } finally {
       this.busy.set(false);
     }

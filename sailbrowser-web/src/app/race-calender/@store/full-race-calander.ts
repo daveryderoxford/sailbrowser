@@ -2,7 +2,7 @@ import { computed, Injectable, Signal } from '@angular/core';
 import { rxResource } from '@angular/core/rxjs-interop';
 import { Series } from './series';
 import { Race } from './race';
-import { mappedConverter } from 'app/shared/firebase/firestore-helper';
+import { dataObjectConverter } from 'app/shared/firebase/firestore-helper';
 import { collectionData, query, where, collectionGroup, writeBatch, doc } from '@angular/fire/firestore';
 import { Observable, map, tap } from 'rxjs';
 import { RaceCalendarStoreBase, RaceSeriesDetails, seriesSort, sortRaces } from './race-calendar-store-base';
@@ -33,7 +33,7 @@ export class RaceCalendarStore extends RaceCalendarStoreBase {
       stream: (): Observable<Race[]> => {
          const racesQuery = query(
             collectionGroup(this.firestore, 'races'),
-         ).withConverter(mappedConverter<Race>());
+         ).withConverter(dataObjectConverter<Race>());
          return collectionData(racesQuery).pipe(
             map( races => races.sort(sortRaces)),
             tap( races => console.log(`FullRaceCalander. Loaded ${races.length} races`))

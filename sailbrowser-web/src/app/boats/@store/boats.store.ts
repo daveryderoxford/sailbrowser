@@ -1,8 +1,8 @@
 import { Injectable, inject } from '@angular/core';
 import { rxResource } from '@angular/core/rxjs-interop';
 import { FirebaseApp } from '@angular/fire/app';
-import { addDoc, collectionData, deleteDoc, doc, getFirestore, updateDoc } from '@angular/fire/firestore';
-import { typedCollectionRef } from 'app/shared/firebase/firestore-helper';
+import { addDoc, collection, collectionData, deleteDoc, doc, getFirestore, updateDoc } from '@angular/fire/firestore';
+import { dataObjectConverter } from 'app/shared/firebase/firestore-helper';
 import { normaliseString } from 'app/shared/utils/string-utils';
 import { map, Observable } from 'rxjs';
 
@@ -11,7 +11,9 @@ import { map, Observable } from 'rxjs';
 })
 export class BoatsStore {
   private readonly firestore = getFirestore(inject(FirebaseApp));
-  private readonly boatsCollection = typedCollectionRef<Boat>(this.firestore, '/boats');
+
+  private boatsCollection = collection(
+    this.firestore, '/boats').withConverter(dataObjectConverter<Boat>());
 
   private readonly boatsResource = rxResource({
     stream: (): Observable<Boat[]> =>

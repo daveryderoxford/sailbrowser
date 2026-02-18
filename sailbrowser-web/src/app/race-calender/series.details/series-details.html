@@ -28,6 +28,18 @@
          </mat-card-subtitle>
       </mat-card-header>
 
+      <mat-card-content>
+         <div class="scoring-details">
+            <div class="detail-item">
+               <span class="detail-label">Scoring Scheme:</span>
+               <span class="detail-value">{{ scoringSchemeName() }}</span>
+            </div>
+            <div class="detail-item">
+               <span class="detail-label">Entry Grouping:</span>
+               <span class="detail-value">{{ entryAlgorithmName() }}</span>
+            </div>
+         </div>
+      </mat-card-content>
       <mat-card-actions align="end">
          <button matButton (click)="editSeries(s.id)" title="Edit Series">
             Edit Details

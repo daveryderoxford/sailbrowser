@@ -1,9 +1,9 @@
 import { Injectable, inject } from '@angular/core';
 import { ClubService } from 'app/club/@store/club.service';
 import { Race } from 'app/race-calender/@store/race';
-import { RaceCompetitor } from 'app/race/@store/race-competitor';
-import { RaceCompetitorStore } from 'app/race/@store/race-competitor-store';
-import { ResultCode } from 'app/race/@store/result-code';
+import { RaceCompetitor } from 'app/results-input/@store/race-competitor';
+import { RaceCompetitorStore } from 'app/results-input/@store/race-competitor-store';
+
 
 export interface EntryDetails {
   races: Race[];
@@ -49,10 +49,10 @@ export class EntryService {
         boatClass: details.boatClass,
         sailNumber: details.sailNumber,
         handicap: handicap,
-        resultCode: ResultCode.NotFinished
+        resultCode: 'NOT FINISHED'
       };
 
-      console.log("Adding competiotot");
+      console.log("Adding competitor");
 
 
       return this.raceResultsService.addResult({

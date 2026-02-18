@@ -1,11 +1,11 @@
 import { Injectable, computed, inject } from "@angular/core";
 import { FirebaseApp } from '@angular/fire/app';
 import { User } from "@angular/fire/auth";
-import { DocumentReference, arrayRemove, arrayUnion, doc, docData, getFirestore, setDoc, updateDoc } from "@angular/fire/firestore";
+import { DocumentReference, arrayRemove, arrayUnion, collection, doc, docData, getFirestore, setDoc, updateDoc } from "@angular/fire/firestore";
 import { of } from 'rxjs';
 import { UserData } from './user';
 import { AuthService } from '../auth/auth.service';
-import { mappedCollectionRef } from '../shared/firebase/firestore-helper';
+import { dataObjectConverter } from '../shared/firebase/firestore-helper';
 import { rxResource } from '@angular/core/rxjs-interop';
 import { BoatClass } from 'app/club/@store/boat-class';
 
@@ -16,7 +16,7 @@ export class UserDataService {
   private fs = getFirestore(inject(FirebaseApp));
   private as = inject(AuthService);
 
-  private userCollection = mappedCollectionRef<UserData>(this.fs, 'users');
+  private userCollection = collection(this.fs, 'users').withConverter(dataObjectConverter<UserData>());
 
   private _userResource = rxResource<UserData | undefined, User| undefined>({
     params: () => this.as.user(),

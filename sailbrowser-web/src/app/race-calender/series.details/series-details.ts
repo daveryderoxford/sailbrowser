@@ -14,6 +14,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { RaceCalendarStore } from '../@store/full-race-calander';
 import { RaceListItem } from "../race-list-item/race-list-item";
 import { MatSnackBar } from '@angular/material/snack-bar';
+import { SeriesEntryAlgorithmDetails, SeriesScoringSchemeDetails } from 'app/race-calender/@store/series-scoring-data';
 
 /** Displays series details with a list of races 
  * Includes buttons to add/edit races and duplicate the series
@@ -24,7 +25,7 @@ import { MatSnackBar } from '@angular/material/snack-bar';
    templateUrl: 'series-details.html',
    styles: [`
       @use "mixins" as mix;
-      @include mix.centered-column-page(".content", 350px);
+      @include mix.centered-column-page(".content", 400px);
 
     .race-header  {
        display: flex; 
@@ -33,6 +34,18 @@ import { MatSnackBar } from '@angular/material/snack-bar';
        margin-right: 10px;
     }
     .spacer { flex: 1 0 0}
+
+    .scoring-details {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      padding-top: 16px;
+    }
+    .detail-item {
+      display: flex;
+      justify-content: space-between;
+    }
+    .detail-label { font-weight: 500; }
 
   `],
    changeDetection: ChangeDetectionStrategy.OnPush,
@@ -51,6 +64,18 @@ export class SeriesDetails {
    series = computed(() => this.rc.allSeries().find(s => s.id === this.id())!);
    fleets = computed(() => this.clubService.club().fleets);
    fleet = computed(() => this.fleets().find(f => f.shortName === this.series()?.fleetId));
+
+   scoringSchemeName = computed(() => {
+      const scheme = this.series()?.scoringScheme?.scheme;
+      if (!scheme) return '';
+      return SeriesScoringSchemeDetails.find(s => s.name === scheme)?.displayName ?? '';
+   });
+
+   entryAlgorithmName = computed(() => {
+      const algorithm = this.series()?.scoringScheme?.entryAlgorithm;
+      if (!algorithm) return '';
+      return SeriesEntryAlgorithmDetails.find(a => a.name === algorithm)?.displayName ?? '';
+   });
 
    races = this.rc.getSeriesRaces(this.id);
 

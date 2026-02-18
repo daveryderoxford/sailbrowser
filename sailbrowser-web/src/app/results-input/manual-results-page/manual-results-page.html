@@ -1,8 +1,12 @@
 <app-toolbar title="Results Entry">
+
+  <button matButton (click)="publish()">  
+    Publish results
+  </button>
   <mat-form-field appearance="outline" class="race-selector dense-form-field" subscriptSizing="dynamic">
     <mat-select [formControl]="raceFilterControl" placeholder="Select Race">
       @for (race of currentRacesStore.selectedRaces(); track race.id) {
-      <mat-option [value]="race">{{ race.seriesName }} - {{race.scheduledStart | date: "dd/mm/yy"}} Race {{
+      <mat-option [value]="race.id">{{ race.seriesName }} - {{race.scheduledStart | date: "dd/mm/yy"}} Race {{
         race.raceOfDay }}</mat-option>
       }
     </mat-select>
@@ -46,11 +50,11 @@
     <form [formGroup]="form" (ngSubmit)="save()">
 
       <mat-form-field appearance="outline">
-        <mat-label>Search Competitor</mat-label>
+        <mat-label>Competitor</mat-label>
         <input matInput [formControl]="searchControl" [matAutocomplete]="auto" placeholder="Class or Sail No">
         <mat-autocomplete #auto="matAutocomplete" [displayWith]="displayFn"
           (optionSelected)="onCompetitorSelected($event)">
-          @for (comp of filteredCompetitors(); track comp.id) {
+          @for (comp of autoCompleteCompetitors(); track comp.id) {
           <mat-option [value]="comp">
             {{comp.boatClass}} {{comp.sailNumber}} - {{comp.helm}}
           </mat-option>
@@ -87,8 +91,8 @@
       <mat-form-field appearance="outline">
         <mat-label>Result Code</mat-label>
         <mat-select formControlName="resultCode">
-          @for (code of resultCodes; track code.code) {
-            <mat-option [value]="code.code">{{ code.displayName }}</mat-option>
+          @for (code of resultCodes; track code.id) {
+            <mat-option [value]="code.id">{{ code.id }}</mat-option>
           }
         </mat-select>
         <mat-hint>{{ resultCodeDescription() }}</mat-hint>

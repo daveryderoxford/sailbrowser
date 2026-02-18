@@ -1,19 +1,9 @@
+import { differenceInSeconds } from 'date-fns';
 import { ResultCode } from './result-code';
 
 export const RESULTS_UNSET_VALUE = 9999;
 
-export interface ResultData {
-  /** Ellapsed time in seconds */
-  elapsedTime: number;
-  /** Corrected time in seconds */
-  correctedTime: number; 
-  /** Position if two competitors */
-  position: number;
-  /** Points alloccated  */
-  points: number;
-  isDiscarded: boolean;
-  isDiscardable: boolean;
-}
+export const RESULTS_TIME_ERROR = -9999;
 
 export class RaceCompetitor {
   id: string;
@@ -51,9 +41,9 @@ export class RaceCompetitor {
    */
   manualLaps: number;
   lapTimes: Date[];
-  result?: ResultData;
 
   constructor(data: Partial<RaceCompetitor>) {
+    console.log("RaceCompetitor: Constructor called for " + data.id);
     this.id = data.id || '';
     this.raceId = data.raceId || '';
     this.seriesId = data.seriesId || '';
@@ -65,66 +55,67 @@ export class RaceCompetitor {
     this.recordedFinishTime = data.recordedFinishTime;
     this.manualFinishTime = data.manualFinishTime;
     this.startTime = data.startTime;
-    this.resultCode = data.resultCode || ResultCode.NotFinished;
+    this.resultCode = data.resultCode || 'NOT FINISHED';
     this.manualLaps = data.manualLaps || 0;
     this.lapTimes = data.lapTimes || [];
-    this.result = data.result;
   }
-}
-
-import { Pipe, PipeTransform } from "@angular/core";
-
-@Pipe({
-  name: 'helmcrew',
-})
-export class HelmCrew implements PipeTransform {
-  transform(comp: RaceCompetitor | null) {
-    if (!comp) return;
-    return comp.crew && comp.crew.trim().length > 0 ? `${comp.helm} / ${comp.crew}` : comp.helm;
-  }
-} 
 
   /**
-   * TODO functions originall part of the competitor - convert to utility functions 
-   * 
-  /**
-   * The number of laps, manual value if set, otherwise the number of lap times recorded.
-   
-  get numLaps(): number {
-  if (this.manualLaps !== 0) {
-    return this.manualLaps;
-  } else {
-    // If competitor has finished then he has completed an extra lap.
-    return this.finishTime === undefined ? this.lapTimes.length : this.lapTimes.length + 1;
-  }
-   * 
    * Gets the finish time using a manually entered time in preference to
    * a recorded one. Returns undefined if no finish time is available.
-   
+   */
   get finishTime(): Date | undefined {
-  return this.manualFinishTime !== undefined && this.manualFinishTime !== null
-    ? this.manualFinishTime
-    : this.recordedFinishTime;
-}
+    console.log("RaceCompetitor: Finish time called");
+
+    return this.manualFinishTime ?? this.recordedFinishTime;
+  }
+
+  /** 
+   * Returns the elapsed time in seconds, 
+   * or undefined if it cannot be calculated.
+  */
+  get elapsedTime(): number | undefined {
+    console.log("RaceCompetitor: Elapsed time getter called");
+
+    // Competitor has not finished, or does not have a valid start/finish time.
+    if (this.resultCode === 'NOT FINISHED' || !this.startTime || !this.finishTime) {
+      return undefined;
+    }
+
+    const elapsed = differenceInSeconds(this.finishTime, this.startTime);
+
+    if (elapsed < 0) {
+      console.error("RaceCompetitor: Finish time is before Start time for competitor:", this.id);
+      return RESULTS_TIME_ERROR;
+    }
+
+    return elapsed;
+  }
 
   /**
-   * Returns the total time taken (finish - start) in milliseconds.
-   
-  get totalTime(): number {
-  if (this.finishTime && this.startTime) {
-    return this.finishTime.getTime() - this.startTime.getTime();
+   * The number of laps, manual value if set, otherwise the number of lap times recorded.
+   */
+  get numLaps(): number {
+    if (this.manualLaps > 0) {
+      return this.manualLaps;
+    }
+    // If competitor has finished then he has completed an extra lap.
+    return this.finishTime ? this.lapTimes.length + 1 : this.lapTimes.length;
   }
-  return 0;
-}
 
   get helmCrew(): string {
-  return this.crew && this.crew.trim().length > 0 ? `${this.helm} / ${this.crew}` : this.helm;
-}
+    console.log("RaceCompetitor:  Hem/crew called");
+
+    return this.crew && this.crew.trim().length > 0 ? `${this.helm} / ${this.crew}` : this.helm;
+  }
 
   /**
-   * Competitor has finished OK
-   
-  get isOk(): boolean {
-  return this.resultCode === ResultCode.Ok;
+   * Gets the average lap time in seconds.
+   */
+  get averageLapTime(): number | undefined {
+    if (this.elapsedTime && this.numLaps > 0) {
+      return this.elapsedTime / this.numLaps;
+    }
+    return undefined;
+  }
 }
-  */

@@ -1,5 +1,5 @@
 import { TestBed } from '@angular/core/testing';
-import { RaceScorer } from './race-scorer';
+import { RaceScorer } from './race-scorer.tsxxx';
 import { RaceCompetitor } from 'app/race/@store/race-competitor';
 import { ResultCode } from 'app/race/@store/result-code';
 import { Race } from 'app/race-calender/@store/race';

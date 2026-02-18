@@ -2,8 +2,8 @@ import { Component, computed, ElementRef, forwardRef, inject, input, OnInit } fr
 import { AbstractControl, FormControl, NG_VALIDATORS, NG_VALUE_ACCESSOR, ReactiveFormsModule, ValidationErrors, Validator } from '@angular/forms';
 import { MatFormFieldControl, MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
+import { FormFieldBase } from 'app/shared/components/form-field.base';
 import { format, isValid, parse } from 'date-fns';
-import { FormFieldBase } from './form-field.base';
 
 @Component({
   selector: 'app-race-time-input',

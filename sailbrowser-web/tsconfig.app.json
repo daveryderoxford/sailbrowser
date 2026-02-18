@@ -9,7 +9,7 @@
   },
   "include": [
     "src/**/*.ts"
-, "src/app/boats/boat-page"  ],
+, "src/app/boats/boat-page", "src/app/published-results/scoring/race-scorer.tsxxx"  ],
   "exclude": [
     "src/**/*.spec.ts"
   ]

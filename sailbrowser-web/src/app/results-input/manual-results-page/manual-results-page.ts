@@ -11,20 +11,20 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
 import { MatTableModule } from '@angular/material/table';
+import { PublishService } from 'app/published-results/@store/published-results-service';
 import { RaceCalendarStore } from 'app/race-calender/@store/full-race-calander';
 import { Race } from 'app/race-calender/@store/race';
-import { CurrentRaces } from 'app/race/@store/current-races-store';
-import { RaceCompetitor, ResultData } from 'app/race/@store/race-competitor';
-import { RaceCompetitorStore, sortEntries } from 'app/race/@store/race-competitor-store';
-import { ResultCode, ResultCodeDefinitions } from 'app/race/@store/result-code';
+import { CurrentRaces } from 'app/results-input/@store/current-races-store';
+import { RaceCompetitor } from 'app/results-input/@store/race-competitor';
+import { RaceCompetitorStore, sortEntries } from 'app/results-input/@store/race-competitor-store';
+import { RESULT_CODE_DEFINITIONS, ResultCode, getResultCodeDefinition } from 'app/results-input/@store/result-code';
 import { Toolbar } from 'app/shared/components/toolbar';
 import { normaliseString } from 'app/shared/utils/string-utils';
 import { differenceInSeconds } from 'date-fns';
-import { map, startWith } from 'rxjs';
-import { RaceStartTimeDialog, RaceStartTimeResult } from '../race-start-time-dialog';
-import { RaceScorer } from '../scoring/race-scorer';
+import { firstValueFrom, map, startWith } from 'rxjs';
 import { DurationPipe } from './duration.pipe';
 import { ManualResultsTable } from './manual-results-table';
+import { RaceStartTimeDialog, RaceStartTimeResult } from './race-start-time-dialog';
 import { RaceTimeInput } from './race-time-input';
 
 @Component({
@@ -55,26 +55,29 @@ export class ManualResultsPage {
   private readonly dialog = inject(MatDialog);
   protected readonly raceStore = inject(RaceCalendarStore);
   protected readonly currentRacesStore = inject(CurrentRaces);
-  private readonly raceScorer = inject(RaceScorer);
+  private readonly publishService = inject(PublishService);
 
-  readonly raceFilterControl = new FormControl<Race | null>(null);
+  readonly raceFilterControl = new FormControl<string | null>(null);
 
-  readonly resultCodes = Object.values(ResultCodeDefinitions).sort((a, b) => a.displayName.localeCompare(b.displayName));
+  readonly resultCodes = [...RESULT_CODE_DEFINITIONS].sort((a, b) => a.id.localeCompare(b.id));
 
   // Form for data entry
   readonly form = new FormGroup({
     competitor: new FormControl<RaceCompetitor | null>(null, Validators.required),
     finishTime: new FormControl<Date | null>(null, { validators: Validators.required, updateOn: 'blur' }),
     laps: new FormControl<number>(1, Validators.required),
-    resultCode: new FormControl<ResultCode>(ResultCode.Ok, { nonNullable: true }),
+    resultCode: new FormControl<ResultCode>('OK', { nonNullable: true }),
   });
 
-  readonly resultCodeValue = toSignal(this.form.controls.resultCode.valueChanges, { initialValue: ResultCode.Ok });
-  readonly resultCodeDescription = computed(() => ResultCodeDefinitions[this.resultCodeValue()]?.description);
+  readonly resultCodeValue = toSignal(this.form.controls.resultCode.valueChanges, { initialValue: 'OK' });
+  readonly resultCodeDescription = computed(() => getResultCodeDefinition(this.resultCodeValue())?.description);
 
   readonly selectedCompetitor = signal<RaceCompetitor | undefined>(undefined);
 
-  readonly selectedRace = toSignal(this.raceFilterControl.valueChanges);
+  readonly selectedRaceId = toSignal(this.raceFilterControl.valueChanges);
+
+  readonly selectedRace = computed(() => 
+    this.currentRacesStore.selectedRaces().find( r => this.selectedRaceId() ==r.id) );
 
   // Search control for autocomplete
   readonly searchControl = new FormControl<string | RaceCompetitor | null>('');
@@ -127,15 +130,13 @@ export class ManualResultsPage {
 
   // Competitors list sorted: Unfinished first, then Finished (at bottom)
   readonly sortedCompetitors = computed(() => {
-    const raceId = this.selectedRace()?.id || 'xxxxx';
+    const raceId = this.selectedRace()?.id;
     const comps = this.store.selectedCompetitors().filter(comp => raceId === comp.raceId);
-    console.log('***competitors. ' + comps.length);
-    console.log('raceId' + raceId);
-    return [...comps].sort((a, b) => manualRaceEntrySort(a,b));
+    return [...comps].sort((a, b) => manualRaceEntrySort(a, b));
   });
 
   // Filtered competitors for autocomplete
-  readonly filteredCompetitors = computed(() => {
+  readonly autoCompleteCompetitors = computed(() => {
     const term = normaliseString(this.searchTerm());
 
     return this.sortedCompetitors().filter(c => {
@@ -158,7 +159,7 @@ export class ManualResultsPage {
           this.form.controls.finishTime.setValue(comp.manualFinishTime);
         } else {
           this.form.controls.laps.setValue(this.lastEnteredLaps());
-          this.form.controls.resultCode.setValue(ResultCode.Ok);
+          this.form.controls.resultCode.setValue('OK');
           this.form.controls.finishTime.setValue(null);
         }
       }
@@ -188,18 +189,39 @@ export class ManualResultsPage {
     this.selectedCompetitor.set(row);
   }
 
-  setStartTime(race: Race) {
-    this.dialog.open<RaceStartTimeDialog, { race: typeof race; }, RaceStartTimeResult>(RaceStartTimeDialog, {
+  async setStartTime(race: Race): Promise<RaceStartTimeResult | undefined> {
+    const dialog = this.dialog.open<RaceStartTimeDialog, { race: typeof race; }, RaceStartTimeResult>(RaceStartTimeDialog, {
       data: { race }
-    }).afterClosed().subscribe(result => {
-      if (result) {
-        this.raceStore.updateRace(race.seriesId, race.id, {
-          actualStart: result.startTime,
-          timeInputMode: result.mode
-        });
-      }
     });
-  }
+
+    const result = await firstValueFrom<RaceStartTimeResult | undefined>(dialog.afterClosed());
+
+    if (result) {
+      await this.raceStore.updateRace(race.seriesId, race.id, {
+        actualStart: result.startTime,
+        timeInputMode: result.mode
+      });
+    }
+
+    return result;
+  } 
+/*
+  async setStartTime(race: Race): Promise<RaceStartTimeResult | undefined> {
+    const dialog = this.dialog.open<RaceStartTimeDialog, { race: typeof race; }, RaceStartTimeResult>(RaceStartTimeDialog, {
+      data: { race }
+    });
+
+    const result = await firstValueFrom<RaceStartTimeResult | undefined>(dialog.afterClosed());
+
+    if (result) {
+      await this.raceStore.updateRace(race.seriesId, race.id, {
+        actualStart: result.startTime,
+        timeInputMode: result.mode
+      });
+    }
+
+    return result;
+  } */
 
   async save() {
     if (this.form.invalid) return;
@@ -208,66 +230,34 @@ export class ManualResultsPage {
     if (!competitor) return;
 
     const race = this.currentRacesStore.selectedRaces().find(r => r.id === competitor.raceId);
-    const finishDate = finishTime || undefined;
 
-    // If Result is OK, we expect a finish date. If not OK, we proceed without one.
-    if (finishDate || resultCode !== ResultCode.Ok) {
-
-      // Check if data actually changed to avoid unnecessary writes
-      if (competitor.manualFinishTime?.getTime() === finishDate?.getTime() &&
-        competitor.manualLaps === laps &&
-        competitor.resultCode === resultCode) {
-        this.resetForm();
-        return;
-      }
-
-      // Calculate result data (corrected time) for sorting
-      let resultData: ResultData | undefined;
-
-      if (race && finishDate && resultCode === ResultCode.Ok) {
-        // TODO:  Decide we we display avaerge lap time or scakled by maxlaps We need the max laps to calculate corrected time for average lap races
-        // We use the current store state, but override the current competitor's laps
-        const competitors = this.store.selectedCompetitors().filter(c => c.raceId === race.id);
-        const currentLaps = laps || 1;
-
-        // Calculate max laps including this update
-        let maxLaps = currentLaps;
-        /*     if (race.isAverageLap) {
-               maxLaps = competitors.reduce((max, c) => {
-                 const cLaps = c.id === competitor.id ? currentLaps : (c.manualLaps || c.lapTimes.length || 0);
-                 return Math.max(max, cLaps);
-               }, 0);
-             } */
-
-        const times = this.raceScorer.calculateResultTimes({
-          comp: { ...competitor, manualFinishTime: finishDate, manualLaps: currentLaps } as RaceCompetitor,
-          scheme: (race as any).handicapScheme || 'PY',
-          isAverageLap: race.isAverageLap,
-          startTime: race.actualStart!,
-        });
-
-        resultData = {
-          elapsedTime: times.elapsed,
-          correctedTime: times.corrected,
-          position: 0, // Placeholder, requires full fleet scoring
-          points: 0,   // Placeholder
-          isDiscarded: false,  // Placeholder
-          isDiscardable: true
-        };
-      }
-
-      await this.store.updateResult(competitor, {
-        manualFinishTime: finishDate,
-        manualLaps: laps || 1,
-        resultCode: resultCode,
-        ...(resultData ? { result: resultData } : {})
-      });
-
-      // Remember laps for next entry
-      if (laps) this.lastEnteredLaps.set(laps);
-
-      this.resetForm();
+    // Start time must have been set for the competitor prior 
+    // to saving the result. 
+    if (!race!.actualStart) {
+      console.error('ManualResultsRage: Attempting to save resukt before start time set');
+      await this.setStartTime(race!);
+      return
     }
+
+    // If Result is OK, a finish time must be provided. 
+    // If not OK then it is valid not to have a finish time.
+    if (resultCode === 'OK' && !finishTime) {
+      console.error('ManualResultsRage: Attempting to save competitor with result code OK and no finish time');
+      return;
+    }
+
+    await this.store.updateResult(competitor, {
+      startTime: race!.actualStart,
+      manualFinishTime: finishTime || undefined,  // map null to undefined
+      manualLaps: laps || 1,
+      resultCode: resultCode
+    });
+
+    // Remember laps for next entry
+    if (laps) this.lastEnteredLaps.set(laps);
+
+    this.resetForm();
+
   }
 
   resetForm() {
@@ -275,27 +265,35 @@ export class ManualResultsPage {
     this.form.reset(); // this will set laps to its default of 1
     this.form.controls.laps.setValue(lastLaps); // now set it to the last entered value
     this.searchControl.setValue('');
-    this.form.controls.resultCode.setValue(ResultCode.Ok);
+    this.form.controls.resultCode.setValue('OK');
     this.selectedCompetitor.set(undefined);
+  }
+
+  /** Publish the race results */
+  publish() {
+    if (this.selectedRace()) {
+      this.publishService.publishRace(this.selectedRace()!);
+    }
+
   }
 }
 
 export function manualRaceEntrySort(a: RaceCompetitor, b: RaceCompetitor): number {
+   // A competitor is considered 'finished' for sorting if they have a finish time and an 'OK' result code.
+   const aFinished = !!a.finishTime && a.resultCode === 'OK';
+   const bFinished = !!b.finishTime && b.resultCode === 'OK';
 
-  const aFinished = !!a.result;
-  const bFinished = !!b.result;
+   // If one is finished and the other isn't, unfinished goes first
+   if (aFinished !== bFinished) {
+      return aFinished ? 1 : -1;
+   }
+   // If both finished, sort by corrected time (fastest first) or finish time if no result
+   if (aFinished && bFinished && a.elapsedTime && b.elapsedTime) {
+      // This is a simplified sort. A full corrected time calculation would be needed here for handicap races.
+      // For now, sorting by elapsed time is a reasonable default for the manual entry view.
+      return a.elapsedTime - b.elapsedTime;
+   }
 
-  // If one is finished and the other isn't, unfinished goes first
-  if (aFinished !== bFinished) {
-    return aFinished ? 1 : -1;
-  }
-  // If both finished, sort by corrected time (fastest first) or finish time if no result
-  if (aFinished && bFinished) {
-    const aTime = a.result!.correctedTime;
-    const bTime = b.result!.correctedTime;
-    return aTime - bTime;
-  }
-
-  // If both unfinished, standard sort (Class/SailNo)
-  return sortEntries(a, b);
+   // If both unfinished, standard sort (Class/SailNo)
+   return sortEntries(a, b);
 }

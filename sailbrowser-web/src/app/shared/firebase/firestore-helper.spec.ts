@@ -1,5 +1,5 @@
 import { DocumentData, QueryDocumentSnapshot, Timestamp } from '@angular/fire/firestore';
-import { mappedConverter } from './firestore-helper';
+import { genericConverter } from './firestore-helper';
 
 // A test interface to represent our application's data model.
 interface TestModel {
@@ -19,7 +19,7 @@ interface TestModel {
 describe('FirestoreHelper', () => {
   describe('mappedConverter', () => {
     // Get an instance of the converter for our test model.
-    const converter = mappedConverter<TestModel>();
+    const converter = genericConverter<TestModel>();
 
     // --- Test Data Setup ---
     const testDate1 = new Date('2023-10-27T10:00:00Z');

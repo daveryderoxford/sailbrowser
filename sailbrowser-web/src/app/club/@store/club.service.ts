@@ -2,9 +2,9 @@
 import { Injectable, inject } from '@angular/core';
 import { rxResource } from '@angular/core/rxjs-interop';
 import { FirebaseApp } from '@angular/fire/app';
-import { arrayRemove, arrayUnion, docData, getFirestore, updateDoc } from '@angular/fire/firestore';
+import { arrayRemove, arrayUnion, doc, docData, getFirestore, updateDoc } from '@angular/fire/firestore';
 import { Observable } from 'rxjs';
-import { mappedDoc } from '../../shared/firebase/firestore-helper';
+import { dataObjectConverter } from '../../shared/firebase/firestore-helper';
 import { BoatClass } from './boat-class';
 import { Club } from './club';
 import { Fleet } from './fleet';
@@ -14,7 +14,7 @@ import { Fleet } from './fleet';
 })
 export class ClubService {
   private readonly firestore = getFirestore(inject(FirebaseApp));
-  private readonly clubDoc = mappedDoc<Club>(this.firestore, 'systemdata', 'clubdata');
+  private readonly clubDoc = doc(this.firestore, 'systemdata', 'clubdata').withConverter(dataObjectConverter<Club>());
 
   private readonly clubResource = rxResource({
     stream: (): Observable<Club> =>

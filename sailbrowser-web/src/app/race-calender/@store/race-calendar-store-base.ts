@@ -1,7 +1,7 @@
 import { inject, Injectable } from '@angular/core';
 import { FirebaseApp } from '@angular/fire/app';
-import { addDoc, deleteDoc, getDocs, getFirestore, setDoc, writeBatch, doc } from '@angular/fire/firestore';
-import { mappedCollectionRef, mappedDoc } from '../../shared/firebase/firestore-helper';
+import { addDoc, deleteDoc, getDocs, getFirestore, setDoc, writeBatch, doc, collection } from '@angular/fire/firestore';
+import { dataObjectConverter } from '../../shared/firebase/firestore-helper';
 import { Race } from './race';
 import { Series } from './series';
 
@@ -17,8 +17,8 @@ export interface RaceSeriesDetails {
 export class RaceCalendarStoreBase {
   protected readonly firestore = getFirestore(inject(FirebaseApp));  
 
-  protected ref = (id: string) => mappedDoc<Series>(this.firestore, 'series', id);
-  protected readonly seriesCollection = mappedCollectionRef<Series>(this.firestore, '/series'); 
+  protected ref = (id: string) => doc(this.firestore, 'series', id).withConverter(dataObjectConverter<Series>());
+  protected readonly seriesCollection = collection(this.firestore, '/series').withConverter(dataObjectConverter<Series>()); 
 
   /** Add a series retruning a document Id */
   async addSeries(series: Partial<Series>): Promise<string> {
@@ -44,8 +44,8 @@ export class RaceCalendarStoreBase {
     await batch.commit();
   }
 
-  protected raceRef = (seriesId: string, id: string) => mappedDoc<Race>(this.firestore, `/series/${seriesId}/races`, id);
-  protected racesCollection = (seriesId: string) => mappedCollectionRef<Race>(this.firestore, `/series/${seriesId}/races`);
+  protected raceRef = (seriesId: string, id: string) => doc(this.firestore, `/series/${seriesId}/races`, id).withConverter(dataObjectConverter<Race>());
+  protected racesCollection = (seriesId: string) => collection(this.firestore, `/series/${seriesId}/races`).withConverter(dataObjectConverter<Race>());
 
   async addRace(seriesDetails: RaceSeriesDetails, race: Partial<Race>): Promise<void> {
     race.seriesId = seriesDetails.id;

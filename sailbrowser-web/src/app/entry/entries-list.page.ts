@@ -4,13 +4,13 @@ import { MatSelectModule } from '@angular/material/select';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { ReactiveFormsModule, FormControl } from '@angular/forms';
 import { Toolbar } from 'app/shared/components/toolbar';
-import { RaceCompetitorStore } from 'app/race/@store/race-competitor-store';
-import { CurrentRaces } from 'app/race/@store/current-races-store';
+import { RaceCompetitorStore } from 'app/results-input/@store/race-competitor-store';
+import { CurrentRaces } from 'app/results-input/@store/current-races-store';
 import { RaceCalendarStore } from 'app/race-calender/@store/full-race-calander';
 import { ClubService } from 'app/club/@store/club.service';
 import { LoadingCentered } from 'app/shared/components/loading-centered';
 import { toSignal } from '@angular/core/rxjs-interop';
-import { RaceCompetitor, HelmCrew } from 'app/race/@store/race-competitor';
+import { RaceCompetitor } from 'app/results-input/@store/race-competitor';
 import { RouterLink } from "@angular/router";
 import { MatButtonModule } from '@angular/material/button';
 import { DialogsService } from 'app/shared';
@@ -28,7 +28,6 @@ import { MatSnackBar } from '@angular/material/snack-bar';
     LoadingCentered,
     RouterLink,
     MatButtonModule,
-    HelmCrew,
     MatIconModule
   ],
   template: `
@@ -54,12 +53,18 @@ import { MatSnackBar } from '@angular/material/snack-bar';
           <p class="placeholder">No entries for this selection</p>
       } @else {
           <mat-list>
-            @for (competitor of filtered(); track competitor.id) {
+            @for (comp of filtered(); track comp.id) {
               <mat-list-item>
-                <span matListItemTitle>{{ competitor.boatClass }} {{ competitor.sailNumber }}</span>
-                <span matListItemLine>{{ competitor | helmcrew }}</span>
+                <span matListItemTitle>{{ comp.boatClass }} {{ comp.sailNumber }}</span>
+                <span matListItemLine>
+                  <span class=gap>{{ comp.helmCrew }}</span>
+                  Handicap: {{comp.handicap.toString()}}
+                </span>
+                <span matListItemLine>
+                  @if (comp.result) { Finished }
+              </span>
                 <span matListItemMeta>
-                  <button matIconButton (click)="delete(competitor)">
+                  <button matIconButton (click)="delete(comp)">
                     <mat-icon class="warning">delete</mat-icon>
                   </button>
                 </span>
@@ -93,6 +98,10 @@ import { MatSnackBar } from '@angular/material/snack-bar';
       text-align: center;
       font: var(--mat-sys-body-large);
     }
+
+    .gap {
+      margin-right: 10px;
+    }
   `],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
@@ -116,14 +125,15 @@ export class EntriesListPage {
 
   async delete(comp: RaceCompetitor) {
     if (comp.manualFinishTime || comp.recordedFinishTime) {
-      this.snackbar.open("Competitor not deleted", "Can not delete an entry with a finish time", { duration: 3000 });
+      this.snackbar.open("Can not delete an entry who has finished", "Dismiss", { duration: 3000 });
+      return
     }
     const ok = await this.ds.confirm("Delete competitor", "Delete competitor");
     if (ok) {
       try {
         await this.competitorStore.deleteResult(comp);
       } catch (error: any) {
-        this.snackbar.open("Error encountered deleting task", "Error encountered deleting task", { duration: 3000 });
+        this.snackbar.open("Error encountered deleting task", "Dismiss", { duration: 3000 });
         console.log('UpdateTask. Error deleting task: ' + error.toString());
       }
     }

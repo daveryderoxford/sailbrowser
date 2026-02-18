@@ -1,4 +1,4 @@
-import { HandicapScheme } from 'app/race/@store/handicap-scheme';
+import { HandicapScheme } from 'app/results-input/@store/handicap-scheme';
 
 export interface Fleet {
    id: string;
