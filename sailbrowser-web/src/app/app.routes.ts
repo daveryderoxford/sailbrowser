@@ -2,7 +2,7 @@ import { Routes } from '@angular/router';
 
 export const APP_ROUTES: Routes = [
    { path: "", redirectTo: "home", pathMatch: 'full' },
-   { path: "home", title: 'Home', loadComponent: () => import('./home/home-page').then(c => c.HomePage) },
+   { path: "home", title: 'Home', loadComponent: () => import('./home').then(c => c.HomePage) },
    { path: "entry", loadChildren: () => import('./entry/entries.routes').then(r => r.ENTERIES_ROUTES) },
    { path: "boats", loadChildren: () => import('./boats/boats.routes').then(r => r.BOATS_ROUTES) },
    { path: "race-calender", loadChildren: () => import('./race-calender/race-calender.routes').then(r => r.RACE_CALENDER_ROUTES) },
@@ -11,5 +11,5 @@ export const APP_ROUTES: Routes = [
    { path: "sys-admin", loadChildren: () => import('./sys-admin/sys-admin.routes').then(r => r.SYS_ADMIN_ROUTES) },
    { path: "auth", loadChildren: () => import('./auth/auth.routes').then(r => r.AUTH_ROUTES) },
    { path: "user", loadChildren: () => import('./user/user.routes').then(r => r.USER_ROUTES) },
-   { path: "about", title: 'About Sailbrowser', loadComponent: () => import('./about/about-page').then(c => c.AboutComponent) },
+   { path: "about", title: 'About Sailbrowser', loadComponent: () => import('./about').then(c => c.AboutComponent) },
 ];

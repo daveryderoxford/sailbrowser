@@ -3,13 +3,17 @@
 {
   "extends": "./tsconfig.json",
   "compilerOptions": {
-    "baseUrl": "./src",
+    "baseUrl": "./",
     "outDir": "./out-tsc/app",
-    "types": []
+    "types": [],
+    "paths": {
+      "app/*": ["src/app/*"],
+      "@env/*": ["src/environments/*"]
+    }
   },
   "include": [
     "src/**/*.ts"
-, "src/app/boats/boat-page", "src/app/published-results/scoring/race-scorer.tsxxx"  ],
+, "src/app/published-results/presentation/results-viewer" ],
   "exclude": [
     "src/**/*.spec.ts"
   ]

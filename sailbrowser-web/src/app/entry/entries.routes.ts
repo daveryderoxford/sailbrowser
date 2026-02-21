@@ -1,8 +1,8 @@
 import { Routes } from '@angular/router';
 import { authGuard } from 'app/auth/guards/auth-guard';
 import { pendingChangesGuard } from 'app/shared/services/pending-changes-guard-service.guard';
-import { EntriesListPage } from './entries-list.page';
-import { EntryPage } from './entry-page/entry-page';
+import { EntriesListPage } from './presentation/entries-list.page';
+import { EntryPage } from './presentation/entry-page/entry-page';
 
 export const ENTERIES_ROUTES: Routes = [
    { path: '', component: EntriesListPage },

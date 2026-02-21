@@ -1,0 +1,23 @@
+{
+  "id": "2023-2024",
+  "series": [
+    {
+      "id": "spring-laser-series-2024",
+      "name": "Spring Laser Series",
+      "fleetId": "Laser",
+      "startDate": "2024-04-07T10:00:00.000Z",
+      "endDate": "2024-04-21T10:00:00.000Z",
+      "raceCount": 3,
+      "seriesId": "spring-laser-series-2024"
+    },
+    {
+      "id": "summer-handicap-series-2024",
+      "name": "Summer Handicap Series",
+      "fleetId": "Handicap",
+      "startDate": "2024-06-02T10:00:00.000Z",
+      "endDate": "2024-06-02T11:00:00.000Z",
+      "raceCount": 1,
+      "seriesId": "summer-handicap-series-2024"
+    }
+  ]
+}

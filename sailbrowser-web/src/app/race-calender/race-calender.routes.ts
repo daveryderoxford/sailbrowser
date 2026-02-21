@@ -1,14 +1,13 @@
 import { Routes } from '@angular/router';
-import {authGuard} from 'app/auth/guards/auth-guard'
-import {pendingChangesGuard} from 'app/shared/services/pending-changes-guard-service.guard';
-import { SeriesAdd } from './series-list/series-add';
-import { SeriesEdit } from './series-list/series-edit';
-import { SeriesList } from './series-list/series-list';
-import { SeriesDetails } from './series.details/series-details';
-import { SeriesCopy } from './series-copy';
-import { RaceEdit } from './race-details/race-edit';
-import { RaceAdd } from './race-details/add-race';
-
+import { authGuard } from 'app/auth/guards/auth-guard';
+import { pendingChangesGuard } from 'app/shared/services/pending-changes-guard-service.guard';
+import { RaceAdd } from './presentation/race-add/add-race';
+import { RaceEdit } from './presentation/race-edit/race-edit';
+import { SeriesAdd } from './presentation/series-add';
+import { SeriesCopy } from './presentation/series-copy';
+import { SeriesEdit } from './presentation/series-edit';
+import { SeriesList } from './presentation/series-list';
+import { SeriesDetails } from './presentation/series.details/series-details';
 
 export const RACE_CALENDER_ROUTES: Routes = [
    { path: '', component: SeriesList },

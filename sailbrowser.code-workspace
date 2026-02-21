@@ -1,0 +1,31 @@
+{
+  "folders": [
+    {
+      "name": "Frontend: Angular",
+      "path": "sailbrowser-web"
+    },
+    {
+      "name": "Mobile: Dart/Flutter",
+      "path": "race_officer"
+    },
+    {
+      "name": "Firebase: Functions & Rules",
+      "path": "firebase" 
+    },
+    {
+      "name": "Repo: Root Config",
+      "path": "."
+    }
+  ],
+  "settings": {
+    "files.exclude": {
+      "sailbrowser-web/**": true,
+      "race_officer/**": true,
+      "firebase/**": true,
+      "**/node_modules": true,
+      "**/.dart_tool": true,
+      "**/.firebase": false // Keep this visible in Root Config if you need to see it
+    },
+    "typescript.tsdk": "angular-site/node_modules/typescript/lib"
+  }
+}

@@ -4,7 +4,7 @@ import { FirebaseApp } from '@angular/fire/app';
 import { collection, collectionData, getFirestore } from '@angular/fire/firestore';
 import { AuthService } from 'app/auth/auth.service';
 import { dataObjectConverter } from 'app/shared/firebase/firestore-helper';
-import { UserData } from 'app/user/user';
+import { UserData } from '../../user/model/user';
 import { of } from 'rxjs';
 
 @Injectable({

@@ -4,7 +4,7 @@
   "scripts": {
     "serve": "ng serve",
     "build": "ng build",
-    "stats": "ng build --stats-json --named-chunks && npx @angular-experts/hawkeye dist/splitsbrowser/stats.json",
+    "stats": "ng build --stats-json --named-chunks && npx @angular-experts/hawkeye dist/sailbrowser/stats.json",
     "watch": "ng build --watch --configuration development",
     "test": "ng test"
   },
@@ -46,7 +46,8 @@
     "firebase-tools": "^14.0.0",
     "jsdom": "^27.1.0",
     "typescript": "~5.9.2",
-    "vitest": "^4.0.8"
+    "vitest": "^4.0.8",
+    "webpack-bundle-analyzer": "^5.2.0"
   },
   "overrides": {
     "@angular/fire": {

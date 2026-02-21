@@ -1,7 +1,15 @@
 import { Routes } from '@angular/router';
-import { authGuard } from 'app/auth/guards/auth-guard';
-import { ResultsViewer } from './results-viewer.ts/results-viewer';
+import { ResultsViewer } from './presentation/results-viewer/results-viewer';
+import { SeasonList } from './presentation/season-list/season-list';
 
 export const PUBLISHED_RESULTS_ROUTES: Routes = [
-   { path: 'viewer', component: ResultsViewer, canActivate: [authGuard] },
+
+   // On Mobile: Navigates to this route to see the list full-screen
+   // On Desktop: This route shows the sidebar + a "Select an item" message
+   { path: 'mobile-results-list', component: SeasonList },
+
+   { path: 'viewer/:id', component: ResultsViewer },
+
+   { path: '', redirectTo: 'items', pathMatch: 'full' }
+
 ];

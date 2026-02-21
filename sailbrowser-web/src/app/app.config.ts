@@ -1,10 +1,12 @@
 import { ApplicationConfig, isDevMode, provideZonelessChangeDetection } from '@angular/core';
 import { getApp, initializeApp, provideFirebaseApp } from '@angular/fire/app';
 import { initializeAppCheck, provideAppCheck, ReCaptchaEnterpriseProvider } from '@angular/fire/app-check';
-import { getAuth, provideAuth } from '@angular/fire/auth';
+import { connectAuthEmulator, getAuth, provideAuth } from '@angular/fire/auth';
+import { connectFirestoreEmulator, getFirestore, provideFirestore } from '@angular/fire/firestore';
 import { provideRouter, withComponentInputBinding } from '@angular/router';
 import { APP_ROUTES } from './app.routes';
 import { firebaseConfig } from './firebase-config';
+import { environment } from '../environments/environment';
 
 if (isDevMode()) {
   (window as any).FIREBASE_APPCHECK_DEBUG_TOKEN = true;
@@ -15,7 +17,20 @@ export const appConfig: ApplicationConfig = {
   providers: [
     provideZonelessChangeDetection(),
     provideFirebaseApp(() => initializeApp(firebaseConfig)),
-    provideAuth(() => getAuth()),
+    provideAuth(() => {
+      const auth = getAuth();
+      if (environment.useEmulators) {
+        connectAuthEmulator(auth, 'http://localhost:9099', { disableWarnings: true });
+      }
+      return auth;
+    }),
+    provideFirestore(() => {
+      const firestore = getFirestore();
+      if (environment.useEmulators) {
+        connectFirestoreEmulator(firestore, 'localhost', 8080);
+      }
+      return firestore;
+    }),
     provideAppCheck(() =>
       initializeAppCheck(getApp(), {
         provider: new ReCaptchaEnterpriseProvider('6LfC1dUrAAAAAH6_S3uOuk--gDUsbLivZ4lDEgH0'), isTokenAutoRefreshEnabled: true
@@ -26,4 +41,3 @@ export const appConfig: ApplicationConfig = {
     ),
   ],
 };
-

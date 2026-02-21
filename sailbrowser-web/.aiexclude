@@ -1,0 +1,31 @@
+# Dependency folders (The biggest culprits)
+node_modules/
+bower_components/
+
+# Angular & Build artifacts
+.angular/
+dist/
+out/
+build/
+*.log
+*.tmp
+
+# Version Control & Metadata
+.git/
+.svn/
+.hg/
+.vscode/
+.idea/
+
+# Testing & Reports
+coverage/
+test-results/
+.nyc_output/
+
+# Large Asset Folders (Optional: if you have many images/videos)
+src/assets/
+
+# Environment and Secrets (For safety)
+.env
+*.pem
+*.key

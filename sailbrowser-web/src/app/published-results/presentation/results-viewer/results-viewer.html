@@ -1,0 +1,11 @@
+<app-toolbar title="Results" />
+
+<div class="layout-container" [class.mobile-mode]="isMobile()">
+
+   @if (isMobile()) {
+      <aside class="desktop-sidebar">
+         <app-season-list/>
+      </aside>
+   }
+
+</div>

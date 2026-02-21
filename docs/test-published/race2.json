@@ -1,0 +1,42 @@
+[
+   {
+      "helm": "David Miller",
+      "sailNumber": 950,
+      "club": "Lakeside SC",
+      "boatClass": "RS Aero 9",
+      "handicap": 1065,
+      "raceScores": [
+         {
+            "points": 1,
+            "resultCode": "OK",
+            "isDiscard": false
+         }
+      ],
+      "totalPoints": 1,
+      "netPoints": 1,
+      "rank": 1,
+      "tiebreakScores": [
+         1
+      ]
+   },
+   {
+      "helm": "Eve Davis",
+      "sailNumber": 732,
+      "club": "Lakeside SC",
+      "boatClass": "Solo",
+      "handicap": 1141,
+      "raceScores": [
+         {
+            "points": 2,
+            "resultCode": "OK",
+            "isDiscard": false
+         }
+      ],
+      "totalPoints": 2,
+      "netPoints": 2,
+      "rank": 2,
+      "tiebreakScores": [
+         2
+      ]
+   }
+]

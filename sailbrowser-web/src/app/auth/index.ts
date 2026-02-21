@@ -1,11 +1,7 @@
-import {LoginComponent} from './login/login';
-import {Signup} from './signup/signup';
-import {RecoverComponent} from './recover/recover-password';
-// import {MobileLoginComponent} from "./login.component.mobile";
+export { AuthButton } from './auth-button/auth-button';
+export { AUTH_ROUTES } from './auth.routes';
 
-export const AUTH_DECLARATIONS = [
-  LoginComponent,
-  Signup,
-  RecoverComponent
-];
+export { AuthService } from './auth.service';
+
+export { authGuard } from './guards/auth-guard';
 

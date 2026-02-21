@@ -1,0 +1,97 @@
+[
+   {
+      "helm": "Alice Johnson",
+      "sailNumber": 210987,
+      "club": "Lakeside SC",
+      "boatClass": "Laser",
+      "handicap": 1148,
+      "raceScores": [
+         {
+            "points": 1,
+            "resultCode": "OK",
+            "isDiscard": false
+         },
+         {
+            "points": 2,
+            "resultCode": "OK",
+            "isDiscard": false
+         },
+         {
+            "points": 1,
+            "resultCode": "OK",
+            "isDiscard": false
+         }
+      ],
+      "totalPoints": 4,
+      "netPoints": 4,
+      "rank": 1,
+      "tiebreakScores": [
+         1,
+         1,
+         2
+      ]
+   },
+   {
+      "helm": "Bob Williams",
+      "sailNumber": 198765,
+      "club": "Lakeside SC",
+      "boatClass": "Laser",
+      "handicap": 1148,
+      "raceScores": [
+         {
+            "points": 2,
+            "resultCode": "OK",
+            "isDiscard": false
+         },
+         {
+            "points": 1,
+            "resultCode": "OK",
+            "isDiscard": false
+         },
+         {
+            "points": 2,
+            "resultCode": "OK",
+            "isDiscard": false
+         }
+      ],
+      "totalPoints": 5,
+      "netPoints": 5,
+      "rank": 2,
+      "tiebreakScores": [
+         1,
+         2,
+         2
+      ]
+   },
+   {
+      "helm": "Charlie Brown",
+      "sailNumber": 205432,
+      "club": "Lakeside SC",
+      "boatClass": "Laser",
+      "handicap": 1148,
+      "raceScores": [
+         {
+            "points": 4,
+            "resultCode": "DNC",
+            "isDiscard": true
+         },
+         {
+            "points": 3,
+            "resultCode": "OK",
+            "isDiscard": false
+         },
+         {
+            "points": 3,
+            "resultCode": "OK",
+            "isDiscard": false
+         }
+      ],
+      "totalPoints": 10,
+      "netPoints": 6,
+      "rank": 3,
+      "tiebreakScores": [
+         3,
+         3
+      ]
+   }
+]
