@@ -31,7 +31,6 @@ import { endOfDay, isWithinInterval } from 'date-fns';
       background: var(--mat-sys-surface-variant);
       padding: 15px;
    }
-
   `,
   changeDetection: ChangeDetectionStrategy.OnPush,
 })

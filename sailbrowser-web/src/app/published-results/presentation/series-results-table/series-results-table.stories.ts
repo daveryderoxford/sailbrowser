@@ -1,6 +1,7 @@
 import { Meta, StoryObj } from '@storybook/angular';
 import { SeriesResultsTable } from './series-results-table';
-import { PublishedSeries } from '../../model/published-series';
+import { PUBLIC_SERIES_MOCK } from '@testing/mocks/published-results/published-series-mocks';
+
 
 export default {
   title: 'Published Results/Results Table',
@@ -24,56 +25,12 @@ const mockRaceTitles = [
   { id: '6', index: 6, scheduledStart: new Date('2024-05-30'), raceOfDay: 1 },
 ];
 
-const mockSeries: PublishedSeries = {
-  id: 'test-series',
-  competitors: [
-    {
-      rank: 1,
-      helm: 'John Doe',
-      boatClass: 'Laser',
-      sailNumber: 12345,
-      club: 'SBSC',
-      handicap: 1000,
-      totalPoints: 5,
-      netPoints: 3,
-      raceScores: [
-        { points: 1, resultCode: 'OK', isDiscard: false },
-        { points: 2, resultCode: 'OK', isDiscard: false },
-        { points: 2, resultCode: 'OK', isDiscard: true },
-        { points: 2, resultCode: 'OK', isDiscard: true },
-        { points: 2, resultCode: 'OK', isDiscard: true },
-        { points: 2, resultCode: 'OK', isDiscard: true },
-      ],
-      tiebreakScores: [],
-    },
-    {
-      rank: 2,
-      helm: 'Jane Smith',
-      crew: 'Jim Crew',
-      boatClass: 'RS200',
-      sailNumber: 987,
-      club: 'SBSC',
-      handicap: 950,
-      totalPoints: 7,
-      netPoints: 4,
-      raceScores: [
-        { points: 3, resultCode: 'OK', isDiscard: true },
-        { points: 1, resultCode: 'OK', isDiscard: false },
-        { points: 3, resultCode: 'OK', isDiscard: false },
-        { points: 3, resultCode: 'OK', isDiscard: false },
-        { points: 3, resultCode: 'OK', isDiscard: false },
-        { points: 3, resultCode: 'OK', isDiscard: false },
-      ],
-      tiebreakScores: [],
-    },
-  ],
-};
 
 type Story = StoryObj<SeriesResultsTable>;
 
 export const Default: Story = {
   args: {
-    series: mockSeries,
+    series: PUBLIC_SERIES_MOCK,
     raceTitles: mockRaceTitles,
     fontSize: '10pt',
   },
@@ -85,7 +42,7 @@ export const Default: Story = {
 export const ThirdPlace: Story = {
   args: {
     ...Default.args,
-    series: { ...mockSeries, competitors: [{ ...mockSeries.competitors[0], rank: 3 }, mockSeries.competitors[1]] }
+    series: { ...PUBLIC_SERIES_MOCK, competitors: [{ ...PUBLIC_SERIES_MOCK.competitors[0], rank: 3 }, PUBLIC_SERIES_MOCK.competitors[1]] }
   },
   render: (args) => ({
     props: args,

@@ -12307,17 +12307,17 @@
         },
         {
             "name": "ResultsViewer",
-            "id": "component-ResultsViewer-dc47355a568c20cf56d1e77ee22db1f2c37ec92f991f7973d8a973fa1d7d58faec9452e5a788e99604c836e71ec85c7880e6f3bf9d7ee8a7c20fdf48a87747df",
+            "id": "component-ResultsViewer-3059278b413464cc9bdaa77d47ad88298643b4a18f732bb4963ec7ea3450a4c8518cab1bfe52e13f3e496fb2c6ebe9640b67b16f8a1a0779aa4e3c2540fd5125",
             "file": "src/app/published-results/presentation/results-viewer/results-viewer.ts",
             "encapsulation": [],
             "entryComponents": [],
             "inputs": [],
             "outputs": [],
             "providers": [],
-            "selector": "app-results-viewer.ts",
+            "selector": "app-results-viewer",
             "styleUrls": [],
             "styles": [
-                "\n  .layout-container {\n    display: grid;\n    grid-template-columns: 300px 1fr; /* Desktop default */\n    height: 100vh;\n  }\n\n  .layout-container.mobile-mode {\n    grid-template-columns: 1fr; /* Sidebar is *ngIf-ed away, content takes all */\n  }\n\n  .desktop-sidebar {\n    border-right: 1px solid #eee;\n    overflow-y: auto;\n  }\n  \n  "
+                "\n  .layout-container {\n    display: grid;\n    grid-template-columns: 300px 1fr; /* Desktop default */\n    height: 100vh;\n    transition: grid-template-columns 0.3s ease-in-out;\n  }\n\n  .layout-container.panel-collapsed {\n    grid-template-columns: 0px 1fr;\n  }\n\n  .layout-container.mobile-mode {\n    grid-template-columns: 1fr; /* Sidebar is *ngIf-ed away, content takes all */\n  }\n\n  .sidebar {\n    border-right: 1px solid #eee;\n    overflow-y: auto;\n    overflow-x: hidden; /* Hide content as it collapses */\n  }\n\n  .content-area {\n    position: relative; /* For positioning the toggle button */\n    display: flex;\n    justify-content: center; /* Center the tables-container horizontally */\n    overflow-y: auto;\n    padding: 2rem;\n  }\n\n  .tables-container {\n    width: 100%;\n    max-width: 1200px; /* Max width for the tables */\n  }\n\n  .panel-toggle-button {\n    position: absolute;\n    top: 16px;\n    left: 16px;\n    z-index: 10;\n  }\n  "
             ],
             "templateUrl": [
                 "./results-viewer.html"
@@ -12333,7 +12333,7 @@
                     "indexKey": "",
                     "optional": false,
                     "description": "",
-                    "line": 39,
+                    "line": 67,
                     "required": true
                 }
             ],
@@ -12348,7 +12348,7 @@
                     "indexKey": "",
                     "optional": false,
                     "description": "",
-                    "line": 36,
+                    "line": 63,
                     "modifierKind": [
                         123
                     ]
@@ -12362,7 +12362,21 @@
                     "indexKey": "",
                     "optional": false,
                     "description": "",
-                    "line": 41
+                    "line": 69
+                },
+                {
+                    "name": "isPanelCollapsed",
+                    "defaultValue": "signal(false)",
+                    "deprecated": false,
+                    "deprecationMessage": "",
+                    "type": "unknown",
+                    "indexKey": "",
+                    "optional": false,
+                    "description": "",
+                    "line": 65,
+                    "modifierKind": [
+                        124
+                    ]
                 },
                 {
                     "name": "races",
@@ -12373,7 +12387,7 @@
                     "indexKey": "",
                     "optional": false,
                     "description": "",
-                    "line": 44
+                    "line": 72
                 },
                 {
                     "name": "raceTitles",
@@ -12384,7 +12398,7 @@
                     "indexKey": "",
                     "optional": false,
                     "description": "",
-                    "line": 46
+                    "line": 74
                 },
                 {
                     "name": "reader",
@@ -12395,7 +12409,7 @@
                     "indexKey": "",
                     "optional": false,
                     "description": "",
-                    "line": 37,
+                    "line": 64,
                     "modifierKind": [
                         124
                     ]
@@ -12409,7 +12423,7 @@
                     "indexKey": "",
                     "optional": false,
                     "description": "",
-                    "line": 43
+                    "line": 71
                 },
                 {
                     "name": "store",
@@ -12420,7 +12434,7 @@
                     "indexKey": "",
                     "optional": false,
                     "description": "",
-                    "line": 35,
+                    "line": 62,
                     "modifierKind": [
                         124
                     ]
@@ -12442,7 +12456,7 @@
                     "optional": false,
                     "returnType": "void",
                     "typeParameters": [],
-                    "line": 61,
+                    "line": 89,
                     "deprecated": false,
                     "deprecationMessage": "",
                     "jsdoctags": [
@@ -12458,6 +12472,16 @@
                             }
                         }
                     ]
+                },
+                {
+                    "name": "togglePanel",
+                    "args": [],
+                    "optional": false,
+                    "returnType": "void",
+                    "typeParameters": [],
+                    "line": 93,
+                    "deprecated": false,
+                    "deprecationMessage": ""
                 }
             ],
             "deprecated": false,
@@ -12480,29 +12504,37 @@
                 },
                 {
                     "name": "RaceResultsTable"
+                },
+                {
+                    "name": "MatIconModule",
+                    "type": "module"
+                },
+                {
+                    "name": "MatButtonModule",
+                    "type": "module"
                 }
             ],
             "description": "",
             "rawdescription": "\n",
             "type": "component",
-            "sourceCode": "import { Component, computed, effect, inject, input } from '@angular/core';\nimport { Toolbar } from \"app/shared/components/toolbar\";\nimport { BreakpointObserver, Breakpoints } from '@angular/cdk/layout';\nimport { toSignal } from '@angular/core/rxjs-interop';\nimport { SeasonList } from \"../season-list/season-list\";\nimport { PublishedResultsReader } from 'app/published-results/services/published-results-store';\nimport { SeriesResultsTable } from \"../series-results-table/series-results-table\";\nimport { LoadingCentered } from \"../../../shared/components/loading-centered\";\nimport { RaceResultsTable } from \"../race-results-table/race-results-table\";\n\n@Component({\n  selector: 'app-results-viewer.ts',\n  imports: [Toolbar, SeasonList, SeriesResultsTable, LoadingCentered, RaceResultsTable],\n  templateUrl: './results-viewer.html',\n  styles: `\n  .layout-container {\n    display: grid;\n    grid-template-columns: 300px 1fr; /* Desktop default */\n    height: 100vh;\n  }\n\n  .layout-container.mobile-mode {\n    grid-template-columns: 1fr; /* Sidebar is *ngIf-ed away, content takes all */\n  }\n\n  .desktop-sidebar {\n    border-right: 1px solid #eee;\n    overflow-y: auto;\n  }\n  \n  `,\n})\nexport class ResultsViewer {\n\n  protected store = inject(PublishedResultsReader);\n  private breakpoint = toSignal(inject(BreakpointObserver).observe([Breakpoints.Handset]));\n  protected reader = inject(PublishedResultsReader);\n\n  id = input.required<string>();  // Route parameter\n\n  isMobile = computed(() => this.breakpoint()?.matches );\n\n  series = this.store.series;\n  races = this.store.races;\n\n  raceTitles = computed(() => this.races().map((({ id, index, scheduledStart, raceOfDay }) => ({\n      id,  \n      index,\n      scheduledStart,\n      raceOfDay\n    })\n  )));\n\n  constructor() {\n    // Effect to read series data when the selected Id changes\n    // based on route parameter\n    effect(() => {\n      this.store.selectedSeriesId.set(this.id());\n    });\n  }\n  raceClicked(raceId: string) {\n\n  }\n}\n",
+            "sourceCode": "import { Component, computed, effect, inject, input, signal } from '@angular/core';\nimport { Toolbar } from \"app/shared/components/toolbar\";\nimport { BreakpointObserver, Breakpoints } from '@angular/cdk/layout';\nimport { toSignal } from '@angular/core/rxjs-interop';\nimport { SeasonList } from \"../season-list/season-list\";\nimport { PublishedResultsReader } from 'app/published-results/services/published-results-store';\nimport { SeriesResultsTable } from \"../series-results-table/series-results-table\";\nimport { LoadingCentered } from \"../../../shared/components/loading-centered\";\nimport { RaceResultsTable } from \"../race-results-table/race-results-table\";\nimport { MatIconModule } from '@angular/material/icon';\nimport { MatButtonModule } from '@angular/material/button';\n\n@Component({\n  selector: 'app-results-viewer',\n  imports: [Toolbar, SeasonList, SeriesResultsTable, LoadingCentered, RaceResultsTable, MatIconModule, MatButtonModule],\n  templateUrl: './results-viewer.html',\n  styles: `\n  .layout-container {\n    display: grid;\n    grid-template-columns: 300px 1fr; /* Desktop default */\n    height: 100vh;\n    transition: grid-template-columns 0.3s ease-in-out;\n  }\n\n  .layout-container.panel-collapsed {\n    grid-template-columns: 0px 1fr;\n  }\n\n  .layout-container.mobile-mode {\n    grid-template-columns: 1fr; /* Sidebar is *ngIf-ed away, content takes all */\n  }\n\n  .sidebar {\n    border-right: 1px solid #eee;\n    overflow-y: auto;\n    overflow-x: hidden; /* Hide content as it collapses */\n  }\n\n  .content-area {\n    position: relative; /* For positioning the toggle button */\n    display: flex;\n    justify-content: center; /* Center the tables-container horizontally */\n    overflow-y: auto;\n    padding: 2rem;\n  }\n\n  .tables-container {\n    width: 100%;\n    max-width: 1200px; /* Max width for the tables */\n  }\n\n  .panel-toggle-button {\n    position: absolute;\n    top: 16px;\n    left: 16px;\n    z-index: 10;\n  }\n  `,\n})\nexport class ResultsViewer {\n\n  protected store = inject(PublishedResultsReader);\n  private breakpoint = toSignal(inject(BreakpointObserver).observe([Breakpoints.Handset]));\n  protected reader = inject(PublishedResultsReader);\n  protected isPanelCollapsed = signal(false);\n\n  id = input.required<string>();  // Route parameter\n\n  isMobile = computed(() => this.breakpoint()?.matches );\n\n  series = this.store.series;\n  races = this.store.races;\n\n  raceTitles = computed(() => this.races().map((({ id, index, scheduledStart, raceOfDay }) => ({\n      id,  \n      index,\n      scheduledStart,\n      raceOfDay\n    })\n  )));\n\n  constructor() {\n    // Effect to read series data when the selected Id changes\n    // based on route parameter\n    effect(() => {\n      this.store.selectedSeriesId.set(this.id());\n    });\n  }\n  raceClicked(raceId: string) {\n\n  }\n\n  togglePanel() {\n    this.isPanelCollapsed.update(v => !v);\n  }\n}\n",
             "assetsDirs": [],
             "styleUrlsData": "",
-            "stylesData": "\n  .layout-container {\n    display: grid;\n    grid-template-columns: 300px 1fr; /* Desktop default */\n    height: 100vh;\n  }\n\n  .layout-container.mobile-mode {\n    grid-template-columns: 1fr; /* Sidebar is *ngIf-ed away, content takes all */\n  }\n\n  .desktop-sidebar {\n    border-right: 1px solid #eee;\n    overflow-y: auto;\n  }\n  \n  \n",
+            "stylesData": "\n  .layout-container {\n    display: grid;\n    grid-template-columns: 300px 1fr; /* Desktop default */\n    height: 100vh;\n    transition: grid-template-columns 0.3s ease-in-out;\n  }\n\n  .layout-container.panel-collapsed {\n    grid-template-columns: 0px 1fr;\n  }\n\n  .layout-container.mobile-mode {\n    grid-template-columns: 1fr; /* Sidebar is *ngIf-ed away, content takes all */\n  }\n\n  .sidebar {\n    border-right: 1px solid #eee;\n    overflow-y: auto;\n    overflow-x: hidden; /* Hide content as it collapses */\n  }\n\n  .content-area {\n    position: relative; /* For positioning the toggle button */\n    display: flex;\n    justify-content: center; /* Center the tables-container horizontally */\n    overflow-y: auto;\n    padding: 2rem;\n  }\n\n  .tables-container {\n    width: 100%;\n    max-width: 1200px; /* Max width for the tables */\n  }\n\n  .panel-toggle-button {\n    position: absolute;\n    top: 16px;\n    left: 16px;\n    z-index: 10;\n  }\n  \n",
             "constructorObj": {
                 "name": "constructor",
                 "description": "",
                 "deprecated": false,
                 "deprecationMessage": "",
                 "args": [],
-                "line": 52
+                "line": 80
             },
             "extends": [],
-            "templateData": "<app-toolbar title=\"Results\" />\n\n<div class=\"layout-container\" [class.mobile-mode]=\"isMobile()\">\n\n   <!-- Show sidebar in desktop view\n     on mobile, navgate via a full screen list page -->\n   @if (!isMobile()) {\n   <aside class=\"desktop-sidebar\">\n      <app-season-list [seasons]=\"reader.seasons()\" />\n   </aside>\n   }\n\n   @if (store.seriesLoading()) {\n   <app-loading-centered/>\n   } @else if (store.seriesLoading()){\n\n   } @else {\n   <app-series-results-table [series]=\"series()!\" [raceTitles]=\"raceTitles()\" (raceClicked)=\"raceClicked($event)\" />\n   }\n\n   @for (race of races(); track race) {\n      <app-race-results-table [race]=\"race\"/>\n   }\n\n</div>"
+            "templateData": "<app-toolbar title=\"Results\" />\n\n<div class=\"layout-container\" [class.mobile-mode]=\"isMobile()\" [class.panel-collapsed]=\"isPanelCollapsed()\">\n\n   <!-- Show sidebar in desktop view\n     on mobile, navgate via a full screen list page -->\n   @if (!isMobile()) {\n   <aside class=\"sidebar\">\n      <app-season-list [seasons]=\"reader.seasons()\" />\n   </aside>\n   }\n\n   <main class=\"content-area\">\n      @if (!isMobile()) {\n      <button mat-icon-button (click)=\"togglePanel()\" class=\"panel-toggle-button\"\n         [title]=\"isPanelCollapsed() ? 'Show panel' : 'Hide panel'\">\n         <mat-icon>{{ isPanelCollapsed() ? 'menu_open' : 'menu' }}</mat-icon>\n      </button>\n      }\n\n      <div class=\"tables-container\">\n         @if (store.seriesLoading()) {\n         <app-loading-centered />\n         } @else {\n         <app-series-results-table [series]=\"series()!\" [raceTitles]=\"raceTitles()\" (raceClicked)=\"raceClicked($event)\" />\n         }\n\n         @for (race of races(); track race) {\n         <app-race-results-table [race]=\"race\" />\n         }\n      </div>\n   </main>\n</div>\n"
         },
         {
             "name": "SeasonList",
-            "id": "component-SeasonList-946ad898b900088d59c5eeeece2d27d10fc484cb4fe043e3c5c194b4e25cdcb16268a9d0783c2b9ea6346ca3f759c84981e186c67e7f1edcd18f34dcce41856b",
+            "id": "component-SeasonList-c388a813ee93c1c2ba64ce7d3dec8a27c9f9d332c989864174bb0147729eb5e471ce2e9c61af3cfec4e4a8e00e687c65ba9e300ab3b0745c25b6fa2a07f1a400",
             "file": "src/app/published-results/presentation/season-list/season-list.ts",
             "changeDetection": "ChangeDetectionStrategy.OnPush",
             "encapsulation": [],
@@ -12512,7 +12544,9 @@
             "providers": [],
             "selector": "app-season-list",
             "styleUrls": [],
-            "styles": [],
+            "styles": [
+                "\n   .container {\n      background: var(--mat-sys-surface-variant);\n      padding: 15px;\n   }\n  "
+            ],
             "templateUrl": [
                 "./season-list.html"
             ],
@@ -12527,7 +12561,7 @@
                     "indexKey": "",
                     "optional": false,
                     "description": "<p>Input for the seasons and their series to be displayed.</p>\n",
-                    "line": 34,
+                    "line": 39,
                     "rawdescription": "\nInput for the seasons and their series to be displayed.",
                     "required": true
                 }
@@ -12543,9 +12577,23 @@
                     "indexKey": "",
                     "optional": false,
                     "description": "",
-                    "line": 39,
+                    "line": 44,
                     "modifierKind": [
                         123
+                    ]
+                },
+                {
+                    "name": "expansionPanels",
+                    "defaultValue": "computed( () => {\n    return [\n      {title: 'In Progress', series: this.inProgressSeries()},\n      ...this.filteredSeasons().map( s => ({title: s.id, series: s.series}))\n    ]\n  })",
+                    "deprecated": false,
+                    "deprecationMessage": "",
+                    "type": "unknown",
+                    "indexKey": "",
+                    "optional": false,
+                    "description": "",
+                    "line": 73,
+                    "modifierKind": [
+                        124
                     ]
                 },
                 {
@@ -12557,7 +12605,7 @@
                     "indexKey": "",
                     "optional": false,
                     "description": "<p>A computed signal that filters the seasons based on the fleetFilter.\nA season is included if any of its series contain a fleet matching the filter.</p>\n",
-                    "line": 55,
+                    "line": 60,
                     "rawdescription": "\n\nA computed signal that filters the seasons based on the fleetFilter.\nA season is included if any of its series contain a fleet matching the filter.\n",
                     "modifierKind": [
                         124
@@ -12572,7 +12620,7 @@
                     "indexKey": "",
                     "optional": false,
                     "description": "<p>Signal to hold the current filter text for fleets.</p>\n",
-                    "line": 37,
+                    "line": 42,
                     "rawdescription": "\nSignal to hold the current filter text for fleets.",
                     "modifierKind": [
                         124
@@ -12587,7 +12635,7 @@
                     "indexKey": "",
                     "optional": false,
                     "description": "",
-                    "line": 41
+                    "line": 46
                 }
             ],
             "methodsClass": [
@@ -12614,7 +12662,7 @@
                     "optional": false,
                     "returnType": "string",
                     "typeParameters": [],
-                    "line": 70,
+                    "line": 83,
                     "deprecated": false,
                     "deprecationMessage": "",
                     "rawdescription": "\n\nTrackBy function for the season list to improve performance.\n",
@@ -12652,7 +12700,7 @@
             "deprecationMessage": "",
             "hostBindings": [],
             "hostListeners": [],
-            "standalone": true,
+            "standalone": false,
             "imports": [
                 {
                     "name": "FormsModule",
@@ -12685,12 +12733,12 @@
             "description": "<p>A dumb component to display a list of published race series, grouped by season.\nIt allows filtering by fleet and emits an event when a series is selected.</p>\n",
             "rawdescription": "\n\nA dumb component to display a list of published race series, grouped by season.\nIt allows filtering by fleet and emits an event when a series is selected.\n",
             "type": "component",
-            "sourceCode": "import { ChangeDetectionStrategy, Component, computed, input, output, signal } from '@angular/core';\nimport { FormsModule } from '@angular/forms';\nimport { MatExpansionModule } from '@angular/material/expansion';\nimport { MatFormFieldModule } from '@angular/material/form-field';\nimport { MatIconModule } from '@angular/material/icon';\nimport { MatInputModule } from '@angular/material/input';\nimport { MatListModule } from '@angular/material/list';\nimport { RouterLink } from '@angular/router';\nimport { PublishedSeason } from 'app/published-results';\nimport { normaliseString } from 'app/shared/utils/string-utils';\nimport { endOfDay, isWithinInterval } from 'date-fns';\n\n/**\n * A dumb component to display a list of published race series, grouped by season.\n * It allows filtering by fleet and emits an event when a series is selected.\n */\n@Component({\n  selector: 'app-season-list',\n  standalone: true,\n  imports: [\n    FormsModule,\n    MatExpansionModule,\n    MatFormFieldModule,\n    MatIconModule,\n    MatInputModule,\n    MatListModule,\n    RouterLink,\n  ],\n  templateUrl: './season-list.html',\n  changeDetection: ChangeDetectionStrategy.OnPush,\n})\nexport class SeasonList {\n  /** Input for the seasons and their series to be displayed. */\n  seasons = input.required<PublishedSeason[]>();\n\n  /** Signal to hold the current filter text for fleets. */\n  protected fleetFilter = signal('');\n\n  private allSeries = computed(() => this.seasons().flatMap(season => season.series));\n\n  inProgressSeries = computed(() => {\n    const now = new Date();\n    return this.allSeries().filter(series => {\n      return isWithinInterval(now, {\n        start: new Date(series.startDate),\n        end: endOfDay(new Date(series.endDate)),\n      });\n    });\n  });\n\n  /**\n   * A computed signal that filters the seasons based on the fleetFilter.\n   * A season is included if any of its series contain a fleet matching the filter.\n   */\n  protected filteredSeasons = computed(() => {\n    const filter = normaliseString(this.fleetFilter());\n    if (!filter) {\n      return this.seasons();\n    }\n\n    return this.seasons().map((season) => ({\n      ...season,\n      series: season.series.filter((series) => series.fleetId === filter)\n    }));\n  });\n\n  /**\n   * TrackBy function for the season list to improve performance.\n   */\n  protected trackBySeasonName(index: number, season: PublishedSeason): string {\n    return season.id;\n  }\n}\n",
+            "sourceCode": "import { ChangeDetectionStrategy, Component, computed, input, output, signal } from '@angular/core';\nimport { FormsModule } from '@angular/forms';\nimport { MatExpansionModule } from '@angular/material/expansion';\nimport { MatFormFieldModule } from '@angular/material/form-field';\nimport { MatIconModule } from '@angular/material/icon';\nimport { MatInputModule } from '@angular/material/input';\nimport { MatListModule } from '@angular/material/list';\nimport { RouterLink } from '@angular/router';\nimport { PublishedSeason } from 'app/published-results';\nimport { normaliseString } from 'app/shared/utils/string-utils';\nimport { endOfDay, isWithinInterval } from 'date-fns';\n\n/**\n * A dumb component to display a list of published race series, grouped by season.\n * It allows filtering by fleet and emits an event when a series is selected.\n */\n@Component({\n  selector: 'app-season-list',\n  imports: [\n    FormsModule,\n    MatExpansionModule,\n    MatFormFieldModule,\n    MatIconModule,\n    MatInputModule,\n    MatListModule,\n    RouterLink,\n  ],\n  templateUrl: './season-list.html',\n  styles: `\n   .container {\n      background: var(--mat-sys-surface-variant);\n      padding: 15px;\n   }\n  `,\n  changeDetection: ChangeDetectionStrategy.OnPush,\n})\nexport class SeasonList {\n  /** Input for the seasons and their series to be displayed. */\n  seasons = input.required<PublishedSeason[]>();\n\n  /** Signal to hold the current filter text for fleets. */\n  protected fleetFilter = signal('');\n\n  private allSeries = computed(() => this.seasons().flatMap(season => season.series));\n\n  inProgressSeries = computed(() => {\n    const now = new Date();\n    return this.allSeries().filter(series => {\n      return isWithinInterval(now, {\n        start: new Date(series.startDate),\n        end: endOfDay(new Date(series.endDate)),\n      });\n    });\n  });\n\n  /**\n   * A computed signal that filters the seasons based on the fleetFilter.\n   * A season is included if any of its series contain a fleet matching the filter.\n   */\n  protected filteredSeasons = computed(() => {\n    const filter = normaliseString(this.fleetFilter());\n    if (!filter) {\n      return this.seasons();\n    }\n\n    return this.seasons().map((season) => ({\n      ...season,\n      series: season.series.filter((series) => series.fleetId === filter)\n    }));\n  });\n\n  // Expansion data. In progress series followed by seasons\n  protected expansionPanels = computed( () => {\n    return [\n      {title: 'In Progress', series: this.inProgressSeries()},\n      ...this.filteredSeasons().map( s => ({title: s.id, series: s.series}))\n    ]\n  });\n\n  /**\n   * TrackBy function for the season list to improve performance.\n   */\n  protected trackBySeasonName(index: number, season: PublishedSeason): string {\n    return season.id;\n  }\n}\n",
             "assetsDirs": [],
             "styleUrlsData": "",
-            "stylesData": "",
+            "stylesData": "\n   .container {\n      background: var(--mat-sys-surface-variant);\n      padding: 15px;\n   }\n  \n",
             "extends": [],
-            "templateData": "<mat-form-field appearance=\"fill\" class=\"w-full\">\n  <mat-label>Filter by Fleet</mat-label>\n  <input matInput type=\"text\" [ngModel]=\"fleetFilter()\" (ngModelChange)=\"fleetFilter.set($event)\"\n    placeholder=\"e.g., Laser\" />\n  @if (fleetFilter()) {\n  <button matSuffix matIconButton aria-label=\"Clear\" (click)=\"fleetFilter.set('')\">\n    <mat-icon>close</mat-icon>\n  </button>\n  }\n</mat-form-field>\n\n@if (inProgressSeries().length > 0) {\n<h3>In Progress</h3>\n<mat-list>\n  @for (series of inProgressSeries(); track series.id) {\n  <mat-list-item>\n    <a [routerLink]=\"['/series', series.id]\">{{ series.name }}</a>\n  </mat-list-item>\n  }\n</mat-list>\n}\n\n<mat-accordion multi>\n  @for (season of filteredSeasons(); track season.id) {\n  <mat-expansion-panel>\n    <mat-expansion-panel-header>\n      <mat-panel-title>\n        {{ season.id }}\n      </mat-panel-title>\n    </mat-expansion-panel-header>\n\n    <mat-nav-list>\n      @for (series of season.series; track series.id) {\n      <mat-list-item>\n        <a [routerLink]=\"['/series', series.id]\">{{ series.name }}</a>\n      </mat-list-item>\n      }\n    </mat-nav-list>\n  </mat-expansion-panel>\n  }\n</mat-accordion>"
+            "templateData": "<div class=\"container\">\n  <mat-form-field appearance=\"fill\" class=\"w-full\">\n    <mat-label>Filter by Fleet</mat-label>\n    <input matInput type=\"text\" [ngModel]=\"fleetFilter()\" (ngModelChange)=\"fleetFilter.set($event)\"\n      placeholder=\"e.g., Laser\" />\n    @if (fleetFilter()) {\n    <button matSuffix matIconButton aria-label=\"Clear\" (click)=\"fleetFilter.set('')\">\n      <mat-icon>close</mat-icon>\n    </button>\n    }\n  </mat-form-field>\n\n  <mat-accordion multi>\n    @for (season of expansionPanels(); track season.title; let isFirst = $first) {\n    <mat-expansion-panel [expanded]=\"isFirst\">\n      <mat-expansion-panel-header>\n        <mat-panel-title>\n          {{ season.title }}\n        </mat-panel-title>\n      </mat-expansion-panel-header>\n\n      <mat-nav-list>\n        @for (series of season.series; track series.id) {\n        <mat-list-item>\n          <a [routerLink]=\"['/series', series.id]\">{{ series.name }}</a>\n        </mat-list-item>\n        }\n      </mat-nav-list>\n    </mat-expansion-panel>\n    }\n  </mat-accordion>\n</div>"
         },
         {
             "name": "SeriesAdd",
@@ -15633,6 +15681,36 @@
                 "defaultValue": "[\n   { path: '', component: BoatsPage },\n   { path: 'add', component: BoatAdd, canDeactivate: [pendingChangesGuard], canActivate: [authGuard] },\n   { path: 'edit/:id', component: BoatEdit, canDeactivate: [pendingChangesGuard], canActivate: [authGuard] },\n]"
             },
             {
+                "name": "createPublishedSeason",
+                "ctype": "miscellaneous",
+                "subtype": "variable",
+                "file": "src/testing/mocks/published-results/published-races-mocks.ts",
+                "deprecated": false,
+                "deprecationMessage": "",
+                "type": "unknown",
+                "defaultValue": "(overrides?: Partial<PublishedRace>): PublishedRace => ({\n   ...PUBLISHED_RACES_MOCKS[0],\n   ...overrides\n})"
+            },
+            {
+                "name": "createPublishedSeason",
+                "ctype": "miscellaneous",
+                "subtype": "variable",
+                "file": "src/testing/mocks/published-results/published-season-mocks.ts",
+                "deprecated": false,
+                "deprecationMessage": "",
+                "type": "unknown",
+                "defaultValue": "(overrides?: Partial<PublishedSeason>): PublishedSeason => ({\n   ...MOCK_PUBLISHED_SEASONS[0],\n   ...overrides\n})"
+            },
+            {
+                "name": "createPublishedSeries",
+                "ctype": "miscellaneous",
+                "subtype": "variable",
+                "file": "src/testing/mocks/published-results/published-series-mocks.ts",
+                "deprecated": false,
+                "deprecationMessage": "",
+                "type": "unknown",
+                "defaultValue": "(overrides?: Partial<PublishedSeries>): PublishedSeries => ({\n   ...PUBLIC_SERIES_MOCK,\n   ...overrides\n})"
+            },
+            {
                 "name": "dataObjectConverter",
                 "ctype": "miscellaneous",
                 "subtype": "variable",
@@ -15757,6 +15835,16 @@
                 "description": "<p>This story verifies that Material 3 tokens and \nyour custom global SCSS classes are loading.</p>\n<p>What this test tells you:\nIf Button 1 is white/transparent: Your styles.scss isn&#39;t being imported in preview.ts, or the mat.theme mixin isn&#39;t targeting the right element.</p>\n<p>If Button 2 isn&#39;t &quot;Small/Dense&quot;: Your .dense-button class isn&#39;t being reached.</p>\n<p>If Box 3 is invisible or has no background: The Material 3 system variables (the &quot;dictionary&quot;) aren&#39;t being emitted.</p>\n"
             },
             {
+                "name": "MOCK_PUBLISHED_SEASONS",
+                "ctype": "miscellaneous",
+                "subtype": "variable",
+                "file": "src/testing/mocks/published-results/published-season-mocks.ts",
+                "deprecated": false,
+                "deprecationMessage": "",
+                "type": "PublishedSeason[]",
+                "defaultValue": "[\n  {\n    id: '2024',\n    series: [\n      { id: 's1', name: 'Spring Series', fleetId: 'laser', startDate: new Date('2024-04-01'), endDate: new Date('2024-05-31'), raceCount: 1, seriesId: 'eee' },\n      { id: 's2', name: 'Summer Series', fleetId: 'laser', startDate: new Date('2024-06-01'), endDate: new Date('2024-08-31'), raceCount: 1, seriesId: 'eee' },\n      { id: 's3', name: 'Autumn Series', fleetId: 'rs200', startDate: new Date('2024-09-01'), endDate: new Date('2024-10-31'), raceCount: 1, seriesId: 'eee' },\n    ],\n  },\n  {\n    id: '2025',\n    series: [\n      { id: 's4', name: 'Frostbite', fleetId: 'solo', startDate: new Date('2025-01-01'), endDate: new Date('2025-03-31'), raceCount: 1, seriesId: 'eee' },\n      { id: 's5', name: 'Spring Warmup', fleetId: 'laser', startDate: new Date('2025-04-01'), endDate: new Date('2025-04-30'), raceCount: 1, seriesId: 'eee' },\n    ],\n  },\n  {\n    id: '2026',\n    series: [\n      // This series is \"in progress\" based on the current date of Feb 22, 2026\n      { id: 's6', name: 'Winter Wonder', fleetId: 'wanderer', startDate: new Date(new Date('2026-01-15')), endDate: new Date('2026-03-15'), raceCount: 1, seriesId: 'eee' },\n    ],\n  }\n]"
+            },
+            {
                 "name": "pendingChangesGuard",
                 "ctype": "miscellaneous",
                 "subtype": "variable",
@@ -15765,6 +15853,26 @@
                 "deprecationMessage": "",
                 "type": "CanDeactivateFn<ComponentCanDeactivate>",
                 "defaultValue": "(component: ComponentCanDeactivate) => {\n  const ds = inject(DialogsService);\n  if (component.canDeactivate()) {\n    return true;\n  } else {\n    return ds.confirm(' Unsaved changes',\n      'You have unsaved changes.  \\n Press Cancel to go back and save these changes, or OK to lose these changes.');\n  }\n}"
+            },
+            {
+                "name": "PUBLIC_SERIES_MOCK",
+                "ctype": "miscellaneous",
+                "subtype": "variable",
+                "file": "src/testing/mocks/published-results/published-series-mocks.ts",
+                "deprecated": false,
+                "deprecationMessage": "",
+                "type": "PublishedSeries",
+                "defaultValue": "{\n   id: 'test-series',\n   competitors: [\n      {\n         rank: 1,\n         helm: 'John Doe',\n         boatClass: 'Laser',\n         sailNumber: 12345,\n         club: 'SBSC',\n         handicap: 1000,\n         totalPoints: 5,\n         netPoints: 3,\n         raceScores: [\n            { points: 1, resultCode: 'OK', isDiscard: false },\n            { points: 2, resultCode: 'OK', isDiscard: false },\n            { points: 2, resultCode: 'OK', isDiscard: true },\n            { points: 2, resultCode: 'OK', isDiscard: true },\n            { points: 2, resultCode: 'OK', isDiscard: true },\n            { points: 2, resultCode: 'OK', isDiscard: true },\n         ],\n         tiebreakScores: [],\n      },\n      {\n         rank: 2,\n         helm: 'Jane Smith',\n         crew: 'Jim Crew',\n         boatClass: 'RS200',\n         sailNumber: 987,\n         club: 'SBSC',\n         handicap: 950,\n         totalPoints: 7,\n         netPoints: 4,\n         raceScores: [\n            { points: 3, resultCode: 'OK', isDiscard: true },\n            { points: 1, resultCode: 'OK', isDiscard: false },\n            { points: 3, resultCode: 'OK', isDiscard: false },\n            { points: 3, resultCode: 'OK', isDiscard: false },\n            { points: 3, resultCode: 'OK', isDiscard: false },\n            { points: 3, resultCode: 'OK', isDiscard: false },\n         ],\n         tiebreakScores: [],\n      },\n   ],\n}"
+            },
+            {
+                "name": "PUBLISHED_RACES_MOCKS",
+                "ctype": "miscellaneous",
+                "subtype": "variable",
+                "file": "src/testing/mocks/published-results/published-races-mocks.ts",
+                "deprecated": false,
+                "deprecationMessage": "",
+                "type": "PublishedRace[]",
+                "defaultValue": "[\n   { id: 'r1', seriesId: 'test-series', seriesName: 'Test Series', fleetId: 'laser', type: 'Conventional', isDiscardable: true, index: 1, scheduledStart: new Date('2024-05-01'), raceOfDay: 1, results: [] },\n   { id: 'r2', seriesId: 'test-series', seriesName: 'Test Series', fleetId: 'laser', type: 'Conventional', isDiscardable: true, index: 2, scheduledStart: new Date('2024-05-01'), raceOfDay: 2, results: [] },\n   { id: 'r3', seriesId: 'test-series', seriesName: 'Test Series', fleetId: 'laser', type: 'Conventional', isDiscardable: true, index: 3, scheduledStart: new Date('2024-05-08'), raceOfDay: 1, results: [] },\n   { id: 'r4', seriesId: 'test-series', seriesName: 'Test Series', fleetId: 'laser', type: 'Conventional', isDiscardable: true, index: 4, scheduledStart: new Date('2024-05-15'), raceOfDay: 1, results: [] },\n   { id: 'r5', seriesId: 'test-series', seriesName: 'Test Series', fleetId: 'laser', type: 'Conventional', isDiscardable: true, index: 5, scheduledStart: new Date('2024-05-22'), raceOfDay: 1, results: [] },\n   { id: 'r6', seriesId: 'test-series', seriesName: 'Test Series', fleetId: 'laser', type: 'Conventional', isDiscardable: true, index: 6, scheduledStart: new Date('2024-05-30'), raceOfDay: 1, results: [] },\n]"
             },
             {
                 "name": "PUBLISHED_RESULTS_ROUTES",
@@ -18205,6 +18313,72 @@
                     "deprecationMessage": "",
                     "type": "Routes",
                     "defaultValue": "[\n   { path: '', component: BoatsPage },\n   { path: 'add', component: BoatAdd, canDeactivate: [pendingChangesGuard], canActivate: [authGuard] },\n   { path: 'edit/:id', component: BoatEdit, canDeactivate: [pendingChangesGuard], canActivate: [authGuard] },\n]"
+                }
+            ],
+            "src/testing/mocks/published-results/published-races-mocks.ts": [
+                {
+                    "name": "createPublishedSeason",
+                    "ctype": "miscellaneous",
+                    "subtype": "variable",
+                    "file": "src/testing/mocks/published-results/published-races-mocks.ts",
+                    "deprecated": false,
+                    "deprecationMessage": "",
+                    "type": "unknown",
+                    "defaultValue": "(overrides?: Partial<PublishedRace>): PublishedRace => ({\n   ...PUBLISHED_RACES_MOCKS[0],\n   ...overrides\n})"
+                },
+                {
+                    "name": "PUBLISHED_RACES_MOCKS",
+                    "ctype": "miscellaneous",
+                    "subtype": "variable",
+                    "file": "src/testing/mocks/published-results/published-races-mocks.ts",
+                    "deprecated": false,
+                    "deprecationMessage": "",
+                    "type": "PublishedRace[]",
+                    "defaultValue": "[\n   { id: 'r1', seriesId: 'test-series', seriesName: 'Test Series', fleetId: 'laser', type: 'Conventional', isDiscardable: true, index: 1, scheduledStart: new Date('2024-05-01'), raceOfDay: 1, results: [] },\n   { id: 'r2', seriesId: 'test-series', seriesName: 'Test Series', fleetId: 'laser', type: 'Conventional', isDiscardable: true, index: 2, scheduledStart: new Date('2024-05-01'), raceOfDay: 2, results: [] },\n   { id: 'r3', seriesId: 'test-series', seriesName: 'Test Series', fleetId: 'laser', type: 'Conventional', isDiscardable: true, index: 3, scheduledStart: new Date('2024-05-08'), raceOfDay: 1, results: [] },\n   { id: 'r4', seriesId: 'test-series', seriesName: 'Test Series', fleetId: 'laser', type: 'Conventional', isDiscardable: true, index: 4, scheduledStart: new Date('2024-05-15'), raceOfDay: 1, results: [] },\n   { id: 'r5', seriesId: 'test-series', seriesName: 'Test Series', fleetId: 'laser', type: 'Conventional', isDiscardable: true, index: 5, scheduledStart: new Date('2024-05-22'), raceOfDay: 1, results: [] },\n   { id: 'r6', seriesId: 'test-series', seriesName: 'Test Series', fleetId: 'laser', type: 'Conventional', isDiscardable: true, index: 6, scheduledStart: new Date('2024-05-30'), raceOfDay: 1, results: [] },\n]"
+                }
+            ],
+            "src/testing/mocks/published-results/published-season-mocks.ts": [
+                {
+                    "name": "createPublishedSeason",
+                    "ctype": "miscellaneous",
+                    "subtype": "variable",
+                    "file": "src/testing/mocks/published-results/published-season-mocks.ts",
+                    "deprecated": false,
+                    "deprecationMessage": "",
+                    "type": "unknown",
+                    "defaultValue": "(overrides?: Partial<PublishedSeason>): PublishedSeason => ({\n   ...MOCK_PUBLISHED_SEASONS[0],\n   ...overrides\n})"
+                },
+                {
+                    "name": "MOCK_PUBLISHED_SEASONS",
+                    "ctype": "miscellaneous",
+                    "subtype": "variable",
+                    "file": "src/testing/mocks/published-results/published-season-mocks.ts",
+                    "deprecated": false,
+                    "deprecationMessage": "",
+                    "type": "PublishedSeason[]",
+                    "defaultValue": "[\n  {\n    id: '2024',\n    series: [\n      { id: 's1', name: 'Spring Series', fleetId: 'laser', startDate: new Date('2024-04-01'), endDate: new Date('2024-05-31'), raceCount: 1, seriesId: 'eee' },\n      { id: 's2', name: 'Summer Series', fleetId: 'laser', startDate: new Date('2024-06-01'), endDate: new Date('2024-08-31'), raceCount: 1, seriesId: 'eee' },\n      { id: 's3', name: 'Autumn Series', fleetId: 'rs200', startDate: new Date('2024-09-01'), endDate: new Date('2024-10-31'), raceCount: 1, seriesId: 'eee' },\n    ],\n  },\n  {\n    id: '2025',\n    series: [\n      { id: 's4', name: 'Frostbite', fleetId: 'solo', startDate: new Date('2025-01-01'), endDate: new Date('2025-03-31'), raceCount: 1, seriesId: 'eee' },\n      { id: 's5', name: 'Spring Warmup', fleetId: 'laser', startDate: new Date('2025-04-01'), endDate: new Date('2025-04-30'), raceCount: 1, seriesId: 'eee' },\n    ],\n  },\n  {\n    id: '2026',\n    series: [\n      // This series is \"in progress\" based on the current date of Feb 22, 2026\n      { id: 's6', name: 'Winter Wonder', fleetId: 'wanderer', startDate: new Date(new Date('2026-01-15')), endDate: new Date('2026-03-15'), raceCount: 1, seriesId: 'eee' },\n    ],\n  }\n]"
+                }
+            ],
+            "src/testing/mocks/published-results/published-series-mocks.ts": [
+                {
+                    "name": "createPublishedSeries",
+                    "ctype": "miscellaneous",
+                    "subtype": "variable",
+                    "file": "src/testing/mocks/published-results/published-series-mocks.ts",
+                    "deprecated": false,
+                    "deprecationMessage": "",
+                    "type": "unknown",
+                    "defaultValue": "(overrides?: Partial<PublishedSeries>): PublishedSeries => ({\n   ...PUBLIC_SERIES_MOCK,\n   ...overrides\n})"
+                },
+                {
+                    "name": "PUBLIC_SERIES_MOCK",
+                    "ctype": "miscellaneous",
+                    "subtype": "variable",
+                    "file": "src/testing/mocks/published-results/published-series-mocks.ts",
+                    "deprecated": false,
+                    "deprecationMessage": "",
+                    "type": "PublishedSeries",
+                    "defaultValue": "{\n   id: 'test-series',\n   competitors: [\n      {\n         rank: 1,\n         helm: 'John Doe',\n         boatClass: 'Laser',\n         sailNumber: 12345,\n         club: 'SBSC',\n         handicap: 1000,\n         totalPoints: 5,\n         netPoints: 3,\n         raceScores: [\n            { points: 1, resultCode: 'OK', isDiscard: false },\n            { points: 2, resultCode: 'OK', isDiscard: false },\n            { points: 2, resultCode: 'OK', isDiscard: true },\n            { points: 2, resultCode: 'OK', isDiscard: true },\n            { points: 2, resultCode: 'OK', isDiscard: true },\n            { points: 2, resultCode: 'OK', isDiscard: true },\n         ],\n         tiebreakScores: [],\n      },\n      {\n         rank: 2,\n         helm: 'Jane Smith',\n         crew: 'Jim Crew',\n         boatClass: 'RS200',\n         sailNumber: 987,\n         club: 'SBSC',\n         handicap: 950,\n         totalPoints: 7,\n         netPoints: 4,\n         raceScores: [\n            { points: 3, resultCode: 'OK', isDiscard: true },\n            { points: 1, resultCode: 'OK', isDiscard: false },\n            { points: 3, resultCode: 'OK', isDiscard: false },\n            { points: 3, resultCode: 'OK', isDiscard: false },\n            { points: 3, resultCode: 'OK', isDiscard: false },\n            { points: 3, resultCode: 'OK', isDiscard: false },\n         ],\n         tiebreakScores: [],\n      },\n   ],\n}"
                 }
             ],
             "src/app/shared/firebase/firestore-helper.ts": [
@@ -21021,7 +21195,7 @@
         ]
     },
     "coverage": {
-        "count": 16,
+        "count": 15,
         "status": "low",
         "files": [
             {
@@ -21535,7 +21709,7 @@
                 "linktype": "component",
                 "name": "ResultsViewer",
                 "coveragePercent": 0,
-                "coverageCount": "0/11",
+                "coverageCount": "0/13",
                 "status": "low"
             },
             {
@@ -21543,8 +21717,8 @@
                 "type": "component",
                 "linktype": "component",
                 "name": "SeasonList",
-                "coveragePercent": 71,
-                "coverageCount": "5/7",
+                "coveragePercent": 62,
+                "coverageCount": "5/8",
                 "status": "good"
             },
             {
@@ -22830,6 +23004,66 @@
                 "name": "User",
                 "coveragePercent": 0,
                 "coverageCount": "0/2",
+                "status": "low"
+            },
+            {
+                "filePath": "src/testing/mocks/published-results/published-races-mocks.ts",
+                "type": "variable",
+                "linktype": "miscellaneous",
+                "linksubtype": "variable",
+                "name": "createPublishedSeason",
+                "coveragePercent": 0,
+                "coverageCount": "0/1",
+                "status": "low"
+            },
+            {
+                "filePath": "src/testing/mocks/published-results/published-races-mocks.ts",
+                "type": "variable",
+                "linktype": "miscellaneous",
+                "linksubtype": "variable",
+                "name": "PUBLISHED_RACES_MOCKS",
+                "coveragePercent": 0,
+                "coverageCount": "0/1",
+                "status": "low"
+            },
+            {
+                "filePath": "src/testing/mocks/published-results/published-season-mocks.ts",
+                "type": "variable",
+                "linktype": "miscellaneous",
+                "linksubtype": "variable",
+                "name": "createPublishedSeason",
+                "coveragePercent": 0,
+                "coverageCount": "0/1",
+                "status": "low"
+            },
+            {
+                "filePath": "src/testing/mocks/published-results/published-season-mocks.ts",
+                "type": "variable",
+                "linktype": "miscellaneous",
+                "linksubtype": "variable",
+                "name": "MOCK_PUBLISHED_SEASONS",
+                "coveragePercent": 0,
+                "coverageCount": "0/1",
+                "status": "low"
+            },
+            {
+                "filePath": "src/testing/mocks/published-results/published-series-mocks.ts",
+                "type": "variable",
+                "linktype": "miscellaneous",
+                "linksubtype": "variable",
+                "name": "createPublishedSeries",
+                "coveragePercent": 0,
+                "coverageCount": "0/1",
+                "status": "low"
+            },
+            {
+                "filePath": "src/testing/mocks/published-results/published-series-mocks.ts",
+                "type": "variable",
+                "linktype": "miscellaneous",
+                "linksubtype": "variable",
+                "name": "PUBLIC_SERIES_MOCK",
+                "coveragePercent": 0,
+                "coverageCount": "0/1",
                 "status": "low"
             }
         ]

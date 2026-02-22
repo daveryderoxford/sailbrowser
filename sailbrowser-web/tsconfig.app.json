@@ -8,14 +8,16 @@
     "types": [],
     "paths": {
       "app/*": ["src/app/*"],
-      "@env/*": ["src/environments/*"]
+      "@env/*": ["src/environments/*"],
+      "@testing/*": ["src/testing/*"]
     }
   },
   "include": [
     "src/**/*.ts"
-, "src/app/published-results/presentation/results-viewer" ],
+   ],
   "exclude": [
-    "src/**/*.spec.ts"
+    "src/**/*.spec.ts",
+    "src/**/*.stories.ts"
   ]
 }
 

@@ -1,25 +1,33 @@
 <app-toolbar title="Results" />
 
-<div class="layout-container" [class.mobile-mode]="isMobile()">
+<div class="layout-container" [class.mobile-mode]="isMobile()" [class.panel-collapsed]="isPanelCollapsed()">
 
    <!-- Show sidebar in desktop view
      on mobile, navgate via a full screen list page -->
    @if (!isMobile()) {
-   <aside class="desktop-sidebar">
+   <aside class="sidebar">
       <app-season-list [seasons]="reader.seasons()" />
    </aside>
    }
 
-   @if (store.seriesLoading()) {
-   <app-loading-centered/>
-   } @else if (store.seriesLoading()){
+   <main class="content-area">
+      @if (!isMobile()) {
+      <button mat-icon-button (click)="togglePanel()" class="panel-toggle-button"
+         [title]="isPanelCollapsed() ? 'Show panel' : 'Hide panel'">
+         <mat-icon>{{ isPanelCollapsed() ? 'menu_open' : 'menu' }}</mat-icon>
+      </button>
+      }
 
-   } @else {
-   <app-series-results-table [series]="series()!" [raceTitles]="raceTitles()" (raceClicked)="raceClicked($event)" />
-   }
+      <div class="tables-container">
+         @if (store.seriesLoading()) {
+         <app-loading-centered />
+         } @else {
+         <app-series-results-table [series]="series()!" [raceTitles]="raceTitles()" (raceClicked)="raceClicked($event)" />
+         }
 
-   @for (race of races(); track race) {
-      <app-race-results-table [race]="race"/>
-   }
-
+         @for (race of races(); track race) {
+         <app-race-results-table [race]="race" />
+         }
+      </div>
+   </main>
 </div>
