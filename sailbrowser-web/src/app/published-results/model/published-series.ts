@@ -9,6 +9,7 @@ export interface PublishedSeries {
 
 export interface PublishedSeriesResult {
    helm: string;
+   crew?: string;
    sailNumber: number;
    club: string;
    boatClass: string;

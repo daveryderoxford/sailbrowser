@@ -1,33 +1,48 @@
-import { ChangeDetectionStrategy, Component, computed, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, input, output, signal } from '@angular/core';
+import { FormsModule } from '@angular/forms';
 import { MatExpansionModule } from '@angular/material/expansion';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatIconModule } from '@angular/material/icon';
+import { MatInputModule } from '@angular/material/input';
 import { MatListModule } from '@angular/material/list';
-import { RouterLink, RouterLinkActive } from '@angular/router';
+import { RouterLink } from '@angular/router';
+import { PublishedSeason } from 'app/published-results';
+import { normaliseString } from 'app/shared/utils/string-utils';
 import { endOfDay, isWithinInterval } from 'date-fns';
-import { LoadingCentered } from "app/shared/components/loading-centered";
-import { PublishedResultsReader } from '../../services/published-results-store';
 
-/** List of published seasons displayed in the 
- * left panel of the results viewer on desktop and
- * in the mobile season list page */ 
+/**
+ * A dumb component to display a list of published race series, grouped by season.
+ * It allows filtering by fleet and emits an event when a series is selected.
+ */
 @Component({
   selector: 'app-season-list',
   imports: [
+    FormsModule,
     MatExpansionModule,
+    MatFormFieldModule,
+    MatIconModule,
+    MatInputModule,
     MatListModule,
-],
+    RouterLink,
+  ],
   templateUrl: './season-list.html',
   styles: `
-    :host {
-      display: block;
-      padding: 16px;
-    }
+   .container {
+      background: var(--mat-sys-surface-variant);
+      padding: 15px;
+   }
+
   `,
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class SeasonList {
-  protected store = inject(PublishedResultsReader);
+  /** Input for the seasons and their series to be displayed. */
+  seasons = input.required<PublishedSeason[]>();
 
-  private allSeries = computed(() => this.store.seasons().flatMap(season => season.series));
+  /** Signal to hold the current filter text for fleets. */
+  protected fleetFilter = signal('');
+
+  private allSeries = computed(() => this.seasons().flatMap(season => season.series));
 
   inProgressSeries = computed(() => {
     const now = new Date();
@@ -38,4 +53,35 @@ export class SeasonList {
       });
     });
   });
+
+  /**
+   * A computed signal that filters the seasons based on the fleetFilter.
+   * A season is included if any of its series contain a fleet matching the filter.
+   */
+  protected filteredSeasons = computed(() => {
+    const filter = normaliseString(this.fleetFilter());
+    if (!filter) {
+      return this.seasons();
+    }
+
+    return this.seasons().map((season) => ({
+      ...season,
+      series: season.series.filter((series) => series.fleetId === filter)
+    }));
+  });
+
+  // Expansion data. In progress series followed by seasons
+  protected expansionPanels = computed( () => {
+    return [
+      {title: 'In Progress', series: this.inProgressSeries()},
+      ...this.filteredSeasons().map( s => ({title: s.id, series: s.series}))
+    ]
+  });
+
+  /**
+   * TrackBy function for the season list to improve performance.
+   */
+  protected trackBySeasonName(index: number, season: PublishedSeason): string {
+    return season.id;
+  }
 }

@@ -6,7 +6,9 @@
     "build": "ng build",
     "stats": "ng build --stats-json --named-chunks && npx @angular-experts/hawkeye dist/sailbrowser/stats.json",
     "watch": "ng build --watch --configuration development",
-    "test": "ng test"
+    "test": "ng test",
+    "storybook": "ng run sailbrowser-web:storybook",
+    "build-storybook": "ng run sailbrowser-web:build-storybook"
   },
   "prettier": {
     "printWidth": 120,
@@ -23,28 +25,38 @@
   "private": true,
   "packageManager": "npm@10.9.2",
   "dependencies": {
-    "@angular/cdk": "~21.1.2",
-    "@angular/common": "^21.1.0",
-    "@angular/compiler": "^21.1.0",
-    "@angular/core": "^21.1.0",
+    "@angular/cdk": "21.1.2",
+    "@angular/common": "21.1.2",
+    "@angular/compiler": "21.1.2",
+    "@angular/core": "21.1.2",
     "@angular/fire": "^20.0.0",
-    "@angular/forms": "^21.1.0",
-    "@angular/material": "~21.1.2",
-    "@angular/material-date-fns-adapter": "^21.0.5",
-    "@angular/platform-browser": "^21.1.0",
-    "@angular/router": "^21.1.0",
+    "@angular/forms": "21.1.2",
+    "@angular/material": "21.1.2",
+    "@angular/material-date-fns-adapter": "21.1.2",
+    "@angular/platform-browser": "21.1.2",
+    "@angular/router": "21.1.2",
     "@ngbracket/ngx-layout": "15.1.3",
     "date-fns": "^4.1.0",
     "rxjs": "~7.8.0",
     "tslib": "^2.3.0"
   },
   "devDependencies": {
-    "@angular/build": "^21.1.2",
-    "@angular/cli": "^21.1.2",
-    "@angular/compiler-cli": "^21.1.0",
-    "@angular/material": "^21.1.2",
+    "@angular-devkit/architect": "^0.2101.0",
+    "@angular-devkit/build-angular": "21.1.2",
+    "@angular-devkit/core": "21.1.2",
+    "@angular/cli": "21.1.2",
+    "@angular/compiler-cli": "21.1.2",
+    "@angular/platform-browser-dynamic": "21.1.2",
+    "@compodoc/compodoc": "^1.2.1",
+    "@storybook/addon-a11y": "^10.2.10",
+    "@storybook/addon-docs": "^10.2.10",
+    "@storybook/addon-onboarding": "^10.2.10",
+    "@storybook/addon-styling-webpack": "^3.0.0",
+    "@storybook/angular": "^10.2.10",
+    "eslint-plugin-storybook": "^10.2.10",
     "firebase-tools": "^14.0.0",
     "jsdom": "^27.1.0",
+    "storybook": "^10.2.10",
     "typescript": "~5.9.2",
     "vitest": "^4.0.8",
     "webpack-bundle-analyzer": "^5.2.0"
@@ -55,8 +67,8 @@
       "@angular/core": "$@angular/core",
       "@angular/platform-browser": "$@angular/platform-browser",
       "@angular/router": "$@angular/router",
-      "@angular/platform-server": "21.0.6",
-      "@angular/platform-browser-dynamic": "21.1.2"
+      "@angular/platform-server": "21.1.2",
+      "@angular/platform-browser-dynamic": "$@angular/platform-browser-dynamic"
     }
   }
 }

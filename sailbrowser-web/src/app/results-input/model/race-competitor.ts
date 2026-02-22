@@ -1,5 +1,5 @@
+import { ResultCode } from 'app/scoring';
 import { differenceInSeconds } from 'date-fns';
-import { ResultCode } from '../../scoring/model/result-code';
 
 export const RESULTS_UNSET_VALUE = 9999;
 

@@ -2,10 +2,24 @@
 
 <div class="layout-container" [class.mobile-mode]="isMobile()">
 
-   @if (isMobile()) {
-      <aside class="desktop-sidebar">
-         <app-season-list/>
-      </aside>
+   <!-- Show sidebar in desktop view
+     on mobile, navgate via a full screen list page -->
+   @if (!isMobile()) {
+   <aside class="desktop-sidebar">
+      <app-season-list [seasons]="reader.seasons()" />
+   </aside>
+   }
+
+   @if (store.seriesLoading()) {
+   <app-loading-centered/>
+   } @else if (store.seriesLoading()){
+
+   } @else {
+   <app-series-results-table [series]="series()!" [raceTitles]="raceTitles()" (raceClicked)="raceClicked($event)" />
+   }
+
+   @for (race of races(); track race) {
+      <app-race-results-table [race]="race"/>
    }
 
 </div>

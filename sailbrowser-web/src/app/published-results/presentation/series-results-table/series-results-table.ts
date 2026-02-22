@@ -1,34 +1,32 @@
-import { ChangeDetectionStrategy, Component, computed, input } from '@angular/core';
-import { ReactiveFormsModule } from '@angular/forms';
-import { MatCheckboxModule } from '@angular/material/checkbox';
-import { MatFormFieldModule } from '@angular/material/form-field';
-import { MatSelectModule } from '@angular/material/select';
-import { MatSlideToggleModule } from '@angular/material/slide-toggle';
-import { MatSortModule } from '@angular/material/sort';
-import { MatTableModule } from '@angular/material/table';
-import { MatTooltipModule } from '@angular/material/tooltip';
-import { PublishedSeries } from 'app/published-results';
+import { ChangeDetectionStrategy, Component, computed, input, output } from '@angular/core';
 
-export const allSeriesColumns = ['rank', 'fleet', 'class', 'sailNumber', 'helm', 'crew', 'handicap'] as const;
+import { CdkTableModule } from '@angular/cdk/table';
+
+import { PublishedSeries, PublishedSeriesResult } from 'app/published-results';
+import { format } from 'date-fns';
+
+export const allSeriesColumns = ['rank', 'name', 'boatClass', 'sailNumber', 'club', 'handicap', 'totalPoints', 'netPoints'] as const;
 export type SeriesColumn = typeof allSeriesColumns[number];
 
 @Component({
-  selector: 'app-results-table',
+  selector: 'app-series-results-table',
   templateUrl: './series-results-table.html',
   styleUrls: ['./series-results-table.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [MatFormFieldModule, MatSelectModule, ReactiveFormsModule, MatSlideToggleModule, MatTableModule, MatSortModule, MatTooltipModule,
-    MatCheckboxModule]
+  imports: [CdkTableModule]
 })
-export class ResultsTable {
-  series = input.required<PublishedSeries>();
+export class SeriesResultsTable {
 
+  series = input.required<PublishedSeries>();
   seriesColumns = input<SeriesColumn[]>([...allSeriesColumns]);
+  raceTitles = input.required<{ id: string; index: number; scheduledStart: Date; raceOfDay: number; }[]>();
+  fontSize = input<string>('10pt');
+  raceClicked = output<string>();
 
   raceColumns = computed(() => {
-    const scores = this.series().competitors[0]?.raceScores ?? [];
+    const scores = this.series()!.competitors[0]?.raceScores ?? [];
 
-    // Creates an array of length n where each entry is its index
+    // Creates an array of length n where each entry is it's index 
     return Array.from({ length: scores.length }, (_, i) => i.toString());
 
   });
@@ -36,29 +34,38 @@ export class ResultsTable {
   displayedColumns = computed(() => [...this.seriesColumns(), ...this.raceColumns()]);
 
   tableData = computed(() => {
-    const series = this.series();
-    if (!series.competitors) return [];
-    // Assuming you want to sort the results.
-    // The original code had broken bits I am trying to fix.
-    return series.competitors;
+    return this.series()?.competitors.map(c => ({
+      ...c,
+      name: c.crew ? `${c.helm} / ${c.crew}` : c.helm
+    })) || [];
   });
 
   raceTitle(index: number): string {
-    // TODO
-    return index.toString();
+    const title = this.raceTitles()[index];
+    let ret = 'Race ' + title.index.toString() + '<br>';
+    if (title.scheduledStart) {
+      ret = `${ret} ${format(title.scheduledStart, 'mm/dd')}`;
+    }
+    if (title.raceOfDay > 0) {
+      ret = `${ret} ${title.raceOfDay.toString()}`;
+    }
+    return ret;
   }
 
-  isCompetitorSelected(comp: any): boolean {
+  isCompetitorSelected(comp: PublishedSeriesResult): boolean {
     return false;
   }
 
-  updateSelectedCompetitor(comp: any) {
+  updateSelectedCompetitor(comp: PublishedSeriesResult) {
 
   }
 
-  tackByKey() {
-
+  trackByKey(index: number, item: PublishedSeriesResult) {
+    return item.sailNumber.toString() + item.boatClass + item.helm;
   }
 
-
+  onRaceHeaderClick(raceIndex: number) {
+    const id = this.raceTitles()[raceIndex].id;
+    this.raceClicked.emit(id);
+  }
 }

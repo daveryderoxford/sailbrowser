@@ -4,14 +4,14 @@ import { toSignal } from '@angular/core/rxjs-interop';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatAutocompleteModule, MatAutocompleteSelectedEvent } from '@angular/material/autocomplete';
 import { MatButtonModule } from '@angular/material/button';
-import { MatButtonToggleModule } from '@angular/material/button-toggle';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
-import { MatTableModule } from '@angular/material/table';
-
+import { ScoringEngine } from 'app/published-results';
+import { Race, RaceCalendarStore } from 'app/race-calender';
+import { CurrentRaces, RaceCompetitor, RaceCompetitorStore, sortEntries } from 'app/results-input';
 import { RESULT_CODE_DEFINITIONS, ResultCode, getResultCodeDefinition } from 'app/scoring/model/result-code';
 import { Toolbar } from 'app/shared/components/toolbar';
 import { normaliseString } from 'app/shared/utils/string-utils';
@@ -21,9 +21,6 @@ import { DurationPipe } from '../duration.pipe';
 import { ManualResultsTable } from '../manual-results-table';
 import { RaceStartTimeDialog, RaceStartTimeResult } from '../race-start-time-dialog';
 import { RaceTimeInput } from '../race-time-input';
-import { CurrentRaces, RaceCompetitor, RaceCompetitorStore, sortEntries } from 'app/results-input';
-import { Race, RaceCalendarStore } from 'app/race-calender';
-import { ScoringEngine } from 'app/published-results';
 
 @Component({
   selector: 'app-manual-results-page',
@@ -31,14 +28,12 @@ import { ScoringEngine } from 'app/published-results';
   styleUrls: ['./manual-results-page.scss'],
   imports: [
     Toolbar,
-    MatTableModule,
     MatFormFieldModule,
     MatInputModule,
     MatButtonModule,
     MatAutocompleteModule,
     ReactiveFormsModule,
     DatePipe,
-    MatButtonToggleModule,
     MatIconModule,
     MatSelectModule,
     MatDialogModule,

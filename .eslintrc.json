@@ -23,8 +23,13 @@
       "rules": {
         "no-underscore-dangle": 0,
         "no-shadow": "off",
-        "object-shorthand": ["error", "consistent"],
-        "@typescript-eslint/no-shadow": ["error"],
+        "object-shorthand": [
+          "error",
+          "consistent"
+        ],
+        "@typescript-eslint/no-shadow": [
+          "error"
+        ],
         "prefer-arrow/prefer-arrow-functions": [
           "error",
           {
@@ -65,8 +70,10 @@
       "extends": [
         "plugin:@angular-eslint/template/recommended"
       ],
-      "rules": {
-      }
+      "rules": {}
     }
+  ],
+  "extends": [
+    "plugin:storybook/recommended"
   ]
 }

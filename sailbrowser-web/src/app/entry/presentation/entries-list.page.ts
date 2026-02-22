@@ -1,21 +1,19 @@
-import { ChangeDetectionStrategy, Component, computed, inject, Injector, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, inject } from '@angular/core';
+import { toSignal } from '@angular/core/rxjs-interop';
+import { FormControl, ReactiveFormsModule } from '@angular/forms';
+import { MatButtonModule } from '@angular/material/button';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatIconModule } from "@angular/material/icon";
 import { MatListModule } from '@angular/material/list';
 import { MatSelectModule } from '@angular/material/select';
-import { MatFormFieldModule } from '@angular/material/form-field';
-import { ReactiveFormsModule, FormControl } from '@angular/forms';
-import { Toolbar } from 'app/shared/components/toolbar';
-import { RaceCompetitorStore } from '../../results-input/services/race-competitor-store';
-import { CurrentRaces } from '../../results-input/services/current-races-store';
-import { RaceCalendarStore } from '../../race-calender/services/full-race-calander';
-import { LoadingCentered } from 'app/shared/components/loading-centered';
-import { toSignal } from '@angular/core/rxjs-interop';
-import { RaceCompetitor } from '../../results-input/model/race-competitor';
-import { RouterLink } from "@angular/router";
-import { MatButtonModule } from '@angular/material/button';
-import {  MatIconModule } from "@angular/material/icon";
 import { MatSnackBar } from '@angular/material/snack-bar';
-import { ClubService } from 'app/club';
+import { RouterLink } from "@angular/router";
+import { LoadingCentered } from 'app/shared/components/loading-centered';
+import { Toolbar } from 'app/shared/components/toolbar';
 import { DialogsService } from 'app/shared/dialogs/dialogs.service';
+import { RaceCompetitor } from '../../results-input/model/race-competitor';
+import { CurrentRaces } from '../../results-input/services/current-races-store';
+import { RaceCompetitorStore } from '../../results-input/services/race-competitor-store';
 
 @Component({
   selector: 'app-entries-list-page',
@@ -107,8 +105,6 @@ import { DialogsService } from 'app/shared/dialogs/dialogs.service';
 })
 export class EntriesListPage {
   protected readonly competitorStore = inject(RaceCompetitorStore);
-  private readonly clubService = inject(ClubService);
-  private readonly raceCalendarStore = inject(RaceCalendarStore);
   protected currentRaces = inject(CurrentRaces);
   protected ds = inject(DialogsService);
   protected snackbar = inject(MatSnackBar);

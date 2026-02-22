@@ -4,10 +4,10 @@ import { collection, doc, getDoc, getDocs, getFirestore, query, where } from '@a
 import { dataObjectConverter } from 'app/shared/firebase/firestore-helper';
 import { PublishedRace } from '../model/published-race';
 import { PublishedSeason } from '../model/published-season';
-import { PublishedSeriesResult } from '../model/published-series';
+import { PublishedSeries, PublishedSeriesResult } from '../model/published-series';
 
 interface SeriesRaces {
-  series: PublishedSeriesResult | undefined;
+  series: PublishedSeries | undefined;
   races: PublishedRace[];
 }
 
@@ -21,7 +21,7 @@ export class PublishedResultsReader {
     this.firestore, '/published-seasons').withConverter(dataObjectConverter<PublishedSeason>());
 
   private seriesCollection = collection(
-    this.firestore, '/published-series-results').withConverter(dataObjectConverter<PublishedSeriesResult>());
+    this.firestore, '/published-series').withConverter(dataObjectConverter<PublishedSeries>());
 
   private racesCollection = collection(
     this.firestore, '/published-races').withConverter(dataObjectConverter<PublishedRace>());
@@ -59,11 +59,12 @@ export class PublishedResultsReader {
         return { series, races };
 
       }
-    }
+    },
+    defaultValue: { series: undefined, races: [] }
   });
 
-  readonly series = computed(() => this.seriesResource.value()?.series);
-  readonly races = computed(() => this.seriesResource.value()?.races);
+  readonly series = computed(() => this.seriesResource.value().series);
+  readonly races = computed(() => this.seriesResource.value().races);
 
   readonly seriesLoading = this.seriesResource.isLoading;
   readonly seriesError = this.seriesResource.error;

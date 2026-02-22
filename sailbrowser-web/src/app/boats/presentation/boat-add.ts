@@ -46,9 +46,7 @@ export class BoatAdd {
   
 
   }
-
-
-
+  
   canDeactivate(): boolean {
     return this.form().canDeactivate();
   }

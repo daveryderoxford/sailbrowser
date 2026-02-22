@@ -1,0 +1,84 @@
+.table {
+  width: 100%;
+}
+
+.header {
+  background-color: var(--mat-sys-color-surface-container-high);
+}
+
+.row {
+  border-bottom: 1px solid var(--mat-sys-color-outline-variant);
+}
+
+.even-row {
+  background-color: #e3f2fd; // Light blue
+}
+
+.rank-col {
+  width: 50px;
+  text-align: center;
+}
+
+.points-col {
+  width: 50px;
+  text-align: center;
+}
+
+.name-col {
+  min-width: 150px;
+}
+
+.race-col {
+  cursor: pointer;
+  text-align: center;
+  min-width: 80px;
+}
+
+.discarded {
+  color: var(--mat-sys-color-on-surface-variant);
+}
+
+.fastest {
+  font-weight: bold;
+  color: #FFD700; // Gold
+}
+
+.second {
+  font-weight: bold;
+  color: #C0C0C0; // Silver
+}
+
+.third {
+  font-weight: bold;
+  color: #CD7F32; // Bronze
+}
+
+.rank-oval {
+  width: 30px;
+  height: 20px;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: auto;
+  color: var(--mat-sys-color-on-primary);
+}
+
+.rank-1 {
+  background-color: #FFD700; // Gold
+}
+
+.rank-2 {
+  background-color: #C0C0C0; // Silver
+}
+
+.rank-3 {
+  background-color: #CD7F32; // Bronze
+}
+
+@media (max-width: 600px) {
+  .race-col,
+  [cdkColumnDef*='race'] {
+    display: none;
+  }
+}
