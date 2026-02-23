@@ -5,7 +5,7 @@ import { CdkTableModule } from '@angular/cdk/table';
 import { PublishedSeries, PublishedSeriesResult } from 'app/published-results';
 import { format } from 'date-fns';
 
-export const allSeriesColumns = ['rank', 'name', 'boatClass', 'sailNumber', 'club', 'handicap', 'totalPoints', 'netPoints'] as const;
+export const allSeriesColumns = ['rank', 'name', 'boat', 'club', 'handicap', 'total', 'net'] as const;
 export type SeriesColumn = typeof allSeriesColumns[number];
 
 @Component({
@@ -19,6 +19,7 @@ export class SeriesResultsTable {
 
   series = input.required<PublishedSeries>();
   seriesColumns = input<SeriesColumn[]>([...allSeriesColumns]);
+  showBoatClass = input(true);
   raceTitles = input.required<{ id: string; index: number; scheduledStart: Date; raceOfDay: number; }[]>();
   fontSize = input<string>('10pt');
   raceClicked = output<string>();
@@ -40,14 +41,29 @@ export class SeriesResultsTable {
     })) || [];
   });
 
+  nameColumnWidth = computed(() => {
+    const competitors = this.series()?.competitors;
+    if (!competitors || competitors.length === 0) {
+      return '100px'; // Default width
+    }
+
+    // Find the length of the longesst name (helm or crew)
+    const longestNameLength = competitors.reduce((maxLength, competitor) => {
+      const helmLength = competitor.helm?.length || 0;
+      const crewLength = competitor.crew?.length || 0;
+      return Math.max(maxLength, helmLength, crewLength);
+    }, 0);
+
+    // Estimate width: (char count * avg char width) + padding.
+    // Add a minimum width to prevent it from being too narrow.
+    return `${Math.max(100, longestNameLength * 7 + 20)}px`;
+  });
+
   raceTitle(index: number): string {
     const title = this.raceTitles()[index];
     let ret = 'Race ' + title.index.toString() + '<br>';
     if (title.scheduledStart) {
-      ret = `${ret} ${format(title.scheduledStart, 'mm/dd')}`;
-    }
-    if (title.raceOfDay > 0) {
-      ret = `${ret} ${title.raceOfDay.toString()}`;
+      ret = `${ret} ${format(title.scheduledStart, 'MMM dd')}`;
     }
     return ret;
   }
