@@ -1,4 +1,4 @@
-import { Component, computed, effect, inject, input, signal } from '@angular/core';
+import { Component, computed, effect, inject, input, signal, ElementRef } from '@angular/core';
 import { Toolbar } from "app/shared/components/toolbar";
 import { BreakpointObserver, Breakpoints } from '@angular/cdk/layout';
 import { toSignal } from '@angular/core/rxjs-interop';
@@ -14,48 +14,7 @@ import { MatButtonModule } from '@angular/material/button';
   selector: 'app-results-viewer',
   imports: [Toolbar, SeasonList, SeriesResultsTable, LoadingCentered, RaceResultsTable, MatIconModule, MatButtonModule],
   templateUrl: './results-viewer.html',
-  styles: `
-  .layout-container {
-    display: grid;
-    grid-template-columns: 300px 1fr; /* Desktop default */
-    height: 100vh;
-    transition: grid-template-columns 0.3s ease-in-out;
-  }
-
-  .layout-container.panel-collapsed {
-    grid-template-columns: 0px 1fr;
-  }
-
-  .layout-container.mobile-mode {
-    grid-template-columns: 1fr; /* Sidebar is *ngIf-ed away, content takes all */
-  }
-
-  .sidebar {
-    border-right: 1px solid #eee;
-    overflow-y: auto;
-    overflow-x: hidden; /* Hide content as it collapses */
-  }
-
-  .content-area {
-    position: relative; /* For positioning the toggle button */
-    display: flex;
-    justify-content: center; /* Center the tables-container horizontally */
-    overflow-y: auto;
-    padding: 2rem;
-  }
-
-  .tables-container {
-    width: 100%;
-    max-width: 1200px; /* Max width for the tables */
-  }
-
-  .panel-toggle-button {
-    position: absolute;
-    top: 16px;
-    left: 16px;
-    z-index: 10;
-  }
-  `,
+  styleUrl: './results-viewer.scss',
 })
 export class ResultsViewer {
 
@@ -63,6 +22,7 @@ export class ResultsViewer {
   private breakpoint = toSignal(inject(BreakpointObserver).observe([Breakpoints.Handset]));
   protected reader = inject(PublishedResultsReader);
   protected isPanelCollapsed = signal(false);
+  private elementRef = inject(ElementRef);
 
   id = input.required<string>();  // Route parameter
 
@@ -86,8 +46,10 @@ export class ResultsViewer {
       this.store.selectedSeriesId.set(this.id());
     });
   }
-  raceClicked(raceId: string) {
 
+  raceClicked(raceId: string) {
+    const raceElement = this.elementRef.nativeElement.querySelector(`[data-race-id="${raceId}"]`);
+    raceElement?.scrollIntoView({ behavior: 'smooth', block: 'start' });
   }
 
   togglePanel() {

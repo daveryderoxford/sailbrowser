@@ -1,3 +1,4 @@
+<div class="container">
 <table cdk-table class="table" [dataSource]="tableData()" [trackBy]="trackByKey" [style.font-size]="fontSize()">
 
    <!-- Initial columns -->
@@ -68,6 +69,7 @@
 
    <tr cdk-header-row class="header" *cdkHeaderRowDef="displayedColumns(); sticky: true"></tr>
    <tr cdk-row class="row" *cdkRowDef="let competitor; columns: displayedColumns(); let even = $even"
-      [class.even-row]="even" [class.selected]="isCompetitorSelected(competitor)">
+      [class.selected]="isCompetitorSelected(competitor)">
    </tr>
 </table>
+</div>

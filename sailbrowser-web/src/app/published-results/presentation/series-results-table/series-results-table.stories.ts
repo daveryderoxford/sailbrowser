@@ -2,7 +2,6 @@ import { Meta, StoryObj } from '@storybook/angular';
 import { SeriesResultsTable } from './series-results-table';
 import { PUBLIC_SERIES_MOCK } from '@testing/mocks/published-results/published-series-mocks';
 
-
 export default {
   title: 'Published Results/Results Table',
   component: SeriesResultsTable,

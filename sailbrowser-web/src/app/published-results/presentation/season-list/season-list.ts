@@ -1,5 +1,6 @@
 import { ChangeDetectionStrategy, Component, computed, input, output, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
+import { MatIconButton } from '@angular/material/button';
 import { MatExpansionModule } from '@angular/material/expansion';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
@@ -20,6 +21,7 @@ import { endOfDay, isWithinInterval } from 'date-fns';
     FormsModule,
     MatExpansionModule,
     MatFormFieldModule,
+    MatIconButton,
     MatIconModule,
     MatInputModule,
     MatListModule,
@@ -28,6 +30,7 @@ import { endOfDay, isWithinInterval } from 'date-fns';
   templateUrl: './season-list.html',
   styles: `
    .container {
+      height: 100%;
       background: var(--mat-sys-surface-variant);
       padding: 15px;
    }

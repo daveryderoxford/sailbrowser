@@ -14,7 +14,7 @@
       @if (!isMobile()) {
       <button mat-icon-button (click)="togglePanel()" class="panel-toggle-button"
          [title]="isPanelCollapsed() ? 'Show panel' : 'Hide panel'">
-         <mat-icon>{{ isPanelCollapsed() ? 'menu_open' : 'menu' }}</mat-icon>
+         <mat-icon>{{ isPanelCollapsed() ? 'keyboard_double_arrow_right' : 'keyboard_double_arrow_left' }}</mat-icon>
       </button>
       }
 
@@ -26,7 +26,7 @@
          }
 
          @for (race of races(); track race) {
-         <app-race-results-table [race]="race" />
+         <app-race-results-table [race]="race" [attr.data-race-id]="race.id" />
          }
       </div>
    </main>
