@@ -4,15 +4,16 @@ import { BreakpointObserver, Breakpoints } from '@angular/cdk/layout';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { SeasonList } from "../season-list/season-list";
 import { PublishedResultsReader } from 'app/published-results/services/published-results-store';
-import { SeriesResultsTable } from "../series-results-table/series-results-table";
+import { SeriesResultsTable } from "../results-tables/series-results-table/series-results-table";
 import { LoadingCentered } from "../../../shared/components/loading-centered";
-import { RaceResultsTable } from "../race-results-table/race-results-table";
+import { RaceResultsTable } from "../results-tables/race-results-table/race-results-table";
 import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
+import { DatePipe } from '@angular/common';
 
 @Component({
   selector: 'app-results-viewer',
-  imports: [Toolbar, SeasonList, SeriesResultsTable, LoadingCentered, RaceResultsTable, MatIconModule, MatButtonModule],
+  imports: [Toolbar, SeasonList, SeriesResultsTable, LoadingCentered, RaceResultsTable, MatIconModule, MatButtonModule, DatePipe],
   templateUrl: './results-viewer.html',
   styleUrl: './results-viewer.scss',
 })
@@ -30,6 +31,7 @@ export class ResultsViewer {
 
   series = this.store.series;
   races = this.store.races;
+  reversedRaces = computed(() => [...this.races()].reverse());
 
   raceTitles = computed(() => this.races().map((({ id, index, scheduledStart, raceOfDay }) => ({
       id,  
@@ -50,6 +52,10 @@ export class ResultsViewer {
   raceClicked(raceId: string) {
     const raceElement = this.elementRef.nativeElement.querySelector(`[data-race-id="${raceId}"]`);
     raceElement?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }
+
+  scrollToTop() {
+    this.elementRef.nativeElement.querySelector('.content-area')?.scrollTo({ top: 0, behavior: 'smooth' });
   }
 
   togglePanel() {

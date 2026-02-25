@@ -16,6 +16,8 @@ export interface PublishedRace {
 }
 
 export interface RaceResult {
+   rank: number;
+   club?: string;
    boatClass: string;
    sailNumber: number;
    helm: string;

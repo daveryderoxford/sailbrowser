@@ -1,0 +1,32 @@
+/** Additional styles for series results table in addtion to 
+those in results-table-shared */
+
+// Series table is rendere with fixed 
+// layout into wide container (1200px)
+.table {
+   table-layout: fixed;
+   width: 100%;
+}
+
+// Additional coluns in Series table in addition to standard ones
+.cdk-column-total {
+   width: 50px;
+   text-align: center;
+}
+
+.cdk-column-net {
+   width: 50px;
+   text-align: center;
+}
+
+.race-col {
+   text-align: center;
+   min-width: 60px;
+   width: 60px;
+}
+
+// Addiitonal styling
+.pointer {
+   cursor: pointer;
+}
+

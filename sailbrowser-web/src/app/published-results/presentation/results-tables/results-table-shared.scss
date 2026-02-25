@@ -1,0 +1,53 @@
+.container {
+   width: 100%;
+   border-radius: var(--mat-sys-corner-large);
+   overflow-x: scroll;
+   overflow-y: scroll;
+}
+
+.cdk-header-row {
+   background-color: var(--mat-sys-surface-container-high);
+}
+
+.cdk-cell {
+   padding: 2px 10px;
+   /* Provide a default background for all cells */
+   background-color: var(--mat-sys-secondary-container);
+}
+
+.cdk-header-cell {
+   background-color: var(--mat-sys-surface-container-high);
+}
+
+/* Override background for even rows */
+.cdk-row:nth-child(even) {
+   background-color: var(--mat-sys-primary-container);
+}
+
+/* Ensure sticky header cells are on top */
+.cdk-header-cell.cdk-column-rank,
+.cdk-header-cell.cdk-column-name {
+   background-color: var(--mat-sys-surface-container-high);
+   z-index: 3;
+   /* Higher z-index for sticky header corner */
+}
+
+/// Column defintions
+.cdk-column-rank {
+   width: 45px;
+   text-align: center;
+}
+
+.cdk-column-boat {
+   width: 100px;
+}
+
+.cdk-column-club {
+   width: 80px;
+   text-align: center;
+}
+
+.cdk-column-handicap {
+   width: 60px;
+   text-align: center;
+}

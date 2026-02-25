@@ -1,6 +1,54 @@
 {
     "pipes": [
         {
+            "name": "BracketedPipe",
+            "id": "pipe-BracketedPipe-3a1a5adc1f47b22448de599e22ae9a30b5a5d68304b93e3713322b23c8034c7776a3a0194847d45215230cb87ab6c652a7963918bad41babf7b6851a613cca97",
+            "file": "src/app/shared/pipes/bracketed-pipe.ts",
+            "type": "pipe",
+            "deprecated": false,
+            "deprecationMessage": "",
+            "description": "<p>Brackets a string or number,\nHandling input of null/undefined, empty and NaN.</p>\n",
+            "rawdescription": "\nBrackets a string or number,\nHandling input of null/undefined, empty and NaN.\n",
+            "properties": [],
+            "methods": [
+                {
+                    "name": "transform",
+                    "args": [
+                        {
+                            "name": "pos",
+                            "type": "number | string",
+                            "optional": false,
+                            "dotDotDotToken": false,
+                            "deprecated": false,
+                            "deprecationMessage": ""
+                        }
+                    ],
+                    "optional": false,
+                    "returnType": "string",
+                    "typeParameters": [],
+                    "line": 10,
+                    "deprecated": false,
+                    "deprecationMessage": "",
+                    "jsdoctags": [
+                        {
+                            "name": "pos",
+                            "type": "number | string",
+                            "optional": false,
+                            "dotDotDotToken": false,
+                            "deprecated": false,
+                            "deprecationMessage": "",
+                            "tagName": {
+                                "text": "param"
+                            }
+                        }
+                    ]
+                }
+            ],
+            "standalone": false,
+            "ngname": "bracketed",
+            "sourceCode": "import { Pipe, PipeTransform } from \"@angular/core\";\n\n/** Brackets a string or number, \n * Handling input of null/undefined, empty and NaN.\n*/\n@Pipe({\n   name: 'bracketed',\n})\nexport class BracketedPipe implements PipeTransform {\n   transform(pos: number | string): string {\n      if (!pos) {\n         return '';\n      }\n      if (typeof pos ==='string') {\n         return (pos === '') ? '' : `(${pos})`;\n      } else {\n      return isNaN(pos) ? '' : `(${pos.toString()})`;\n      }\n   }\n}"
+        },
+        {
             "name": "DurationPipe",
             "id": "pipe-DurationPipe-178aee179ab37dd76c33c106ec06a611fc6371031ede41c5f3f1a6c78ed3774f9e46adbbd754f1e55a8bdedf0d0f8b145b6f9e1ca5881bdff976f4380ae3afee",
             "file": "src/app/results-input/presentation/duration.pipe.ts",
@@ -494,13 +542,50 @@
             "extends": []
         },
         {
+            "name": "HelmCrew",
+            "id": "interface-HelmCrew-54ca10dce3201629a804b3fb9b589d83d1478476980fdc5a0954a58069dd2ebf985976307b443ff41884cbfd7f107d871e12cd16f1a7726ac1d6307ec3d5ec05",
+            "file": "src/app/published-results/presentation/results-tables/results-table-shared.ts",
+            "deprecated": false,
+            "deprecationMessage": "",
+            "type": "interface",
+            "sourceCode": "export interface HelmCrew  {\n   helm: string;\n   crew?: string;\n}\n\nconst MAX_NAME_WIDTH = 200;\nconst MIN_NAME_WIDTH = 80;\n\nexport function nameColumnWidth(names: HelmCrew[]) {\n\n   if (!names || names.length === 0) {\n      return MIN_NAME_WIDTH + 'px'; \n   }\n\n   // Find the length of the longesst name (helm or crew)\n   const maxLenChars = names.reduce((maxLength, competitor) => {\n      const helmLength = competitor.helm?.length || 0;\n      const crewLength = competitor.crew?.length || 0;\n      return Math.max(maxLength, helmLength, crewLength);\n   }, 0);\n\n   // Estimate width: (char count * avg char width) + padding.\n   let maxLenPixels = maxLenChars * 8 + 15;\n   maxLenPixels = Math.min(MAX_NAME_WIDTH, maxLenPixels);\n   maxLenPixels = Math.max(MIN_NAME_WIDTH, maxLenPixels);\n\n   console.log('Max ' + maxLenPixels + 'Characters: ' + maxLenChars);\n\n   return `${maxLenPixels}px`;\n}\n\nexport const competitorColumns = ['rank', 'name', 'boat', 'club', 'handicap'] as const;",
+            "properties": [
+                {
+                    "name": "crew",
+                    "deprecated": false,
+                    "deprecationMessage": "",
+                    "type": "string",
+                    "indexKey": "",
+                    "optional": true,
+                    "description": "",
+                    "line": 6
+                },
+                {
+                    "name": "helm",
+                    "deprecated": false,
+                    "deprecationMessage": "",
+                    "type": "string",
+                    "indexKey": "",
+                    "optional": false,
+                    "description": "",
+                    "line": 5
+                }
+            ],
+            "indexSignatures": [],
+            "kind": 172,
+            "description": "<p>Shared functionality between series and results tables</p>\n",
+            "rawdescription": "\nShared functionality between series and results tables",
+            "methods": [],
+            "extends": []
+        },
+        {
             "name": "IntermediateResult",
-            "id": "interface-IntermediateResult-ad0180b1f9250298e775a668f4d42aac810b15ca92e21ce603d5a5e96f84119f512407d1cf94a122bf8ec48745a822d6f4e92b28c0abf40815fabecbe8991dbc",
+            "id": "interface-IntermediateResult-00c5f1d936ede9faefe3be84cf2166f139308e86beba69b7d2f206aebef6909108dcb24b9fdc25e47ac0bf4589320c8b1b2f13e6625195b089acb22610477426",
             "file": "src/app/scoring/services/race-scorer.ts",
             "deprecated": false,
             "deprecationMessage": "",
             "type": "interface",
-            "sourceCode": "import { RaceResult } from 'app/published-results/model/published-race';\nimport { Race } from '../../race-calender/model/race';\nimport { RaceCompetitor } from '../../results-input/model/race-competitor';\nimport { HandicapSystem } from 'app/scoring/model/handicap-system';\nimport { isFinishedComp, isStarter } from 'app/scoring/model/result-code';\nimport { differenceInSeconds } from 'date-fns';\nimport { SeriesScoringScheme } from '../model/scoring-algotirhm';\n\ninterface IntermediateResult extends RaceResult {\n  // Internal properties for scoring\n  position: number;\n  isDiscardable: boolean;\n}\n\n/**\n * Uses competitor start, finish. lap and status to calculate results for a single race. \n * All data in the ResultsData object is populated (elapsed/corrected times points and positions).\n * \n * It is assumes all competitors in the race are supplied. \n * The maximum number of laps and number of starters is calculated based on all competitors. \n */\nexport function scoreRace(\n  competitors: RaceCompetitor[],\n  scheme: HandicapSystem,\n  race: Race,\n  seriesType: SeriesScoringScheme,\n  seriesCompetitorCount: number,\n): RaceResult[] {\n\n  const isPositionBased = race.type === 'Pursuit' || scheme === 'Level Rating';\n\n  return isPositionBased\n    ? scoreByPosition(competitors, race, seriesType, seriesCompetitorCount)\n    : scoreByTime(competitors, scheme, race, seriesType, seriesCompetitorCount);\n}\n\n/**\n * Calculates results for a time-based handicap race (e.g., PY).\n */\nfunction scoreByTime(\n  competitors: RaceCompetitor[],\n  scheme: HandicapSystem,\n  race: Race,\n  seriesType: SeriesScoringScheme,\n  seriesCompetitorCount: number,\n): RaceResult[] {\n\n  // 1. Calculate the maximum number of laps.\n  const maxLaps = competitors.reduce((max, comp) => (comp.numLaps > max) ? comp.numLaps : max, 0);\n\n  // 2. Build initial results\n  const intermediateResults = buildIntermediateResults(competitors, scheme, race, maxLaps);\n\n  // 2. Sort by corrected time (taking into account result code)\n  intermediateResults.sort((a, b) => sortByCorrectedTime(a, b));\n\n  // 3. Assign points for finishers\n  assignPointsForFinishers(intermediateResults, 'correctedTime');\n\n  // 4. Assign points for non-finishers\n  assignPointsForNonFinishers(intermediateResults, seriesCompetitorCount);\n\n  // 5. Sort by points to determine final positions\n  intermediateResults.sort((a, b) => sortByPoints(a, b));\n\n  // 6. Apply scoring penalties\n  applyScoringPenalties(intermediateResults, seriesType);\n\n  // 7. Re-sort if penalties changed order\n  intermediateResults.sort((a, b) => sortByPoints(a, b));\n\n  // 8. Remove internal properties before returning\n  return intermediateResults.map(({ position, isDiscardable, ...result }) => result);\n}\n\n/**\n * Calculates results for a position-based race (Level Rating or Pursuit).\n */\nfunction scoreByPosition(\n  competitors: RaceCompetitor[],\n  race: Race,\n  seriesType: SeriesScoringScheme,\n  seriesCompetitorCount: number,\n): RaceResult[] {\n\n  // For position-based races, maxLaps is not used for scoring, so pass 0.\n  const intermediateResults = buildIntermediateResults(competitors, 'Level Rating', race, 0);\n\n  if (race.type === 'Pursuit') {\n    // For Pursuit races, position is manually entered.\n    intermediateResults.forEach((res, i) => {\n      res.position = competitors[i].manualPosition || 0;\n    });\n  } else {\n    // For other position-based races (like Level Rating), sort by corrected time first.\n    intermediateResults.sort((a, b) => sortByCorrectedTime(a, b));\n    intermediateResults.forEach((res, index) => {\n      res.position = index + 1;\n    });\n  }\n\n  // 1. Assign points based on manual position for finishers\n  assignPointsForFinishers(intermediateResults.filter(res => res.position > 0), 'position');\n\n  // 2. Assign points for non-finishers\n  assignPointsForNonFinishers(intermediateResults, seriesCompetitorCount);\n\n  // 3. Sort by points to determine final positions\n  intermediateResults.sort((a, b) => sortByPoints(a, b));\n\n  // 4. Apply scoring penalties\n  applyScoringPenalties(intermediateResults, seriesType);\n\n  // 5. Re-sort if penalties changed order\n  intermediateResults.sort((a, b) => sortByPoints(a, b));\n\n  // 6. Finalize position based on points for official record\n  intermediateResults.forEach((res, index) => {\n    res.position = index + 1;\n  });\n\n  // 7. Remove internal properties before returning\n  return intermediateResults.map(({ position, isDiscardable, ...result }) => result);\n}\n\nfunction buildIntermediateResults(\n  competitors: RaceCompetitor[],\n  scheme: HandicapSystem,\n  race: Race,\n  maxLaps: number\n): IntermediateResult[] {\n  return competitors.map((comp) => {\n    const times = getCorrectedTime(comp, scheme, race.isAverageLap, maxLaps);\n    return {\n      boatClass: comp.boatClass,\n      sailNumber: comp.sailNumber,\n      helm: comp.helm,\n      crew: comp.crew,\n      laps: comp.numLaps,\n      handicap: comp.handicap,\n      startTime: comp.startTime!,\n      finishTime: comp.finishTime!,\n      elapsedTime: times.elapsed,\n      correctedTime: times.corrected,\n      points: 0,\n      resultCode: comp.resultCode,\n      position: 0,\n      isDiscardable: true,\n    };\n  });\n}\n\nfunction getCorrectedTime(comp: RaceCompetitor, scheme: HandicapSystem, isAverageLap: boolean, maxLaps: number): { corrected: number; elapsed: number; error: string; } {\n\n  let corrected = 0.0;\n  let elapsed = 0.0;\n\n  const finishTime = comp.finishTime;\n  const compStartTime = comp.startTime;\n\n  if (finishTime && compStartTime) {\n\n    const diff = differenceInSeconds(finishTime.getTime(), compStartTime.getTime());\n\n    if (diff < 0) {\n      return { corrected: 0, elapsed: 0, error: 'Start time before finish time' };\n    }\n\n    const numLaps = comp.numLaps;\n    if (isAverageLap && numLaps === 0) {\n      return { corrected: 0, elapsed: 0, error: 'Number of laps 0 for average lap race' };\n    }\n\n    elapsed = diff;\n\n    const correctedElapsed = isAverageLap ? (elapsed / numLaps) * maxLaps : elapsed;\n\n    switch (scheme) {\n      case 'PY':\n        corrected = (correctedElapsed * 1000.0) / comp.handicap;\n        break;\n      case 'Level Rating':\n        corrected = diff; // For Level Rating, corrected time is the same as elapsed.\n        break;\n    }\n  } else {\n    return { corrected: 0, elapsed: 0, error: '' };\n  }\n\n  return {\n    corrected: Math.round(corrected),\n    elapsed: Math.round(elapsed),\n    error: '',\n  };\n}\n\n/** Assigns points for finishers in a race\n * Competitors with the same value for the given key (e.g., correctedTime or position)\n * are awarded tied points.\n */\nfunction assignPointsForFinishers(results: IntermediateResult[], key: keyof IntermediateResult) {\n  const finishers = results.filter((res) => isFinishedComp(res.resultCode));\n  const resultsByValue = new Map<number, IntermediateResult[]>();\n\n  // Group competitors by the value of the specified key\n  finishers.forEach((res) => {\n    const value = (res[key] as number) || 0;\n    if (!resultsByValue.has(value)) resultsByValue.set(value, []);\n    resultsByValue.get(value)!.push(res);\n  });\n\n  // Iterate over ordered list of values, calculating points for ties\n  const sortedValues = Array.from(resultsByValue.keys()).sort((a, b) => a - b);\n  let pos = 1.0;\n\n  for (const value of sortedValues) {\n    const resultsAtValue = resultsByValue.get(value)!;\n    // The average points for a group of tied competitors is the average of the positions they would have taken.\n    // For example, if 2 boats tie for 2nd, they take up positions 2 and 3, so they both get (2+3)/2 = 2.5 points.\n    const avgPoints = pos - 1 + (resultsAtValue.length + 1) / 2.0;\n\n    for (const res of resultsAtValue) {\n      res.points = avgPoints;\n      res.position = pos;\n    }\n    pos += resultsAtValue.length;\n  }\n}\n\nfunction assignPointsForNonFinishers(results: IntermediateResult[], seriesCompetitorCount: number) {\n  let starters = -1;\n\n  for (const res of results) {\n    if (isFinishedComp(res.resultCode)) continue;\n\n    if (isStarter(res.resultCode)) {\n      if (starters === -1) starters = startersInRace(results);\n      res.points = starters + 1.0;\n      res.position = starters + 1;\n    } else {\n      res.points = seriesCompetitorCount + 1.0;\n      res.position = seriesCompetitorCount + 1;\n    }\n  }\n}\n\nfunction applyScoringPenalties(results: IntermediateResult[], scheme: SeriesScoringScheme) {\n  for (const res of results) {\n    if (res.resultCode === 'SCP') {\n      res.points = Math.min(res.points * 1.2, 99999);\n    }\n  }\n}\n\nfunction sortByPoints(a: IntermediateResult, b: IntermediateResult): number {\n  return (a.points || 9999) - (b.points || 9999);\n}\n\nfunction startersInRace(results: IntermediateResult[]): number {\n  return results.reduce((count, comp) => {\n    return isStarter(comp.resultCode) ? count + 1 : count;\n  }, 0);\n}\n\nfunction isOk(comp: IntermediateResult): boolean {\n  return comp.resultCode === 'OK';\n}\n\nexport function sortByCorrectedTime(a: IntermediateResult, b: IntermediateResult): number {\n  const aOk = isOk(a);\n  const bOk = isOk(b);\n\n  if (aOk && bOk) {\n    return (a.correctedTime || 0) - (b.correctedTime || 0);\n  } else if (aOk && !bOk) {\n    return -1;\n  } else if (!aOk && bOk) {\n    return 1;\n  } else {\n    return 0;\n  }\n}",
+            "sourceCode": "import { RaceResult } from 'app/published-results/model/published-race';\nimport { Race } from '../../race-calender/model/race';\nimport { RaceCompetitor } from '../../results-input/model/race-competitor';\nimport { HandicapSystem } from 'app/scoring/model/handicap-system';\nimport { isFinishedComp, isStarter } from 'app/scoring/model/result-code';\nimport { differenceInSeconds } from 'date-fns';\nimport { SeriesScoringScheme } from '../model/scoring-algotirhm';\n\ninterface IntermediateResult extends RaceResult {\n  // Internal properties for scoring\n  position: number;\n  isDiscardable: boolean;\n}\n\n/**\n * Uses competitor start, finish. lap and status to calculate results for a single race. \n * All data in the ResultsData object is populated (elapsed/corrected times points and positions).\n * \n * It is assumes all competitors in the race are supplied. \n * The maximum number of laps and number of starters is calculated based on all competitors. \n */\nexport function scoreRace(\n  competitors: RaceCompetitor[],\n  scheme: HandicapSystem,\n  race: Race,\n  seriesType: SeriesScoringScheme,\n  seriesCompetitorCount: number,\n): RaceResult[] {\n\n  const isPositionBased = race.type === 'Pursuit' || scheme === 'Level Rating';\n\n  return isPositionBased\n    ? scoreByPosition(competitors, race, seriesType, seriesCompetitorCount)\n    : scoreByTime(competitors, scheme, race, seriesType, seriesCompetitorCount);\n}\n\n/**\n * Calculates results for a time-based handicap race (e.g., PY).\n */\nfunction scoreByTime(\n  competitors: RaceCompetitor[],\n  scheme: HandicapSystem,\n  race: Race,\n  seriesType: SeriesScoringScheme,\n  seriesCompetitorCount: number,\n): RaceResult[] {\n\n  // 1. Calculate the maximum number of laps.\n  const maxLaps = competitors.reduce((max, comp) => (comp.numLaps > max) ? comp.numLaps : max, 0);\n\n  // 2. Build initial results\n  const intermediateResults = buildIntermediateResults(competitors, scheme, race, maxLaps);\n\n  // 2. Sort by corrected time (taking into account result code)\n  intermediateResults.sort((a, b) => sortByCorrectedTime(a, b));\n\n  // 3. Assign points for finishers\n  assignPointsForFinishers(intermediateResults, 'correctedTime');\n\n  // 4. Assign points for non-finishers\n  assignPointsForNonFinishers(intermediateResults, seriesCompetitorCount);\n\n  // 5. Sort by points to determine final positions\n  intermediateResults.sort((a, b) => sortByPoints(a, b));\n\n  // 6. Apply scoring penalties\n  applyScoringPenalties(intermediateResults, seriesType);\n\n  // 7. Re-sort if penalties changed order\n  intermediateResults.sort((a, b) => sortByPoints(a, b));\n\n  // 8. Remove internal properties before returning\n  return intermediateResults.map(({ position, isDiscardable, ...result }) => result);\n}\n\n/**\n * Calculates results for a position-based race (Level Rating or Pursuit).\n */\nfunction scoreByPosition(\n  competitors: RaceCompetitor[],\n  race: Race,\n  seriesType: SeriesScoringScheme,\n  seriesCompetitorCount: number,\n): RaceResult[] {\n\n  // For position-based races, maxLaps is not used for scoring, so pass 0.\n  const intermediateResults = buildIntermediateResults(competitors, 'Level Rating', race, 0);\n\n  if (race.type === 'Pursuit') {\n    // For Pursuit races, position is manually entered.\n    intermediateResults.forEach((res, i) => {\n      res.position = competitors[i].manualPosition || 0;\n    });\n  } else {\n    // For other position-based races (like Level Rating), sort by corrected time first.\n    intermediateResults.sort((a, b) => sortByCorrectedTime(a, b));\n    intermediateResults.forEach((res, index) => {\n      res.position = index + 1;\n    });\n  }\n\n  // 1. Assign points based on manual position for finishers\n  assignPointsForFinishers(intermediateResults.filter(res => res.position > 0), 'position');\n\n  // 2. Assign points for non-finishers\n  assignPointsForNonFinishers(intermediateResults, seriesCompetitorCount);\n\n  // 3. Sort by points to determine final positions\n  intermediateResults.sort((a, b) => sortByPoints(a, b));\n\n  // 4. Apply scoring penalties\n  applyScoringPenalties(intermediateResults, seriesType);\n\n  // 5. Re-sort if penalties changed order\n  intermediateResults.sort((a, b) => sortByPoints(a, b));\n\n  // 6. Finalize position based on points for official record\n  intermediateResults.forEach((res, index) => {\n    res.position = index + 1;\n  });\n\n  // 7. Remove internal properties before returning\n  return intermediateResults.map(({ position, isDiscardable, ...result }) => result);\n}\n\nfunction buildIntermediateResults(\n  competitors: RaceCompetitor[],\n  scheme: HandicapSystem,\n  race: Race,\n  maxLaps: number\n): IntermediateResult[] {\n  return competitors.map((comp) => {\n    const times = getCorrectedTime(comp, scheme, race.isAverageLap, maxLaps);\n    return {\n      rank: 1,  // Temp to do\n      boatClass: comp.boatClass,\n      sailNumber: comp.sailNumber,\n      helm: comp.helm,\n      crew: comp.crew,\n      laps: comp.numLaps,\n      handicap: comp.handicap,\n      startTime: comp.startTime!,\n      finishTime: comp.finishTime!,\n      elapsedTime: times.elapsed,\n      correctedTime: times.corrected,\n      points: 0,\n      resultCode: comp.resultCode,\n      position: 0,\n      isDiscardable: true,\n    };\n  });\n}\n\nfunction getCorrectedTime(comp: RaceCompetitor, scheme: HandicapSystem, isAverageLap: boolean, maxLaps: number): { corrected: number; elapsed: number; error: string; } {\n\n  let corrected = 0.0;\n  let elapsed = 0.0;\n\n  const finishTime = comp.finishTime;\n  const compStartTime = comp.startTime;\n\n  if (finishTime && compStartTime) {\n\n    const diff = differenceInSeconds(finishTime.getTime(), compStartTime.getTime());\n\n    if (diff < 0) {\n      return { corrected: 0, elapsed: 0, error: 'Start time before finish time' };\n    }\n\n    const numLaps = comp.numLaps;\n    if (isAverageLap && numLaps === 0) {\n      return { corrected: 0, elapsed: 0, error: 'Number of laps 0 for average lap race' };\n    }\n\n    elapsed = diff;\n\n    const correctedElapsed = isAverageLap ? (elapsed / numLaps) * maxLaps : elapsed;\n\n    switch (scheme) {\n      case 'PY':\n        corrected = (correctedElapsed * 1000.0) / comp.handicap;\n        break;\n      case 'Level Rating':\n        corrected = diff; // For Level Rating, corrected time is the same as elapsed.\n        break;\n    }\n  } else {\n    return { corrected: 0, elapsed: 0, error: '' };\n  }\n\n  return {\n    corrected: Math.round(corrected),\n    elapsed: Math.round(elapsed),\n    error: '',\n  };\n}\n\n/** Assigns points for finishers in a race\n * Competitors with the same value for the given key (e.g., correctedTime or position)\n * are awarded tied points.\n */\nfunction assignPointsForFinishers(results: IntermediateResult[], key: keyof IntermediateResult) {\n  const finishers = results.filter((res) => isFinishedComp(res.resultCode));\n  const resultsByValue = new Map<number, IntermediateResult[]>();\n\n  // Group competitors by the value of the specified key\n  finishers.forEach((res) => {\n    const value = (res[key] as number) || 0;\n    if (!resultsByValue.has(value)) resultsByValue.set(value, []);\n    resultsByValue.get(value)!.push(res);\n  });\n\n  // Iterate over ordered list of values, calculating points for ties\n  const sortedValues = Array.from(resultsByValue.keys()).sort((a, b) => a - b);\n  let pos = 1.0;\n\n  for (const value of sortedValues) {\n    const resultsAtValue = resultsByValue.get(value)!;\n    // The average points for a group of tied competitors is the average of the positions they would have taken.\n    // For example, if 2 boats tie for 2nd, they take up positions 2 and 3, so they both get (2+3)/2 = 2.5 points.\n    const avgPoints = pos - 1 + (resultsAtValue.length + 1) / 2.0;\n\n    for (const res of resultsAtValue) {\n      res.points = avgPoints;\n      res.position = pos;\n    }\n    pos += resultsAtValue.length;\n  }\n}\n\nfunction assignPointsForNonFinishers(results: IntermediateResult[], seriesCompetitorCount: number) {\n  let starters = -1;\n\n  for (const res of results) {\n    if (isFinishedComp(res.resultCode)) continue;\n\n    if (isStarter(res.resultCode)) {\n      if (starters === -1) starters = startersInRace(results);\n      res.points = starters + 1.0;\n      res.position = starters + 1;\n    } else {\n      res.points = seriesCompetitorCount + 1.0;\n      res.position = seriesCompetitorCount + 1;\n    }\n  }\n}\n\nfunction applyScoringPenalties(results: IntermediateResult[], scheme: SeriesScoringScheme) {\n  for (const res of results) {\n    if (res.resultCode === 'SCP') {\n      res.points = Math.min(res.points * 1.2, 99999);\n    }\n  }\n}\n\nfunction sortByPoints(a: IntermediateResult, b: IntermediateResult): number {\n  return (a.points || 9999) - (b.points || 9999);\n}\n\nfunction startersInRace(results: IntermediateResult[]): number {\n  return results.reduce((count, comp) => {\n    return isStarter(comp.resultCode) ? count + 1 : count;\n  }, 0);\n}\n\nfunction isOk(comp: IntermediateResult): boolean {\n  return comp.resultCode === 'OK';\n}\n\nexport function sortByCorrectedTime(a: IntermediateResult, b: IntermediateResult): number {\n  const aOk = isOk(a);\n  const bOk = isOk(b);\n\n  if (aOk && bOk) {\n    return (a.correctedTime || 0) - (b.correctedTime || 0);\n  } else if (aOk && !bOk) {\n    return -1;\n  } else if (!aOk && bOk) {\n    return 1;\n  } else {\n    return 0;\n  }\n}",
             "properties": [
                 {
                     "name": "isDiscardable",
@@ -532,12 +617,12 @@
         },
         {
             "name": "PublishedRace",
-            "id": "interface-PublishedRace-79e6ac5b0fc73cfcd08ed6d2f8d3f826b1e1d8cdfbc584741222bf72d5125819b934cd9fa7e95936112399eb91b07c5172a3d0073262b72933e8ea6006b43195",
+            "id": "interface-PublishedRace-68ec583835c7b05f4c8162b36b51c8caf197beadb6785b4fc4f0b835897a1ed3a9b053882f9ba5ad399fb1afc7d1de5860ec363bbbe7ca62c941e8cad568381b",
             "file": "src/app/published-results/model/published-race.ts",
             "deprecated": false,
             "deprecationMessage": "",
             "type": "interface",
-            "sourceCode": "import { RaceType } from '../../race-calender/model/race-type';\nimport { ResultCode } from 'app/scoring/model/result-code';\n\n/** Immutable race results object, stored in the `published_races` collection. */\nexport interface PublishedRace {\n   id: string;\n   seriesName: string;\n   index: number;\n   fleetId: string;\n   seriesId: string;\n   raceOfDay: number;\n   scheduledStart: Date;\n   type: RaceType;\n   isDiscardable: boolean;\n   results: RaceResult[]\n}\n\nexport interface RaceResult {\n   boatClass: string;\n   sailNumber: number;\n   helm: string;\n   crew?: string;\n   handicap: number;\n   laps: number;\n   startTime: Date;\n   finishTime: Date;\n   elapsedTime: number;\n   correctedTime: number;\n   points: number;\n   resultCode: ResultCode;\n}",
+            "sourceCode": "import { RaceType } from '../../race-calender/model/race-type';\nimport { ResultCode } from 'app/scoring/model/result-code';\n\n/** Immutable race results object, stored in the `published_races` collection. */\nexport interface PublishedRace {\n   id: string;\n   seriesName: string;\n   index: number;\n   fleetId: string;\n   seriesId: string;\n   raceOfDay: number;\n   scheduledStart: Date;\n   type: RaceType;\n   isDiscardable: boolean;\n   results: RaceResult[]\n}\n\nexport interface RaceResult {\n   rank: number;\n   club?: string;\n   boatClass: string;\n   sailNumber: number;\n   helm: string;\n   crew?: string;\n   handicap: number;\n   laps: number;\n   startTime: Date;\n   finishTime: Date;\n   elapsedTime: number;\n   correctedTime: number;\n   points: number;\n   resultCode: ResultCode;\n}",
             "properties": [
                 {
                     "name": "fleetId",
@@ -994,12 +1079,12 @@
         },
         {
             "name": "RaceResult",
-            "id": "interface-RaceResult-79e6ac5b0fc73cfcd08ed6d2f8d3f826b1e1d8cdfbc584741222bf72d5125819b934cd9fa7e95936112399eb91b07c5172a3d0073262b72933e8ea6006b43195",
+            "id": "interface-RaceResult-68ec583835c7b05f4c8162b36b51c8caf197beadb6785b4fc4f0b835897a1ed3a9b053882f9ba5ad399fb1afc7d1de5860ec363bbbe7ca62c941e8cad568381b",
             "file": "src/app/published-results/model/published-race.ts",
             "deprecated": false,
             "deprecationMessage": "",
             "type": "interface",
-            "sourceCode": "import { RaceType } from '../../race-calender/model/race-type';\nimport { ResultCode } from 'app/scoring/model/result-code';\n\n/** Immutable race results object, stored in the `published_races` collection. */\nexport interface PublishedRace {\n   id: string;\n   seriesName: string;\n   index: number;\n   fleetId: string;\n   seriesId: string;\n   raceOfDay: number;\n   scheduledStart: Date;\n   type: RaceType;\n   isDiscardable: boolean;\n   results: RaceResult[]\n}\n\nexport interface RaceResult {\n   boatClass: string;\n   sailNumber: number;\n   helm: string;\n   crew?: string;\n   handicap: number;\n   laps: number;\n   startTime: Date;\n   finishTime: Date;\n   elapsedTime: number;\n   correctedTime: number;\n   points: number;\n   resultCode: ResultCode;\n}",
+            "sourceCode": "import { RaceType } from '../../race-calender/model/race-type';\nimport { ResultCode } from 'app/scoring/model/result-code';\n\n/** Immutable race results object, stored in the `published_races` collection. */\nexport interface PublishedRace {\n   id: string;\n   seriesName: string;\n   index: number;\n   fleetId: string;\n   seriesId: string;\n   raceOfDay: number;\n   scheduledStart: Date;\n   type: RaceType;\n   isDiscardable: boolean;\n   results: RaceResult[]\n}\n\nexport interface RaceResult {\n   rank: number;\n   club?: string;\n   boatClass: string;\n   sailNumber: number;\n   helm: string;\n   crew?: string;\n   handicap: number;\n   laps: number;\n   startTime: Date;\n   finishTime: Date;\n   elapsedTime: number;\n   correctedTime: number;\n   points: number;\n   resultCode: ResultCode;\n}",
             "properties": [
                 {
                     "name": "boatClass",
@@ -1009,7 +1094,17 @@
                     "indexKey": "",
                     "optional": false,
                     "description": "",
-                    "line": 19
+                    "line": 21
+                },
+                {
+                    "name": "club",
+                    "deprecated": false,
+                    "deprecationMessage": "",
+                    "type": "string",
+                    "indexKey": "",
+                    "optional": true,
+                    "description": "",
+                    "line": 20
                 },
                 {
                     "name": "correctedTime",
@@ -1019,7 +1114,7 @@
                     "indexKey": "",
                     "optional": false,
                     "description": "",
-                    "line": 28
+                    "line": 30
                 },
                 {
                     "name": "crew",
@@ -1029,7 +1124,7 @@
                     "indexKey": "",
                     "optional": true,
                     "description": "",
-                    "line": 22
+                    "line": 24
                 },
                 {
                     "name": "elapsedTime",
@@ -1039,7 +1134,7 @@
                     "indexKey": "",
                     "optional": false,
                     "description": "",
-                    "line": 27
+                    "line": 29
                 },
                 {
                     "name": "finishTime",
@@ -1049,7 +1144,7 @@
                     "indexKey": "",
                     "optional": false,
                     "description": "",
-                    "line": 26
+                    "line": 28
                 },
                 {
                     "name": "handicap",
@@ -1059,7 +1154,7 @@
                     "indexKey": "",
                     "optional": false,
                     "description": "",
-                    "line": 23
+                    "line": 25
                 },
                 {
                     "name": "helm",
@@ -1069,7 +1164,7 @@
                     "indexKey": "",
                     "optional": false,
                     "description": "",
-                    "line": 21
+                    "line": 23
                 },
                 {
                     "name": "laps",
@@ -1079,7 +1174,7 @@
                     "indexKey": "",
                     "optional": false,
                     "description": "",
-                    "line": 24
+                    "line": 26
                 },
                 {
                     "name": "points",
@@ -1089,7 +1184,17 @@
                     "indexKey": "",
                     "optional": false,
                     "description": "",
-                    "line": 29
+                    "line": 31
+                },
+                {
+                    "name": "rank",
+                    "deprecated": false,
+                    "deprecationMessage": "",
+                    "type": "number",
+                    "indexKey": "",
+                    "optional": false,
+                    "description": "",
+                    "line": 19
                 },
                 {
                     "name": "resultCode",
@@ -1099,7 +1204,7 @@
                     "indexKey": "",
                     "optional": false,
                     "description": "",
-                    "line": 30
+                    "line": 32
                 },
                 {
                     "name": "sailNumber",
@@ -1109,7 +1214,7 @@
                     "indexKey": "",
                     "optional": false,
                     "description": "",
-                    "line": 20
+                    "line": 22
                 },
                 {
                     "name": "startTime",
@@ -1119,7 +1224,7 @@
                     "indexKey": "",
                     "optional": false,
                     "description": "",
-                    "line": 25
+                    "line": 27
                 }
             ],
             "indexSignatures": [],
@@ -9216,6 +9321,67 @@
             "extends": []
         },
         {
+            "name": "HighlightPosition",
+            "id": "component-HighlightPosition-6fe46acdaa7a08731ca7ecf3079b23130b33391219c9c094f70f73f19f792ddeffe33a68d20d239237dc37a0fa4edadc078274f1101870c410f34bf40028546b",
+            "file": "src/app/published-results/presentation/results-tables/highlighted-position.ts",
+            "changeDetection": "ChangeDetectionStrategy.OnPush",
+            "encapsulation": [],
+            "entryComponents": [],
+            "inputs": [],
+            "outputs": [],
+            "providers": [],
+            "selector": "app-highlight-position",
+            "styleUrls": [],
+            "styles": [
+                "\n    :host {\n      display: inline-block;\n      vertical-align: middle;\n    }\n\n    .rank-oval {\n      width: 30px;\n      height: 18px;\n      border-radius: 10px;\n      display: flex;\n      align-items: center;\n      justify-content: center;\n      margin: auto;\n      color: var(--mat-sys-color-on-primary);\n    }\n\n    .rank-1 {\n      background-color: #FFD700; /* Gold */\n    }\n\n    .rank-2 {\n      background-color: #C0C0C0; /* Silver */\n    }\n\n    .rank-3 {\n      background-color: #CD7F32; /* Bronze */\n    }\n\n    .discarded {\n      color: var(--mat-sys-color-on-surface-variant);\n    }\n\n  "
+            ],
+            "template": "<div class=\"rank-oval\" [class]=\"'rank-' + position()\">\n  @if (isDiscard()) {\n   ({{ position() }})\n  } @else {\n    {{ position() }}\n  }\n</div>\n",
+            "templateUrl": [],
+            "viewProviders": [],
+            "hostDirectives": [],
+            "inputsClass": [
+                {
+                    "name": "isDiscard",
+                    "defaultValue": "false",
+                    "deprecated": false,
+                    "deprecationMessage": "",
+                    "indexKey": "",
+                    "optional": false,
+                    "description": "",
+                    "line": 53,
+                    "required": false
+                },
+                {
+                    "name": "position",
+                    "deprecated": false,
+                    "deprecationMessage": "",
+                    "type": "number | string",
+                    "indexKey": "",
+                    "optional": false,
+                    "description": "",
+                    "line": 52,
+                    "required": true
+                }
+            ],
+            "outputsClass": [],
+            "propertiesClass": [],
+            "methodsClass": [],
+            "deprecated": false,
+            "deprecationMessage": "",
+            "hostBindings": [],
+            "hostListeners": [],
+            "standalone": false,
+            "imports": [],
+            "description": "",
+            "rawdescription": "\n",
+            "type": "component",
+            "sourceCode": "import { ChangeDetectionStrategy, Component, input } from '@angular/core';\n\n\n@Component({\n   selector: 'app-highlight-position',\n   changeDetection: ChangeDetectionStrategy.OnPush,\n   template: `\n    <div class=\"rank-oval\" [class]=\"'rank-' + position()\">\n      @if (isDiscard()) {\n       ({{ position() }})\n      } @else {\n        {{ position() }}\n      }\n    </div>\n  `,\n   styles: `\n    :host {\n      display: inline-block;\n      vertical-align: middle;\n    }\n\n    .rank-oval {\n      width: 30px;\n      height: 18px;\n      border-radius: 10px;\n      display: flex;\n      align-items: center;\n      justify-content: center;\n      margin: auto;\n      color: var(--mat-sys-color-on-primary);\n    }\n\n    .rank-1 {\n      background-color: #FFD700; /* Gold */\n    }\n\n    .rank-2 {\n      background-color: #C0C0C0; /* Silver */\n    }\n\n    .rank-3 {\n      background-color: #CD7F32; /* Bronze */\n    }\n\n    .discarded {\n      color: var(--mat-sys-color-on-surface-variant);\n    }\n\n  `,\n})\nexport class HighlightPosition {\n   position = input.required<number | string>();\n   isDiscard = input(false);\n}",
+            "assetsDirs": [],
+            "styleUrlsData": "",
+            "stylesData": "\n    :host {\n      display: inline-block;\n      vertical-align: middle;\n    }\n\n    .rank-oval {\n      width: 30px;\n      height: 18px;\n      border-radius: 10px;\n      display: flex;\n      align-items: center;\n      justify-content: center;\n      margin: auto;\n      color: var(--mat-sys-color-on-primary);\n    }\n\n    .rank-1 {\n      background-color: #FFD700; /* Gold */\n    }\n\n    .rank-2 {\n      background-color: #C0C0C0; /* Silver */\n    }\n\n    .rank-3 {\n      background-color: #CD7F32; /* Bronze */\n    }\n\n    .discarded {\n      color: var(--mat-sys-color-on-surface-variant);\n    }\n\n  \n",
+            "extends": []
+        },
+        {
             "name": "HomePage",
             "id": "component-HomePage-e86b1202ece3fb756f487a03b8714c909470220b2ff4d1d82ce85cd092b12d318a4138a2cbc7d5dbc14f92c5e7320c7baf8e53b3bc4b644877dacb7baa6caf5a",
             "file": "src/app/home/presentation/home-page.ts",
@@ -11207,8 +11373,8 @@
         },
         {
             "name": "RaceResultsTable",
-            "id": "component-RaceResultsTable-8c4887e6470ed1854532c904f648e6ddffeba11b463f53cba8991090d20de8267a0e08f949d26b144327408b5aef191e1027f666ffa332b92072d4572a13acf9",
-            "file": "src/app/published-results/presentation/race-results-table/race-results-table.ts",
+            "id": "component-RaceResultsTable-825ee9293ca330cf00f78d5a7ac389eb2c8279871008e22e141579923934272011e7a4b4dc0db936bd88b831f02c4c6c1c57f115c4d94d9b7f08810fa427e256",
+            "file": "src/app/published-results/presentation/results-tables/race-results-table/race-results-table.ts",
             "changeDetection": "ChangeDetectionStrategy.OnPush",
             "encapsulation": [],
             "entryComponents": [],
@@ -11216,10 +11382,11 @@
             "outputs": [],
             "providers": [],
             "selector": "app-race-results-table",
-            "styleUrls": [],
-            "styles": [
-                "\n  .box {\n    width: 300px;\n    height: 500px;\n    background: var(--mat-sys-surface-container-high);\n    text-align: center;\n    border-radius: var(--mat-sys-corner-large);\n  }\n  "
+            "styleUrls": [
+                "../results-table-shared.scss",
+                "./race-results-table.scss"
             ],
+            "styles": [],
             "templateUrl": [
                 "./race-results-table.html"
             ],
@@ -11227,32 +11394,205 @@
             "hostDirectives": [],
             "inputsClass": [
                 {
-                    "name": "race",
+                    "name": "columns",
+                    "defaultValue": "[...raceColumns]",
                     "deprecated": false,
                     "deprecationMessage": "",
-                    "type": "PublishedRace",
+                    "type": "RaceColumn[]",
                     "indexKey": "",
                     "optional": false,
                     "description": "",
-                    "line": 26,
-                    "required": true
-                }
-            ],
-            "outputsClass": [
+                    "line": 19,
+                    "required": false
+                },
                 {
-                    "name": "navClicked",
+                    "name": "fontSize",
+                    "defaultValue": "10",
                     "deprecated": false,
                     "deprecationMessage": "",
-                    "type": "NavClicked",
                     "indexKey": "",
                     "optional": false,
                     "description": "",
-                    "line": 27,
+                    "line": 21,
+                    "required": false
+                },
+                {
+                    "name": "results",
+                    "deprecated": false,
+                    "deprecationMessage": "",
+                    "type": "RaceResult[]",
+                    "indexKey": "",
+                    "optional": false,
+                    "description": "",
+                    "line": 18,
+                    "required": true
+                },
+                {
+                    "name": "showBoatClass",
+                    "defaultValue": "true",
+                    "deprecated": false,
+                    "deprecationMessage": "",
+                    "indexKey": "",
+                    "optional": false,
+                    "description": "",
+                    "line": 20,
                     "required": false
                 }
             ],
-            "propertiesClass": [],
-            "methodsClass": [],
+            "outputsClass": [],
+            "propertiesClass": [
+                {
+                    "name": "displayedColumns",
+                    "defaultValue": "this.columns",
+                    "deprecated": false,
+                    "deprecationMessage": "",
+                    "type": "unknown",
+                    "indexKey": "",
+                    "optional": false,
+                    "description": "",
+                    "line": 23
+                },
+                {
+                    "name": "nameColumnWidth",
+                    "defaultValue": "computed(() => \n      nameColumnWidth(this.results()))",
+                    "deprecated": false,
+                    "deprecationMessage": "",
+                    "type": "unknown",
+                    "indexKey": "",
+                    "optional": false,
+                    "description": "",
+                    "line": 25
+                },
+                {
+                    "name": "tableData",
+                    "defaultValue": "computed(() => {\n    return this.results().map(c => ({\n      ...c,\n      helmCrew: c.crew ? `${c.helm} <br> ${c.crew}` : c.helm,\n      boat: this.showBoatClass() ? `${c.boatClass} <br> ${c.sailNumber}` : c.sailNumber\n    })) || [];\n  })",
+                    "deprecated": false,
+                    "deprecationMessage": "",
+                    "type": "unknown",
+                    "indexKey": "",
+                    "optional": false,
+                    "description": "<p>Add additonal composite fields to competitor</p>\n",
+                    "line": 29,
+                    "rawdescription": "\nAdd additonal composite fields to competitor"
+                }
+            ],
+            "methodsClass": [
+                {
+                    "name": "isCompetitorSelected",
+                    "args": [
+                        {
+                            "name": "comp",
+                            "type": "RaceResult",
+                            "optional": false,
+                            "dotDotDotToken": false,
+                            "deprecated": false,
+                            "deprecationMessage": ""
+                        }
+                    ],
+                    "optional": false,
+                    "returnType": "boolean",
+                    "typeParameters": [],
+                    "line": 41,
+                    "deprecated": false,
+                    "deprecationMessage": "",
+                    "jsdoctags": [
+                        {
+                            "name": "comp",
+                            "type": "RaceResult",
+                            "optional": false,
+                            "dotDotDotToken": false,
+                            "deprecated": false,
+                            "deprecationMessage": "",
+                            "tagName": {
+                                "text": "param"
+                            }
+                        }
+                    ]
+                },
+                {
+                    "name": "trackByKey",
+                    "args": [
+                        {
+                            "name": "index",
+                            "type": "number",
+                            "optional": false,
+                            "dotDotDotToken": false,
+                            "deprecated": false,
+                            "deprecationMessage": ""
+                        },
+                        {
+                            "name": "item",
+                            "type": "RaceResult",
+                            "optional": false,
+                            "dotDotDotToken": false,
+                            "deprecated": false,
+                            "deprecationMessage": ""
+                        }
+                    ],
+                    "optional": false,
+                    "returnType": "any",
+                    "typeParameters": [],
+                    "line": 37,
+                    "deprecated": false,
+                    "deprecationMessage": "",
+                    "jsdoctags": [
+                        {
+                            "name": "index",
+                            "type": "number",
+                            "optional": false,
+                            "dotDotDotToken": false,
+                            "deprecated": false,
+                            "deprecationMessage": "",
+                            "tagName": {
+                                "text": "param"
+                            }
+                        },
+                        {
+                            "name": "item",
+                            "type": "RaceResult",
+                            "optional": false,
+                            "dotDotDotToken": false,
+                            "deprecated": false,
+                            "deprecationMessage": "",
+                            "tagName": {
+                                "text": "param"
+                            }
+                        }
+                    ]
+                },
+                {
+                    "name": "updateSelectedCompetitor",
+                    "args": [
+                        {
+                            "name": "comp",
+                            "type": "RaceResult",
+                            "optional": false,
+                            "dotDotDotToken": false,
+                            "deprecated": false,
+                            "deprecationMessage": ""
+                        }
+                    ],
+                    "optional": false,
+                    "returnType": "void",
+                    "typeParameters": [],
+                    "line": 45,
+                    "deprecated": false,
+                    "deprecationMessage": "",
+                    "jsdoctags": [
+                        {
+                            "name": "comp",
+                            "type": "RaceResult",
+                            "optional": false,
+                            "dotDotDotToken": false,
+                            "deprecated": false,
+                            "deprecationMessage": "",
+                            "tagName": {
+                                "text": "param"
+                            }
+                        }
+                    ]
+                }
+            ],
             "deprecated": false,
             "deprecationMessage": "",
             "hostBindings": [],
@@ -11267,12 +11607,21 @@
             "description": "",
             "rawdescription": "\n",
             "type": "component",
-            "sourceCode": "import { ChangeDetectionStrategy, Component, computed, input, output } from '@angular/core';\n\nimport { CdkTableModule } from '@angular/cdk/table';\n\nimport { PublishedRace } from 'app/published-results/model/published-race';\n\nexport type NavClicked = 'series' | 'next' | 'previous';\n\n@Component({\n  selector: 'app-race-results-table',\n  changeDetection: ChangeDetectionStrategy.OnPush,\n  imports: [CdkTableModule],\n  templateUrl: './race-results-table.html',\n  styles: `\n  .box {\n    width: 300px;\n    height: 500px;\n    background: var(--mat-sys-surface-container-high);\n    text-align: center;\n    border-radius: var(--mat-sys-corner-large);\n  }\n  `,\n\n})\nexport class RaceResultsTable {\n  race = input.required<PublishedRace>();\n  navClicked = output<NavClicked>()\n}\n",
+            "sourceCode": "import { ChangeDetectionStrategy, Component, computed, input, output } from '@angular/core';\nimport { CdkTableModule } from '@angular/cdk/table';\nimport { PublishedRace, RaceResult } from 'app/published-results/model/published-race';\nimport { competitorColumns, nameColumnWidth } from '../results-table-shared';\nimport { format } from 'date-fns';\n\nexport const raceColumns = [...competitorColumns, 'points'] as const;\nexport type RaceColumn = typeof raceColumns[number];\n\n@Component({\n  selector: 'app-race-results-table',\n  changeDetection: ChangeDetectionStrategy.OnPush,\n  imports: [CdkTableModule],\n  templateUrl: './race-results-table.html',\n  styleUrls: ['../results-table-shared.scss', './race-results-table.scss'],\n})\nexport class RaceResultsTable {\n  results = input.required<RaceResult[]>();\n  columns = input<RaceColumn[]>([...raceColumns]);\n  showBoatClass = input(true);\n  fontSize = input(10);\n\n  displayedColumns = this.columns;\n\n   nameColumnWidth = computed(() => \n      nameColumnWidth(this.results()));\n\n  /** Add additonal composite fields to competitor */\n  tableData = computed(() => {\n    return this.results().map(c => ({\n      ...c,\n      helmCrew: c.crew ? `${c.helm} <br> ${c.crew}` : c.helm,\n      boat: this.showBoatClass() ? `${c.boatClass} <br> ${c.sailNumber}` : c.sailNumber\n    })) || [];\n  });\n\n  trackByKey(index: number, item: RaceResult) {\n    return item.sailNumber.toString() + item.boatClass + item.helm;\n  }\n\n  isCompetitorSelected(comp: RaceResult): boolean {\n    return false;\n  }\n\n  updateSelectedCompetitor(comp: RaceResult) {\n\n  }\n\n}\n",
             "assetsDirs": [],
-            "styleUrlsData": "",
-            "stylesData": "\n  .box {\n    width: 300px;\n    height: 500px;\n    background: var(--mat-sys-surface-container-high);\n    text-align: center;\n    border-radius: var(--mat-sys-corner-large);\n  }\n  \n",
+            "styleUrlsData": [
+                {
+                    "data": ".container {\n   width: 100%;\n   border-radius: var(--mat-sys-corner-large);\n   overflow-x: scroll;\n   overflow-y: scroll;\n}\n\n.cdk-header-row {\n   background-color: var(--mat-sys-surface-container-high);\n}\n\n.cdk-cell {\n   padding: 2px 10px;\n   /* Provide a default background for all cells */\n   background-color: var(--mat-sys-secondary-container);\n}\n\n.cdk-header-cell {\n   background-color: var(--mat-sys-surface-container-high);\n}\n\n/* Override background for even rows */\n.cdk-row:nth-child(even) {\n   background-color: var(--mat-sys-primary-container);\n}\n\n/* Ensure sticky header cells are on top */\n.cdk-header-cell.cdk-column-rank,\n.cdk-header-cell.cdk-column-name {\n   background-color: var(--mat-sys-surface-container-high);\n   z-index: 3;\n   /* Higher z-index for sticky header corner */\n}\n\n/// Column defintions\n.cdk-column-rank {\n   width: 45px;\n   text-align: center;\n}\n\n.cdk-column-boat {\n   width: 100px;\n}\n\n.cdk-column-club {\n   width: 80px;\n   text-align: center;\n}\n\n.cdk-column-handicap {\n   width: 60px;\n   text-align: center;\n}\n",
+                    "styleUrl": "../results-table-shared.scss"
+                },
+                {
+                    "data": "/** Additional styles for seriracees results table in addtion to \nthose in results-table-shared */\n\n.table {\n   table-layout: fixed;\n}\n\n.cdk-column-points {\n   width: 60px;\n   text-align: center;\n}",
+                    "styleUrl": "./race-results-table.scss"
+                }
+            ],
+            "stylesData": "",
             "extends": [],
-            "templateData": "<div class=\"box\">\n   <p>Results for race <br>\n      Race {{race().index}}\n   </p>\n</div>\n"
+            "templateData": "<div class=\"container\">\n   <table cdk-table class=\"table\" [dataSource]=\"tableData()\" [trackBy]=\"trackByKey\" [style.font-size]=\"fontSize()\">\n\n      <!-- Initial columns -->\n      <ng-container cdkColumnDef=\"rank\">\n         <th cdk-header-cell class=\"rank-col\" *cdkHeaderCellDef>Rank</th>\n         <td cdk-cell class=\"rank-col\" *cdkCellDef=\"let competitor\">\n            <div class=\"rank-oval\" [class.rank-1]=\"competitor.rank === 1\" [class.rank-2]=\"competitor.rank === 2\"\n               [class.rank-3]=\"competitor.rank === 3\">\n               {{competitor.rank}}\n            </div>\n         </td>\n      </ng-container>\n\n      <ng-container cdkColumnDef=\"name\" sticky>\n         <th cdk-header-cell [style.width]=\"nameColumnWidth()\" *cdkHeaderCellDef>Helm/Crew</th>\n         <td cdk-cell [style.width]=\"nameColumnWidth()\" *cdkCellDef=\"let competitor\">\n            {{competitor.helm}}\n            @if (competitor.crew) {\n            <br> {{ competitor.crew}}\n            }\n         </td>\n      </ng-container>\n\n      <ng-container cdkColumnDef=\"boat\">\n         <th cdk-header-cell *cdkHeaderCellDef>Boat</th>\n         <td cdk-cell *cdkCellDef=\"let competitor\">\n            @if (showBoatClass()) {\n            {{ competitor.boatClass }} <br>\n            }\n            {{ competitor.sailNumber }}\n         </td>\n      </ng-container>\n\n      <ng-container cdkColumnDef=\"club\">\n         <th cdk-header-cell *cdkHeaderCellDef>Club</th>\n         <td cdk-cell *cdkCellDef=\"let competitor\"> {{ competitor.club }} </td>\n      </ng-container>\n\n      <ng-container cdkColumnDef=\"handicap\">\n         <th cdk-header-cell *cdkHeaderCellDef>Rating</th>\n         <td cdk-cell *cdkCellDef=\"let competitor\"> {{ competitor.handicap }} </td>\n      </ng-container>\n\n      <ng-container cdkColumnDef=\"points\">\n         <th cdk-header-cell *cdkHeaderCellDef>Points</th>\n         <td cdk-cell *cdkCellDef=\"let competitor\"> {{ competitor.points }} </td>\n      </ng-container>\n\n      <tr cdk-header-row class=\"header\" *cdkHeaderRowDef=\"displayedColumns(); sticky: true\"></tr>\n      <tr cdk-row class=\"row\" *cdkRowDef=\"let competitor; columns: displayedColumns(); let even = $even\"\n         [class.selected]=\"isCompetitorSelected(competitor)\">\n      </tr>\n      \n   </table>\n</div>"
         },
         {
             "name": "RaceStartTimeDialog",
@@ -12280,7 +12629,7 @@
         },
         {
             "name": "ResultsViewer",
-            "id": "component-ResultsViewer-02d17a51cf7655715ebec2c05dbee2ed8eb0d8ce367e3b79201a83c2b10055af568b9deafac6e66d02aca7a2e9b26d97e3a36c7203641950b29e19874fdc28f4",
+            "id": "component-ResultsViewer-15dfa4e3b718b291ce8b1c1bfd2bc7f5fabc694c5734baa3450642c75a1807e8aedf3c94175116fe58d90706736537c1ca5498f8afb5f011e3e2aa8b2b51a326",
             "file": "src/app/published-results/presentation/results-viewer/results-viewer.ts",
             "encapsulation": [],
             "entryComponents": [],
@@ -12304,7 +12653,7 @@
                     "indexKey": "",
                     "optional": false,
                     "description": "",
-                    "line": 27,
+                    "line": 28,
                     "required": true
                 }
             ],
@@ -12319,7 +12668,7 @@
                     "indexKey": "",
                     "optional": false,
                     "description": "",
-                    "line": 22,
+                    "line": 23,
                     "modifierKind": [
                         123
                     ]
@@ -12333,7 +12682,7 @@
                     "indexKey": "",
                     "optional": false,
                     "description": "",
-                    "line": 25,
+                    "line": 26,
                     "modifierKind": [
                         123
                     ]
@@ -12347,7 +12696,7 @@
                     "indexKey": "",
                     "optional": false,
                     "description": "",
-                    "line": 29
+                    "line": 30
                 },
                 {
                     "name": "isPanelCollapsed",
@@ -12358,7 +12707,7 @@
                     "indexKey": "",
                     "optional": false,
                     "description": "",
-                    "line": 24,
+                    "line": 25,
                     "modifierKind": [
                         124
                     ]
@@ -12372,7 +12721,7 @@
                     "indexKey": "",
                     "optional": false,
                     "description": "",
-                    "line": 32
+                    "line": 33
                 },
                 {
                     "name": "raceTitles",
@@ -12383,7 +12732,7 @@
                     "indexKey": "",
                     "optional": false,
                     "description": "",
-                    "line": 34
+                    "line": 36
                 },
                 {
                     "name": "reader",
@@ -12394,10 +12743,21 @@
                     "indexKey": "",
                     "optional": false,
                     "description": "",
-                    "line": 23,
+                    "line": 24,
                     "modifierKind": [
                         124
                     ]
+                },
+                {
+                    "name": "reversedRaces",
+                    "defaultValue": "computed(() => [...this.races()].reverse())",
+                    "deprecated": false,
+                    "deprecationMessage": "",
+                    "type": "unknown",
+                    "indexKey": "",
+                    "optional": false,
+                    "description": "",
+                    "line": 34
                 },
                 {
                     "name": "series",
@@ -12408,7 +12768,7 @@
                     "indexKey": "",
                     "optional": false,
                     "description": "",
-                    "line": 31
+                    "line": 32
                 },
                 {
                     "name": "store",
@@ -12419,7 +12779,7 @@
                     "indexKey": "",
                     "optional": false,
                     "description": "",
-                    "line": 21,
+                    "line": 22,
                     "modifierKind": [
                         124
                     ]
@@ -12441,7 +12801,7 @@
                     "optional": false,
                     "returnType": "void",
                     "typeParameters": [],
-                    "line": 50,
+                    "line": 52,
                     "deprecated": false,
                     "deprecationMessage": "",
                     "jsdoctags": [
@@ -12459,12 +12819,22 @@
                     ]
                 },
                 {
+                    "name": "scrollToTop",
+                    "args": [],
+                    "optional": false,
+                    "returnType": "void",
+                    "typeParameters": [],
+                    "line": 57,
+                    "deprecated": false,
+                    "deprecationMessage": ""
+                },
+                {
                     "name": "togglePanel",
                     "args": [],
                     "optional": false,
                     "returnType": "void",
                     "typeParameters": [],
-                    "line": 55,
+                    "line": 61,
                     "deprecated": false,
                     "deprecationMessage": ""
                 }
@@ -12497,12 +12867,16 @@
                 {
                     "name": "MatButtonModule",
                     "type": "module"
+                },
+                {
+                    "name": "DatePipe",
+                    "type": "pipe"
                 }
             ],
             "description": "",
             "rawdescription": "\n",
             "type": "component",
-            "sourceCode": "import { Component, computed, effect, inject, input, signal, ElementRef } from '@angular/core';\nimport { Toolbar } from \"app/shared/components/toolbar\";\nimport { BreakpointObserver, Breakpoints } from '@angular/cdk/layout';\nimport { toSignal } from '@angular/core/rxjs-interop';\nimport { SeasonList } from \"../season-list/season-list\";\nimport { PublishedResultsReader } from 'app/published-results/services/published-results-store';\nimport { SeriesResultsTable } from \"../series-results-table/series-results-table\";\nimport { LoadingCentered } from \"../../../shared/components/loading-centered\";\nimport { RaceResultsTable } from \"../race-results-table/race-results-table\";\nimport { MatIconModule } from '@angular/material/icon';\nimport { MatButtonModule } from '@angular/material/button';\n\n@Component({\n  selector: 'app-results-viewer',\n  imports: [Toolbar, SeasonList, SeriesResultsTable, LoadingCentered, RaceResultsTable, MatIconModule, MatButtonModule],\n  templateUrl: './results-viewer.html',\n  styleUrl: './results-viewer.scss',\n})\nexport class ResultsViewer {\n\n  protected store = inject(PublishedResultsReader);\n  private breakpoint = toSignal(inject(BreakpointObserver).observe([Breakpoints.Handset]));\n  protected reader = inject(PublishedResultsReader);\n  protected isPanelCollapsed = signal(false);\n  private elementRef = inject(ElementRef);\n\n  id = input.required<string>();  // Route parameter\n\n  isMobile = computed(() => this.breakpoint()?.matches );\n\n  series = this.store.series;\n  races = this.store.races;\n\n  raceTitles = computed(() => this.races().map((({ id, index, scheduledStart, raceOfDay }) => ({\n      id,  \n      index,\n      scheduledStart,\n      raceOfDay\n    })\n  )));\n\n  constructor() {\n    // Effect to read series data when the selected Id changes\n    // based on route parameter\n    effect(() => {\n      this.store.selectedSeriesId.set(this.id());\n    });\n  }\n\n  raceClicked(raceId: string) {\n    const raceElement = this.elementRef.nativeElement.querySelector(`[data-race-id=\"${raceId}\"]`);\n    raceElement?.scrollIntoView({ behavior: 'smooth', block: 'start' });\n  }\n\n  togglePanel() {\n    this.isPanelCollapsed.update(v => !v);\n  }\n}\n",
+            "sourceCode": "import { Component, computed, effect, inject, input, signal, ElementRef } from '@angular/core';\nimport { Toolbar } from \"app/shared/components/toolbar\";\nimport { BreakpointObserver, Breakpoints } from '@angular/cdk/layout';\nimport { toSignal } from '@angular/core/rxjs-interop';\nimport { SeasonList } from \"../season-list/season-list\";\nimport { PublishedResultsReader } from 'app/published-results/services/published-results-store';\nimport { SeriesResultsTable } from \"../results-tables/series-results-table/series-results-table\";\nimport { LoadingCentered } from \"../../../shared/components/loading-centered\";\nimport { RaceResultsTable } from \"../results-tables/race-results-table/race-results-table\";\nimport { MatIconModule } from '@angular/material/icon';\nimport { MatButtonModule } from '@angular/material/button';\nimport { DatePipe } from '@angular/common';\n\n@Component({\n  selector: 'app-results-viewer',\n  imports: [Toolbar, SeasonList, SeriesResultsTable, LoadingCentered, RaceResultsTable, MatIconModule, MatButtonModule, DatePipe],\n  templateUrl: './results-viewer.html',\n  styleUrl: './results-viewer.scss',\n})\nexport class ResultsViewer {\n\n  protected store = inject(PublishedResultsReader);\n  private breakpoint = toSignal(inject(BreakpointObserver).observe([Breakpoints.Handset]));\n  protected reader = inject(PublishedResultsReader);\n  protected isPanelCollapsed = signal(false);\n  private elementRef = inject(ElementRef);\n\n  id = input.required<string>();  // Route parameter\n\n  isMobile = computed(() => this.breakpoint()?.matches );\n\n  series = this.store.series;\n  races = this.store.races;\n  reversedRaces = computed(() => [...this.races()].reverse());\n\n  raceTitles = computed(() => this.races().map((({ id, index, scheduledStart, raceOfDay }) => ({\n      id,  \n      index,\n      scheduledStart,\n      raceOfDay\n    })\n  )));\n\n  constructor() {\n    // Effect to read series data when the selected Id changes\n    // based on route parameter\n    effect(() => {\n      this.store.selectedSeriesId.set(this.id());\n    });\n  }\n\n  raceClicked(raceId: string) {\n    const raceElement = this.elementRef.nativeElement.querySelector(`[data-race-id=\"${raceId}\"]`);\n    raceElement?.scrollIntoView({ behavior: 'smooth', block: 'start' });\n  }\n\n  scrollToTop() {\n    this.elementRef.nativeElement.querySelector('.content-area')?.scrollTo({ top: 0, behavior: 'smooth' });\n  }\n\n  togglePanel() {\n    this.isPanelCollapsed.update(v => !v);\n  }\n}\n",
             "styleUrl": "./results-viewer.scss",
             "assetsDirs": [],
             "styleUrlsData": "",
@@ -12513,10 +12887,10 @@
                 "deprecated": false,
                 "deprecationMessage": "",
                 "args": [],
-                "line": 40
+                "line": 42
             },
             "extends": [],
-            "templateData": "<div class=\"page-container\" [class.mobile-mode]=\"isMobile()\" [class.panel-collapsed]=\"isPanelCollapsed()\">\n   <app-toolbar title=\"Results\" class=\"toolbar-area\" />\n\n   <!-- Show sidebar in desktop view\n     on mobile, navgate via a full screen list page -->\n   @if (!isMobile()) {\n   <aside class=\"sidebar\">\n      <app-season-list [seasons]=\"reader.seasons()\" />\n   </aside>\n   }\n\n   <main class=\"content-area\">\n      @if (!isMobile()) {\n      <button mat-icon-button (click)=\"togglePanel()\" class=\"panel-toggle-button\"\n         [title]=\"isPanelCollapsed() ? 'Show panel' : 'Hide panel'\">\n         <mat-icon>{{ isPanelCollapsed() ? 'keyboard_double_arrow_right' : 'keyboard_double_arrow_left' }}</mat-icon>\n      </button>\n      }\n\n      <div class=\"tables-container\">\n         @if (store.seriesLoading()) {\n         <app-loading-centered />\n         } @else {\n         <app-series-results-table [series]=\"series()!\" [raceTitles]=\"raceTitles()\" (raceClicked)=\"raceClicked($event)\" />\n         \n\n         @for (race of races(); track race) {\n         <app-race-results-table [race]=\"race\" [attr.data-race-id]=\"race.id\" />\n         }\n      }\n      \n</div>\n</main>\n</div>\n"
+            "templateData": "<div class=\"page-container\" [class.mobile-mode]=\"isMobile()\" [class.panel-collapsed]=\"isPanelCollapsed()\">\n   <app-toolbar title=\"Results\" class=\"toolbar-area\" />\n\n   <!-- Show sidebar in desktop view\n     on mobile, navgate via a full screen list page -->\n   @if (!isMobile()) {\n   <aside class=\"sidebar\">\n      <app-season-list [seasons]=\"reader.seasons()\" />\n   </aside>\n   }\n\n   <main class=\"content-area\">\n      @if (!isMobile()) {\n      <button mat-icon-button (click)=\"togglePanel()\" class=\"panel-toggle-button\"\n         [title]=\"isPanelCollapsed() ? 'Show panel' : 'Hide panel'\">\n         <mat-icon>{{ isPanelCollapsed() ? 'keyboard_double_arrow_right' : 'keyboard_double_arrow_left' }}</mat-icon>\n      </button>\n      }\n\n      <div class=\"tables-container\">\n         @if (store.seriesLoading()) {\n         <app-loading-centered />\n         } @else {\n         <h3> {{series()?.id}}</h3>\n         <app-series-results-table [series]=\"series()!\" [raceTitles]=\"raceTitles()\"\n            (raceClicked)=\"raceClicked($event)\" />\n\n         @for (race of reversedRaces(); track race; let i = $index, isFirst = $first, isLast = $last) {\n         <div class=\"race-title\" [attr.data-race-id]=\"race.id\">\n            <h3>\n               Race {{race.index}} - {{race.scheduledStart| date:'dd MMM yy'}} {{race.results.length === 0 ? ' - No\n               competitors' : '' }}\n            </h3>\n            <span class=\"spacer\"></span>\n            <div class=\"race-nav\">\n               <button mat-icon-button (click)=\"scrollToTop()\" title=\"Scroll to top\">\n                  <mat-icon>arrow_upward</mat-icon>\n               </button>\n               @if (!isFirst) {\n               <button mat-icon-button (click)=\"raceClicked(reversedRaces()[i-1].id)\" title=\"Previous race\">\n                  <mat-icon>keyboard_arrow_up</mat-icon>\n               </button>\n               }\n               @if (!isLast) {\n               <button mat-icon-button (click)=\"raceClicked(reversedRaces()[i+1].id)\" title=\"Next race\">\n                  <mat-icon>keyboard_arrow_down</mat-icon>\n               </button>\n               }\n            </div>\n         \n         @if (race.results.length > 0) {\n         <app-race-results-table [results]=\"race.results\" />\n         }\n         </div>\n         }\n         }\n      </div>\n   </main>\n</div>"
         },
         {
             "name": "SeasonList",
@@ -14075,8 +14449,8 @@
         },
         {
             "name": "SeriesResultsTable",
-            "id": "component-SeriesResultsTable-e5c3cdc70f1e8c22e4839372c91e32f3c220cdb4419c94c69a7382e28f6b1ef2b060242f2e769471be1534c72f30257a26190391af444bc7994af42c08a3bfb4",
-            "file": "src/app/published-results/presentation/series-results-table/series-results-table.ts",
+            "id": "component-SeriesResultsTable-16c1d39124d81d557ad1a4ec04b55e2a8533c2403d828d323d4a2df4c5fa265666de49232e61b9940c65a7587dee6e038fa3febb156313d988b87b74543f2643",
+            "file": "src/app/published-results/presentation/results-tables/series-results-table/series-results-table.ts",
             "changeDetection": "ChangeDetectionStrategy.OnPush",
             "encapsulation": [],
             "entryComponents": [],
@@ -14085,6 +14459,7 @@
             "providers": [],
             "selector": "app-series-results-table",
             "styleUrls": [
+                "../results-table-shared.scss",
                 "./series-results-table.scss"
             ],
             "styles": [],
@@ -14103,7 +14478,7 @@
                     "indexKey": "",
                     "optional": false,
                     "description": "",
-                    "line": 23,
+                    "line": 25,
                     "required": false
                 },
                 {
@@ -14114,7 +14489,7 @@
                     "indexKey": "",
                     "optional": false,
                     "description": "",
-                    "line": 22,
+                    "line": 24,
                     "required": true
                 },
                 {
@@ -14125,19 +14500,30 @@
                     "indexKey": "",
                     "optional": false,
                     "description": "",
-                    "line": 20,
+                    "line": 21,
                     "required": true
                 },
                 {
                     "name": "seriesColumns",
-                    "defaultValue": "[...allSeriesColumns]",
+                    "defaultValue": "[...seriesColumns]",
                     "deprecated": false,
                     "deprecationMessage": "",
                     "type": "SeriesColumn[]",
                     "indexKey": "",
                     "optional": false,
                     "description": "",
-                    "line": 21,
+                    "line": 22,
+                    "required": false
+                },
+                {
+                    "name": "showBoatClass",
+                    "defaultValue": "true",
+                    "deprecated": false,
+                    "deprecationMessage": "",
+                    "indexKey": "",
+                    "optional": false,
+                    "description": "",
+                    "line": 23,
                     "required": false
                 }
             ],
@@ -14150,7 +14536,7 @@
                     "indexKey": "",
                     "optional": false,
                     "description": "",
-                    "line": 24,
+                    "line": 26,
                     "required": false
                 }
             ],
@@ -14164,7 +14550,18 @@
                     "indexKey": "",
                     "optional": false,
                     "description": "",
-                    "line": 34
+                    "line": 36
+                },
+                {
+                    "name": "nameColumnWidth",
+                    "defaultValue": "computed(() => \n    nameColumnWidth(this.series()?.competitors))",
+                    "deprecated": false,
+                    "deprecationMessage": "",
+                    "type": "unknown",
+                    "indexKey": "",
+                    "optional": false,
+                    "description": "",
+                    "line": 40
                 },
                 {
                     "name": "raceColumns",
@@ -14175,18 +14572,18 @@
                     "indexKey": "",
                     "optional": false,
                     "description": "",
-                    "line": 26
+                    "line": 28
                 },
                 {
                     "name": "tableData",
-                    "defaultValue": "computed(() => {\n    return this.series()?.competitors.map(c => ({\n      ...c,\n      name: c.crew ? `${c.helm} / ${c.crew}` : c.helm\n    })) || [];\n  })",
+                    "defaultValue": "computed(() => this.series()?.competitors || [])",
                     "deprecated": false,
                     "deprecationMessage": "",
                     "type": "unknown",
                     "indexKey": "",
                     "optional": false,
                     "description": "",
-                    "line": 36
+                    "line": 38
                 }
             ],
             "methodsClass": [
@@ -14205,7 +14602,7 @@
                     "optional": false,
                     "returnType": "boolean",
                     "typeParameters": [],
-                    "line": 55,
+                    "line": 52,
                     "deprecated": false,
                     "deprecationMessage": "",
                     "jsdoctags": [
@@ -14237,7 +14634,7 @@
                     "optional": false,
                     "returnType": "void",
                     "typeParameters": [],
-                    "line": 67,
+                    "line": 64,
                     "deprecated": false,
                     "deprecationMessage": "",
                     "jsdoctags": [
@@ -14309,7 +14706,7 @@
                     "optional": false,
                     "returnType": "any",
                     "typeParameters": [],
-                    "line": 63,
+                    "line": 60,
                     "deprecated": false,
                     "deprecationMessage": "",
                     "jsdoctags": [
@@ -14352,7 +14749,7 @@
                     "optional": false,
                     "returnType": "void",
                     "typeParameters": [],
-                    "line": 59,
+                    "line": 56,
                     "deprecated": false,
                     "deprecationMessage": "",
                     "jsdoctags": [
@@ -14374,27 +14771,34 @@
             "deprecationMessage": "",
             "hostBindings": [],
             "hostListeners": [],
-            "standalone": false,
+            "standalone": true,
             "imports": [
                 {
                     "name": "CdkTableModule",
                     "type": "module"
+                },
+                {
+                    "name": "HighlightPosition"
                 }
             ],
             "description": "",
             "rawdescription": "\n",
             "type": "component",
-            "sourceCode": "import { ChangeDetectionStrategy, Component, computed, input, output } from '@angular/core';\n\nimport { CdkTableModule } from '@angular/cdk/table';\n\nimport { PublishedSeries, PublishedSeriesResult } from 'app/published-results';\nimport { format } from 'date-fns';\n\nexport const allSeriesColumns = ['rank', 'name', 'boatClass', 'sailNumber', 'club', 'handicap', 'totalPoints', 'netPoints'] as const;\nexport type SeriesColumn = typeof allSeriesColumns[number];\n\n@Component({\n  selector: 'app-series-results-table',\n  templateUrl: './series-results-table.html',\n  styleUrls: ['./series-results-table.scss'],\n  changeDetection: ChangeDetectionStrategy.OnPush,\n  imports: [CdkTableModule]\n})\nexport class SeriesResultsTable {\n\n  series = input.required<PublishedSeries>();\n  seriesColumns = input<SeriesColumn[]>([...allSeriesColumns]);\n  raceTitles = input.required<{ id: string; index: number; scheduledStart: Date; raceOfDay: number; }[]>();\n  fontSize = input<string>('10pt');\n  raceClicked = output<string>();\n\n  raceColumns = computed(() => {\n    const scores = this.series()!.competitors[0]?.raceScores ?? [];\n\n    // Creates an array of length n where each entry is it's index \n    return Array.from({ length: scores.length }, (_, i) => i.toString());\n\n  });\n\n  displayedColumns = computed(() => [...this.seriesColumns(), ...this.raceColumns()]);\n\n  tableData = computed(() => {\n    return this.series()?.competitors.map(c => ({\n      ...c,\n      name: c.crew ? `${c.helm} / ${c.crew}` : c.helm\n    })) || [];\n  });\n\n  raceTitle(index: number): string {\n    const title = this.raceTitles()[index];\n    let ret = 'Race ' + title.index.toString() + '<br>';\n    if (title.scheduledStart) {\n      ret = `${ret} ${format(title.scheduledStart, 'mm/dd')}`;\n    }\n    if (title.raceOfDay > 0) {\n      ret = `${ret} ${title.raceOfDay.toString()}`;\n    }\n    return ret;\n  }\n\n  isCompetitorSelected(comp: PublishedSeriesResult): boolean {\n    return false;\n  }\n\n  updateSelectedCompetitor(comp: PublishedSeriesResult) {\n\n  }\n\n  trackByKey(index: number, item: PublishedSeriesResult) {\n    return item.sailNumber.toString() + item.boatClass + item.helm;\n  }\n\n  onRaceHeaderClick(raceIndex: number) {\n    const id = this.raceTitles()[raceIndex].id;\n    this.raceClicked.emit(id);\n  }\n}\n",
+            "sourceCode": "import { ChangeDetectionStrategy, Component, computed, input, output } from '@angular/core';\nimport { CdkTableModule } from '@angular/cdk/table';\nimport { PublishedSeries, PublishedSeriesResult } from 'app/published-results';\nimport { format } from 'date-fns';\nimport { competitorColumns, nameColumnWidth } from '../results-table-shared';\nimport { HighlightPosition } from \"../highlighted-position\";\n\nexport const seriesColumns = [...competitorColumns, 'total', 'net'] as const;\nexport type SeriesColumn = typeof seriesColumns[number];\n\n@Component({\n  selector: 'app-series-results-table',\n  templateUrl: './series-results-table.html',\n  styleUrls: ['../results-table-shared.scss', './series-results-table.scss'],\n  changeDetection: ChangeDetectionStrategy.OnPush,\n  standalone: true,\n  imports: [CdkTableModule, HighlightPosition]\n})\nexport class SeriesResultsTable {\n\n  series = input.required<PublishedSeries>();\n  seriesColumns = input<SeriesColumn[]>([...seriesColumns]);\n  showBoatClass = input(true);\n  raceTitles = input.required<{ id: string; index: number; scheduledStart: Date; raceOfDay: number; }[]>();\n  fontSize = input<string>('10pt');\n  raceClicked = output<string>();\n\n  raceColumns = computed(() => {\n    const scores = this.series()!.competitors[0]?.raceScores ?? [];\n\n    // Creates an array of length n where each entry is it's index \n    return Array.from({ length: scores.length }, (_, i) => i.toString());\n\n  });\n\n  displayedColumns = computed(() => [...this.seriesColumns(), ...this.raceColumns()]);\n\n  tableData = computed(() => this.series()?.competitors || []);\n\n  nameColumnWidth = computed(() => \n    nameColumnWidth(this.series()?.competitors));\n\n  raceTitle(index: number): string {\n    const title = this.raceTitles()[index];\n    let ret = 'Race ' + title.index.toString() + '<br>';\n    if (title.scheduledStart) {\n      ret = `${ret} ${format(title.scheduledStart, 'MMM dd')}`;\n    }\n    return ret;\n  }\n\n  isCompetitorSelected(comp: PublishedSeriesResult): boolean {\n    return false;\n  }\n\n  updateSelectedCompetitor(comp: PublishedSeriesResult) {\n\n  }\n\n  trackByKey(index: number, item: PublishedSeriesResult) {\n    return item.sailNumber.toString() + item.boatClass + item.helm;\n  }\n\n  onRaceHeaderClick(raceIndex: number) {\n    const id = this.raceTitles()[raceIndex].id;\n    this.raceClicked.emit(id);\n  }\n}\n",
             "assetsDirs": [],
             "styleUrlsData": [
                 {
-                    "data": "\n// Increase z-order of inital columns to address \n// scrolling issue\n.cdk-cell, .cdk-header-cell {\n  &.cdk-column-rank, &.cdk-column-name {\n    background-color: inherit;\n    z-index: 1;\n  }\n}\n\n.rank-col {\n  width: 50px;\n  text-align: center;\n}\n\n.points-col {\n  width: 50px;\n  text-align: center;\n}\n\n.name-col {\n  min-width: 150px;\n}\n\n.race-col {\n  cursor: pointer;\n  text-align: center;\n  min-width: 80px;\n}\n\n.discarded {\n  color: var(--mat-sys-color-on-surface-variant);\n}\n\n.rank-oval {\n  width: 30px;\n  height: 18px;\n  border-radius: 10px;\n  display: flex;\n  align-items: center;\n  justify-content: center;\n  margin: auto;\n  color: var(--mat-sys-color-on-primary);\n}\n\n.rank-1 {\n  background-color: #FFD700; // Gold\n}\n\n.rank-2 {\n  background-color: #C0C0C0; // Silver\n}\n\n.rank-3 {\n  background-color: #CD7F32; // Bronze\n}\n\n@media (max-width: 600px) {\n  .race-col,\n  [cdkColumnDef*='race'] {\n    display: none;\n  }\n}\n",
+                    "data": ".container {\n   width: 100%;\n   border-radius: var(--mat-sys-corner-large);\n   overflow-x: scroll;\n   overflow-y: scroll;\n}\n\n.cdk-header-row {\n   background-color: var(--mat-sys-surface-container-high);\n}\n\n.cdk-cell {\n   padding: 2px 10px;\n   /* Provide a default background for all cells */\n   background-color: var(--mat-sys-secondary-container);\n}\n\n.cdk-header-cell {\n   background-color: var(--mat-sys-surface-container-high);\n}\n\n/* Override background for even rows */\n.cdk-row:nth-child(even) {\n   background-color: var(--mat-sys-primary-container);\n}\n\n/* Ensure sticky header cells are on top */\n.cdk-header-cell.cdk-column-rank,\n.cdk-header-cell.cdk-column-name {\n   background-color: var(--mat-sys-surface-container-high);\n   z-index: 3;\n   /* Higher z-index for sticky header corner */\n}\n\n/// Column defintions\n.cdk-column-rank {\n   width: 45px;\n   text-align: center;\n}\n\n.cdk-column-boat {\n   width: 100px;\n}\n\n.cdk-column-club {\n   width: 80px;\n   text-align: center;\n}\n\n.cdk-column-handicap {\n   width: 60px;\n   text-align: center;\n}\n",
+                    "styleUrl": "../results-table-shared.scss"
+                },
+                {
+                    "data": "/** Additional styles for series results table in addtion to \nthose in results-table-shared */\n\n// Series table is rendere with fixed \n// layout into wide container (1200px)\n.table {\n   table-layout: fixed;\n   width: 100%;\n}\n\n// Additional coluns in Series table in addition to standard ones\n.cdk-column-total {\n   width: 50px;\n   text-align: center;\n}\n\n.cdk-column-net {\n   width: 50px;\n   text-align: center;\n}\n\n.race-col {\n   text-align: center;\n   min-width: 60px;\n   width: 60px;\n}\n\n// Addiitonal styling\n.pointer {\n   cursor: pointer;\n}\n\n",
                     "styleUrl": "./series-results-table.scss"
                 }
             ],
             "stylesData": "",
             "extends": [],
-            "templateData": "<div class=\"container\">\n<table cdk-table class=\"table\" [dataSource]=\"tableData()\" [trackBy]=\"trackByKey\" [style.font-size]=\"fontSize()\">\n\n   <!-- Initial columns -->\n   <ng-container cdkColumnDef=\"rank\" sticky>\n      <th cdk-header-cell class=\"rank-col\" *cdkHeaderCellDef>Rank</th>\n      <td cdk-cell *cdkCellDef=\"let competitor\">\n         <div class=\"rank-oval\" [class.rank-1]=\"competitor.rank === 1\" [class.rank-2]=\"competitor.rank === 2\"\n            [class.rank-3]=\"competitor.rank === 3\">\n            {{competitor.rank}}\n         </div>\n      </td>\n   </ng-container>\n\n   <ng-container cdkColumnDef=\"name\" sticky>\n      <th cdk-header-cell class=\"name-col\" *cdkHeaderCellDef>Helm/Crew</th>\n      <td cdk-cell *cdkCellDef=\"let competitor\">\n         {{competitor.name}}\n      </td>\n   </ng-container>\n\n   <ng-container cdkColumnDef=\"boatClass\">\n      <th cdk-header-cell *cdkHeaderCellDef>Class</th>\n      <td cdk-cell *cdkCellDef=\"let competitor\"> {{ competitor.boatClass }} </td>\n   </ng-container>\n\n   <ng-container cdkColumnDef=\"sailNumber\">\n      <th cdk-header-cell *cdkHeaderCellDef>Sail No</th>\n      <td cdk-cell *cdkCellDef=\"let competitor\"> {{ competitor.sailNumber }} </td>\n   </ng-container>\n\n   <ng-container cdkColumnDef=\"club\">\n      <th cdk-header-cell *cdkHeaderCellDef>Club</th>\n      <td cdk-cell *cdkCellDef=\"let competitor\"> {{ competitor.club }} </td>\n   </ng-container>\n\n   <ng-container cdkColumnDef=\"handicap\">\n      <th cdk-header-cell *cdkHeaderCellDef>Handicap</th>\n      <td cdk-cell *cdkCellDef=\"let competitor\"> {{ competitor.handicap }} </td>\n   </ng-container>\n\n   <ng-container cdkColumnDef=\"totalPoints\">\n      <th cdk-header-cell class=\"points-col\" *cdkHeaderCellDef>Total</th>\n      <td cdk-cell *cdkCellDef=\"let competitor\"> {{ competitor.totalPoints }} </td>\n   </ng-container>\n\n   <ng-container cdkColumnDef=\"netPoints\">\n      <th cdk-header-cell class=\"points-col\" *cdkHeaderCellDef>Net</th>\n      <td cdk-cell *cdkCellDef=\"let competitor\"> {{ competitor.netPoints }} </td>\n   </ng-container>\n\n   <!-- Splits times columns -->\n   @for (raceCol of raceColumns(); track raceCol; let i = $index) {\n   <ng-container [cdkColumnDef]=\"raceCol\">\n      <th cdk-header-cell class=\"race-col\" *cdkHeaderCellDef (click)=\"onRaceHeaderClick(i)\">\n         <div [innerHTML]=\"raceTitle(i)\"></div>\n      </th>\n      <td cdk-cell *cdkCellDef=\"let comp\">\n         @if (comp.raceScores[i]; as score) {\n         <span [class.discarded]=\"score.isDiscard\" [class.fastest]=\"score.position === 1\"\n            [class.second]=\"score.position === 2\" [class.third]=\"score.position === 3\">\n            {{ score.isDiscard ? '(' : '' }}{{ score.points }}{{ score.resultCode !== 'OK' ? ' ' + score.resultCode : ''\n            }}{{ score.isDiscard ? ')' : '' }}\n         </span>\n         }\n      </td>\n   </ng-container>\n   }\n\n   <tr cdk-header-row class=\"header\" *cdkHeaderRowDef=\"displayedColumns(); sticky: true\"></tr>\n   <tr cdk-row class=\"row\" *cdkRowDef=\"let competitor; columns: displayedColumns(); let even = $even\"\n      [class.selected]=\"isCompetitorSelected(competitor)\">\n   </tr>\n</table>\n</div>"
+            "templateData": "<div class=\"container\">\n   <table cdk-table class=\"table\" [dataSource]=\"tableData()\" [trackBy]=\"trackByKey\" [style.font-size]=\"fontSize()\">\n\n      <!-- Initial columns -->\n      <ng-container cdkColumnDef=\"rank\" sticky>\n         <th cdk-header-cell class=\"rank-col\" *cdkHeaderCellDef>Rank</th>\n         <td cdk-cell class=\"rank-col\" *cdkCellDef=\"let competitor\">\n            <div class=\"rank-oval\" [class.rank-1]=\"competitor.rank === 1\" [class.rank-2]=\"competitor.rank === 2\"\n               [class.rank-3]=\"competitor.rank === 3\">\n               {{competitor.rank}}\n            </div>\n         </td>\n      </ng-container>\n\n      <ng-container cdkColumnDef=\"name\" sticky>\n         <th cdk-header-cell *cdkHeaderCellDef [style.width]=\"nameColumnWidth()\">Helm/Crew</th>\n         <td cdk-cell *cdkCellDef=\"let competitor\" [style.width]=\"nameColumnWidth()\">\n            {{competitor.helm}}\n            @if (competitor.crew) {\n            <br> {{ competitor.crew}}\n            }\n         </td>\n      </ng-container>\n\n      <ng-container cdkColumnDef=\"boat\">\n         <th cdk-header-cell *cdkHeaderCellDef>Boat</th>\n         <td cdk-cell *cdkCellDef=\"let competitor\">\n            @if (showBoatClass()) {\n            {{ competitor.boatClass }} <br>\n            }\n            {{ competitor.sailNumber }}\n         </td>\n      </ng-container>\n\n      <ng-container cdkColumnDef=\"club\">\n         <th cdk-header-cell *cdkHeaderCellDef>Club</th>\n         <td cdk-cell *cdkCellDef=\"let competitor\"> {{ competitor.club }} </td>\n      </ng-container>\n\n      <ng-container cdkColumnDef=\"handicap\">\n         <th cdk-header-cell *cdkHeaderCellDef>Rating</th>\n         <td cdk-cell *cdkCellDef=\"let competitor\"> {{ competitor.handicap }} </td>\n      </ng-container>\n\n      <ng-container cdkColumnDef=\"total\">\n         <th cdk-header-cell class=\"points-col\" *cdkHeaderCellDef>Total</th>\n         <td cdk-cell *cdkCellDef=\"let competitor\"> {{ competitor.totalPoints }} </td>\n      </ng-container>\n\n      <ng-container cdkColumnDef=\"net\">\n         <th cdk-header-cell *cdkHeaderCellDef>Net</th>\n         <td cdk-cell *cdkCellDef=\"let competitor\"> {{ competitor.netPoints }} </td>\n      </ng-container>\n\n      <!-- Splits times columns -->\n      @for (raceCol of raceColumns(); track raceCol; let i = $index) {\n      <ng-container [cdkColumnDef]=\"raceCol\">\n         <th cdk-header-cell class=\"race-col pointer\" *cdkHeaderCellDef (click)=\"onRaceHeaderClick(i)\">\n            <div [innerHTML]=\"raceTitle(i)\"></div>\n         </th>\n         <td cdk-cell class=\"race-col\" *cdkCellDef=\"let comp\">\n            @if (comp.raceScores[i]; as score) {\n            <span>\n               <app-highlight-position [position]=score.points [isDiscard]=\"score.isDiscard\"/>\n               @if (score.resultCode !== 'OK') {\n                  <br> {{score.resultCode}}\n               }\n            </span>\n            }\n         </td>\n      </ng-container>\n      }\n\n      <tr cdk-header-row class=\"header\" *cdkHeaderRowDef=\"displayedColumns(); sticky: true\"></tr>\n      <tr cdk-row class=\"row\" *cdkRowDef=\"let competitor; columns: displayedColumns(); let even = $even\"\n         [class.selected]=\"isCompetitorSelected(competitor)\">\n      </tr>\n   </table>\n</div>"
         },
         {
             "name": "SidenavButton",
@@ -15608,16 +16012,6 @@
     "miscellaneous": {
         "variables": [
             {
-                "name": "allSeriesColumns",
-                "ctype": "miscellaneous",
-                "subtype": "variable",
-                "file": "src/app/published-results/presentation/series-results-table/series-results-table.ts",
-                "deprecated": false,
-                "deprecationMessage": "",
-                "type": "unknown",
-                "defaultValue": "['rank', 'name', 'boatClass', 'sailNumber', 'club', 'handicap', 'totalPoints', 'netPoints'] as const"
-            },
-            {
                 "name": "APP_ROUTES",
                 "ctype": "miscellaneous",
                 "subtype": "variable",
@@ -15660,6 +16054,16 @@
                 "description": "<p>Authentication guard\nChecks if logged in as Firebase users \nRedirects to login if user is not authenticated including returnUrlquery parameter with the \noriginal URL</p>\n"
             },
             {
+                "name": "baseRaceStartTime",
+                "ctype": "miscellaneous",
+                "subtype": "variable",
+                "file": "src/testing/mocks/published-results/published-races-mocks.ts",
+                "deprecated": false,
+                "deprecationMessage": "",
+                "type": "unknown",
+                "defaultValue": "new Date('2024-05-01T12:00:00Z')"
+            },
+            {
                 "name": "BOATS_ROUTES",
                 "ctype": "miscellaneous",
                 "subtype": "variable",
@@ -15668,6 +16072,16 @@
                 "deprecationMessage": "",
                 "type": "Routes",
                 "defaultValue": "[\n   { path: '', component: BoatsPage },\n   { path: 'add', component: BoatAdd, canDeactivate: [pendingChangesGuard], canActivate: [authGuard] },\n   { path: 'edit/:id', component: BoatEdit, canDeactivate: [pendingChangesGuard], canActivate: [authGuard] },\n]"
+            },
+            {
+                "name": "competitorColumns",
+                "ctype": "miscellaneous",
+                "subtype": "variable",
+                "file": "src/app/published-results/presentation/results-tables/results-table-shared.ts",
+                "deprecated": false,
+                "deprecationMessage": "",
+                "type": "unknown",
+                "defaultValue": "['rank', 'name', 'boat', 'club', 'handicap'] as const"
             },
             {
                 "name": "createPublishedSeason",
@@ -15812,6 +16226,16 @@
                 "defaultValue": "(value: any) => (value !== null && typeof value === 'object' && !Array.isArray(value))"
             },
             {
+                "name": "MAX_NAME_WIDTH",
+                "ctype": "miscellaneous",
+                "subtype": "variable",
+                "file": "src/app/published-results/presentation/results-tables/results-table-shared.ts",
+                "deprecated": false,
+                "deprecationMessage": "",
+                "type": "number",
+                "defaultValue": "200"
+            },
+            {
                 "name": "meta",
                 "ctype": "miscellaneous",
                 "subtype": "variable",
@@ -15822,6 +16246,16 @@
                 "defaultValue": "{\n   title: 'Tests/Material3Config',\n   decorators: [\n      moduleMetadata({\n         imports: [MatButtonModule, MatIconModule],\n      }),\n   ],\n}",
                 "rawdescription": "This story verifies that Material 3 tokens and \nyour custom global SCSS classes are loading.\n\nWhat this test tells you:\nIf Button 1 is white/transparent: Your styles.scss isn't being imported in preview.ts, or the mat.theme mixin isn't targeting the right element.\n\nIf Button 2 isn't \"Small/Dense\": Your .dense-button class isn't being reached.\n\nIf Box 3 is invisible or has no background: The Material 3 system variables (the \"dictionary\") aren't being emitted.",
                 "description": "<p>This story verifies that Material 3 tokens and \nyour custom global SCSS classes are loading.</p>\n<p>What this test tells you:\nIf Button 1 is white/transparent: Your styles.scss isn&#39;t being imported in preview.ts, or the mat.theme mixin isn&#39;t targeting the right element.</p>\n<p>If Button 2 isn&#39;t &quot;Small/Dense&quot;: Your .dense-button class isn&#39;t being reached.</p>\n<p>If Box 3 is invisible or has no background: The Material 3 system variables (the &quot;dictionary&quot;) aren&#39;t being emitted.</p>\n"
+            },
+            {
+                "name": "MIN_NAME_WIDTH",
+                "ctype": "miscellaneous",
+                "subtype": "variable",
+                "file": "src/app/published-results/presentation/results-tables/results-table-shared.ts",
+                "deprecated": false,
+                "deprecationMessage": "",
+                "type": "number",
+                "defaultValue": "80"
             },
             {
                 "name": "MOCK_PUBLISHED_SEASONS",
@@ -15851,7 +16285,7 @@
                 "deprecated": false,
                 "deprecationMessage": "",
                 "type": "PublishedSeries",
-                "defaultValue": "{\n   id: 'test-series',\n   competitors: [\n      {\n         rank: 1,\n         helm: 'John Doe',\n         boatClass: 'Laser',\n         sailNumber: 12345,\n         club: 'SBSC',\n         handicap: 1000,\n         totalPoints: 5,\n         netPoints: 3,\n         raceScores: [\n            { points: 1, resultCode: 'OK', isDiscard: false },\n            { points: 2, resultCode: 'OK', isDiscard: false },\n            { points: 2, resultCode: 'OK', isDiscard: true },\n            { points: 2, resultCode: 'OK', isDiscard: true },\n            { points: 2, resultCode: 'OK', isDiscard: true },\n            { points: 2, resultCode: 'OK', isDiscard: true },\n         ],\n         tiebreakScores: [],\n      },\n      {\n         rank: 2,\n         helm: 'Jane Smith',\n         crew: 'Jim Crew',\n         boatClass: 'RS200',\n         sailNumber: 987,\n         club: 'SBSC',\n         handicap: 950,\n         totalPoints: 7,\n         netPoints: 4,\n         raceScores: [\n            { points: 3, resultCode: 'OK', isDiscard: true },\n            { points: 1, resultCode: 'OK', isDiscard: false },\n            { points: 3, resultCode: 'OK', isDiscard: false },\n            { points: 3, resultCode: 'OK', isDiscard: false },\n            { points: 3, resultCode: 'OK', isDiscard: false },\n            { points: 3, resultCode: 'OK', isDiscard: false },\n         ],\n         tiebreakScores: [],\n      },\n   ],\n}"
+                "defaultValue": "{\n   id: 'test-series',\n   competitors: [\n      {\n         rank: 1,\n         helm: 'John Doe',\n         boatClass: 'Laser',\n         sailNumber: 12345,\n         club: 'SBSC',\n         handicap: 1000,\n         totalPoints: 5,\n         netPoints: 3,\n         raceScores: [\n            { points: 1, resultCode: 'OK', isDiscard: false },\n            { points: 2, resultCode: 'OK', isDiscard: false },\n            { points: 2, resultCode: 'DSQ', isDiscard: false },\n            { points: 2, resultCode: 'OK', isDiscard: true },\n            { points: 2, resultCode: 'OCS', isDiscard: true },\n            { points: 2, resultCode: 'OK', isDiscard: true },\n         ],\n         tiebreakScores: [],\n      },\n      {\n         rank: 2,\n         helm: 'Jane Smith',\n         crew: 'Jim Crew',\n         boatClass: 'RS200',\n         sailNumber: 987,\n         club: 'SBSC',\n         handicap: 950,\n         totalPoints: 7,\n         netPoints: 4,\n         raceScores: [\n            { points: 3, resultCode: 'OK', isDiscard: true },\n            { points: 1, resultCode: 'OK', isDiscard: false },\n            { points: 3, resultCode: 'OK', isDiscard: false },\n            { points: 3, resultCode: 'OK', isDiscard: false },\n            { points: 3, resultCode: 'OK', isDiscard: false },\n            { points: 3, resultCode: 'OK', isDiscard: false },\n         ],\n         tiebreakScores: [],\n      },\n   ],\n}"
             },
             {
                 "name": "PUBLISHED_RACES_MOCKS",
@@ -15861,7 +16295,7 @@
                 "deprecated": false,
                 "deprecationMessage": "",
                 "type": "PublishedRace[]",
-                "defaultValue": "[\n   { id: 'r1', seriesId: 'test-series', seriesName: 'Test Series', fleetId: 'laser', type: 'Conventional', isDiscardable: true, index: 1, scheduledStart: new Date('2024-05-01'), raceOfDay: 1, results: [] },\n   { id: 'r2', seriesId: 'test-series', seriesName: 'Test Series', fleetId: 'laser', type: 'Conventional', isDiscardable: true, index: 2, scheduledStart: new Date('2024-05-01'), raceOfDay: 2, results: [] },\n   { id: 'r3', seriesId: 'test-series', seriesName: 'Test Series', fleetId: 'laser', type: 'Conventional', isDiscardable: true, index: 3, scheduledStart: new Date('2024-05-08'), raceOfDay: 1, results: [] },\n   { id: 'r4', seriesId: 'test-series', seriesName: 'Test Series', fleetId: 'laser', type: 'Conventional', isDiscardable: true, index: 4, scheduledStart: new Date('2024-05-15'), raceOfDay: 1, results: [] },\n   { id: 'r5', seriesId: 'test-series', seriesName: 'Test Series', fleetId: 'laser', type: 'Conventional', isDiscardable: true, index: 5, scheduledStart: new Date('2024-05-22'), raceOfDay: 1, results: [] },\n   { id: 'r6', seriesId: 'test-series', seriesName: 'Test Series', fleetId: 'laser', type: 'Conventional', isDiscardable: true, index: 6, scheduledStart: new Date('2024-05-30'), raceOfDay: 1, results: [] },\n]"
+                "defaultValue": "[\n   { id: 'r1', seriesId: 'test-series', seriesName: 'Test Series', fleetId: 'laser', type: 'Conventional', isDiscardable: true, index: 1, scheduledStart: new Date('2024-05-01'), raceOfDay: 1, results: race1Results },\n   { id: 'r2', seriesId: 'test-series', seriesName: 'Test Series', fleetId: 'laser', type: 'Conventional', isDiscardable: true, index: 2, scheduledStart: new Date('2024-05-01'), raceOfDay: 2, results: [] },\n   { id: 'r3', seriesId: 'test-series', seriesName: 'Test Series', fleetId: 'laser', type: 'Conventional', isDiscardable: true, index: 3, scheduledStart: new Date('2024-05-08'), raceOfDay: 1, results: [] },\n   { id: 'r4', seriesId: 'test-series', seriesName: 'Test Series', fleetId: 'laser', type: 'Conventional', isDiscardable: true, index: 4, scheduledStart: new Date('2024-05-15'), raceOfDay: 1, results: [] },\n   { id: 'r5', seriesId: 'test-series', seriesName: 'Test Series', fleetId: 'laser', type: 'Conventional', isDiscardable: true, index: 5, scheduledStart: new Date('2024-05-22'), raceOfDay: 1, results: [] },\n   { id: 'r6', seriesId: 'test-series', seriesName: 'Test Series', fleetId: 'laser', type: 'Conventional', isDiscardable: true, index: 6, scheduledStart: new Date('2024-05-30'), raceOfDay: 1, results: [] },\n]"
             },
             {
                 "name": "PUBLISHED_RESULTS_ROUTES",
@@ -15904,6 +16338,26 @@
                 "defaultValue": "[\n   'Conventional',\n   'Pursuit',\n] as const"
             },
             {
+                "name": "race1Results",
+                "ctype": "miscellaneous",
+                "subtype": "variable",
+                "file": "src/testing/mocks/published-results/published-races-mocks.ts",
+                "deprecated": false,
+                "deprecationMessage": "",
+                "type": "RaceResult[]",
+                "defaultValue": "rawRaceResults.map((result, index) => ({\n  ...result,\n  rank: index + 1,\n  points: index + 1, // 1st gets 1 point, 2nd gets 2, etc.\n}))"
+            },
+            {
+                "name": "raceColumns",
+                "ctype": "miscellaneous",
+                "subtype": "variable",
+                "file": "src/app/published-results/presentation/results-tables/race-results-table/race-results-table.ts",
+                "deprecated": false,
+                "deprecationMessage": "",
+                "type": "unknown",
+                "defaultValue": "[...competitorColumns, 'points'] as const"
+            },
+            {
                 "name": "raceCompetitorConverter",
                 "ctype": "miscellaneous",
                 "subtype": "variable",
@@ -15912,6 +16366,16 @@
                 "deprecationMessage": "",
                 "type": "unknown",
                 "defaultValue": "classInstanceConverter(RaceCompetitor)"
+            },
+            {
+                "name": "rawRaceResults",
+                "ctype": "miscellaneous",
+                "subtype": "variable",
+                "file": "src/testing/mocks/published-results/published-races-mocks.ts",
+                "deprecated": false,
+                "deprecationMessage": "",
+                "type": "RaceResult[]",
+                "defaultValue": "[]"
             },
             {
                 "name": "RESULT_CODE_DEFINITIONS",
@@ -15994,6 +16458,16 @@
                 "deprecationMessage": "",
                 "type": "unknown",
                 "defaultValue": "['shortSeries2017', 'longSeries2017'] as const"
+            },
+            {
+                "name": "seriesColumns",
+                "ctype": "miscellaneous",
+                "subtype": "variable",
+                "file": "src/app/published-results/presentation/results-tables/series-results-table/series-results-table.ts",
+                "deprecated": false,
+                "deprecationMessage": "",
+                "type": "unknown",
+                "defaultValue": "[...competitorColumns, 'total', 'net'] as const"
             },
             {
                 "name": "seriesEntryGroupingDetails",
@@ -16522,6 +16996,50 @@
                 ]
             },
             {
+                "name": "createRawRaceResult",
+                "file": "src/testing/mocks/published-results/published-races-mocks.ts",
+                "ctype": "miscellaneous",
+                "subtype": "function",
+                "deprecated": false,
+                "deprecationMessage": "",
+                "description": "",
+                "args": [
+                    {
+                        "name": "index",
+                        "type": "number",
+                        "deprecated": false,
+                        "deprecationMessage": ""
+                    },
+                    {
+                        "name": "baseStartTime",
+                        "type": "Date",
+                        "deprecated": false,
+                        "deprecationMessage": ""
+                    }
+                ],
+                "returnType": "RaceResult",
+                "jsdoctags": [
+                    {
+                        "name": "index",
+                        "type": "number",
+                        "deprecated": false,
+                        "deprecationMessage": "",
+                        "tagName": {
+                            "text": "param"
+                        }
+                    },
+                    {
+                        "name": "baseStartTime",
+                        "type": "Date",
+                        "deprecated": false,
+                        "deprecationMessage": "",
+                        "tagName": {
+                            "text": "param"
+                        }
+                    }
+                ]
+            },
+            {
                 "name": "existsInLocalStorage",
                 "file": "src/app/app.ts",
                 "ctype": "miscellaneous",
@@ -17015,6 +17533,32 @@
                     {
                         "name": "b",
                         "type": "RaceCompetitor",
+                        "deprecated": false,
+                        "deprecationMessage": "",
+                        "tagName": {
+                            "text": "param"
+                        }
+                    }
+                ]
+            },
+            {
+                "name": "nameColumnWidth",
+                "file": "src/app/published-results/presentation/results-tables/results-table-shared.ts",
+                "ctype": "miscellaneous",
+                "subtype": "function",
+                "deprecated": false,
+                "deprecationMessage": "",
+                "description": "",
+                "args": [
+                    {
+                        "name": "names",
+                        "deprecated": false,
+                        "deprecationMessage": ""
+                    }
+                ],
+                "jsdoctags": [
+                    {
+                        "name": "names",
                         "deprecated": false,
                         "deprecationMessage": "",
                         "tagName": {
@@ -18121,15 +18665,15 @@
                 "kind": 202
             },
             {
-                "name": "NavClicked",
+                "name": "RaceColumn",
                 "ctype": "miscellaneous",
                 "subtype": "typealias",
-                "rawtype": "\"series\" | \"next\" | \"previous\"",
-                "file": "src/app/published-results/presentation/race-results-table/race-results-table.ts",
+                "rawtype": "unknown",
+                "file": "src/app/published-results/presentation/results-tables/race-results-table/race-results-table.ts",
                 "deprecated": false,
                 "deprecationMessage": "",
                 "description": "",
-                "kind": 193
+                "kind": 200
             },
             {
                 "name": "RaceStatus",
@@ -18169,7 +18713,7 @@
                 "ctype": "miscellaneous",
                 "subtype": "typealias",
                 "rawtype": "unknown",
-                "file": "src/app/published-results/presentation/series-results-table/series-results-table.ts",
+                "file": "src/app/published-results/presentation/results-tables/series-results-table/series-results-table.ts",
                 "deprecated": false,
                 "deprecationMessage": "",
                 "description": "",
@@ -18241,18 +18785,6 @@
             }
         ],
         "groupedVariables": {
-            "src/app/published-results/presentation/series-results-table/series-results-table.ts": [
-                {
-                    "name": "allSeriesColumns",
-                    "ctype": "miscellaneous",
-                    "subtype": "variable",
-                    "file": "src/app/published-results/presentation/series-results-table/series-results-table.ts",
-                    "deprecated": false,
-                    "deprecationMessage": "",
-                    "type": "unknown",
-                    "defaultValue": "['rank', 'name', 'boatClass', 'sailNumber', 'club', 'handicap', 'totalPoints', 'netPoints'] as const"
-                }
-            ],
             "src/app/app.routes.ts": [
                 {
                     "name": "APP_ROUTES",
@@ -18303,19 +18835,17 @@
                     "description": "<p>Authentication guard\nChecks if logged in as Firebase users \nRedirects to login if user is not authenticated including returnUrlquery parameter with the \noriginal URL</p>\n"
                 }
             ],
-            "src/app/boats/boats.routes.ts": [
+            "src/testing/mocks/published-results/published-races-mocks.ts": [
                 {
-                    "name": "BOATS_ROUTES",
+                    "name": "baseRaceStartTime",
                     "ctype": "miscellaneous",
                     "subtype": "variable",
-                    "file": "src/app/boats/boats.routes.ts",
+                    "file": "src/testing/mocks/published-results/published-races-mocks.ts",
                     "deprecated": false,
                     "deprecationMessage": "",
-                    "type": "Routes",
-                    "defaultValue": "[\n   { path: '', component: BoatsPage },\n   { path: 'add', component: BoatAdd, canDeactivate: [pendingChangesGuard], canActivate: [authGuard] },\n   { path: 'edit/:id', component: BoatEdit, canDeactivate: [pendingChangesGuard], canActivate: [authGuard] },\n]"
-                }
-            ],
-            "src/testing/mocks/published-results/published-races-mocks.ts": [
+                    "type": "unknown",
+                    "defaultValue": "new Date('2024-05-01T12:00:00Z')"
+                },
                 {
                     "name": "createPublishedSeason",
                     "ctype": "miscellaneous",
@@ -18334,7 +18864,71 @@
                     "deprecated": false,
                     "deprecationMessage": "",
                     "type": "PublishedRace[]",
-                    "defaultValue": "[\n   { id: 'r1', seriesId: 'test-series', seriesName: 'Test Series', fleetId: 'laser', type: 'Conventional', isDiscardable: true, index: 1, scheduledStart: new Date('2024-05-01'), raceOfDay: 1, results: [] },\n   { id: 'r2', seriesId: 'test-series', seriesName: 'Test Series', fleetId: 'laser', type: 'Conventional', isDiscardable: true, index: 2, scheduledStart: new Date('2024-05-01'), raceOfDay: 2, results: [] },\n   { id: 'r3', seriesId: 'test-series', seriesName: 'Test Series', fleetId: 'laser', type: 'Conventional', isDiscardable: true, index: 3, scheduledStart: new Date('2024-05-08'), raceOfDay: 1, results: [] },\n   { id: 'r4', seriesId: 'test-series', seriesName: 'Test Series', fleetId: 'laser', type: 'Conventional', isDiscardable: true, index: 4, scheduledStart: new Date('2024-05-15'), raceOfDay: 1, results: [] },\n   { id: 'r5', seriesId: 'test-series', seriesName: 'Test Series', fleetId: 'laser', type: 'Conventional', isDiscardable: true, index: 5, scheduledStart: new Date('2024-05-22'), raceOfDay: 1, results: [] },\n   { id: 'r6', seriesId: 'test-series', seriesName: 'Test Series', fleetId: 'laser', type: 'Conventional', isDiscardable: true, index: 6, scheduledStart: new Date('2024-05-30'), raceOfDay: 1, results: [] },\n]"
+                    "defaultValue": "[\n   { id: 'r1', seriesId: 'test-series', seriesName: 'Test Series', fleetId: 'laser', type: 'Conventional', isDiscardable: true, index: 1, scheduledStart: new Date('2024-05-01'), raceOfDay: 1, results: race1Results },\n   { id: 'r2', seriesId: 'test-series', seriesName: 'Test Series', fleetId: 'laser', type: 'Conventional', isDiscardable: true, index: 2, scheduledStart: new Date('2024-05-01'), raceOfDay: 2, results: [] },\n   { id: 'r3', seriesId: 'test-series', seriesName: 'Test Series', fleetId: 'laser', type: 'Conventional', isDiscardable: true, index: 3, scheduledStart: new Date('2024-05-08'), raceOfDay: 1, results: [] },\n   { id: 'r4', seriesId: 'test-series', seriesName: 'Test Series', fleetId: 'laser', type: 'Conventional', isDiscardable: true, index: 4, scheduledStart: new Date('2024-05-15'), raceOfDay: 1, results: [] },\n   { id: 'r5', seriesId: 'test-series', seriesName: 'Test Series', fleetId: 'laser', type: 'Conventional', isDiscardable: true, index: 5, scheduledStart: new Date('2024-05-22'), raceOfDay: 1, results: [] },\n   { id: 'r6', seriesId: 'test-series', seriesName: 'Test Series', fleetId: 'laser', type: 'Conventional', isDiscardable: true, index: 6, scheduledStart: new Date('2024-05-30'), raceOfDay: 1, results: [] },\n]"
+                },
+                {
+                    "name": "race1Results",
+                    "ctype": "miscellaneous",
+                    "subtype": "variable",
+                    "file": "src/testing/mocks/published-results/published-races-mocks.ts",
+                    "deprecated": false,
+                    "deprecationMessage": "",
+                    "type": "RaceResult[]",
+                    "defaultValue": "rawRaceResults.map((result, index) => ({\n  ...result,\n  rank: index + 1,\n  points: index + 1, // 1st gets 1 point, 2nd gets 2, etc.\n}))"
+                },
+                {
+                    "name": "rawRaceResults",
+                    "ctype": "miscellaneous",
+                    "subtype": "variable",
+                    "file": "src/testing/mocks/published-results/published-races-mocks.ts",
+                    "deprecated": false,
+                    "deprecationMessage": "",
+                    "type": "RaceResult[]",
+                    "defaultValue": "[]"
+                }
+            ],
+            "src/app/boats/boats.routes.ts": [
+                {
+                    "name": "BOATS_ROUTES",
+                    "ctype": "miscellaneous",
+                    "subtype": "variable",
+                    "file": "src/app/boats/boats.routes.ts",
+                    "deprecated": false,
+                    "deprecationMessage": "",
+                    "type": "Routes",
+                    "defaultValue": "[\n   { path: '', component: BoatsPage },\n   { path: 'add', component: BoatAdd, canDeactivate: [pendingChangesGuard], canActivate: [authGuard] },\n   { path: 'edit/:id', component: BoatEdit, canDeactivate: [pendingChangesGuard], canActivate: [authGuard] },\n]"
+                }
+            ],
+            "src/app/published-results/presentation/results-tables/results-table-shared.ts": [
+                {
+                    "name": "competitorColumns",
+                    "ctype": "miscellaneous",
+                    "subtype": "variable",
+                    "file": "src/app/published-results/presentation/results-tables/results-table-shared.ts",
+                    "deprecated": false,
+                    "deprecationMessage": "",
+                    "type": "unknown",
+                    "defaultValue": "['rank', 'name', 'boat', 'club', 'handicap'] as const"
+                },
+                {
+                    "name": "MAX_NAME_WIDTH",
+                    "ctype": "miscellaneous",
+                    "subtype": "variable",
+                    "file": "src/app/published-results/presentation/results-tables/results-table-shared.ts",
+                    "deprecated": false,
+                    "deprecationMessage": "",
+                    "type": "number",
+                    "defaultValue": "200"
+                },
+                {
+                    "name": "MIN_NAME_WIDTH",
+                    "ctype": "miscellaneous",
+                    "subtype": "variable",
+                    "file": "src/app/published-results/presentation/results-tables/results-table-shared.ts",
+                    "deprecated": false,
+                    "deprecationMessage": "",
+                    "type": "number",
+                    "defaultValue": "80"
                 }
             ],
             "src/testing/mocks/published-results/published-season-mocks.ts": [
@@ -18378,7 +18972,7 @@
                     "deprecated": false,
                     "deprecationMessage": "",
                     "type": "PublishedSeries",
-                    "defaultValue": "{\n   id: 'test-series',\n   competitors: [\n      {\n         rank: 1,\n         helm: 'John Doe',\n         boatClass: 'Laser',\n         sailNumber: 12345,\n         club: 'SBSC',\n         handicap: 1000,\n         totalPoints: 5,\n         netPoints: 3,\n         raceScores: [\n            { points: 1, resultCode: 'OK', isDiscard: false },\n            { points: 2, resultCode: 'OK', isDiscard: false },\n            { points: 2, resultCode: 'OK', isDiscard: true },\n            { points: 2, resultCode: 'OK', isDiscard: true },\n            { points: 2, resultCode: 'OK', isDiscard: true },\n            { points: 2, resultCode: 'OK', isDiscard: true },\n         ],\n         tiebreakScores: [],\n      },\n      {\n         rank: 2,\n         helm: 'Jane Smith',\n         crew: 'Jim Crew',\n         boatClass: 'RS200',\n         sailNumber: 987,\n         club: 'SBSC',\n         handicap: 950,\n         totalPoints: 7,\n         netPoints: 4,\n         raceScores: [\n            { points: 3, resultCode: 'OK', isDiscard: true },\n            { points: 1, resultCode: 'OK', isDiscard: false },\n            { points: 3, resultCode: 'OK', isDiscard: false },\n            { points: 3, resultCode: 'OK', isDiscard: false },\n            { points: 3, resultCode: 'OK', isDiscard: false },\n            { points: 3, resultCode: 'OK', isDiscard: false },\n         ],\n         tiebreakScores: [],\n      },\n   ],\n}"
+                    "defaultValue": "{\n   id: 'test-series',\n   competitors: [\n      {\n         rank: 1,\n         helm: 'John Doe',\n         boatClass: 'Laser',\n         sailNumber: 12345,\n         club: 'SBSC',\n         handicap: 1000,\n         totalPoints: 5,\n         netPoints: 3,\n         raceScores: [\n            { points: 1, resultCode: 'OK', isDiscard: false },\n            { points: 2, resultCode: 'OK', isDiscard: false },\n            { points: 2, resultCode: 'DSQ', isDiscard: false },\n            { points: 2, resultCode: 'OK', isDiscard: true },\n            { points: 2, resultCode: 'OCS', isDiscard: true },\n            { points: 2, resultCode: 'OK', isDiscard: true },\n         ],\n         tiebreakScores: [],\n      },\n      {\n         rank: 2,\n         helm: 'Jane Smith',\n         crew: 'Jim Crew',\n         boatClass: 'RS200',\n         sailNumber: 987,\n         club: 'SBSC',\n         handicap: 950,\n         totalPoints: 7,\n         netPoints: 4,\n         raceScores: [\n            { points: 3, resultCode: 'OK', isDiscard: true },\n            { points: 1, resultCode: 'OK', isDiscard: false },\n            { points: 3, resultCode: 'OK', isDiscard: false },\n            { points: 3, resultCode: 'OK', isDiscard: false },\n            { points: 3, resultCode: 'OK', isDiscard: false },\n            { points: 3, resultCode: 'OK', isDiscard: false },\n         ],\n         tiebreakScores: [],\n      },\n   ],\n}"
                 }
             ],
             "src/app/shared/firebase/firestore-helper.ts": [
@@ -18593,6 +19187,18 @@
                     "defaultValue": "[\n   'Conventional',\n   'Pursuit',\n] as const"
                 }
             ],
+            "src/app/published-results/presentation/results-tables/race-results-table/race-results-table.ts": [
+                {
+                    "name": "raceColumns",
+                    "ctype": "miscellaneous",
+                    "subtype": "variable",
+                    "file": "src/app/published-results/presentation/results-tables/race-results-table/race-results-table.ts",
+                    "deprecated": false,
+                    "deprecationMessage": "",
+                    "type": "unknown",
+                    "defaultValue": "[...competitorColumns, 'points'] as const"
+                }
+            ],
             "src/app/results-input/services/race-competitor-store.ts": [
                 {
                     "name": "raceCompetitorConverter",
@@ -18717,6 +19323,18 @@
                     "deprecationMessage": "",
                     "type": "literal type[]",
                     "defaultValue": "[\n  { name: 'shortSeries2017', displayName: 'ISAF 2017 Short Series' },\n  { name: 'longSeries2017', displayName: 'ISAF 2017 LongSeries' }\n]"
+                }
+            ],
+            "src/app/published-results/presentation/results-tables/series-results-table/series-results-table.ts": [
+                {
+                    "name": "seriesColumns",
+                    "ctype": "miscellaneous",
+                    "subtype": "variable",
+                    "file": "src/app/published-results/presentation/results-tables/series-results-table/series-results-table.ts",
+                    "deprecated": false,
+                    "deprecationMessage": "",
+                    "type": "unknown",
+                    "defaultValue": "[...competitorColumns, 'total', 'net'] as const"
                 }
             ],
             "src/app/sys-admin/sys-admin.routes.ts": [
@@ -19997,6 +20615,52 @@
                     ]
                 }
             ],
+            "src/testing/mocks/published-results/published-races-mocks.ts": [
+                {
+                    "name": "createRawRaceResult",
+                    "file": "src/testing/mocks/published-results/published-races-mocks.ts",
+                    "ctype": "miscellaneous",
+                    "subtype": "function",
+                    "deprecated": false,
+                    "deprecationMessage": "",
+                    "description": "",
+                    "args": [
+                        {
+                            "name": "index",
+                            "type": "number",
+                            "deprecated": false,
+                            "deprecationMessage": ""
+                        },
+                        {
+                            "name": "baseStartTime",
+                            "type": "Date",
+                            "deprecated": false,
+                            "deprecationMessage": ""
+                        }
+                    ],
+                    "returnType": "RaceResult",
+                    "jsdoctags": [
+                        {
+                            "name": "index",
+                            "type": "number",
+                            "deprecated": false,
+                            "deprecationMessage": "",
+                            "tagName": {
+                                "text": "param"
+                            }
+                        },
+                        {
+                            "name": "baseStartTime",
+                            "type": "Date",
+                            "deprecated": false,
+                            "deprecationMessage": "",
+                            "tagName": {
+                                "text": "param"
+                            }
+                        }
+                    ]
+                }
+            ],
             "src/app/app.ts": [
                 {
                     "name": "existsInLocalStorage",
@@ -20466,6 +21130,34 @@
                     ]
                 }
             ],
+            "src/app/published-results/presentation/results-tables/results-table-shared.ts": [
+                {
+                    "name": "nameColumnWidth",
+                    "file": "src/app/published-results/presentation/results-tables/results-table-shared.ts",
+                    "ctype": "miscellaneous",
+                    "subtype": "function",
+                    "deprecated": false,
+                    "deprecationMessage": "",
+                    "description": "",
+                    "args": [
+                        {
+                            "name": "names",
+                            "deprecated": false,
+                            "deprecationMessage": ""
+                        }
+                    ],
+                    "jsdoctags": [
+                        {
+                            "name": "names",
+                            "deprecated": false,
+                            "deprecationMessage": "",
+                            "tagName": {
+                                "text": "param"
+                            }
+                        }
+                    ]
+                }
+            ],
             "src/app/shared/utils/string-utils.ts": [
                 {
                     "name": "normalisedCompare",
@@ -20889,17 +21581,17 @@
                     "kind": 202
                 }
             ],
-            "src/app/published-results/presentation/race-results-table/race-results-table.ts": [
+            "src/app/published-results/presentation/results-tables/race-results-table/race-results-table.ts": [
                 {
-                    "name": "NavClicked",
+                    "name": "RaceColumn",
                     "ctype": "miscellaneous",
                     "subtype": "typealias",
-                    "rawtype": "\"series\" | \"next\" | \"previous\"",
-                    "file": "src/app/published-results/presentation/race-results-table/race-results-table.ts",
+                    "rawtype": "unknown",
+                    "file": "src/app/published-results/presentation/results-tables/race-results-table/race-results-table.ts",
                     "deprecated": false,
                     "deprecationMessage": "",
                     "description": "",
-                    "kind": 193
+                    "kind": 200
                 }
             ],
             "src/app/race-calender/model/race-status.ts": [
@@ -20941,13 +21633,13 @@
                     "kind": 200
                 }
             ],
-            "src/app/published-results/presentation/series-results-table/series-results-table.ts": [
+            "src/app/published-results/presentation/results-tables/series-results-table/series-results-table.ts": [
                 {
                     "name": "SeriesColumn",
                     "ctype": "miscellaneous",
                     "subtype": "typealias",
                     "rawtype": "unknown",
-                    "file": "src/app/published-results/presentation/series-results-table/series-results-table.ts",
+                    "file": "src/app/published-results/presentation/results-tables/series-results-table/series-results-table.ts",
                     "deprecated": false,
                     "deprecationMessage": "",
                     "description": "",
@@ -21659,7 +22351,7 @@
                 "linktype": "interface",
                 "name": "RaceResult",
                 "coveragePercent": 0,
-                "coverageCount": "0/13",
+                "coverageCount": "0/15",
                 "status": "low"
             },
             {
@@ -21699,20 +22391,117 @@
                 "status": "low"
             },
             {
-                "filePath": "src/app/published-results/presentation/race-results-table/race-results-table.ts",
+                "filePath": "src/app/published-results/presentation/results-tables/highlighted-position.ts",
                 "type": "component",
                 "linktype": "component",
-                "name": "RaceResultsTable",
+                "name": "HighlightPosition",
                 "coveragePercent": 0,
                 "coverageCount": "0/3",
                 "status": "low"
             },
             {
-                "filePath": "src/app/published-results/presentation/race-results-table/race-results-table.ts",
+                "filePath": "src/app/published-results/presentation/results-tables/race-results-table/race-results-table.ts",
+                "type": "component",
+                "linktype": "component",
+                "name": "RaceResultsTable",
+                "coveragePercent": 9,
+                "coverageCount": "1/11",
+                "status": "low"
+            },
+            {
+                "filePath": "src/app/published-results/presentation/results-tables/race-results-table/race-results-table.ts",
+                "type": "variable",
+                "linktype": "miscellaneous",
+                "linksubtype": "variable",
+                "name": "raceColumns",
+                "coveragePercent": 0,
+                "coverageCount": "0/1",
+                "status": "low"
+            },
+            {
+                "filePath": "src/app/published-results/presentation/results-tables/race-results-table/race-results-table.ts",
                 "type": "type alias",
                 "linktype": "miscellaneous",
                 "linksubtype": "typealias",
-                "name": "NavClicked",
+                "name": "RaceColumn",
+                "coveragePercent": 0,
+                "coverageCount": "0/1",
+                "status": "low"
+            },
+            {
+                "filePath": "src/app/published-results/presentation/results-tables/results-table-shared.ts",
+                "type": "interface",
+                "linktype": "interface",
+                "name": "HelmCrew",
+                "coveragePercent": 33,
+                "coverageCount": "1/3",
+                "status": "medium"
+            },
+            {
+                "filePath": "src/app/published-results/presentation/results-tables/results-table-shared.ts",
+                "type": "function",
+                "linktype": "miscellaneous",
+                "linksubtype": "function",
+                "name": "nameColumnWidth",
+                "coveragePercent": 0,
+                "coverageCount": "0/1",
+                "status": "low"
+            },
+            {
+                "filePath": "src/app/published-results/presentation/results-tables/results-table-shared.ts",
+                "type": "variable",
+                "linktype": "miscellaneous",
+                "linksubtype": "variable",
+                "name": "competitorColumns",
+                "coveragePercent": 0,
+                "coverageCount": "0/1",
+                "status": "low"
+            },
+            {
+                "filePath": "src/app/published-results/presentation/results-tables/results-table-shared.ts",
+                "type": "variable",
+                "linktype": "miscellaneous",
+                "linksubtype": "variable",
+                "name": "MAX_NAME_WIDTH",
+                "coveragePercent": 0,
+                "coverageCount": "0/1",
+                "status": "low"
+            },
+            {
+                "filePath": "src/app/published-results/presentation/results-tables/results-table-shared.ts",
+                "type": "variable",
+                "linktype": "miscellaneous",
+                "linksubtype": "variable",
+                "name": "MIN_NAME_WIDTH",
+                "coveragePercent": 0,
+                "coverageCount": "0/1",
+                "status": "low"
+            },
+            {
+                "filePath": "src/app/published-results/presentation/results-tables/series-results-table/series-results-table.ts",
+                "type": "component",
+                "linktype": "component",
+                "name": "SeriesResultsTable",
+                "coveragePercent": 0,
+                "coverageCount": "0/16",
+                "status": "low"
+            },
+            {
+                "filePath": "src/app/published-results/presentation/results-tables/series-results-table/series-results-table.ts",
+                "type": "variable",
+                "linktype": "miscellaneous",
+                "linksubtype": "variable",
+                "name": "seriesColumns",
+                "coveragePercent": 0,
+                "coverageCount": "0/1",
+                "status": "low"
+            },
+            {
+                "filePath": "src/app/published-results/presentation/results-tables/series-results-table/series-results-table.ts",
+                "type": "type alias",
+                "linktype": "miscellaneous",
+                "linksubtype": "typealias",
+                "name": "SeriesColumn",
                 "coveragePercent": 0,
                 "coverageCount": "0/1",
                 "status": "low"
@@ -21723,7 +22512,7 @@
                 "linktype": "component",
                 "name": "ResultsViewer",
                 "coveragePercent": 0,
-                "coverageCount": "0/14",
+                "coverageCount": "0/16",
                 "status": "low"
             },
             {
@@ -21734,35 +22523,6 @@
                 "coveragePercent": 62,
                 "coverageCount": "5/8",
                 "status": "good"
-            },
-            {
-                "filePath": "src/app/published-results/presentation/series-results-table/series-results-table.ts",
-                "type": "component",
-                "linktype": "component",
-                "name": "SeriesResultsTable",
-                "coveragePercent": 0,
-                "coverageCount": "0/14",
-                "status": "low"
-            },
-            {
-                "filePath": "src/app/published-results/presentation/series-results-table/series-results-table.ts",
-                "type": "variable",
-                "linktype": "miscellaneous",
-                "linksubtype": "variable",
-                "name": "allSeriesColumns",
-                "coveragePercent": 0,
-                "coverageCount": "0/1",
-                "status": "low"
-            },
-            {
-                "filePath": "src/app/published-results/presentation/series-results-table/series-results-table.ts",
-                "type": "type alias",
-                "linktype": "miscellaneous",
-                "linksubtype": "typealias",
-                "name": "SeriesColumn",
-                "coveragePercent": 0,
-                "coverageCount": "0/1",
-                "status": "low"
             },
             {
                 "filePath": "src/app/published-results/published-result.routes.ts",
@@ -22750,6 +23510,15 @@
                 "status": "low"
             },
             {
+                "filePath": "src/app/shared/pipes/bracketed-pipe.ts",
+                "type": "pipe",
+                "linktype": "pipe",
+                "name": "BracketedPipe",
+                "coveragePercent": 100,
+                "coverageCount": "1/1",
+                "status": "very-good"
+            },
+            {
                 "filePath": "src/app/shared/pipes/ellipsis-pipe.ts",
                 "type": "pipe",
                 "linktype": "pipe",
@@ -23022,6 +23791,26 @@
             },
             {
                 "filePath": "src/testing/mocks/published-results/published-races-mocks.ts",
+                "type": "function",
+                "linktype": "miscellaneous",
+                "linksubtype": "function",
+                "name": "createRawRaceResult",
+                "coveragePercent": 0,
+                "coverageCount": "0/1",
+                "status": "low"
+            },
+            {
+                "filePath": "src/testing/mocks/published-results/published-races-mocks.ts",
+                "type": "variable",
+                "linktype": "miscellaneous",
+                "linksubtype": "variable",
+                "name": "baseRaceStartTime",
+                "coveragePercent": 0,
+                "coverageCount": "0/1",
+                "status": "low"
+            },
+            {
+                "filePath": "src/testing/mocks/published-results/published-races-mocks.ts",
                 "type": "variable",
                 "linktype": "miscellaneous",
                 "linksubtype": "variable",
@@ -23036,6 +23825,26 @@
                 "linktype": "miscellaneous",
                 "linksubtype": "variable",
                 "name": "PUBLISHED_RACES_MOCKS",
+                "coveragePercent": 0,
+                "coverageCount": "0/1",
+                "status": "low"
+            },
+            {
+                "filePath": "src/testing/mocks/published-results/published-races-mocks.ts",
+                "type": "variable",
+                "linktype": "miscellaneous",
+                "linksubtype": "variable",
+                "name": "race1Results",
+                "coveragePercent": 0,
+                "coverageCount": "0/1",
+                "status": "low"
+            },
+            {
+                "filePath": "src/testing/mocks/published-results/published-races-mocks.ts",
+                "type": "variable",
+                "linktype": "miscellaneous",
+                "linksubtype": "variable",
+                "name": "rawRaceResults",
                 "coveragePercent": 0,
                 "coverageCount": "0/1",
                 "status": "low"

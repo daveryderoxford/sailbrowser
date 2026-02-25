@@ -15,6 +15,7 @@ export interface PublishedSeriesResult {
    boatClass: string;
    handicap: number;
    raceScores: {
+      raceIndex: number;
       points: number;
       resultCode: ResultCode;
       isDiscard: boolean;

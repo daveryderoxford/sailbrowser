@@ -1,0 +1,11 @@
+/** Additional styles for seriracees results table in addtion to 
+those in results-table-shared */
+
+.table {
+   table-layout: fixed;
+}
+
+.cdk-column-points {
+   width: 60px;
+   text-align: center;
+}

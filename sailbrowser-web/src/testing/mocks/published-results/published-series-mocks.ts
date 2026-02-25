@@ -15,9 +15,9 @@ export const PUBLIC_SERIES_MOCK : PublishedSeries = {
          raceScores: [
             { points: 1, resultCode: 'OK', isDiscard: false },
             { points: 2, resultCode: 'OK', isDiscard: false },
+            { points: 2, resultCode: 'DSQ', isDiscard: false },
             { points: 2, resultCode: 'OK', isDiscard: true },
-            { points: 2, resultCode: 'OK', isDiscard: true },
-            { points: 2, resultCode: 'OK', isDiscard: true },
+            { points: 2, resultCode: 'OCS', isDiscard: true },
             { points: 2, resultCode: 'OK', isDiscard: true },
          ],
          tiebreakScores: [],

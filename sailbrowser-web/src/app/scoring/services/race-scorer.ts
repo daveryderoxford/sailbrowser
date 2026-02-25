@@ -132,6 +132,7 @@ function buildIntermediateResults(
   return competitors.map((comp) => {
     const times = getCorrectedTime(comp, scheme, race.isAverageLap, maxLaps);
     return {
+      rank: 1,  // Temp to do
       boatClass: comp.boatClass,
       sailNumber: comp.sailNumber,
       helm: comp.helm,

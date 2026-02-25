@@ -1,3 +1,12 @@
+@use '@angular/material' as mat;
+
+@include mat.icon-button-overrides((
+   icon-size: 40px,
+      state-layer-size: 40px,
+                        icon-color: orange,
+      // The container must be larger than the icon
+));
+
 .page-container {
    display: grid;
    grid-template-areas:
@@ -55,4 +64,22 @@
     top: 7px;
     left: 7px;
     z-index: 10;
+  }
+
+  .race-container {
+      margin-top: 2rem;
+  }
+
+  .race-title {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding-bottom: 0.5rem;
+      border-bottom: 1px solid var(--mat-sys-color-outline-variant);
+      margin-bottom: 0.5rem;
+
+      h3 {
+         flex-grow: 1;
+         margin: 0;
+      }
   }
