@@ -294,7 +294,7 @@ describe('RaceScorer', () => {
         createCompetitor('4', null, 'OCS'),                        // Non-finisher, should be ignored
       ];
 
-      const expectedError = 'Inconsistent ordering data: Manual positions are used, but finisher with sail number 102 is missing a position.';
+      const expectedError = 'Inconsistent ordering data: Pursuit races require a manual position, but finisher with sail number 102 is missing a position.';
 
       expect(() => scoreRace(pursuitRace, competitors, 'Level Rating', 'shortSeries2017', 4))
         .toThrow(new SailbrowserError(expectedError));

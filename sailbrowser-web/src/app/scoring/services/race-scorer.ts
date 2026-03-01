@@ -28,95 +28,71 @@ export function scoreRace(
   seriesCompetitorCount: number,
 ): RaceResult[] {
 
-  const isPositionBased = race.type === 'Pursuit' || scheme === 'Level Rating';
-
-  return isPositionBased
-    ? scoreByPosition(competitors, race, seriesType, seriesCompetitorCount)
-    : scoreByTime(competitors, scheme, race, seriesType, seriesCompetitorCount);
-}
-
-/**
- * Calculates results for a time-based handicap race (e.g., PY).
- */
-function scoreByTime(
-  competitors: RaceCompetitor[],
-  scheme: HandicapSystem,
-  race: Race,
-  seriesType: SeriesScoringScheme,
-  seriesCompetitorCount: number,
-): RaceResult[] {
-
-  // 1. Calculate the maximum number of laps.
+  // 1. Build initial results, including calculated elapsed and corrected times.
   const maxLaps = competitors.reduce((max, comp) => (comp.numLaps > max) ? comp.numLaps : max, 0);
-
-  // 2. Build initial results
   const intermediateResults = buildIntermediateResults(competitors, scheme, race, maxLaps);
 
-  // 2. Sort by corrected time (taking into account result code)
-  intermediateResults.sort((a, b) => sortByCorrectedTime(a, b));
+  // 2. Determine the ordering property for finishers.
+  const orderingProperty = determineOrdering(race, scheme, intermediateResults);
+  // Sort all results to establish finishing order (finishers first, then by ordering property).
+  intermediateResults.sort((a, b) => sortByFinishingOrder(a, b, orderingProperty));
 
-  // 3. Assign points for finishers
-  assignPointsForFinishers(intermediateResults, 'correctedTime', seriesType, seriesCompetitorCount);
+  // 3. Assign points to finishers based on their sorted order.
+  assignPointsForFinishers(intermediateResults, orderingProperty, seriesType, seriesCompetitorCount);
 
-  // 4. Assign points for non-finishers
-  applyStaticRacePenalties(intermediateResults, 
-                           seriesCompetitorCount, seriesType);
-
-  // 5. Sort by points to determine final positions
-  intermediateResults.sort((a, b) => sortByPoints(a, b));
-
-  // 8. Remove internal properties before returning
-  return intermediateResults.map(({ position, isDiscardable, ...result }, index) => {
-    return { ...result, rank: index + 1 };
-  });
-}
-
-/**
- * Calculates results for a position-based race (Level Rating or Pursuit).
- */
-function scoreByPosition(
-  competitors: RaceCompetitor[],
-  race: Race,
-  seriesType: SeriesScoringScheme,
-  seriesCompetitorCount: number,
-): RaceResult[] {
-
-  // For position-based races, maxLaps is not used for scoring, so pass 0.
-  const intermediateResults = buildIntermediateResults(competitors, 'Level Rating', race, 0);
-
-  const finishers = intermediateResults.filter(res => isFinishedComp(res.resultCode));
-
-  // For Level Rating and Pursuit, manual position takes precedence.
-  // If any finisher has a manual position, all must. Otherwise, all must have an elapsed time.
-  const useManualPositions = race.type === 'Pursuit' || finishers.some(f => f.position > 0);
-
-  if (useManualPositions) {
-    const missingPosition = finishers.find(f => !(f.position > 0));
-    if (missingPosition) {
-      throw new SailbrowserError(`Inconsistent ordering data: Manual positions are used, but finisher with sail number ${missingPosition.sailNumber} is missing a position.`);
-    }
-    finishers.sort((a, b) => (a.position || 0) - (b.position || 0));
-  } else {
-    const missingTime = finishers.find(f => !(f.elapsedTime > 0));
-    if (missingTime) {
-      throw new SailbrowserError(`Inconsistent ordering data: Finish times are used, but finisher with sail number ${missingTime.sailNumber} is missing a finish time.`);
-    }
-    finishers.sort((a, b) => (a.elapsedTime || 0) - (b.elapsedTime || 0));
-  }
-
-  // 1. Assign points based on manual position for finishers
-  assignPointsForFinishers(finishers, useManualPositions ? 'position' : 'elapsedTime', seriesType, seriesCompetitorCount);
-
-  // 2. Assign points for non-finishers
+  // 4. Assign points for non-finishers (DNF, OCS, etc.).
   applyStaticRacePenalties(intermediateResults, seriesCompetitorCount, seriesType);
 
-  // 3. Sort by points to determine final positions
+  // 5. Sort all competitors by points to determine final race ranks.
   intermediateResults.sort((a, b) => sortByPoints(a, b));
 
   // 4. Remove internal properties before returning
   return intermediateResults.map(({ position, isDiscardable, ...result }, index) => {
     return { ...result, rank: index + 1 };
   });
+}
+
+/**
+ * Determines the property to sort finishers by and validates that all finishers have the required data.
+ * 1. If Pursuit -> position.
+ * 2. If Level Rating -> if manualPositions -> position, else elapsedTime.
+ * 3. Handicap -> correctedTime.
+ * 4. Checks that all finishers have a value for the ordering property.
+ */
+function determineOrdering(race: Race, scheme: HandicapSystem, results: IntermediateResult[]): keyof IntermediateResult {
+  let orderingProperty: keyof IntermediateResult;
+  const finishers = results.filter(res => isFinishedComp(res.resultCode));
+
+  if (race.type === 'Pursuit') {
+    orderingProperty = 'position';
+    validateFinishersHaveData(finishers, 'position', 'Pursuit races require a manual position');
+  } else if (scheme === 'Level Rating') {
+    const useManualPositions = finishers.some(f => f.position > 0);
+    if (useManualPositions) {
+      orderingProperty = 'position';
+      validateFinishersHaveData(finishers, 'position', 'Manual positions are used');
+    } else {
+      orderingProperty = 'elapsedTime';
+      validateFinishersHaveData(finishers, 'elapsedTime', 'Finish times are used');
+    }
+  } else { // Handicap race
+    orderingProperty = 'correctedTime';
+    // For handicap races, a corrected time of 0 implies missing finish time, which is an error for a finisher.
+    validateFinishersHaveData(finishers, 'correctedTime', 'Handicap races require a finish time');
+  }
+  return orderingProperty;
+}
+
+/**
+ * Checks that all finishers have a valid (non-zero) value for the specified ordering property.
+ * Throws a SailbrowserError if any finisher is missing data.
+ */
+function validateFinishersHaveData(finishers: IntermediateResult[], property: keyof IntermediateResult, context: string) {
+  const missingData = finishers.find(f => !((f[property] as number) > 0));
+  if (missingData) {
+    const propertyName = property === 'position' ? 'position' : 'finish time';
+    throw new SailbrowserError(`Inconsistent ordering data: ${context}, but finisher with sail number ${missingData.sailNumber} is missing a ${propertyName}.`);
+  }
 }
 
 /**
@@ -223,7 +199,7 @@ function assignPointsForFinishers(
   // Group competitors by the value of the specified key
   for (const res of finishers) {
     const value = (res[key] as number) || 0;
-    // A value of 0 is valid for time/position, so we don't want to treat it as falsey.
+    // A value of 0 is used for null for time/position, so we don't want to treat it as falsey.
     if (value === 0 && res.resultCode !== 'OK') continue;
     if (!resultsByValue.has(value)) resultsByValue.set(value, []);
     resultsByValue.get(value)!.push(res);
@@ -301,17 +277,21 @@ function sortByPoints(a: IntermediateResult, b: IntermediateResult): number {
   return (a.points || 9999) - (b.points || 9999);
 }
 
-export function sortByCorrectedTime(a: IntermediateResult, b: IntermediateResult): number {
+/**
+ * Sorts results by a specified ordering property, ensuring that finishers always
+ * appear before non-finishers.
+ */
+function sortByFinishingOrder(a: IntermediateResult, b: IntermediateResult, orderingProperty: keyof IntermediateResult): number {
   const aIsFinisher = isFinishedComp(a.resultCode);
   const bIsFinisher = isFinishedComp(b.resultCode);
 
   if (aIsFinisher && bIsFinisher) {
-    return (a.correctedTime || 0) - (b.correctedTime || 0);
+    return (a[orderingProperty] as number || 0) - (b[orderingProperty] as number || 0);
   } else if (aIsFinisher && !bIsFinisher) {
     return -1;
   } else if (!aIsFinisher && bIsFinisher) {
     return 1;
   } else {
-    return 0;
+    return 0; // Keep original order for non-finishers relative to each other
   }
 }
