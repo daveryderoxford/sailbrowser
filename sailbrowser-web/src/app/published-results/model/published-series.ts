@@ -4,6 +4,8 @@ import { ResultCode } from 'app/scoring/model/result-code';
  */
 export interface PublishedSeries {
    id: string;
+   name: string;
+   fleetId: string;
    competitors: PublishedSeriesResult[];
 }
 
@@ -23,5 +25,5 @@ export interface PublishedSeriesResult {
    totalPoints: number;
    netPoints: number;
    rank: number;
-   tiebreakScores: number[];
+   scoresForTiebreak: number[];
 }

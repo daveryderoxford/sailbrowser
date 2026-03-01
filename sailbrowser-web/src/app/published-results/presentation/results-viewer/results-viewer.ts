@@ -10,10 +10,13 @@ import { RaceResultsTable } from "../results-tables/race-results-table/race-resu
 import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
 import { DatePipe } from '@angular/common';
+import { CenteredText } from "../../../shared/components/centered-text";
+import { ɵɵRouterLink } from "@angular/router/testing";
+import { RouterLink } from '@angular/router';
 
 @Component({
   selector: 'app-results-viewer',
-  imports: [Toolbar, SeasonList, SeriesResultsTable, LoadingCentered, RaceResultsTable, MatIconModule, MatButtonModule, DatePipe],
+  imports: [Toolbar, SeasonList, SeriesResultsTable, LoadingCentered, RaceResultsTable, MatIconModule, MatButtonModule, DatePipe, CenteredText, RouterLink],
   templateUrl: './results-viewer.html',
   styleUrl: './results-viewer.scss',
 })
@@ -25,7 +28,7 @@ export class ResultsViewer {
   protected isPanelCollapsed = signal(false);
   private elementRef = inject(ElementRef);
 
-  id = input.required<string>();  // Route parameter
+  id = input<string>('');  // Route parameter
 
   isMobile = computed(() => this.breakpoint()?.matches );
 

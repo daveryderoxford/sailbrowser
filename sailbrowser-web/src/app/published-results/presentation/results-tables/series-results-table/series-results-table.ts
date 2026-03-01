@@ -26,7 +26,7 @@ export class SeriesResultsTable {
   raceClicked = output<string>();
 
   raceColumns = computed(() => {
-    const scores = this.series()!.competitors[0]?.raceScores ?? [];
+    const scores = this.series()?.competitors[0]?.raceScores ?? [];
 
     // Creates an array of length n where each entry is it's index 
     return Array.from({ length: scores.length }, (_, i) => i.toString());

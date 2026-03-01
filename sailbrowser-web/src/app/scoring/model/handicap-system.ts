@@ -2,7 +2,8 @@
 export const HANDICAP_SYSTEMS = [
   "Level Rating", 
   "PY",
-  "IRC"
+  'IRC',
+  'Personal'
  ] as const;
 
  /** Handicap system used to hamdicap between different boat types */

@@ -25,14 +25,19 @@
       <mat-list>
          @for (boat of filteredBoats(); track boat.id) {
          <mat-list-item>
+            @if (boat.isClub) {
+               Club 
+            }
             <span matListItemTitle>{{boat.boatClass}} {{boat.sailNumber}} </span>
             @if (boat.name) {
                <span matListItemLine>{{boat.name}}</span>
             }
             <span matListItemLine>
-               Helm: {{boat.helm}}
-               @if (boat.crew) {
-               Crew: {{boat.crew}}
+               @if (!boat.isClub) {
+                  Helm: {{boat.helm}}
+                  @if (boat.crew) {
+                     Crew: {{boat.crew}}
+                  }
                }
             </span>
 

@@ -7,6 +7,7 @@ import { MatInputModule } from '@angular/material/input';
 import { Toolbar } from 'app/shared/components/toolbar';
 import { collection, getDocs, writeBatch, doc, getFirestore } from '@angular/fire/firestore';
 import { FirebaseApp } from '@angular/fire/app';
+import { SailbrowserError } from 'app/shared/utils/sailbrowser-error';
 
 @Component({
    selector: 'app-system-data',
@@ -124,7 +125,7 @@ export class SystemDataComponent {
       reader.onload = async (e) => {
          try {
             const json = JSON.parse(e.target?.result as string);
-            if (!Array.isArray(json)) throw new Error('JSON file must contain an array of objects.');
+            if (!Array.isArray(json)) throw new SailbrowserError('JSON file must contain an array of objects.');
 
             this.msg.set(`Importing ${json.length} documents...`);
 

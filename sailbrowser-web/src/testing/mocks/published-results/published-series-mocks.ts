@@ -1,7 +1,10 @@
 import { PublishedSeries } from 'app/published-results/model/published-series';
 
+// Consistent with first 2024 season
 export const PUBLIC_SERIES_MOCK : PublishedSeries = {
-   id: 'test-series',
+   id: 's1',
+   name: 'Spring Series', 
+   fleetId: 'laser',
    competitors: [
       {
          rank: 1,
@@ -13,14 +16,14 @@ export const PUBLIC_SERIES_MOCK : PublishedSeries = {
          totalPoints: 5,
          netPoints: 3,
          raceScores: [
-            { points: 1, resultCode: 'OK', isDiscard: false },
-            { points: 2, resultCode: 'OK', isDiscard: false },
-            { points: 2, resultCode: 'DSQ', isDiscard: false },
-            { points: 2, resultCode: 'OK', isDiscard: true },
-            { points: 2, resultCode: 'OCS', isDiscard: true },
-            { points: 2, resultCode: 'OK', isDiscard: true },
+            { raceIndex: 1, points: 1, resultCode: 'OK', isDiscard: false },
+            { raceIndex: 2, points: 2, resultCode: 'OK', isDiscard: false },
+            { raceIndex: 3, points: 33, resultCode: 'DSQ', isDiscard: true },
+            { raceIndex: 4, points: 5, resultCode: 'OK', isDiscard: true },
+            { raceIndex: 5, points: 33, resultCode: 'OCS', isDiscard: true },
+            { raceIndex: 6, points: 2, resultCode: 'OK', isDiscard: true },
          ],
-         tiebreakScores: [],
+         scoresForTiebreak: [],
       },
       {
          rank: 2,
@@ -33,14 +36,14 @@ export const PUBLIC_SERIES_MOCK : PublishedSeries = {
          totalPoints: 7,
          netPoints: 4,
          raceScores: [
-            { points: 3, resultCode: 'OK', isDiscard: true },
-            { points: 1, resultCode: 'OK', isDiscard: false },
-            { points: 3, resultCode: 'OK', isDiscard: false },
-            { points: 3, resultCode: 'OK', isDiscard: false },
-            { points: 3, resultCode: 'OK', isDiscard: false },
-            { points: 3, resultCode: 'OK', isDiscard: false },
+            { raceIndex: 1, points: 3, resultCode: 'OK', isDiscard: true },
+            { raceIndex: 2, points: 1, resultCode: 'OK', isDiscard: false },
+            { raceIndex: 3, points: 3, resultCode: 'OK', isDiscard: false },
+            { raceIndex: 4, points: 3, resultCode: 'OK', isDiscard: false },
+            { raceIndex: 5, points: 3, resultCode: 'OK', isDiscard: false },
+            { raceIndex: 6, points: 3, resultCode: 'OK', isDiscard: false },
          ],
-         tiebreakScores: [],
+         scoresForTiebreak: [],
       },
    ],
 };

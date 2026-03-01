@@ -22,7 +22,7 @@
       <mat-nav-list>
         @for (series of season.series; track series.id) {
         <mat-list-item>
-          <a [routerLink]="['/series', series.id]">{{ series.name }}</a>
+          <a [routerLink]="['/results/viewer/', series.id]">{{ series.name }}</a>
         </mat-list-item>
         }
       </mat-nav-list>

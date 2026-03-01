@@ -9,7 +9,7 @@
         "shortname": "Fast Hcap",
         "startOrder": 1,
         "classFlag": "H",
-        "handicapScheme": "PY"
+        "handicapSchemes": "[PY]"
       },
       {
         "id": "shc",
@@ -17,7 +17,7 @@
         "shortname": "Slow Hcap",
         "startOrder": 2,
         "classFlag": "H",
-        "handicapScheme": "PY"
+        "handicapSchemes": "[PY]"
       },
       {
         "id": "ghc",
@@ -25,7 +25,7 @@
         "shortname": "handicap",
         "startOrder": 1,
         "classFlag": "H",
-        "handicapScheme": "PY"
+        "handicapSchemes": "[PY]"
       },
       {
         "id": "topper",

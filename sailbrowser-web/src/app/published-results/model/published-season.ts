@@ -5,17 +5,16 @@
  */
 export interface PublishedSeason {
    id: string;
+   name: string;
    series: SeriesInfo[];
 }
 
 /** A summary of a published series, stored within a `PublishedSeason` document. */
 export interface SeriesInfo {
-   id: string;
+   id: string;  
    name: string;
    fleetId: string;
    startDate: Date;
    endDate: Date;
    raceCount: number;
-   /** The ID of the document in the `published_series_results` collection. */
-   seriesId: string;
 }

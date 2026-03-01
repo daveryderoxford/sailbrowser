@@ -1,11 +1,18 @@
 import { PublishedSeriesResult } from 'app/published-results';
 import { SeriesScoringScheme } from '../model/scoring-algotirhm';
 import { PublishedRace } from 'app/published-results/model/published-race';
-import { ResultCode } from '../model/result-code';
 
 export interface ScoringConfig {
   seriesType: SeriesScoringScheme;
   discards: number;
+}
+
+/**
+ * Intermediate data structure for series scoring calculations.
+ */
+export interface IntermediateSeriesResult extends PublishedSeriesResult {
+  racesSailed: number;
+  averagePoints: number;
 }
 
 /**
@@ -15,71 +22,70 @@ export interface ScoringConfig {
  * @param config - The scoring configuration for the series.
  * @returns An array of SeriesCompetitorResult, sorted by rank.
  */
-export function scoreSeries(races: PublishedRace[], allCompetitorKeys: Set<string>, config: ScoringConfig): PublishedSeriesResult[] {
-  const competitorMap = aggregateCompetitorResults(races, allCompetitorKeys, config);
+export function scoreSeries(races: PublishedRace[], allCompetitorKeys: Set<string>, config: ScoringConfig): IntermediateSeriesResult[] {
+  const competitorMap = aggregateCompetitorResults(races, allCompetitorKeys);
   const resultsWithTotals = calculateTotalsAndDiscards(Array.from(competitorMap.values()), config);
   const rankedResults = rankCompetitors(resultsWithTotals);
+
   return rankedResults;
 }
 
-function aggregateCompetitorResults(races: PublishedRace[], allCompetitorKeys: Set<string>, config: ScoringConfig): Map<string, PublishedSeriesResult> {
-  const competitorMap = new Map<string, PublishedSeriesResult>();
-
+function aggregateCompetitorResults(races: PublishedRace[], allCompetitorKeys: Set<string>): Map<string, IntermediateSeriesResult> {
+  const competitorMap = new Map<string, IntermediateSeriesResult>();
   const dncPoints = allCompetitorKeys.size + 1;
 
-  // Initialize the map with all competitors from the series
-  allCompetitorKeys.forEach(key => {
-    const [helm, sailNumber, boatClass] = key.split('-');
-    if (!competitorMap.has(key)) {
-      competitorMap.set(key, {
-        helm,
-        sailNumber: parseInt(sailNumber, 10),
-        club: '', // TODO: Where does club info come from?
-        handicap: 0, // This needs to come from the competitor so cant just pull out of the key
-        boatClass,
-        raceScores: [],
-        totalPoints: 0,
-        netPoints: 0,
-        rank: 0,
-        tiebreakScores: [],
-      });
-    }
-  });
-
+  // Find the first result for each competitor to get their details
+  const competitorDetails = new Map<string, { club?: string; handicap: number }>();
   for (const race of races) {
-    const resultsByKey = new Map(race.results.map(r => [`${r.helm}-${r.sailNumber}-${r.boatClass}`, r]));
-
-    for (const key of allCompetitorKeys) {
-      const competitorResult = competitorMap.get(key)!;
-      if (!resultsByKey.has(key)) {
-        // Competitor did not sail in this race (DNC)
-        const dncResult = {
-          points: dncPoints,
-          resultCode: 'DNC',
-          isDiscard: false,
-        } as const;
-        competitorResult.raceScores.push(dncResult);
+    for (const result of race.results) {
+      const key = `${result.helm}-${result.sailNumber}-${result.boatClass}`;
+      if (!competitorDetails.has(key)) {
+        competitorDetails.set(key, { club: result.club, handicap: result.handicap });
       }
     }
   }
 
-  // Now, add the actual scored results from the published races
-  races.forEach(race => {
-    race.results.forEach(result => {
-      const key = `${result.helm}-${result.sailNumber}-${result.boatClass}`;
-      const score = {
-        points: result.points,
-        resultCode: result.resultCode as ResultCode,
-        isDiscard: false,
-      };
-      competitorMap.get(key)?.raceScores.push(score);
+  allCompetitorKeys.forEach(key => {
+    const [helm, sailNumber, boatClass] = key.split('-');
+    const details = competitorDetails.get(key) || { club: '', handicap: 0 };
+    competitorMap.set(key, {
+      helm,
+      sailNumber: parseInt(sailNumber, 10),
+      club: details.club || '',
+      handicap: details.handicap,
+      boatClass,
+      raceScores: [],
+      totalPoints: 0,
+      netPoints: 0,
+      rank: 0,
+      scoresForTiebreak: [],
+      racesSailed: 0,
+      averagePoints: 0,
+    });
+  });
+
+  races.forEach((race, raceIndex) => {
+    const resultsByKey = new Map(race.results.map(r => [`${r.helm}-${r.sailNumber}-${r.boatClass}`, r]));
+    competitorMap.forEach((seriesResult, key) => {
+      const raceResult = resultsByKey.get(key);
+      if (raceResult) {
+        seriesResult.raceScores.push({ raceIndex, points: raceResult.points, resultCode: raceResult.resultCode, isDiscard: false });
+      } else {
+        // Competitor did not compete in this race (DNC)
+        seriesResult.raceScores.push({
+          raceIndex: raceIndex,
+          points: dncPoints,
+          resultCode: 'DNC',
+          isDiscard: false,
+        });
+      }
     });
   });
 
   return competitorMap;
 }
 
-function calculateTotalsAndDiscards(results: PublishedSeriesResult[], config: ScoringConfig): PublishedSeriesResult[] {
+function calculateTotalsAndDiscards(results: IntermediateSeriesResult[], config: ScoringConfig): IntermediateSeriesResult[] {
   // Calculate total and net points after all races are processed
   for (const result of results) {
     const sortedScores = [...result.raceScores].sort((a, b) => b.points - a.points); // Sort scores descending for discards
@@ -89,14 +95,18 @@ function calculateTotalsAndDiscards(results: PublishedSeriesResult[], config: Sc
     const scoresToCount = sortedScores.filter(s => !s.isDiscard);
     result.netPoints = scoresToCount.reduce((acc, r) => acc + r.points, 0);
     result.totalPoints = result.raceScores.reduce((acc, r) => acc + r.points, 0);
+
+    // Calculate average points
+    result.racesSailed = result.raceScores.filter(r => r.resultCode !== 'DNC').length;
+    result.averagePoints = result.racesSailed > 0 ? result.totalPoints / result.racesSailed : 0;
   }
   return results;
 }
 
-function rankCompetitors(results: PublishedSeriesResult[]): PublishedSeriesResult[] {
+function rankCompetitors(results: IntermediateSeriesResult[]): IntermediateSeriesResult[] {
   // For tie-breaking (A8.1), create a sorted list of scores for each competitor
   results.forEach(result => {
-    result.tiebreakScores = result.raceScores.map(r => r.points).sort((a, b) => a - b);
+    result.scoresForTiebreak = result.raceScores.map(r => r.points).sort((a, b) => a - b);
   });
 
   results.sort((a, b) => {
@@ -106,9 +116,9 @@ function rankCompetitors(results: PublishedSeriesResult[]): PublishedSeriesResul
     }
 
     // Tie-break A8.1: most firsts, seconds, etc.
-    for (let i = 0; i < Math.min(a.tiebreakScores.length, b.tiebreakScores.length); i++) {
-      if (a.tiebreakScores[i] !== b.tiebreakScores[i]) {
-        return a.tiebreakScores[i] - b.tiebreakScores[i];
+    for (let i = 0; i < Math.min(a.scoresForTiebreak.length, b.scoresForTiebreak.length); i++) {
+      if (a.scoresForTiebreak[i] !== b.scoresForTiebreak[i]) {
+        return a.scoresForTiebreak[i] - b.scoresForTiebreak[i];
       }
     }
 
@@ -138,17 +148,17 @@ function rankCompetitors(results: PublishedSeriesResult[]): PublishedSeriesResul
   return results;
 }
 
-function isTied(a: PublishedSeriesResult, b: PublishedSeriesResult): boolean {
+function isTied(a: IntermediateSeriesResult, b: IntermediateSeriesResult): boolean {
   if (a.netPoints !== b.netPoints) {
     return false;
   }
 
-  if (a.tiebreakScores.length !== b.tiebreakScores.length) {
+  if (a.scoresForTiebreak.length !== b.scoresForTiebreak.length) {
     return false;
   }
 
-  for (let i = 0; i < a.tiebreakScores.length; i++) {
-    if (a.tiebreakScores[i] !== b.tiebreakScores[i]) {
+  for (let i = 0; i < a.scoresForTiebreak.length; i++) {
+    if (a.scoresForTiebreak[i] !== b.scoresForTiebreak[i]) {
       return false;
     }
   }

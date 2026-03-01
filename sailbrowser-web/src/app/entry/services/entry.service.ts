@@ -30,7 +30,7 @@ export class EntryService {
     console.log("Calling enter races");
 
     if (this.isDuplicateEntry(details)) {
-      throw new Error("Duplicate entry");
+      throw new SailbrowserError("Duplicate entry");
     }
 
     // Populate handicap based on the classes handicap if not provided

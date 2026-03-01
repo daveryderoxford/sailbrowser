@@ -75,7 +75,7 @@ export class SeasonList {
   // Expansion data. In progress series followed by seasons
   protected expansionPanels = computed( () => {
     return [
-      {title: 'In Progress', series: this.inProgressSeries()},
+      {title: 'Current Series', series: this.inProgressSeries()},
       ...this.filteredSeasons().map( s => ({title: s.id, series: s.series}))
     ]
   });

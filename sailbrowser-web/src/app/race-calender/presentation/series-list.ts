@@ -16,6 +16,7 @@ import { Toolbar } from 'app/shared/components/toolbar';
 import { debounceTime, distinctUntilChanged, startWith } from 'rxjs';
 import { Series } from '../model/series';
 import { RaceCalendarStore } from '../services/full-race-calander';
+import { normaliseString } from 'app/shared/utils/string-utils';
 
 @Component({
   selector: 'app-series-list',
@@ -49,7 +50,7 @@ import { RaceCalendarStore } from '../services/full-race-calander';
         <mat-list class="content">
             @for (series of filteredSeries(); track series.id) {
             <mat-list-item>
-              <span matListItemTitle>{{series.name}} ({{series.season}})</span>
+              <span matListItemTitle>{{series.name}} ({{this.getSeasonName(series.seasonId)}})</span>
               <span matListItemLine>
                   {{getFleetName(series.fleetId)}}
                   @if(series.startDate) { - {{series.startDate | date}} }
@@ -93,9 +94,12 @@ export class SeriesList {
   );
 
   filteredSeries = computed(() => {
-    const term = this.searchTerm()?.toLowerCase() ?? '';
-    return this.rcs.allSeries().filter((s: Series) => !term || s.name.toLowerCase().includes(term) || s.season.toLowerCase().includes(term));
+    const term = normaliseString(this.searchTerm());
+    return this.rcs.allSeries().filter((s: Series) => 
+      !term || normaliseString(s.name).includes(term) || normaliseString(s.seasonId).includes(term));
   });
 
-  getFleetName = (id: string) => this.cs.club()?.fleets.find(f => f.id === id)?.name ?? 'Unknown Fleet';
+  getFleetName = (id: string) => this.cs.findFleet(id)()?.name ?? 'Unknown Fleet';
+
+  getSeasonName = (id: string) => this.cs.club().seasons.find(s => s.id === id)?.name ?? 'Unknown Season';
 }

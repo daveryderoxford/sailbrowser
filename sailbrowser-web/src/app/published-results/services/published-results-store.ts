@@ -4,12 +4,16 @@ import { collection, doc, getDoc, getDocs, getFirestore, query, where } from '@a
 import { dataObjectConverter } from 'app/shared/firebase/firestore-helper';
 import { PublishedRace } from '../model/published-race';
 import { PublishedSeason } from '../model/published-season';
-import { PublishedSeries, PublishedSeriesResult } from '../model/published-series';
+import { PublishedSeries } from '../model/published-series';
 
 interface SeriesRaces {
   series: PublishedSeries | undefined;
   races: PublishedRace[];
 }
+
+export const PUBLISHED_SEASONS_PATH = '/published-seasons';
+export const PUBLISHED_SERIES_PATH = '/published-series';
+export const PUBLISHED_RACES_PATH = '/published-races';
 
 @Injectable({
   providedIn: 'root'
@@ -18,15 +22,15 @@ export class PublishedResultsReader {
   private readonly firestore = getFirestore(inject(FirebaseApp));
 
   private seasonsCollection = collection(
-    this.firestore, '/published-seasons').withConverter(dataObjectConverter<PublishedSeason>());
+    this.firestore, PUBLISHED_SEASONS_PATH).withConverter(dataObjectConverter<PublishedSeason>());
 
   private seriesCollection = collection(
-    this.firestore, '/published-series').withConverter(dataObjectConverter<PublishedSeries>());
+    this.firestore, PUBLISHED_SERIES_PATH).withConverter(dataObjectConverter<PublishedSeries>());
 
   private racesCollection = collection(
-    this.firestore, '/published-races').withConverter(dataObjectConverter<PublishedRace>());
+    this.firestore, PUBLISHED_RACES_PATH).withConverter(dataObjectConverter<PublishedRace>());
 
-  /** One-time load with no monitoring */
+  /** One-time load with no monitoring of all published seasons */
   private readonly seasonsResource = resource({
     loader: () => getDocs(this.seasonsCollection).then(
       snapshot => snapshot.docs.map(d => d.data())

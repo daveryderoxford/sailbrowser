@@ -12890,7 +12890,7 @@
                 "line": 42
             },
             "extends": [],
-            "templateData": "<div class=\"page-container\" [class.mobile-mode]=\"isMobile()\" [class.panel-collapsed]=\"isPanelCollapsed()\">\n   <app-toolbar title=\"Results\" class=\"toolbar-area\" />\n\n   <!-- Show sidebar in desktop view\n     on mobile, navgate via a full screen list page -->\n   @if (!isMobile()) {\n   <aside class=\"sidebar\">\n      <app-season-list [seasons]=\"reader.seasons()\" />\n   </aside>\n   }\n\n   <main class=\"content-area\">\n      @if (!isMobile()) {\n      <button mat-icon-button (click)=\"togglePanel()\" class=\"panel-toggle-button\"\n         [title]=\"isPanelCollapsed() ? 'Show panel' : 'Hide panel'\">\n         <mat-icon>{{ isPanelCollapsed() ? 'keyboard_double_arrow_right' : 'keyboard_double_arrow_left' }}</mat-icon>\n      </button>\n      }\n\n      <div class=\"tables-container\">\n         @if (store.seriesLoading()) {\n         <app-loading-centered />\n         } @else {\n         <h3> {{series()?.id}}</h3>\n         <app-series-results-table [series]=\"series()!\" [raceTitles]=\"raceTitles()\"\n            (raceClicked)=\"raceClicked($event)\" />\n\n         @for (race of reversedRaces(); track race; let i = $index, isFirst = $first, isLast = $last) {\n         <div class=\"race-title\" [attr.data-race-id]=\"race.id\">\n            <h3>\n               Race {{race.index}} - {{race.scheduledStart| date:'dd MMM yy'}} {{race.results.length === 0 ? ' - No\n               competitors' : '' }}\n            </h3>\n            <span class=\"spacer\"></span>\n            <div class=\"race-nav\">\n               <button mat-icon-button (click)=\"scrollToTop()\" title=\"Scroll to top\">\n                  <mat-icon>arrow_upward</mat-icon>\n               </button>\n               @if (!isFirst) {\n               <button mat-icon-button (click)=\"raceClicked(reversedRaces()[i-1].id)\" title=\"Previous race\">\n                  <mat-icon>keyboard_arrow_up</mat-icon>\n               </button>\n               }\n               @if (!isLast) {\n               <button mat-icon-button (click)=\"raceClicked(reversedRaces()[i+1].id)\" title=\"Next race\">\n                  <mat-icon>keyboard_arrow_down</mat-icon>\n               </button>\n               }\n            </div>\n         \n         @if (race.results.length > 0) {\n         <app-race-results-table [results]=\"race.results\" />\n         }\n         </div>\n         }\n         }\n      </div>\n   </main>\n</div>"
+            "templateData": "<div class=\"page-container\" [class.mobile-mode]=\"isMobile()\" [class.panel-collapsed]=\"isPanelCollapsed()\">\n   <app-toolbar title=\"Results\" class=\"toolbar-area\" />\n\n   <!-- Show sidebar in desktop view\n     on mobile, navgate via a full screen list page -->\n   @if (!isMobile()) {\n   <aside class=\"sidebar\">\n      <app-season-list [seasons]=\"reader.seasons()\" />\n   </aside>\n   }\n\n   <main class=\"content-area\">\n      @if (!isMobile()) {\n      <button mat-icon-button (click)=\"togglePanel()\" class=\"panel-toggle-button\"\n         [title]=\"isPanelCollapsed() ? 'Show panel' : 'Hide panel'\">\n         <mat-icon>{{ isPanelCollapsed() ? 'keyboard_double_arrow_right' : 'keyboard_double_arrow_left' }}</mat-icon>\n      </button>\n      }\n\n      <div class=\"tables-container\">\n         @if (store.seriesLoading()) {\n            <app-loading-centered />\n         } @else {\n            <h3> {{series()?.id}}</h3>\n            <app-series-results-table [series]=\"series()!\" [raceTitles]=\"raceTitles()\"\n               (raceClicked)=\"raceClicked($event)\" />\n\n            @for (race of reversedRaces(); track race; let i = $index, isFirst = $first, isLast = $last)  {\n               <div class=\"race-container\">\n                  <div class=\"race-title\" [attr.data-race-id]=\"race.id\">\n                     <h3>Race {{race.index}} - {{race.scheduledStart| date:'dd MMM yy'}} {{race.results.length === 0 ? ' - No competitors' : '' }}</h3>\n                     <div class=\"race-nav\">\n                        <button mat-icon-button (click)=\"scrollToTop()\" title=\"Scroll to top\" class=\"nav-button\">\n                           <mat-icon>arrow_upward</mat-icon>\n                        </button>\n                        @if (!isFirst) {\n                           <button mat-icon-button (click)=\"raceClicked(reversedRaces()[i-1].id)\" title=\"Previous race\" class=\"nav-button\">\n                              <mat-icon>keyboard_arrow_up</mat-icon>\n                           </button>\n                        }\n                        @if (!isLast) {\n                           <button mat-icon-button (click)=\"raceClicked(reversedRaces()[i+1].id)\" title=\"Next race\" class=\"nav-button\">\n                              <mat-icon>keyboard_arrow_down</mat-icon>\n                           </button>\n                        }\n                     </div>\n                  </div>\n                  @if (race.results.length > 0) {\n                     <app-race-results-table [results]=\"race.results\" />\n                  }\n               </div>\n            }\n         }\n      </div>\n   </main>\n</div>"
         },
         {
             "name": "SeasonList",
@@ -13102,6 +13102,78 @@
             "stylesData": "\n   .container {\n      height: 100%;\n      background: var(--mat-sys-surface-variant);\n      padding: 15px;\n   }\n  \n",
             "extends": [],
             "templateData": "<div class=\"container\">\n  <mat-form-field appearance=\"outline\" class=\"w-full\">\n    <mat-label>Filter by Fleet</mat-label>\n    <input matInput type=\"text\" [ngModel]=\"fleetFilter()\" (ngModelChange)=\"fleetFilter.set($event)\"\n      placeholder=\"e.g., Laser\" />\n    @if (fleetFilter()) {\n    <button matSuffix matIconButton aria-label=\"Clear\" (click)=\"fleetFilter.set('')\">\n      <mat-icon>close</mat-icon>\n    </button>\n    }\n  </mat-form-field>\n\n  <mat-accordion multi>\n    @for (season of expansionPanels(); track season.title; let isFirst = $first) {\n    <mat-expansion-panel [expanded]=\"isFirst\">\n      <mat-expansion-panel-header>\n        <mat-panel-title>\n          {{ season.title }}\n        </mat-panel-title>\n      </mat-expansion-panel-header>\n\n      <mat-nav-list>\n        @for (series of season.series; track series.id) {\n        <mat-list-item>\n          <a [routerLink]=\"['/series', series.id]\">{{ series.name }}</a>\n        </mat-list-item>\n        }\n      </mat-nav-list>\n    </mat-expansion-panel>\n    }\n  </mat-accordion>\n</div>"
+        },
+        {
+            "name": "SeasonPage",
+            "id": "component-SeasonPage-96d8e9917e74bb3d39fb10e29ed6cbe2300278a5ed12348591b1cb5795bf285b8774f23ade007caa4c0a8f9453c3ead63a98bf11b1ba15ff1501a37abbb99517",
+            "file": "src/app/published-results/presentation/season-page/season-page.ts",
+            "encapsulation": [],
+            "entryComponents": [],
+            "inputs": [],
+            "outputs": [],
+            "providers": [],
+            "selector": "app-season-page",
+            "styleUrls": [],
+            "styles": [
+                ""
+            ],
+            "templateUrl": [
+                "./season-page.html"
+            ],
+            "viewProviders": [],
+            "hostDirectives": [],
+            "inputsClass": [],
+            "outputsClass": [],
+            "propertiesClass": [
+                {
+                    "name": "prs",
+                    "defaultValue": "inject(PublishedResultsReader)",
+                    "deprecated": false,
+                    "deprecationMessage": "",
+                    "type": "unknown",
+                    "indexKey": "",
+                    "optional": false,
+                    "description": "",
+                    "line": 16,
+                    "modifierKind": [
+                        124
+                    ]
+                },
+                {
+                    "name": "seasons",
+                    "defaultValue": "this.prs.seasons",
+                    "deprecated": false,
+                    "deprecationMessage": "",
+                    "type": "unknown",
+                    "indexKey": "",
+                    "optional": false,
+                    "description": "",
+                    "line": 18
+                }
+            ],
+            "methodsClass": [],
+            "deprecated": false,
+            "deprecationMessage": "",
+            "hostBindings": [],
+            "hostListeners": [],
+            "standalone": false,
+            "imports": [
+                {
+                    "name": "Toolbar"
+                },
+                {
+                    "name": "SeasonList"
+                }
+            ],
+            "description": "<p>Routed component using on mobile that displays a list of seasons\nand allows selection of seaon results</p>\n",
+            "rawdescription": "\nRouted component using on mobile that displays a list of seasons\nand allows selection of seaon results\n",
+            "type": "component",
+            "sourceCode": "import { Component, inject } from '@angular/core';\nimport { Toolbar } from 'app/shared/components/toolbar';\nimport { SeasonList } from \"../season-list/season-list\";\nimport { PublishedResultsReader } from 'app/published-results/services/published-results-store';\n\n/** Routed component using on mobile that displays a list of seasons \n * and allows selection of seaon results\n */\n@Component({\n  selector: 'app-season-page',\n  imports: [Toolbar, SeasonList],\n  templateUrl: './season-page.html',\n  styles: ``,\n})\nexport class SeasonPage {\n  protected prs = inject(PublishedResultsReader);\n\n  seasons = this.prs.seasons;\n\n}\n",
+            "assetsDirs": [],
+            "styleUrlsData": "",
+            "stylesData": "\n",
+            "extends": [],
+            "templateData": "<app-toolbar title=\"Series selection\"/>\n\n<app-season-list [seasons]=\"seasons()\"> </app-season-list>\n"
         },
         {
             "name": "SeriesAdd",
@@ -22523,6 +22595,15 @@
                 "coveragePercent": 62,
                 "coverageCount": "5/8",
                 "status": "good"
+            },
+            {
+                "filePath": "src/app/published-results/presentation/season-page/season-page.ts",
+                "type": "component",
+                "linktype": "component",
+                "name": "SeasonPage",
+                "coveragePercent": 33,
+                "coverageCount": "1/3",
+                "status": "medium"
             },
             {
                 "filePath": "src/app/published-results/published-result.routes.ts",

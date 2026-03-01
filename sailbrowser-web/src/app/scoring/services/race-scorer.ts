@@ -1,10 +1,11 @@
-import { RaceResult } from 'app/published-results/model/published-race';
+import { PublishedRace, RaceResult } from 'app/published-results/model/published-race';
+import { HandicapSystem } from 'app/scoring/model/handicap-system';
+import { getLongAlgorithm, getShortAlgorithm, isFinishedComp, isStartAreaComp, ResultCodeAlgorithm } from 'app/scoring/model/result-code-scoring';
+import { differenceInSeconds } from 'date-fns';
 import { Race } from '../../race-calender/model/race';
 import { RaceCompetitor } from '../../results-input/model/race-competitor';
-import { HandicapSystem } from 'app/scoring/model/handicap-system';
-import { isFinishedComp, isStarter } from 'app/scoring/model/result-code';
-import { differenceInSeconds } from 'date-fns';
 import { SeriesScoringScheme } from '../model/scoring-algotirhm';
+import { SailbrowserError } from 'app/shared/utils/sailbrowser-error'
 
 interface IntermediateResult extends RaceResult {
   // Internal properties for scoring
@@ -16,13 +17,13 @@ interface IntermediateResult extends RaceResult {
  * Uses competitor start, finish. lap and status to calculate results for a single race. 
  * All data in the ResultsData object is populated (elapsed/corrected times points and positions).
  * 
- * It is assumes all competitors in the race are supplied. 
+ * Assumes all competitors in the race are supplied.  
  * The maximum number of laps and number of starters is calculated based on all competitors. 
  */
 export function scoreRace(
+  race: Race,
   competitors: RaceCompetitor[],
   scheme: HandicapSystem,
-  race: Race,
   seriesType: SeriesScoringScheme,
   seriesCompetitorCount: number,
 ): RaceResult[] {
@@ -55,22 +56,19 @@ function scoreByTime(
   intermediateResults.sort((a, b) => sortByCorrectedTime(a, b));
 
   // 3. Assign points for finishers
-  assignPointsForFinishers(intermediateResults, 'correctedTime');
+  assignPointsForFinishers(intermediateResults, 'correctedTime', seriesType, seriesCompetitorCount);
 
   // 4. Assign points for non-finishers
-  assignPointsForNonFinishers(intermediateResults, seriesCompetitorCount);
+  applyStaticRacePenalties(intermediateResults, 
+                           seriesCompetitorCount, seriesType);
 
   // 5. Sort by points to determine final positions
   intermediateResults.sort((a, b) => sortByPoints(a, b));
 
-  // 6. Apply scoring penalties
-  applyScoringPenalties(intermediateResults, seriesType);
-
-  // 7. Re-sort if penalties changed order
-  intermediateResults.sort((a, b) => sortByPoints(a, b));
-
   // 8. Remove internal properties before returning
-  return intermediateResults.map(({ position, isDiscardable, ...result }) => result);
+  return intermediateResults.map(({ position, isDiscardable, ...result }, index) => {
+    return { ...result, rank: index + 1 };
+  });
 }
 
 /**
@@ -86,41 +84,58 @@ function scoreByPosition(
   // For position-based races, maxLaps is not used for scoring, so pass 0.
   const intermediateResults = buildIntermediateResults(competitors, 'Level Rating', race, 0);
 
-  if (race.type === 'Pursuit') {
-    // For Pursuit races, position is manually entered.
-    intermediateResults.forEach((res, i) => {
-      res.position = competitors[i].manualPosition || 0;
-    });
+  const finishers = intermediateResults.filter(res => isFinishedComp(res.resultCode));
+
+  // For Level Rating and Pursuit, manual position takes precedence.
+  // If any finisher has a manual position, all must. Otherwise, all must have an elapsed time.
+  const useManualPositions = race.type === 'Pursuit' || finishers.some(f => f.position > 0);
+
+  if (useManualPositions) {
+    const missingPosition = finishers.find(f => !(f.position > 0));
+    if (missingPosition) {
+      throw new SailbrowserError(`Inconsistent ordering data: Manual positions are used, but finisher with sail number ${missingPosition.sailNumber} is missing a position.`);
+    }
+    finishers.sort((a, b) => (a.position || 0) - (b.position || 0));
   } else {
-    // For other position-based races (like Level Rating), sort by corrected time first.
-    intermediateResults.sort((a, b) => sortByCorrectedTime(a, b));
-    intermediateResults.forEach((res, index) => {
-      res.position = index + 1;
-    });
+    const missingTime = finishers.find(f => !(f.elapsedTime > 0));
+    if (missingTime) {
+      throw new SailbrowserError(`Inconsistent ordering data: Finish times are used, but finisher with sail number ${missingTime.sailNumber} is missing a finish time.`);
+    }
+    finishers.sort((a, b) => (a.elapsedTime || 0) - (b.elapsedTime || 0));
   }
 
   // 1. Assign points based on manual position for finishers
-  assignPointsForFinishers(intermediateResults.filter(res => res.position > 0), 'position');
+  assignPointsForFinishers(finishers, useManualPositions ? 'position' : 'elapsedTime', seriesType, seriesCompetitorCount);
 
   // 2. Assign points for non-finishers
-  assignPointsForNonFinishers(intermediateResults, seriesCompetitorCount);
+  applyStaticRacePenalties(intermediateResults, seriesCompetitorCount, seriesType);
 
   // 3. Sort by points to determine final positions
   intermediateResults.sort((a, b) => sortByPoints(a, b));
 
-  // 4. Apply scoring penalties
-  applyScoringPenalties(intermediateResults, seriesType);
-
-  // 5. Re-sort if penalties changed order
-  intermediateResults.sort((a, b) => sortByPoints(a, b));
-
-  // 6. Finalize position based on points for official record
-  intermediateResults.forEach((res, index) => {
-    res.position = index + 1;
+  // 4. Remove internal properties before returning
+  return intermediateResults.map(({ position, isDiscardable, ...result }, index) => {
+    return { ...result, rank: index + 1 };
   });
+}
 
-  // 7. Remove internal properties before returning
-  return intermediateResults.map(({ position, isDiscardable, ...result }) => result);
+/**
+ * Re-calculates points for a previously scored race. This is necessary when the
+ * total number of competitors in a series changes, affecting DNC/DNS scores.
+ * It modifies the points for non-finishers directly on the provided race object.
+ */
+export function rescoreRacePoints(
+  race: PublishedRace,
+  newSeriesCompetitorCount: number,
+  seriesType: SeriesScoringScheme
+): PublishedRace {
+  // Create a mutable copy of the results to work with.
+  const results: IntermediateResult[] = race.results.map(r => ({ ...r, position: r.rank, isDiscardable: race.isDiscardable }));
+
+  // Re-assign points for non-finishers based on the new total competitor count.
+  applyStaticRacePenalties(results, newSeriesCompetitorCount, seriesType);
+
+  return { ...race, results: results.map(({ position, isDiscardable, ...result }) => result) };
 }
 
 function buildIntermediateResults(
@@ -130,9 +145,9 @@ function buildIntermediateResults(
   maxLaps: number
 ): IntermediateResult[] {
   return competitors.map((comp) => {
-    const times = getCorrectedTime(comp, scheme, race.isAverageLap, maxLaps);
+    const elapsedTime = getElapsedTime(comp, race.isAverageLap, maxLaps);
     return {
-      rank: 1,  // Temp to do
+      rank: 0,
       boatClass: comp.boatClass,
       sailNumber: comp.sailNumber,
       helm: comp.helm,
@@ -141,78 +156,85 @@ function buildIntermediateResults(
       handicap: comp.handicap,
       startTime: comp.startTime!,
       finishTime: comp.finishTime!,
-      elapsedTime: times.elapsed,
-      correctedTime: times.corrected,
+      elapsedTime: elapsedTime,
+      correctedTime: calculateCorrectedTime(elapsedTime, comp.handicap, scheme),
       points: 0,
       resultCode: comp.resultCode,
-      position: 0,
+      position: comp.manualPosition || 0,
       isDiscardable: true,
     };
   });
 }
 
-function getCorrectedTime(comp: RaceCompetitor, scheme: HandicapSystem, isAverageLap: boolean, maxLaps: number): { corrected: number; elapsed: number; error: string; } {
-
-  let corrected = 0.0;
-  let elapsed = 0.0;
-
+function getElapsedTime(comp: RaceCompetitor, isAverageLap: boolean, maxLaps: number): number {
   const finishTime = comp.finishTime;
   const compStartTime = comp.startTime;
 
   if (finishTime && compStartTime) {
-
     const diff = differenceInSeconds(finishTime.getTime(), compStartTime.getTime());
 
     if (diff < 0) {
-      return { corrected: 0, elapsed: 0, error: 'Start time before finish time' };
+      // Consider logging this error
+      return 0;
     }
 
     const numLaps = comp.numLaps;
     if (isAverageLap && numLaps === 0) {
-      return { corrected: 0, elapsed: 0, error: 'Number of laps 0 for average lap race' };
+      // Consider logging this error
+      return 0;
     }
 
-    elapsed = diff;
-
-    const correctedElapsed = isAverageLap ? (elapsed / numLaps) * maxLaps : elapsed;
-
-    switch (scheme) {
-      case 'PY':
-        corrected = (correctedElapsed * 1000.0) / comp.handicap;
-        break;
-      case 'Level Rating':
-        corrected = diff; // For Level Rating, corrected time is the same as elapsed.
-        break;
-    }
-  } else {
-    return { corrected: 0, elapsed: 0, error: '' };
+    const elapsedTime = isAverageLap ? (diff / numLaps) * maxLaps : diff;
+    return Math.round(elapsedTime);
   }
-
-  return {
-    corrected: Math.round(corrected),
-    elapsed: Math.round(elapsed),
-    error: '',
-  };
+  return 0;
 }
 
-/** Assigns points for finishers in a race
+function calculateCorrectedTime(elapsedTime: number, handicap: number, scheme: HandicapSystem): number {
+  if (elapsedTime === 0) {
+    return 0;
+  }
+  switch (scheme) {
+    case 'PY':
+      return Math.round((elapsedTime * 1000.0) / handicap);
+    case 'Level Rating':
+      return elapsedTime; // No handicap correction
+    case 'IRC':
+    case 'Personal':
+      throw new SailbrowserError(`${scheme} Not implemented`);
+  }
+}
+
+/** Assigns points based on the competitor's ellapsed/corrected time.
  * Competitors with the same value for the given key (e.g., correctedTime or position)
- * are awarded tied points.
+ * are awarded tied points.  
+ * When multiple competitors are tied, the score is rounded to 1 decimal place. 
+ * Scoring penalty codes are included and the scoting penatly applied 
  */
-function assignPointsForFinishers(results: IntermediateResult[], key: keyof IntermediateResult) {
+function assignPointsForFinishers(
+  results: IntermediateResult[],
+  key: keyof IntermediateResult,
+  seriesType: SeriesScoringScheme,
+  seriesCompetitorCount: number,
+) {
   const finishers = results.filter((res) => isFinishedComp(res.resultCode));
   const resultsByValue = new Map<number, IntermediateResult[]>();
 
   // Group competitors by the value of the specified key
-  finishers.forEach((res) => {
+  for (const res of finishers) {
     const value = (res[key] as number) || 0;
+    // A value of 0 is valid for time/position, so we don't want to treat it as falsey.
+    if (value === 0 && res.resultCode !== 'OK') continue;
     if (!resultsByValue.has(value)) resultsByValue.set(value, []);
     resultsByValue.get(value)!.push(res);
-  });
+  }
 
   // Iterate over ordered list of values, calculating points for ties
   const sortedValues = Array.from(resultsByValue.keys()).sort((a, b) => a - b);
   let pos = 1.0;
+
+  const startAreaCount = results.filter(r => isStartAreaComp(r.resultCode)).length;
+  const dnfPoints = (seriesType === 'longSeries2017' ? startAreaCount : seriesCompetitorCount) + 1;
 
   for (const value of sortedValues) {
     const resultsAtValue = resultsByValue.get(value)!;
@@ -221,61 +243,73 @@ function assignPointsForFinishers(results: IntermediateResult[], key: keyof Inte
     const avgPoints = pos - 1 + (resultsAtValue.length + 1) / 2.0;
 
     for (const res of resultsAtValue) {
-      res.points = avgPoints;
+      // Round ties to one decimal place 
+      res.points = Math.round(avgPoints * 10) / 10;
       res.position = pos;
+
+      // If the competitor has a scoring penalty, apply it now.
+      const algorithm = getShortAlgorithm(res.resultCode);
+      if (algorithm === ResultCodeAlgorithm.scoringPenalty) {
+        // RRS 44.3(c): Finish position + (20% * Boats Entered)
+        const penalty = Math.round((dnfPoints * 0.2) * 10) / 10;
+        // The penalty is capped at the DNF score.
+        res.points = Math.min(res.points + penalty, dnfPoints);
+      }
     }
     pos += resultsAtValue.length;
   }
 }
 
-function assignPointsForNonFinishers(results: IntermediateResult[], seriesCompetitorCount: number) {
-  let starters = -1;
+/** Applies panalties that are not dependent on other 
+ * results in the series. 
+ */
+function applyStaticRacePenalties(results: IntermediateResult[], 
+  seriesCompetitorCount: number, 
+  scheme: SeriesScoringScheme) {
 
-  for (const res of results) {
-    if (isFinishedComp(res.resultCode)) continue;
+  // 1. Calculate the number of boats that came to the start area for this specific race
+  const startAreaCount = results.filter(r => isStartAreaComp(r.resultCode)).length;
 
-    if (isStarter(res.resultCode)) {
-      if (starters === -1) starters = startersInRace(results);
-      res.points = starters + 1.0;
-      res.position = starters + 1;
-    } else {
-      res.points = seriesCompetitorCount + 1.0;
-      res.position = seriesCompetitorCount + 1;
+  // This function should only apply penalties to non-finishers.
+  // Finishers with penalties (like SCP) are handled in `assignPointsForFinishers`.
+  const nonFinishers = results.filter(r => !isFinishedComp(r.resultCode));
+
+  for (const result of nonFinishers) {
+    // Determine which algorithm to use based on the scheme
+    const algorithm = (scheme === 'longSeries2017')
+      ? getLongAlgorithm(result.resultCode) 
+      : getShortAlgorithm(result.resultCode);
+
+    switch (algorithm) {
+      case ResultCodeAlgorithm.compInSeries:
+        result.points = seriesCompetitorCount + 1;
+        break;
+      case ResultCodeAlgorithm.compInStartArea:
+        result.points = startAreaCount + 1;
+        break;
+      default:
+        break;
     }
   }
 }
 
-function applyScoringPenalties(results: IntermediateResult[], scheme: SeriesScoringScheme) {
-  for (const res of results) {
-    if (res.resultCode === 'SCP') {
-      res.points = Math.min(res.points * 1.2, 99999);
-    }
-  }
-}
-
+/** 
+ * Sorts by points.  Any boat that does not have any points yet 
+ * assigned is sorted to the bottom.
+ */
 function sortByPoints(a: IntermediateResult, b: IntermediateResult): number {
   return (a.points || 9999) - (b.points || 9999);
 }
 
-function startersInRace(results: IntermediateResult[]): number {
-  return results.reduce((count, comp) => {
-    return isStarter(comp.resultCode) ? count + 1 : count;
-  }, 0);
-}
-
-function isOk(comp: IntermediateResult): boolean {
-  return comp.resultCode === 'OK';
-}
-
 export function sortByCorrectedTime(a: IntermediateResult, b: IntermediateResult): number {
-  const aOk = isOk(a);
-  const bOk = isOk(b);
+  const aIsFinisher = isFinishedComp(a.resultCode);
+  const bIsFinisher = isFinishedComp(b.resultCode);
 
-  if (aOk && bOk) {
+  if (aIsFinisher && bIsFinisher) {
     return (a.correctedTime || 0) - (b.correctedTime || 0);
-  } else if (aOk && !bOk) {
+  } else if (aIsFinisher && !bIsFinisher) {
     return -1;
-  } else if (!aOk && bOk) {
+  } else if (!aIsFinisher && bIsFinisher) {
     return 1;
   } else {
     return 0;

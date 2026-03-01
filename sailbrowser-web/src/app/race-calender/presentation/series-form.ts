@@ -30,7 +30,11 @@ import { Series } from '../model/series';
 
       <mat-form-field>
         <mat-label>Season</mat-label>
-        <input matInput formControlName="season">
+        <mat-select formControlName="seasonId">
+          @for (s of cs.club().seasons; track s.id) {
+            <mat-option [value]="s.id">{{s.name}}</mat-option>
+          }
+        </mat-select>
         <mat-error>Season required</mat-error>
       </mat-form-field>
       
@@ -134,7 +138,7 @@ export class SeriesForm {
 
   form = new FormGroup({
     name: new FormControl('', { validators: [Validators.required] }),
-    season: new FormControl('', { validators: [Validators.required] }),
+    seasonId: new FormControl('', { validators: [Validators.required] }),
     fleetId: new FormControl('', { validators: [Validators.required] }),
     startDate: new FormControl<Date | null>(null),
     endDate: new FormControl<Date | null>(null),

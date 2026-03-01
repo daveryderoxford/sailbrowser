@@ -5,7 +5,7 @@ export type { HandicapSystem } from './model/handicap-system';
 export { HANDICAP_SYSTEMS } from './model/handicap-system';
 
 export type { ResultCode, ResultCodeDefinition } from './model/result-code';
-export { RESULT_CODES, isStarter, isFinishedComp, ResultCodeGroup, RESULT_CODE_DEFINITIONS, getResultCodeDefinition } from './model/result-code';
+export { RESULT_CODES, ResultCodeGroup, RESULT_CODE_DEFINITIONS, getResultCodeDefinition } from './model/result-code';
 
 export type { SeriesScoringScheme } from './model/scoring-algotirhm';
 export { SERIES_SCORING_SCHEMES, seriesScoringSchemeDetails } from './model/scoring-algotirhm';

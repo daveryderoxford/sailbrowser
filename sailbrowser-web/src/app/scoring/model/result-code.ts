@@ -23,25 +23,6 @@ export const RESULT_CODES = [
 
 export type ResultCode = typeof RESULT_CODES[number];
 
-/** Is the competitor considered a starter */
-export function isStarter(code: ResultCode): boolean {
-  return !['DNC', 'DNS', 'OOD', 'NOT FINISHED'].includes(code);
-}
-
-export function isFinishedComp(code: ResultCode): boolean {
-  return [
-    'OK',
-    'SCP',
-    'ZFP',
-    'XPA',
-    'RDG',
-    'RDGA',
-    'RDGB',
-    'RDGC',
-    'DPI',
-  ].includes(code);
-}
-
 export enum ResultCodeGroup {
   Race = 'race',
   Start = 'start',

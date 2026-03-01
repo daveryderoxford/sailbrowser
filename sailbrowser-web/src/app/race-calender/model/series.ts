@@ -2,7 +2,7 @@ import { ScoringConfiguration } from 'app/scoring';
 
 export interface Series {
    id: string;
-   season: string;
+   seasonId: string;
    name: string;
    fleetId: string;
    startDate?: Date;

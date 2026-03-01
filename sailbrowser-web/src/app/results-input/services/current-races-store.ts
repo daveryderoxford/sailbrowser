@@ -21,7 +21,6 @@ export class CurrentRaces {
     return allSeries.filter(series => seriesIds.includes(series.id));
   });
 
-
   constructor() {
     effect(() => {
       // Initialize with today's races
