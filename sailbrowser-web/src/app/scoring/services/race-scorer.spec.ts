@@ -103,10 +103,14 @@ describe('RaceScorer', () => {
     const r3 = results.find(r => r.sailNumber === 103)!;
     const r4 = results.find(r => r.sailNumber === 104)!;
 
-    expect(r2.points).toBe(1);   // 1st place
-    expect(r1.points).toBe(2.5); // Tied for 2nd, gets (2+3)/2 = 2.5 points
-    expect(r3.points).toBe(2.5); // Tied for 2nd, gets (2+3)/2 = 2.5 points
-    expect(r4.points).toBe(4);   // 4th place
+    expect(r2.rank).toBe(1);
+    expect(r2.points).toBe(1);
+    expect(r1.rank).toBe(2);
+    expect(r1.points).toBe(2.5);
+    expect(r3.rank).toBe(2);
+    expect(r3.points).toBe(2.5);
+    expect(r4.rank).toBe(4);
+    expect(r4.points).toBe(4);
   });
 
   it('should handle a 3-way tie for 2nd place in a handicap race with 5 competitors', () => {
@@ -129,10 +133,15 @@ describe('RaceScorer', () => {
     const r4 = results.find(r => r.sailNumber === 104)!;
     const r5 = results.find(r => r.sailNumber === 105)!;
 
+    expect(r1.rank).toBe(1);
     expect(r1.points).toBe(1);
+    expect(r2.rank).toBe(2);
     expect(r2.points).toBe(3);
+    expect(r3.rank).toBe(2);
     expect(r3.points).toBe(3);
+    expect(r4.rank).toBe(2);
     expect(r4.points).toBe(3);
+    expect(r5.rank).toBe(5);
     expect(r5.points).toBe(5);
   });
 
@@ -150,11 +159,14 @@ describe('RaceScorer', () => {
     const r2 = results.find(r => r.sailNumber === 102)!;
     const r3 = results.find(r => r.sailNumber === 103)!;
     const r4 = results.find(r => r.sailNumber === 104)!;
-    const r5 = results.find(r => r.sailNumber === 105)!;
     // 4 boats tie for 1st. They take places 1,2,3,4. Points = (1+2+3+4)/4 = 2.5
+    expect(r1.rank).toBe(1);
     expect(r1.points).toBe(2.5);
+    expect(r2.rank).toBe(1);
     expect(r2.points).toBe(2.5);
+    expect(r3.rank).toBe(1);
     expect(r3.points).toBe(2.5);
+    expect(r4.rank).toBe(1);
     expect(r4.points).toBe(2.5);
   });
 
@@ -298,6 +310,30 @@ describe('RaceScorer', () => {
 
       expect(() => scoreRace(pursuitRace, competitors, 'Level Rating', 'shortSeries2017', 4))
         .toThrow(new SailbrowserError(expectedError));
+    });
+
+    it('should assign correct ranks for tied points', () => {
+      const competitors = [
+        createCompetitor('1', 600, 'OK'), // 1st, corrected 600 -> 1 point
+        createCompetitor('2', 700, 'OK'), // 2nd, corrected 700 -> 2.5 points (tie)
+        createCompetitor('3', 700, 'OK'), // 3rd, corrected 700 -> 2.5 points (tie)
+        createCompetitor('4', 800, 'OK'), // 4th, corrected 800 -> 4 points
+        createCompetitor('5', null, 'DNF'), // 5th, DNF -> 6 points
+      ];
+
+      const results = scoreRace(mockRace, competitors, 'PY', 'shortSeries2017', 5);
+
+      const r1 = results.find(r => r.sailNumber === 101)!;
+      const r2 = results.find(r => r.sailNumber === 102)!;
+      const r3 = results.find(r => r.sailNumber === 103)!;
+      const r4 = results.find(r => r.sailNumber === 104)!;
+      const r5 = results.find(r => r.sailNumber === 105)!;
+
+      expect(r1.rank).toBe(1); // 1st place
+      expect(r2.rank).toBe(2); // Tied for 2nd
+      expect(r3.rank).toBe(2); // Tied for 2nd
+      expect(r4.rank).toBe(4); // 4th place (rank 3 is skipped due to the tie)
+      expect(r5.rank).toBe(5); // 5th place
     });
 
   });
