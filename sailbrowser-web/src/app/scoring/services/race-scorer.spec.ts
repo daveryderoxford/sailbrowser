@@ -54,7 +54,7 @@ describe('RaceScorer', () => {
       createCompetitor('3', 840, 'OK'), // 3rd, 14 mins
     ];
 
-    const results = scoreRace(mockRace, competitors, 'Level Rating', 'shortSeries2017', 3);
+    const results = scoreRace(mockRace, competitors, 'Level Rating', 'short', 3);
 
     const r1 = results.find(r => r.sailNumber === 101)!;
     const r2 = results.find(r => r.sailNumber === 102)!;
@@ -76,7 +76,7 @@ describe('RaceScorer', () => {
       createCompetitor('3', null, 'OK', { manualPosition: 3 }),
     ];
 
-    const results = scoreRace(pursuitRace, competitors, 'Level Rating', 'shortSeries2017', 3);
+    const results = scoreRace(pursuitRace, competitors, 'Level Rating', 'short', 3);
 
     const r1 = results.find(r => r.sailNumber === 101)!;
     const r2 = results.find(r => r.sailNumber === 102)!;
@@ -96,7 +96,7 @@ describe('RaceScorer', () => {
       createCompetitor('4', null, 'OK', { manualPosition: 4 }), // 4th
     ];
 
-    const results = scoreRace(levelRace, competitors, 'Level Rating', 'shortSeries2017', 4);
+    const results = scoreRace(levelRace, competitors, 'Level Rating', 'short', 4);
 
     const r1 = results.find(r => r.sailNumber === 101)!;
     const r2 = results.find(r => r.sailNumber === 102)!;
@@ -125,7 +125,7 @@ describe('RaceScorer', () => {
     // c1 is 1st (1pt)
     // c2, c3, c4 tie for 2nd. They occupy places 2, 3, 4. Points = (2+3+4)/3 = 3
     // c5 is 5th (5pts)
-    const results = scoreRace(mockRace, competitors, 'PY', 'shortSeries2017', 5);
+    const results = scoreRace(mockRace, competitors, 'PY', 'short', 5);
 
     const r1 = results.find(r => r.sailNumber === 101)!;
     const r2 = results.find(r => r.sailNumber === 102)!;
@@ -153,7 +153,7 @@ describe('RaceScorer', () => {
     // Positions 1, 2, 3 are tied. Points = (1+2+3)/3 = 2
     // Position 4 gets 4 points.
     // Position 5 gets 5 points.
-    const results = scoreRace(mockRace, competitors, 'PY', 'shortSeries2017', 5);
+    const results = scoreRace(mockRace, competitors, 'PY', 'short', 5);
 
     const r1 = results.find(r => r.sailNumber === 101)!;
     const r2 = results.find(r => r.sailNumber === 102)!;
@@ -185,7 +185,7 @@ describe('RaceScorer', () => {
     const penaltyPoints = seriesCompetitorCount + 1; // 7 points
     const nonStarterPoints = penaltyPoints;
 
-    const results = scoreRace(mockRace, competitors, 'PY', 'shortSeries2017', seriesCompetitorCount);
+    const results = scoreRace(mockRace, competitors, 'PY', 'short', seriesCompetitorCount);
 
     const r1 = results.find(r => r.sailNumber === 101)!;
     const r2 = results.find(r => r.sailNumber === 102)!;
@@ -215,7 +215,7 @@ describe('RaceScorer', () => {
     const starterPoints = 1 + 1; // 2
     const nonStarterPoints = seriesCompetitorCount + 1; // 4
 
-    const results = scoreRace(mockRace, competitors, 'PY', 'shortSeries2017', seriesCompetitorCount);
+    const results = scoreRace(mockRace, competitors, 'PY', 'short', seriesCompetitorCount);
 
     const r1 = results.find(r => r.sailNumber === 101)!;
     const r2 = results.find(r => r.sailNumber === 102)!;
@@ -237,7 +237,7 @@ describe('RaceScorer', () => {
     // c2 finishes 2nd, gets 2 points.
     // SCP penalty is 20% of dnf score = (100+1)*0.2 = 20.2
     // Final order by points: c1 (1), c2 (102), c3 (3)
-    const results = scoreRace(mockRace, competitors, 'PY', 'shortSeries2017', 100);
+    const results = scoreRace(mockRace, competitors, 'PY', 'short', 100);
 
     const r1 = results.find(r => r.sailNumber === 101)!;
     const r2 = results.find(r => r.sailNumber === 102)!;
@@ -264,7 +264,7 @@ describe('RaceScorer', () => {
     // Penalty is 0.2*dnf = 7*0.2 = 1.4
     // Total 7.4.
     // DNF score 6+1 = 7  So score should be capped to 7
-    const results = scoreRace(mockRace, competitors, 'PY', 'longSeries2017', seriesCompetitorCount);
+    const results = scoreRace(mockRace, competitors, 'PY', 'long', seriesCompetitorCount);
 
     const r4 = results.find(r => r.sailNumber === 106)!;
     expect(r4.points).toBe(7);
@@ -280,7 +280,7 @@ describe('RaceScorer', () => {
 
       const expectedError = 'Inconsistent ordering data: Manual positions are used, but finisher with sail number 102 is missing a position.';
 
-      expect(() => scoreRace(mockRace, competitors, 'Level Rating', 'shortSeries2017', 3))
+      expect(() => scoreRace(mockRace, competitors, 'Level Rating', 'short', 3))
         .toThrow(new SailbrowserError(expectedError));
     });
 
@@ -293,7 +293,7 @@ describe('RaceScorer', () => {
 
       const expectedError = 'Inconsistent ordering data: Finish times are used, but finisher with sail number 102 is missing a finish time.';
 
-      expect(() => scoreRace(mockRace, competitors, 'Level Rating', 'shortSeries2017', 3))
+      expect(() => scoreRace(mockRace, competitors, 'Level Rating', 'short', 3))
         .toThrow(new SailbrowserError(expectedError));
     });
 
@@ -308,7 +308,7 @@ describe('RaceScorer', () => {
 
       const expectedError = 'Inconsistent ordering data: Pursuit races require a manual position, but finisher with sail number 102 is missing a position.';
 
-      expect(() => scoreRace(pursuitRace, competitors, 'Level Rating', 'shortSeries2017', 4))
+      expect(() => scoreRace(pursuitRace, competitors, 'Level Rating', 'short', 4))
         .toThrow(new SailbrowserError(expectedError));
     });
 
@@ -321,7 +321,7 @@ describe('RaceScorer', () => {
         createCompetitor('5', null, 'DNF'), // 5th, DNF -> 6 points
       ];
 
-      const results = scoreRace(mockRace, competitors, 'PY', 'shortSeries2017', 5);
+      const results = scoreRace(mockRace, competitors, 'PY', 'short', 5);
 
       const r1 = results.find(r => r.sailNumber === 101)!;
       const r2 = results.find(r => r.sailNumber === 102)!;

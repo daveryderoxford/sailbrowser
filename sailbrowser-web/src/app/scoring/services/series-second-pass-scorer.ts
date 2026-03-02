@@ -1,46 +1,49 @@
 import { PublishedRace, RaceResult } from 'app/published-results/model/published-race';
-import { getScoringData, isStarter, ResultCodeAlgorithm } from '../model/result-code-scoring';
+import { getLongAlgorithm, getShortAlgorithm, isStartAreaComp, ResultCodeAlgorithm } from '../model/result-code-scoring';
+import { calculateRanks, sortByPoints } from './race-scorer';
 import { IntermediateSeriesResult } from './series-scorer';
+import { SeriesScoringScheme } from '../model/scoring-algotirhm';
 
 function startersInRace(results: RaceResult[]): number {
   return results.reduce((count, comp) => {
-    return isStarter(comp.resultCode) ? count + 1 : count;
+    return isStartAreaComp(comp.resultCode) ? count + 1 : count;
   }, 0);
 }
 
 export function applySeriesDependentScores(
   races: PublishedRace[],
   seriesResults: IntermediateSeriesResult[],
-  seriesType: 'long' | 'short',
-): PublishedRace[] {
+  seriesType: SeriesScoringScheme,
+): void {
   const seriesResultsByKey = new Map(seriesResults.map(r => [`${r.helm}-${r.sailNumber}-${r.boatClass}`, r]));
 
-  // Create a deep copy of races to avoid direct mutation
-  const updatedRaces = JSON.parse(JSON.stringify(races));
-
-  for (const race of updatedRaces) {
+  for (const race of races) {
     const dnfPoints = startersInRace(race.results) + 1;
+    let wasModified = false;
 
     for (const result of race.results) {
-      const scoringData = getScoringData(result.resultCode);
-      if (!scoringData) continue;
 
-      const algorithm = seriesType === 'long' ? scoringData.longSeriesAlgorithm : scoringData.shortSeriesAlgorithm;
+      const algorithm = (seriesType === 'long')
+        ? getLongAlgorithm(result.resultCode)
+        : getShortAlgorithm(result.resultCode);
+
       const competitorSeriesResult = seriesResultsByKey.get(`${result.helm}-${result.sailNumber}-${result.boatClass}`);
 
       switch (algorithm) {
         case ResultCodeAlgorithm.avgAll:
           if (competitorSeriesResult) {
             result.points = competitorSeriesResult.averagePoints;
+            wasModified = true;
           }
           break;
 
         case ResultCodeAlgorithm.avgBefore:
-          // This is more complex, as we need the average of races *before* this one.
-          // This will require a separate calculation.
-          // For now, as a placeholder, we will use the overall average.
           if (competitorSeriesResult) {
-            result.points = competitorSeriesResult.averagePoints;
+            const avgBefore = competitorSeriesResult.averagePointsBefore.find(a => a.raceIndex === race.index);
+            if (avgBefore) {
+              result.points = avgBefore.points;
+            }
+            wasModified = true;
           }
           break;
 
@@ -54,7 +57,10 @@ export function applySeriesDependentScores(
           break;
       }
     }
+    // If points were changed, the race must be re-sorted and re-ranked.
+    if (wasModified) {
+      race.results.sort(sortByPoints);
+      calculateRanks(race.results);
+    }
   }
-
-  return updatedRaces;
 }

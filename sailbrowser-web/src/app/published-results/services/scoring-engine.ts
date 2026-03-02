@@ -1,15 +1,15 @@
 import { inject, Injectable } from '@angular/core';
 import { FirebaseApp } from '@angular/fire/app';
-import { collection, doc, getDocs, getFirestore, query, runTransaction, Transaction, updateDoc, where } from '@angular/fire/firestore';
+import { collection, doc, getDocs, getFirestore, query, runTransaction, Transaction, where } from '@angular/fire/firestore';
 import { PublishedRace } from '../model/published-race';
 import { PublishedSeason, SeriesInfo } from '../model/published-season';
 import { PublishedSeries } from '../model/published-series';
-import { score } from 'app/scoring';
 import { CurrentRaces, RaceCompetitorStore } from 'app/results-input';
 import { dataObjectConverter } from 'app/shared/firebase/firestore-helper';
-import { Race, RaceCalendarStore, Series } from 'app/race-calender';
+import { score } from 'app/scoring';
 import { PUBLISHED_RACES_PATH, PUBLISHED_SEASONS_PATH, PUBLISHED_SERIES_PATH } from './published-results-store';
 import { ClubService } from 'app/club';
+import { Race, RaceCalendarStore, Series } from 'app/race-calender';
 
 @Injectable({ providedIn: 'root' })
 export class ScoringEngine {
@@ -33,17 +33,17 @@ export class ScoringEngine {
       const series = this.currentRaces.selectedSeries().find(s => s.id === race.seriesId)!;
       const competitors = this.rcs.selectedCompetitors().filter(c => c.raceId === race.id);
 
-      // Get all previously published races for this series
+      // 1. Fetch all existing data required for scoring.
       const existingRaces = await this.readPublishedRaces(series);
-
       const raceCount = existingRaces.filter(r => r.id !== race.id).length + 1;
 
-      // Score the race and update any published results if they are impacted. 
+      // 2. Call the pure scoring orchestrator to perform all calculations.
       const { scoredRaces, seriesResults } = score(series, race, competitors, existingRaces, {
          seriesType: series.scoringScheme.scheme,
          discards: this.calculateDiscards(series, raceCount),
       });
 
+      // 3. Prepare the final series object for persistence.
       const scoredSeries: PublishedSeries = {
          id: race.seriesId,
          name: race.seriesName,
@@ -54,7 +54,6 @@ export class ScoringEngine {
       await runTransaction(this.firestore, async (transaction) => {
 
          // Update published races
-         // were altered by a change in the number of series competitors (for DNC scores) are updated.
          for (const r of scoredRaces) {
             const raceRef = doc(this.racesCollection, r.id);
             transaction.set(raceRef, r);
@@ -114,7 +113,7 @@ export class ScoringEngine {
    private async readPublishedRaces(series: Series) {
       const q = query(this.racesCollection, where('seriesId', '==', series.id));
       const existingRacesSnapshot = await getDocs(q);
-      const existingRaces = existingRacesSnapshot.docs.map(d => d.data());
+      const existingRaces = existingRacesSnapshot.docs.map(d => d.data()).sort((a, b) => a.index - b.index);
       return existingRaces;
    }
 

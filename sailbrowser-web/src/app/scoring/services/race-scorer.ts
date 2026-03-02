@@ -53,7 +53,7 @@ export function scoreRace(
  * Calculates competitor ranks within the race. 
  * Competitors tied on points will recieve the same rank.
  */
-function calculateRanks(results: RaceResult[]) {
+export function calculateRanks(results: RaceResult[]) {
   for (let i = 0; i < results.length; i++) {
     if (i > 0 && results[i].points === results[i - 1].points) {
       // Tied points, so assign the same rank
@@ -119,14 +119,22 @@ export function rescoreRacePoints(
   race: PublishedRace,
   newSeriesCompetitorCount: number,
   seriesType: SeriesScoringScheme
-): PublishedRace {
-  // Create a mutable copy of the results to work with.
-  const results: RaceResult[] = race.results.map(r => ({ ...r }));
+): void {
+  // Determine the original ordering property. This assumes the race was scored correctly before.
+  // We need to find the original handicap scheme from the series, which isn't passed in.
+  // For now, we assume PY for handicap if not Level Rating.
+  const results = race.results;
+  const scheme = results.some(r => r.correctedTime !== r.elapsedTime) ? 'PY' : 'Level Rating';
+  const orderingProperty = determineOrdering(race.type, scheme, results);
 
+  // Re-assign points for finishers, as SCP penalties may change with series competitor count.
+  assignPointsForFinishers(results, orderingProperty, seriesType, newSeriesCompetitorCount);
+  
   // Re-assign points for non-finishers based on the new total competitor count.
   applyStaticRacePenalties(results, newSeriesCompetitorCount, seriesType);
 
-  return { ...race, results: results };
+  results.sort((a, b) => sortByPoints(a, b));
+  calculateRanks(results);
 }
 
 function buildRaceResults(
@@ -147,7 +155,6 @@ function buildRaceResults(
       correctedTime: 0,
       points: 0,
       resultCode: comp.resultCode,
-      isDiscardable: true,
     };
   });
 }
@@ -242,7 +249,7 @@ function assignPointsForFinishers(
   let pos = 1.0;
 
   const startAreaCount = results.filter(r => isStartAreaComp(r.resultCode)).length;
-  const dnfPoints = (seriesType === 'longSeries2017' ? startAreaCount : seriesCompetitorCount) + 1;
+  const dnfPoints = (seriesType === 'long' ? startAreaCount : seriesCompetitorCount) + 1;
 
   for (const value of sortedValues) {
     const resultsAtValue = resultsByValue.get(value)!;
@@ -284,7 +291,7 @@ function applyStaticRacePenalties(results: RaceResult[],
 
   for (const result of nonFinishers) {
     // Determine which algorithm to use based on the scheme
-    const algorithm = (scheme === 'longSeries2017')
+    const algorithm = (scheme === 'long')
       ? getLongAlgorithm(result.resultCode)
       : getShortAlgorithm(result.resultCode);
 
@@ -305,7 +312,7 @@ function applyStaticRacePenalties(results: RaceResult[],
  * Sorts by points.  Any boat that does not have any points yet 
  * assigned is sorted to the bottom.
  */
-function sortByPoints(a: RaceResult, b: RaceResult): number {
+export function sortByPoints(a: RaceResult, b: RaceResult): number {
   return (a.points || 9999) - (b.points || 9999);
 }
 

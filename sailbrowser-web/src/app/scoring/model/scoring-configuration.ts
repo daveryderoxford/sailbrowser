@@ -13,7 +13,7 @@ export interface ScoringConfiguration {
 
 export const defaultSeriesScoringData: ScoringConfiguration = {
   handicapSystem: 'PY',
-  scheme: 'longSeries2017',
+  scheme: 'long',
   initialDiscardAfter: 3,
   subsequentDiscardsEveryN: 2,
   entryAlgorithm: 'classSailNumberHelm',
