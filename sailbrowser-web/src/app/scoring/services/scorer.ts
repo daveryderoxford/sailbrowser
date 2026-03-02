@@ -16,6 +16,7 @@ import { Series } from 'app/race-calender';
  * 4. Performs a first-pass series scoring to calculate averages.
  * 5. Applies series-dependent scores (like averages) back to the grid.
  * 6. Performs the final series scoring.
+ * 7. Updares race resuklts with rdg values. 
  * @returns An object containing the final scored races and series results.
  */
 export function score(
@@ -56,6 +57,18 @@ export function score(
   // 5. Final series scoring with the fully updated grid.
   // This now handles RDG scores internally.
   const finalSeriesResults = scoreSeries(scoringGrid, allSeriesCompetitorKeys, config);
+
+  // 6. Update the scoring grid with points calculated during series scoring (e.g., RDG).
+  finalSeriesResults.forEach(seriesResult => {
+    const competitorKey = `${seriesResult.helm}-${seriesResult.sailNumber}-${seriesResult.boatClass}`;
+    seriesResult.raceScores.forEach(raceScore => {
+      const race = scoringGrid.find(r => r.index === raceScore.raceIndex);
+      if (race) {
+        const raceResult = race.results.find(res => `${res.helm}-${res.sailNumber}-${res.boatClass}` === competitorKey);
+        if (raceResult) raceResult.points = raceScore.points;
+      }
+    });
+  });
 
   scoringGrid.sort((a, b) => a.index - b.index);
 

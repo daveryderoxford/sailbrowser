@@ -71,8 +71,6 @@ export class RaceCompetitor {
    * a recorded one. Returns undefined if no finish time is available.
    */
   get finishTime(): Date | undefined {
-    console.log("RaceCompetitor: Finish time called");
-
     return this.manualFinishTime ?? this.recordedFinishTime;
   }
 

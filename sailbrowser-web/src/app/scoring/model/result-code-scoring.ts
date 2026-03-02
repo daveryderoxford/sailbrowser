@@ -27,7 +27,10 @@ export enum ResultCodeAlgorithm {
 const NOT_IN_START_AREA: ResultCode[] = ['DNC', 'OOD', 'NOT FINISHED'];
 const NO_LEGAL_FINISH: ResultCode[] = [
   'DNC', 'DNS', 'DNF', 'RET', 'OCS',
-  'BFD', 'UFD', 'DSQ', 'DNE', 'NOT FINISHED'
+  'BFD', 'UFD', 'DSQ', 'DNE', 'NOT FINISHED',
+];
+const REDRESS: ResultCode[] = [
+  'RDG', 'RDGA', 'RDGB', 'OOD'
 ];
 const NON_DISCARDABLE: ResultCode[] = ['DGM', 'DNE'];
 
@@ -41,6 +44,8 @@ const FINISHED_AND_SCORED: ResultCode[] = ['OK', 'SCP', 'DPI'];
  */
 export const isStartAreaComp = (code: ResultCode) => !NOT_IN_START_AREA.includes(code); 
 export const isFinishedComp = (code: ResultCode) => !NO_LEGAL_FINISH.includes(code);
+export const isRedress = (code: ResultCode) => REDRESS.includes(code);
+
 export const isDiscardable = (code: ResultCode) => !NON_DISCARDABLE.includes(code);
 
 /**

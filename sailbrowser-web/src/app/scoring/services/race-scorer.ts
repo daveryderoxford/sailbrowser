@@ -2,7 +2,7 @@ import { PublishedRace, RaceResult } from 'app/published-results/model/published
 import { Race, RaceType } from 'app/race-calender';
 import { RaceCompetitor } from 'app/results-input';
 import { HandicapSystem } from 'app/scoring/model/handicap-system';
-import { getLongAlgorithm, getShortAlgorithm, isFinishedComp, isStartAreaComp, ResultCodeAlgorithm } from 'app/scoring/model/result-code-scoring';
+import { getLongAlgorithm, getShortAlgorithm, isFinishedComp, isRedress, isStartAreaComp, ResultCodeAlgorithm } from 'app/scoring/model/result-code-scoring';
 import { SailbrowserError } from 'app/shared/utils/sailbrowser-error';
 import { differenceInSeconds } from 'date-fns';
 import { SeriesScoringScheme } from '../model/scoring-algotirhm';
@@ -103,7 +103,10 @@ function determineOrdering(raceType: RaceType, scheme: HandicapSystem, results: 
  * Throws a SailbrowserError if any finisher is missing data.
  */
 function validateFinishersHaveData(finishers: RaceResult[], property: keyof RaceResult, context: string) {
-  const missingData = finishers.find(f => !((f[property] as number) > 0));
+  const missingData = finishers
+    // Exclude competitors with redress from finish time validation, as they may not have one.
+    .filter(f => !isRedress(f.resultCode))
+    .find(f => !((f[property] as number) > 0));
   if (missingData) {
     const propertyName = property === 'rank' ? 'position' : 'finish time';
     throw new SailbrowserError(`Inconsistent ordering data: ${context}, but finisher with sail number ${missingData.sailNumber} is missing a ${propertyName}.`);
