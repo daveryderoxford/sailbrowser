@@ -8,7 +8,7 @@ import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
 import { SubmitButton } from 'app/shared/components/submit-button';
 import { DeleteButton } from 'app/shared/components/delete-button';
-import { ClubService } from 'app/club';
+import { ClubService } from '../../../club-tenant';
 import { Boat } from 'app/boats';
 
 @Component({

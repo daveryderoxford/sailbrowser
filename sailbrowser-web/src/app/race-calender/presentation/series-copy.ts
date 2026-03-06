@@ -10,7 +10,7 @@ import { Router } from '@angular/router';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { RaceCalendarStore } from '../services/full-race-calander';
 import { Series } from '../model/series';
-import { ClubService } from 'app/club';
+import { ClubService } from '../../club-tenant';
 
 @Component({
   selector: 'app-series-copy',

@@ -8,7 +8,7 @@ import { CurrentRaces, RaceCompetitorStore } from 'app/results-input';
 import { dataObjectConverter } from 'app/shared/firebase/firestore-helper';
 import { score } from 'app/scoring';
 import { PUBLISHED_RACES_PATH, PUBLISHED_SEASONS_PATH, PUBLISHED_SERIES_PATH } from './published-results-store';
-import { ClubService } from 'app/club';
+import { ClubService, createClubSubCollectionRef } from 'app/club-tenant';
 import { Race, RaceCalendarStore, Series } from 'app/race-calender';
 
 @Injectable({ providedIn: 'root' })
@@ -19,15 +19,12 @@ export class ScoringEngine {
    private currentRaces = inject(CurrentRaces);
    private calander = inject(RaceCalendarStore);
 
-   private seasonsCollection = collection(
-      this.firestore, PUBLISHED_SEASONS_PATH).withConverter(dataObjectConverter<PublishedSeason>());
-
-   private seriesResultsCollection = collection(
-      this.firestore, PUBLISHED_SERIES_PATH).withConverter(dataObjectConverter<PublishedSeries>());
-
-   private racesCollection = collection(
-      this.firestore, PUBLISHED_RACES_PATH).withConverter(dataObjectConverter<PublishedRace>());
-
+     private seasonsCollection = createClubSubCollectionRef<PublishedSeason>(PUBLISHED_SEASONS_PATH);
+   
+     private seriesCollection = createClubSubCollectionRef<PublishedSeries>(PUBLISHED_SERIES_PATH);
+   
+     private racesCollection = createClubSubCollectionRef<PublishedRace>(PUBLISHED_RACES_PATH);
+   
    /** Publishes the results of a race */
    async publishRace(race: Race): Promise<void> {
       const series = this.currentRaces.selectedSeries().find(s => s.id === race.seriesId)!;
@@ -60,7 +57,7 @@ export class ScoringEngine {
          }
 
          // Save the published series. 
-         const seriesResultsDocRef = doc(this.seriesResultsCollection, series.id);
+         const seriesResultsDocRef = doc(this.seriesCollection, series.id);
          transaction.set(seriesResultsDocRef, scoredSeries);
 
          // Update published season  

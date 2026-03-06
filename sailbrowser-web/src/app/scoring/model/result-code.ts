@@ -1,32 +1,13 @@
-export const RESULT_CODES = [
-  'NOT FINISHED',
-  'OK',
-  'OOD',
-  'DNC',
-  'DNF',
-  'RET',
-  'DNS',
-  'OCS',
-  'ZFP',
-  'UFD',
-  'BFD',
-  'DGM',
-  'DSQ',
-  'XPA',
-  'SCP',
-  'RDG',
-  'RDGA',
-  'RDGB',
-  'RDGC',
-  'DPI',
-] as const;
+import type { ResultCode } from './result-code-scoring';
+export type { ResultCode };
 
-export type ResultCode = typeof RESULT_CODES[number];
+export { RESULT_CODES } from 'app/scoring/model/result-code-scoring';
 
 export enum ResultCodeGroup {
   Race = 'race',
   Start = 'start',
   Penalty = 'penalty',
+  Redress = 'redress',
 }
 
 export interface ResultCodeDefinition {
@@ -130,25 +111,25 @@ export const RESULT_CODE_DEFINITIONS: Readonly<ResultCodeDefinition[]> = [
   {
     id: 'RDG',
     description: 'Redress given (hand set)',
-    group: ResultCodeGroup.Penalty,
+    group: ResultCodeGroup.Redress,
     isBasic: false,
   },
   {
     id: 'RDGA',
     description: 'Redress given - Avg of all races',
-    group: ResultCodeGroup.Penalty,
+    group: ResultCodeGroup.Redress,
     isBasic: false,
   },
   {
     id: 'RDGB',
     description: 'Redress given - Avg of all Races before',
-    group: ResultCodeGroup.Penalty,
+    group: ResultCodeGroup.Redress,
     isBasic: false,
   },
   {
     id: 'RDGC',
     description: 'Redress given - Position at incident',
-    group: ResultCodeGroup.Penalty,
+    group: ResultCodeGroup.Redress,
     isBasic: false,
   },
   {

@@ -62,6 +62,9 @@ export class RaceCalendarStore extends RaceCalendarStoreBase {
       return computed(() => this.allRaces().filter(s => s.seriesId === id()));
    }
 
+   /** Adds races to a specified series 
+    *  Race indices and race-of-day are set based on date. 
+   */
     async addRaces(seriesDetails: RaceSeriesDetails, races: Partial<Race>[]): Promise<void> {
       const existingRaces = this.allRaces().filter(r => r.seriesId === seriesDetails.id);
       
@@ -112,6 +115,7 @@ export class RaceCalendarStore extends RaceCalendarStoreBase {
       await batch.commit();
    }
 
+   /** Delete a race from a series, renumnbering the races are requied */
    override async deleteRace(seriesId: string, raceToDelete: Race): Promise<void> {
       const remainingRaces = this.allRaces()
          .filter(r => r.seriesId === seriesId && r.id !== raceToDelete.id)

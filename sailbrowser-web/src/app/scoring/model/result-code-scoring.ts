@@ -1,12 +1,11 @@
 
-export const ALL_RESULT_CODES = [
+export const RESULT_CODES = [
   'OK', 'DNC', 'DNS', 'DNF', 'RET', 'OCS', 'BFD', 'NSC', 'UFD', 'DSQ',
   'DNE', 'DGM', 'RDG', 'RDGA', 'RDGB', 'RDGC', 'OOD', 'ZFP',
   'SCP', 'XPA', 'DPI', 'NOT FINISHED'
 ] as const;
-// Additonal codes ZPF 
 
-export type ResultCode = (typeof ALL_RESULT_CODES)[number];
+export type ResultCode = (typeof RESULT_CODES)[number];
 
 /**
  * The algorthim to use in calculating the points for a code. 
@@ -37,15 +36,14 @@ const NON_DISCARDABLE: ResultCode[] = ['DGM', 'DNE'];
 // Whan calculating averages, excluded all codes that dont 
 // reflect the competitors performance. Per RRS A9, this should be
 // scores from races the boat started and finished.
-const FINISHED_AND_SCORED: ResultCode[] = ['OK', 'SCP', 'DPI']; 
+const FINISHED_AND_SCORED: ResultCode[] = ['OK', 'SCP', 'DPI'];
 
 /**
  * 3. PREDICATES (Public API)
  */
-export const isStartAreaComp = (code: ResultCode) => !NOT_IN_START_AREA.includes(code); 
+export const isStartAreaComp = (code: ResultCode) => !NOT_IN_START_AREA.includes(code);
 export const isFinishedComp = (code: ResultCode) => !NO_LEGAL_FINISH.includes(code);
 export const isRedress = (code: ResultCode) => REDRESS.includes(code);
-
 export const isDiscardable = (code: ResultCode) => !NON_DISCARDABLE.includes(code);
 
 /**

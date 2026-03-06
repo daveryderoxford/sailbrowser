@@ -8,7 +8,7 @@ import { MatDivider } from "@angular/material/divider";
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
-import { ClubService } from 'app/club';
+import { ClubService } from '../../club-tenant';
 import { defaultSeriesScoringData, seriesEntryGroupingDetails, seriesScoringSchemeDetails } from 'app/scoring';
 import { HANDICAP_SYSTEMS } from 'app/scoring/model/handicap-system';
 import { SubmitButton } from "app/shared/components/submit-button";

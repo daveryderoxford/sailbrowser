@@ -20,7 +20,7 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatIcon } from "@angular/material/icon";
 import { BusyButton } from "app/shared/components/busy-button";
-import { ClubService } from 'app/club';
+import { ClubService } from '../../../club-tenant';
 import { Boat } from 'app/boats';
 
 @Component({

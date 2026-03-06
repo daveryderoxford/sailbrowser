@@ -1,20 +1,19 @@
-import { Injectable, inject } from '@angular/core';
+import { Injectable } from '@angular/core';
 import { rxResource } from '@angular/core/rxjs-interop';
-import { FirebaseApp } from '@angular/fire/app';
-import { addDoc, collection, collectionData, deleteDoc, doc, getFirestore, updateDoc } from '@angular/fire/firestore';
-import { dataObjectConverter } from 'app/shared/firebase/firestore-helper';
+import { addDoc, collectionData, deleteDoc, updateDoc } from '@angular/fire/firestore';
+import { createClubSubCollectionRef } from 'app/club-tenant';
+import { clubDocRef } from 'app/club-tenant/services/firestore-tenant';
 import { normaliseString } from 'app/shared/utils/string-utils';
-import { map, Observable, tap } from 'rxjs';
+import { map, Observable } from 'rxjs';
 import { Boat } from '../model/boat';
 
 @Injectable({
   providedIn: 'root',
 })
 export class BoatsStore {
-  private readonly firestore = getFirestore(inject(FirebaseApp));
 
-  private boatsCollection = collection(
-    this.firestore, '/boats').withConverter(dataObjectConverter<Boat>());
+  private ref = (id:string) => clubDocRef( 'boats', id);
+  private boatsCollection = createClubSubCollectionRef<Boat>('boats');
 
   private readonly boatsResource = rxResource({
     stream: (): Observable<Boat[]> =>
@@ -53,13 +52,13 @@ export class BoatsStore {
   }
 
   async update(id: string, data: Partial<Boat>): Promise<void> {
-    const docRef = doc(this.firestore, `boats/${id}`);
+    const docRef = this.ref(id);
     const update = this.trimStrings(data);
     await updateDoc(docRef, update);
   }
 
   async delete(id: string): Promise<void> {
-    const docRef = doc(this.firestore, `boats/${id}`);
+    const docRef = this.ref(id);
     await deleteDoc(docRef);
   }
 }

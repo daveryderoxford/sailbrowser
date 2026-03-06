@@ -1,7 +1,8 @@
 import { inject, Injectable } from '@angular/core';
 import { FirebaseApp } from '@angular/fire/app';
-import { addDoc, deleteDoc, getDocs, getFirestore, setDoc, writeBatch, doc, collection } from '@angular/fire/firestore';
-import { dataObjectConverter } from '../../shared/firebase/firestore-helper';
+import { addDoc, deleteDoc, getDocs, getFirestore, setDoc, writeBatch } from '@angular/fire/firestore';
+import { createClubSubCollectionRef } from 'app/club-tenant';
+import { clubDocRef } from 'app/club-tenant/services/firestore-tenant';
 import { Race } from '../model/race';
 import { Series } from '../model/series';
 
@@ -17,8 +18,11 @@ export interface RaceSeriesDetails {
 export class RaceCalendarStoreBase {
   protected readonly firestore = getFirestore(inject(FirebaseApp));  
 
-  protected ref = (id: string) => doc(this.firestore, 'series', id).withConverter(dataObjectConverter<Series>());
-  protected readonly seriesCollection = collection(this.firestore, '/series').withConverter(dataObjectConverter<Series>()); 
+  protected ref = (id: string) => clubDocRef<Series>('series', id);
+  protected seriesCollection = createClubSubCollectionRef<Series>('series');
+
+  protected raceRef = (seriesId: string, id: string) => clubDocRef<Race>('series/' + seriesId+ '/races/', id);
+  protected racesCollection = (seriesId: string) => createClubSubCollectionRef<Race>('series', seriesId, 'races');
 
   /** Add a series retruning a document Id */
   async addSeries(series: Partial<Series>): Promise<string> {
@@ -40,12 +44,8 @@ export class RaceCalendarStoreBase {
     
     // Delete the series in the batch
     batch.delete(this.ref(id));
-
     await batch.commit();
   }
-
-  protected raceRef = (seriesId: string, id: string) => doc(this.firestore, `/series/${seriesId}/races`, id).withConverter(dataObjectConverter<Race>());
-  protected racesCollection = (seriesId: string) => collection(this.firestore, `/series/${seriesId}/races`).withConverter(dataObjectConverter<Race>());
 
   async addRace(seriesDetails: RaceSeriesDetails, race: Partial<Race>): Promise<void> {
     race.seriesId = seriesDetails.id;

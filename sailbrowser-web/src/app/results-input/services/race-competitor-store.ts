@@ -10,6 +10,7 @@ import { map, of, tap } from 'rxjs';
 import { CurrentRaces } from './current-races-store';
 import { RaceCompetitor } from '../model/race-competitor';
 import { classInstanceConverter } from 'app/shared/firebase/firestore-helper';
+import { ClubContextService } from 'app/club-tenant/services/club-tenant';
 
 export interface ResultsPathData {
   raceId: string;
@@ -31,14 +32,15 @@ const raceCompetitorConverter = classInstanceConverter(RaceCompetitor);
 export class RaceCompetitorStore {
   private readonly firestore = getFirestore(inject(FirebaseApp));
   private selectedRaces = inject(CurrentRaces);
+  private clubId = inject(ClubContextService).clubId;
 
   private ref = (pd: ResultsPathData) => doc(
     this.firestore,
-    `series/${pd.seriesId}/races/${pd.raceId}/results`,
+    `clubs/${this.clubId}/series/${pd.seriesId}/races/${pd.raceId}/results`,
     pd.id).withConverter(raceCompetitorConverter);
 
   private collection = (pd: ResultsCollectionData) => collection(
-    this.firestore, `series/${pd.seriesId}/races/${pd.raceId}/results`).withConverter(raceCompetitorConverter);
+    this.firestore, `clubs/${this.clubId}/series/${pd.seriesId}/races/${pd.raceId}/results`).withConverter(raceCompetitorConverter);
 
   /** Race competitors in selected races */
   private readonly selectedCompResource = rxResource({

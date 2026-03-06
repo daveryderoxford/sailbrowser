@@ -1,8 +1,9 @@
 import { Injectable, inject } from '@angular/core';
-import { ClubService } from 'app/club';
+import { ClubService } from '../../club-tenant';
 import { Race } from '../../race-calender/model/race';
 import { RaceCompetitor } from '../../results-input/model/race-competitor';
 import { RaceCompetitorStore } from '../../results-input/services/race-competitor-store';
+import { SailbrowserError } from 'app/shared/utils/sailbrowser-error';
 
 export interface EntryDetails {
   races: Race[];

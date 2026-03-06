@@ -1,24 +1,21 @@
 import { Injectable, computed, inject } from "@angular/core";
-import { FirebaseApp } from '@angular/fire/app';
+import { rxResource } from '@angular/core/rxjs-interop';
 import { User } from "@angular/fire/auth";
-import { DocumentReference, arrayRemove, arrayUnion, collection, doc, docData, getFirestore, setDoc, updateDoc } from "@angular/fire/firestore";
+import { DocumentReference, arrayRemove, arrayUnion, doc, docData, setDoc, updateDoc } from "@angular/fire/firestore";
+import { AuthService } from 'app/auth';
+import { Boat } from 'app/boats';
+import { createClubSubCollectionRef } from 'app/club-tenant';
 import { of } from 'rxjs';
 import { UserData } from '../model/user';
-import { AuthService } from '../../auth/auth.service';
-import { dataObjectConverter } from '../../shared/firebase/firestore-helper';
-import { rxResource } from '@angular/core/rxjs-interop';
-import { BoatClass } from '../../club/model/boat-class';
-import { Boat } from 'app/boats';
 
 @Injectable({
   providedIn: "root"
 })
 export class UserDataService {
-  private fs = getFirestore(inject(FirebaseApp));
   private as = inject(AuthService);
 
-  private userCollection = collection(this.fs, 'users').withConverter(dataObjectConverter<UserData>());
-
+  private userCollection = createClubSubCollectionRef<UserData>('users');
+  
   private _userResource = rxResource<UserData | undefined, User| undefined>({
     params: () => this.as.user(),
     stream: request => request.params ? docData(this._doc(request.params.uid)) : of(undefined)

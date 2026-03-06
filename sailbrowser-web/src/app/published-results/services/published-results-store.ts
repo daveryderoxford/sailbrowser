@@ -1,7 +1,6 @@
-import { computed, inject, Injectable, resource, signal } from '@angular/core';
-import { FirebaseApp } from '@angular/fire/app';
-import { collection, doc, getDoc, getDocs, getFirestore, query, where } from '@angular/fire/firestore';
-import { dataObjectConverter } from 'app/shared/firebase/firestore-helper';
+import { computed, Injectable, resource, signal } from '@angular/core';
+import { doc, getDoc, getDocs, query, where } from '@angular/fire/firestore';
+import { createClubSubCollectionRef } from 'app/club-tenant';
 import { PublishedRace } from '../model/published-race';
 import { PublishedSeason } from '../model/published-season';
 import { PublishedSeries } from '../model/published-series';
@@ -19,16 +18,12 @@ export const PUBLISHED_RACES_PATH = '/published-races';
   providedIn: 'root'
 })
 export class PublishedResultsReader {
-  private readonly firestore = getFirestore(inject(FirebaseApp));
 
-  private seasonsCollection = collection(
-    this.firestore, PUBLISHED_SEASONS_PATH).withConverter(dataObjectConverter<PublishedSeason>());
+  private seasonsCollection = createClubSubCollectionRef<PublishedSeason>(PUBLISHED_SEASONS_PATH);
 
-  private seriesCollection = collection(
-    this.firestore, PUBLISHED_SERIES_PATH).withConverter(dataObjectConverter<PublishedSeries>());
+  private seriesCollection = createClubSubCollectionRef<PublishedSeries>(PUBLISHED_SERIES_PATH);
 
-  private racesCollection = collection(
-    this.firestore, PUBLISHED_RACES_PATH).withConverter(dataObjectConverter<PublishedRace>());
+  private racesCollection = createClubSubCollectionRef<PublishedRace>(PUBLISHED_RACES_PATH);
 
   /** One-time load with no monitoring of all published seasons */
   private readonly seasonsResource = resource({

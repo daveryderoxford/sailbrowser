@@ -12,7 +12,7 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 import { seriesScoringSchemeDetails } from 'app/scoring/model/scoring-algotirhm';
 import { seriesEntryGroupingDetails } from 'app/scoring';
 import { Race, RaceCalendarStore, Series } from 'app/race-calender';
-import { ClubService } from 'app/club';
+import { ClubService } from '../../../club-tenant';
 import { DialogsService } from 'app/shared/dialogs/dialogs.service';
 
 /** Displays series details with a list of races 
@@ -62,7 +62,7 @@ export class SeriesDetails {
    // Reactive state derived from services
    series = computed(() => this.rc.allSeries().find(s => s.id === this.id())!);
    fleets = computed(() => this.clubService.club().fleets);
-   fleet = computed(() => this.fleets().find(f => f.shortName === this.series()?.fleetId));
+   fleet = computed(() => this.fleets().find((f) => f.shortName === this.series()?.fleetId));
 
    scoringSchemeName = computed(() => {
       const scheme = this.series()?.scoringScheme?.scheme;
@@ -124,7 +124,7 @@ export class SeriesDetails {
          } finally {
             this.busy.set(false);
          }
-         
+
          this.router.navigate(['/series']);
       }
    }
