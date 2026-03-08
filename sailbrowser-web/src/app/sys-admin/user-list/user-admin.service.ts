@@ -2,17 +2,18 @@ import { Injectable, inject, signal } from '@angular/core';
 import { rxResource } from '@angular/core/rxjs-interop';
 import { collectionData } from '@angular/fire/firestore';
 import { AuthService } from 'app/auth/auth.service';
-import { createClubSubCollectionRef as clubSubCollectionRef } from 'app/club-tenant';
 import { of } from 'rxjs';
 import { UserData } from '../../user/model/user';
+import { FirestoreTenantService } from 'app/club-tenant';
 
 @Injectable({
    providedIn: 'root'
 })
 export class UserAdminService {
    private as = inject(AuthService);
+  private readonly tenant = inject(FirestoreTenantService);
 
-   private userCollection = clubSubCollectionRef<UserData>('users');
+   private userCollection = this.tenant.collectionRef<UserData>('users');
    
    private _load = signal(false);
 

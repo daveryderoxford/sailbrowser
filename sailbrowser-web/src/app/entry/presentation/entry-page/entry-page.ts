@@ -1,27 +1,27 @@
 import { DatePipe } from '@angular/common';
-import { ChangeDetectionStrategy, Component, computed, effect, inject, signal, viewChild } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, effect, inject, signal } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { FormBuilder, FormControl, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatAutocompleteModule, MatAutocompleteSelectedEvent } from '@angular/material/autocomplete';
 import { MatButtonModule } from '@angular/material/button';
+import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatIcon } from "@angular/material/icon";
 import { MatInputModule } from '@angular/material/input';
 import { MatListModule } from '@angular/material/list';
-import { MatStepperModule } from '@angular/material/stepper';
-import { debounceTime, map, startWith } from 'rxjs';
-import { Race } from '../../../race-calender/model/race';
-import { EntryService } from '../../services/entry.service';
-import { Toolbar } from "app/shared/components/toolbar";
 import { MatSelectModule } from '@angular/material/select';
-import { CurrentRaces } from '../../../results-input/services/current-races-store';
-import { Router } from '@angular/router';
-import { BoatsStore, boatFilter } from '../../../boats/services/boats.store';
 import { MatSnackBar } from '@angular/material/snack-bar';
-import { MatCheckboxModule } from '@angular/material/checkbox';
-import { MatIcon } from "@angular/material/icon";
+import { MatStepperModule } from '@angular/material/stepper';
+import { Router } from '@angular/router';
+import { Boat, boatFilter, BoatsStore } from 'app/boats';
+import { ClubStore } from 'app/club-tenant';
+import { Race } from 'app/race-calender';
+import { CurrentRaces } from 'app/results-input';
 import { BusyButton } from "app/shared/components/busy-button";
-import { ClubService } from '../../../club-tenant';
-import { Boat } from 'app/boats';
+import { CenteredText } from "app/shared/components/centered-text";
+import { Toolbar } from "app/shared/components/toolbar";
+import { debounceTime, map, startWith } from 'rxjs';
+import { EntryService } from '../../services/entry.service';
 
 @Component({
   selector: 'app-entry',
@@ -38,7 +38,8 @@ import { Boat } from 'app/boats';
     MatSelectModule,
     MatCheckboxModule,
     MatIcon,
-    BusyButton
+    BusyButton,
+    CenteredText
 ],
   templateUrl: 'entry-page.html',
   styles: [`
@@ -82,7 +83,7 @@ export class EntryPage {
   private readonly formBuilder = inject(FormBuilder);
   private readonly _entryService = inject(EntryService);
   private readonly bs = inject(BoatsStore);
-  protected readonly cs = inject(ClubService);
+  protected readonly cs = inject(ClubStore);
   protected readonly currentRacesStore = inject(CurrentRaces);
   private readonly router = inject(Router);
   private readonly snackbar = inject(MatSnackBar);

@@ -7,7 +7,7 @@ import { MatInputModule } from '@angular/material/input';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { Router, RouterLink } from '@angular/router';
 import { FlexModule } from '@ngbracket/ngx-layout/flex';
-import { Toolbar } from "../../shared/components/toolbar";
+import { Toolbar } from "app/shared/components/toolbar";
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { FirebaseError } from '@angular/fire/app';
 import { getFirebaseErrorMessage } from '../firebase-error-messages';

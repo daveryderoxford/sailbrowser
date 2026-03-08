@@ -1,16 +1,16 @@
-import { ChangeDetectionStrategy, Component, computed, input, output } from '@angular/core';
 import { CdkTableModule } from '@angular/cdk/table';
-import { PublishedRace, RaceResult } from 'app/published-results/model/published-race';
+import { ChangeDetectionStrategy, Component, computed, input } from '@angular/core';
+import { RaceResult } from 'app/published-results/model/published-race';
 import { competitorColumns, nameColumnWidth } from '../results-table-shared';
-import { format } from 'date-fns';
+import { DurationPipe } from 'app/results-input';
 
-export const raceColumns = [...competitorColumns, 'points'] as const;
+export const raceColumns = [...competitorColumns, 'elapsed', 'corrected','points'] as const;
 export type RaceColumn = typeof raceColumns[number];
 
 @Component({
   selector: 'app-race-results-table',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [CdkTableModule],
+  imports: [CdkTableModule, DurationPipe],
   templateUrl: './race-results-table.html',
   styleUrls: ['../results-table-shared.scss', './race-results-table.scss'],
 })

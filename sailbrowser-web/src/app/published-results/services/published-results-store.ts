@@ -1,9 +1,9 @@
-import { computed, Injectable, resource, signal } from '@angular/core';
+import { computed, inject, Injectable, resource, signal } from '@angular/core';
 import { doc, getDoc, getDocs, query, where } from '@angular/fire/firestore';
-import { createClubSubCollectionRef } from 'app/club-tenant';
 import { PublishedRace } from '../model/published-race';
 import { PublishedSeason } from '../model/published-season';
 import { PublishedSeries } from '../model/published-series';
+import { FirestoreTenantService } from 'app/club-tenant';
 
 interface SeriesRaces {
   series: PublishedSeries | undefined;
@@ -18,12 +18,11 @@ export const PUBLISHED_RACES_PATH = '/published-races';
   providedIn: 'root'
 })
 export class PublishedResultsReader {
+  private tenant = inject(FirestoreTenantService);
 
-  private seasonsCollection = createClubSubCollectionRef<PublishedSeason>(PUBLISHED_SEASONS_PATH);
-
-  private seriesCollection = createClubSubCollectionRef<PublishedSeries>(PUBLISHED_SERIES_PATH);
-
-  private racesCollection = createClubSubCollectionRef<PublishedRace>(PUBLISHED_RACES_PATH);
+  private seasonsCollection = this.tenant.collectionRef<PublishedSeason>(PUBLISHED_SEASONS_PATH);
+  private seriesCollection = this.tenant.collectionRef<PublishedSeries>(PUBLISHED_SERIES_PATH);
+  private racesCollection = this.tenant.collectionRef<PublishedRace>(PUBLISHED_RACES_PATH);
 
   /** One-time load with no monitoring of all published seasons */
   private readonly seasonsResource = resource({

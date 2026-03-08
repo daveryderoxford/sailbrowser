@@ -29,6 +29,7 @@ export class SeriesAdd {
       this.busy.set(true);
       await this.rcs.addSeries(series);
     } catch (error: any) {
+      console.log('Add Series error ' + error.message);
       this.snackbar.open('Error adding Series', 'Close', { duration: 3000 });
     } finally  {
       this.busy.set(false);

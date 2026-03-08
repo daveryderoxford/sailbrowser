@@ -17,7 +17,7 @@
          <td cdk-cell [style.width]="nameColumnWidth()" *cdkCellDef="let competitor">
             {{competitor.helm}}
             @if (competitor.crew) {
-            <br> {{ competitor.crew}}
+               <br> {{ competitor.crew}}
             }
          </td>
       </ng-container>
@@ -26,7 +26,7 @@
          <th cdk-header-cell *cdkHeaderCellDef>Boat</th>
          <td cdk-cell *cdkCellDef="let competitor">
             @if (showBoatClass()) {
-            {{ competitor.boatClass }} <br>
+               {{ competitor.boatClass }} <br>
             }
             {{ competitor.sailNumber }}
          </td>
@@ -34,23 +34,46 @@
 
       <ng-container cdkColumnDef="club">
          <th cdk-header-cell *cdkHeaderCellDef>Club</th>
-         <td cdk-cell *cdkCellDef="let competitor"> {{ competitor.club }} </td>
+         <td cdk-cell *cdkCellDef="let competitor">
+            {{ competitor.club }}
+         </td>
+      </ng-container>
+
+      <ng-container cdkColumnDef="elapsed">
+         <th cdk-header-cell *cdkHeaderCellDef>Elapsed</th>
+         <td cdk-cell *cdkCellDef="let competitor">
+            {{ competitor.elapsedTime | duration }}
+         </td>
+      </ng-container>
+
+      <ng-container cdkColumnDef="corrected">
+         <th cdk-header-cell *cdkHeaderCellDef>Corrected</th>
+         <td cdk-cell *cdkCellDef="let competitor">
+            {{ competitor.correctedTime | duration }}
+         </td>
       </ng-container>
 
       <ng-container cdkColumnDef="handicap">
          <th cdk-header-cell *cdkHeaderCellDef>Rating</th>
-         <td cdk-cell *cdkCellDef="let competitor"> {{ competitor.handicap }} </td>
+         <td cdk-cell *cdkCellDef="let competitor">
+            {{ competitor.handicap }}
+         </td>
       </ng-container>
 
       <ng-container cdkColumnDef="points">
          <th cdk-header-cell *cdkHeaderCellDef>Points</th>
-         <td cdk-cell *cdkCellDef="let competitor"> {{ competitor.points }} </td>
+         <td cdk-cell *cdkCellDef="let competitor">
+            {{ competitor.points }}
+            @if (competitor.resultCode !== 'OK') {
+               <br> {{competitor.resultCode}}
+            }
+         </td>
       </ng-container>
 
       <tr cdk-header-row class="header" *cdkHeaderRowDef="displayedColumns(); sticky: true"></tr>
       <tr cdk-row class="row" *cdkRowDef="let competitor; columns: displayedColumns(); let even = $even"
          [class.selected]="isCompetitorSelected(competitor)">
       </tr>
-      
+
    </table>
 </div>

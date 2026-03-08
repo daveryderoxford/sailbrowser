@@ -1,18 +1,18 @@
-import { Component, computed, effect, inject, input, signal, ElementRef } from '@angular/core';
-import { Toolbar } from "app/shared/components/toolbar";
 import { BreakpointObserver, Breakpoints } from '@angular/cdk/layout';
-import { toSignal } from '@angular/core/rxjs-interop';
-import { SeasonList } from "../season-list/season-list";
-import { PublishedResultsReader } from 'app/published-results/services/published-results-store';
-import { SeriesResultsTable } from "../results-tables/series-results-table/series-results-table";
-import { LoadingCentered } from "../../../shared/components/loading-centered";
-import { RaceResultsTable } from "../results-tables/race-results-table/race-results-table";
-import { MatIconModule } from '@angular/material/icon';
-import { MatButtonModule } from '@angular/material/button';
 import { DatePipe } from '@angular/common';
-import { CenteredText } from "../../../shared/components/centered-text";
-import { ɵɵRouterLink } from "@angular/router/testing";
+import { Component, computed, effect, ElementRef, inject, input, Signal, signal } from '@angular/core';
+import { toSignal } from '@angular/core/rxjs-interop';
+import { MatButtonModule } from '@angular/material/button';
+import { MatIconModule } from '@angular/material/icon';
 import { RouterLink } from '@angular/router';
+import { PublishedResultsReader } from 'app/published-results/services/published-results-store';
+import { LoadingCentered } from 'app/shared/components/loading-centered';
+import { Toolbar } from "app/shared/components/toolbar";
+import { RaceResultsTable } from "../results-tables/race-results-table/race-results-table";
+import { SeriesResultsTable } from "../results-tables/series-results-table/series-results-table";
+import { SeasonList } from "../season-list/season-list";
+import { CenteredText } from 'app/shared/components/centered-text';
+import { ClubStore, Fleet } from 'app/club-tenant';
 
 @Component({
   selector: 'app-results-viewer',
@@ -23,6 +23,7 @@ import { RouterLink } from '@angular/router';
 export class ResultsViewer {
 
   protected store = inject(PublishedResultsReader);
+  protected cs = inject(ClubStore);
   private breakpoint = toSignal(inject(BreakpointObserver).observe([Breakpoints.Handset]));
   protected reader = inject(PublishedResultsReader);
   protected isPanelCollapsed = signal(false);
@@ -34,6 +35,7 @@ export class ResultsViewer {
 
   series = this.store.series;
   races = this.store.races;
+  seasons = this.store.seasons;
   reversedRaces = computed(() => [...this.races()].reverse());
 
   raceTitles = computed(() => this.races().map((({ id, index, scheduledStart, raceOfDay }) => ({
@@ -63,5 +65,9 @@ export class ResultsViewer {
 
   togglePanel() {
     this.isPanelCollapsed.update(v => !v);
+  }
+
+  fleetName(fleetId: string): string | undefined {
+    return this.cs.findFleet(fleetId)()?.name;
   }
 }

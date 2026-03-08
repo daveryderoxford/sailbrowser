@@ -64,7 +64,7 @@ export class RaceEdit {
 
       try {
         this.busy.set(true);
-        await this.rcs.updateRace(race.seriesId, race.id, update);
+        await this.rcs.updateRace(race.id, update);
         this.form.reset();
         this.router.navigate(['/race-calender/series-details/', race.seriesId]);
       } catch (error: any) {

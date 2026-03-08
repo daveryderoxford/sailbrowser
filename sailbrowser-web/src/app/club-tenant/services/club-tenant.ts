@@ -1,39 +1,53 @@
 import { Injectable, inject } from '@angular/core';
-import { Firestore, doc, getDoc } from '@angular/fire/firestore';
-import { ClubService } from './club.service';
+import { ClubStore } from './club-store';
 
-@Injectable({ providedIn: 'root' })
+@Injectable({ 
+  providedIn: 'root' 
+})
 export class ClubContextService {
-   private _clubId: string = '';
-   private _config: any = null;
+  private _clubId: string = '';
 
-   get clubId() { return this._clubId; }
+  get clubId() { return this._clubId; }
 
-   private firestore = inject(Firestore);
-   private clubStore = inject(ClubService);
+  private clubStore = inject(ClubStore);
 
-   async initialize(): Promise<void> {
-      const host = window.location.hostname;
+  /** Called when the application initialises to
+   * handle the extracting the clubId from the subdomain and
+   * valifdating it. 
+   * 
+   * This is called before the Angualar router is avaliable
+   */
+  async initialize(): Promise<void> {
 
-      // Resolve ID from subdomain
-      if (host.endsWith('.localhost')) {
-         this._clubId = host.replace('.localhost', '');
-      } else {
-         this._clubId = host.split('.')[0];
+    // Resolve ClubId from subdomain
+  /*  const host = window.location.hostname;
+    if (host.endsWith('.localhost')) {
+      this._clubId = host.replace('.localhost', '');
+    } else {
+      this._clubId = host.split('.')[0];
+    } */
+    console.log('Club tenant:  Hard coding club to ibrsc');
+    this._clubId = 'ibrsc'
+
+    // Read club data and verify that the clubid corresponds
+    // If read fails redirect to 'all clubs' page TODO
+    try {
+      const club = await this.clubStore.initialize(this._clubId);
+
+      // Check if club is null OR if the ID doesn't match
+      if (!club || club.id !== this._clubId) {
+        throw new Error(`Club mismatch or not found: Expected ${this._clubId}`);
       }
 
-      // Read club data and verify that the clubid corresponds
-      // If readf fails redirect to 'all clubs' page TODO
-      try {
-         const club = await this.clubStore.initialize(this._clubId);
+    } catch (e: unknown) { 
 
-         if (!club || club.id !== this._clubId) {
-            // Handle unknown tenant club selection page
-            window.location.href = 'https://main-site.com/404';
-         }
-      } catch (e) {
-         console.error('Context Initialization Failed', e);
-         window.location.href = 'https://main-site.com/404';
-      }
-   }
+      const errorMessage = e instanceof Error ? e.message : String(e);
+      console.error('ClubTenant: Redirecting to club list page as URL does not start with a valid club sub-domain', {
+        message: errorMessage,
+        originalError: e,
+        clubId: this._clubId
+      });
+      window.location.href = 'https://sailbrowser.com/clublist.html';
+    }
+  }
 }

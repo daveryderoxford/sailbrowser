@@ -1,7 +1,7 @@
 import { Component, inject, input } from '@angular/core';
 import { FormGroup, FormControl, Validators } from '@angular/forms';
 import { Boat as RaceCompetitor } from 'app/boats';
-import { ClubService } from '../../../club-tenant';
+import { ClubStore } from 'app/club-tenant';
 
 @Component({
   selector: 'app-entry-edit',
@@ -10,12 +10,11 @@ import { ClubService } from '../../../club-tenant';
   styles: ``,
 })
 export class EntryEdit {
-  cs = inject(ClubService);
+  cs = inject(ClubStore);
 
   boat = input<RaceCompetitor | undefined>();
 
   busy = input<boolean>(false);
- 
 
   form = new FormGroup({
     boatClass: new FormControl('', { validators: [Validators.required] }),

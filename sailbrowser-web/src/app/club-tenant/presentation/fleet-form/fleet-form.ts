@@ -2,52 +2,58 @@
 import { ChangeDetectionStrategy, Component, effect, inject, input, output, signal } from '@angular/core';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
-import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
 import { SubmitButton } from 'app/shared/components/submit-button';
 import { DeleteButton } from 'app/shared/components/delete-button';
-import { Boat } from 'app/boats';
+import { Fleet } from 'app/club-tenant/model/fleet';
 import { ClubStore } from 'app/club-tenant';
+import { HANDICAP_SYSTEMS, HandicapSystem } from 'app/scoring';
 
 @Component({
-  selector: 'app-boat-form',
-  templateUrl: './boat-form.html',
-  styleUrl: 'boat-form.scss',
-  standalone: true,
+  selector: 'app-fleet-form',
+  templateUrl: './fleet-form.html',
+  styles: `
+    @use "mixins" as mix;
+
+    @include mix.form-page("form", 350px);
+
+    .form-group-section {
+      display: contents;
+    }
+  `,
   imports: [ReactiveFormsModule, MatFormFieldModule, MatInputModule,
-    MatSelectModule, MatButtonModule, MatCheckboxModule, SubmitButton, DeleteButton],
+    MatSelectModule, MatButtonModule, SubmitButton],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class BoatForm {
+export class FleetForm {
 
   cs = inject(ClubStore);
 
-  boat = input<Boat | undefined>();
+  fleet = input<Fleet | undefined>();
+
+  handicapSystems = HANDICAP_SYSTEMS;
+
   busy = input<boolean>(false);
-  submitted = output<Partial<Boat>>();
-  deleted = output<Boat>();
+  submitted = output<Partial<Fleet>>();
 
   form = new FormGroup({
-    boatClass: new FormControl('', { validators: [Validators.required] }),
-    sailNumber: new FormControl<Number>(0, { validators: [Validators.required, Validators.min(0)] }),
-    name: new FormControl(''),
-    helm: new FormControl(''),
-    crew: new FormControl(''),
-    isClub: new FormControl<boolean>(false),
+    shortName: new FormControl('', { validators: [Validators.required] }),
+    name: new FormControl('', { validators: [Validators.required] }),
+    handicapSystems: new FormControl<HandicapSystem[]>([]),
   });
 
   constructor() {
     effect(() => {
-      if (this.boat()) {
-        this.form.patchValue(this.boat()!);
+      if (this.fleet()) {
+        this.form.patchValue(this.fleet()!);
       }
     });
   }
 
   submit() {
-    const output: Partial<Boat> = this.form.getRawValue() as Partial<Boat>;
+    const output: Partial<Fleet> = this.form.getRawValue() as Partial<Fleet>;
     this.submitted.emit(output);
     this.form.reset();
   }

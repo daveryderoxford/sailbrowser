@@ -34,7 +34,7 @@
          } @else if (!series()) {
          <app-centered-text>Select a series to display</app-centered-text>
          } @else {
-         <h3> {{series()?.id}}</h3>
+         <h3> {{series()!.name}} - {{fleetName(series()!.fleetId)}}</h3>
          <app-series-results-table [series]="series()!" [raceTitles]="raceTitles()"
             (raceClicked)="raceClicked($event)" />
 

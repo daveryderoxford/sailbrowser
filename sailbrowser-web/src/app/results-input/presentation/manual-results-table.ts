@@ -99,8 +99,8 @@ export class ManualResultsTable {
   }
 
   corrected(comp: RaceCompetitor): number | undefined {
-    if (comp.finishTime && this.maxLaps() > 0) {
-      return comp.elapsedTime! / this.maxLaps() * comp.handicap /1000;
+    if (comp.finishTime && comp.numLaps > 0 &&  comp.handicap > 0) {
+      return comp.elapsedTime! * this.maxLaps() / comp.numLaps * 1000 / comp.handicap;
     }
     return undefined;
   }

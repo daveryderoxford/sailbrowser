@@ -4,17 +4,18 @@ import { User } from "@angular/fire/auth";
 import { DocumentReference, arrayRemove, arrayUnion, doc, docData, setDoc, updateDoc } from "@angular/fire/firestore";
 import { AuthService } from 'app/auth';
 import { Boat } from 'app/boats';
-import { createClubSubCollectionRef } from 'app/club-tenant';
 import { of } from 'rxjs';
 import { UserData } from '../model/user';
+import { FirestoreTenantService } from 'app/club-tenant';
 
 @Injectable({
   providedIn: "root"
 })
 export class UserDataService {
   private as = inject(AuthService);
+  private tenant = inject(FirestoreTenantService);
 
-  private userCollection = createClubSubCollectionRef<UserData>('users');
+  private userCollection = this.tenant.collectionRef<UserData>('users');
   
   private _userResource = rxResource<UserData | undefined, User| undefined>({
     params: () => this.as.user(),

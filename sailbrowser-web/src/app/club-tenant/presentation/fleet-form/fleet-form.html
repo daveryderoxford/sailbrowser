@@ -1,0 +1,30 @@
+<form (ngSubmit)="submit()" [formGroup]="form" novalidate>
+
+  <mat-form-field>
+    <mat-label>Name</mat-label>
+    <input matInput formControlName="name">
+  </mat-form-field>
+
+  <mat-form-field>
+    <mat-label>Short name</mat-label>
+    <input matInput formControlName="shortName">
+  </mat-form-field>
+
+  <mat-form-field>
+    <mat-label>Handicap System</mat-label>
+    <mat-select formControlName="handicapSystems" multiple>
+      @for (h of handicapSystems; track h) {
+      <mat-option [value]="h">{{h}}</mat-option>
+      }
+    </mat-select>
+  </mat-form-field>
+
+  <div class="actions">
+
+    <app-submit-button [disabled]="form.invalid || !form.dirty" [busy]="busy()">
+      Save
+    </app-submit-button>
+
+  </div>
+
+</form>

@@ -12,8 +12,8 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 import { seriesScoringSchemeDetails } from 'app/scoring/model/scoring-algotirhm';
 import { seriesEntryGroupingDetails } from 'app/scoring';
 import { Race, RaceCalendarStore, Series } from 'app/race-calender';
-import { ClubService } from '../../../club-tenant';
 import { DialogsService } from 'app/shared/dialogs/dialogs.service';
+import { ClubStore } from 'app/club-tenant';
 
 /** Displays series details with a list of races 
  * Includes buttons to add/edit races and duplicate the series
@@ -55,13 +55,13 @@ export class SeriesDetails {
 
    private router = inject(Router);
    protected rc = inject(RaceCalendarStore);
-   private clubService = inject(ClubService);
+   private clubStore = inject(ClubStore);
    private ds = inject(DialogsService);
    private snackbar = inject(MatSnackBar);
 
    // Reactive state derived from services
    series = computed(() => this.rc.allSeries().find(s => s.id === this.id())!);
-   fleets = computed(() => this.clubService.club().fleets);
+   fleets = computed(() => this.clubStore.club().fleets);
    fleet = computed(() => this.fleets().find((f) => f.shortName === this.series()?.fleetId));
 
    scoringSchemeName = computed(() => {
@@ -100,7 +100,7 @@ export class SeriesDetails {
       if (await this.ds.confirm('Delete race', 'Are you sure you want to delete this race?')) {
          try {
             this.busy.set(true);
-            await this.rc.deleteRace(this.series().id, race);
+            await this.rc.deleteRace(race);
          } catch (error: any) {
             this.snackbar.open("Error deleting race", "Dismiss", { duration: 3000 });
             console.log('SeriesDetails. Error deleting race: ' + error.toString());

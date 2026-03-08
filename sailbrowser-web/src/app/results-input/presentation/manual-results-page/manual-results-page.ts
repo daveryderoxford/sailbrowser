@@ -190,7 +190,7 @@ export class ManualResultsPage {
     const result = await firstValueFrom<RaceStartTimeResult | undefined>(dialog.afterClosed());
 
     if (result) {
-      await this.raceStore.updateRace(race.seriesId, race.id, {
+      await this.raceStore.updateRace(race.id, {
         actualStart: result.startTime,
         timeInputMode: result.mode
       });
@@ -198,23 +198,6 @@ export class ManualResultsPage {
 
     return result;
   } 
-/*
-  async setStartTime(race: Race): Promise<RaceStartTimeResult | undefined> {
-    const dialog = this.dialog.open<RaceStartTimeDialog, { race: typeof race; }, RaceStartTimeResult>(RaceStartTimeDialog, {
-      data: { race }
-    });
-
-    const result = await firstValueFrom<RaceStartTimeResult | undefined>(dialog.afterClosed());
-
-    if (result) {
-      await this.raceStore.updateRace(race.seriesId, race.id, {
-        actualStart: result.startTime,
-        timeInputMode: result.mode
-      });
-    }
-
-    return result;
-  } */
 
   async save() {
     if (this.form.invalid) return;
@@ -239,7 +222,7 @@ export class ManualResultsPage {
       return;
     }
 
-    await this.store.updateResult(competitor, {
+    await this.store.updateResult(competitor.id, {
       startTime: race!.actualStart,
       manualFinishTime: finishTime || undefined,  // map null to undefined
       manualLaps: laps || 1,

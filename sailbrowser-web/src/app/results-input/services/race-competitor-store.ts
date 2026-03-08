@@ -1,46 +1,25 @@
 /**
 * Results Management
-* Operations on the 'results' subcollection of a specific race.
+* Operations on the 'race-results' collection.
 */
 import { inject, Injectable } from '@angular/core';
 import { rxResource } from '@angular/core/rxjs-interop';
-import { FirebaseApp } from '@angular/fire/app';
-import { addDoc, collection, collectionData, collectionGroup, deleteDoc, doc, getFirestore, query, updateDoc, where } from '@angular/fire/firestore';
+import { addDoc, collectionData, deleteDoc, doc, Firestore, query, updateDoc, where } from '@angular/fire/firestore';
+import { FirestoreTenantService } from 'app/club-tenant';
 import { map, of, tap } from 'rxjs';
-import { CurrentRaces } from './current-races-store';
 import { RaceCompetitor } from '../model/race-competitor';
-import { classInstanceConverter } from 'app/shared/firebase/firestore-helper';
-import { ClubContextService } from 'app/club-tenant/services/club-tenant';
-
-export interface ResultsPathData {
-  raceId: string;
-  seriesId: string;
-  id: string;
-}
-
-export interface ResultsCollectionData {
-  raceId: string;
-  seriesId: string;
-}
-
-const raceCompetitorConverter = classInstanceConverter(RaceCompetitor);
-
+import { CurrentRaces } from './current-races-store';
 
 @Injectable({
   providedIn: 'root',
 })
 export class RaceCompetitorStore {
-  private readonly firestore = getFirestore(inject(FirebaseApp));
+  private readonly firestore = inject(Firestore);
   private selectedRaces = inject(CurrentRaces);
-  private clubId = inject(ClubContextService).clubId;
-
-  private ref = (pd: ResultsPathData) => doc(
-    this.firestore,
-    `clubs/${this.clubId}/series/${pd.seriesId}/races/${pd.raceId}/results`,
-    pd.id).withConverter(raceCompetitorConverter);
-
-  private collection = (pd: ResultsCollectionData) => collection(
-    this.firestore, `clubs/${this.clubId}/series/${pd.seriesId}/races/${pd.raceId}/results`).withConverter(raceCompetitorConverter);
+  private tenant = inject(FirestoreTenantService);
+  
+  private collection = this.tenant.collectionOf<RaceCompetitor>(RaceCompetitor, 'race-results');
+  private ref = (id: string) => doc(this.collection, id);
 
   /** Race competitors in selected races */
   private readonly selectedCompResource = rxResource({
@@ -51,9 +30,9 @@ export class RaceCompetitorStore {
         return of([]);
       } else {
         const q = query(
-          collectionGroup(this.firestore, 'results'),
+          this.collection,
           where('raceId', 'in', selectedIds)
-        ).withConverter(raceCompetitorConverter);
+        );
         return collectionData(q).pipe(
           map(rc => rc.sort(sortEntries)),
           tap(rc => console.log(`RaceCompetitorStore. Loaded ${rc.length} competitors`))
@@ -82,21 +61,19 @@ export class RaceCompetitorStore {
   readonly loading = this.selectedCompResource.isLoading;
   readonly error = this.selectedCompResource.error;
 
-  async addResult(pd: { seriesId: string, raceId: string; }, result: Partial<RaceCompetitor>): Promise<string> {
+  async addResult(result: Partial<RaceCompetitor>): Promise<string> {
     const update = this.tidyStrings(result);
-    const ref = await addDoc(this.collection(pd), update);
+    const ref = await addDoc(this.collection, update);
     return ref.id;
   }
 
-  async updateResult(pd: ResultsPathData, changes: Partial<RaceCompetitor>) {
-    const path = `series/${pd.seriesId}/races/${pd.raceId}/results/${pd.id}`;
+  async updateResult(id: string, changes: Partial<RaceCompetitor>) {
     const update = this.tidyStrings(changes);
-    await updateDoc(doc(this.firestore, path), update);
+    await updateDoc(this.ref(id), update);
   }
 
-  async deleteResult(pd: ResultsPathData) {
-    const path = `series/${pd.seriesId}/races/${pd.raceId}/results/${pd.id}`;
-    await deleteDoc(doc(this.firestore, path));
+  async deleteResult(id: string) {
+    await deleteDoc(this.ref(id));
   }
 }
 

@@ -10,7 +10,7 @@ import { MatInputModule } from '@angular/material/input';
 import { MatListModule } from '@angular/material/list';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { RouterModule } from '@angular/router';
-import { ClubService } from '../../club-tenant';
+import { ClubStore } from '../../club-tenant';
 import { LoadingCentered } from "app/shared/components/loading-centered";
 import { Toolbar } from 'app/shared/components/toolbar';
 import { debounceTime, distinctUntilChanged, startWith } from 'rxjs';
@@ -85,7 +85,7 @@ import { normaliseString } from 'app/shared/utils/string-utils';
 })
 export class SeriesList {
   protected rcs = inject(RaceCalendarStore);
-  private cs = inject(ClubService);
+  private cs = inject(ClubStore);
 
   searchControl = new FormControl('');
   searchTerm = toSignal(

@@ -1,0 +1,132 @@
+[
+ {
+   "id": "29er",
+   "name": "29er",
+   "handicap": 900
+ },
+ {
+   "id": "Blaze",
+   "name": "Blaze",
+   "handicap": 1030
+ },
+ {
+   "id": "Enterprise",
+   "name": "Enterprise",
+   "handicap": 1137
+ },
+ {
+   "id": "Hartley 12",
+   "name": "Hartley 12",
+   "handicap": 1250
+ },
+ {
+   "id": "ILCA 4 / Laser 4.7",
+   "name": "ILCA 4 / Laser 4.7",
+   "handicap": 1216
+ },
+ {
+   "id": "ILCA 6 / Laser Radial",
+   "name": "ILCA 6 / Laser Radial",
+   "handicap": 1154
+ },
+ {
+   "id": "ILCA 7 / Laser",
+   "name": "ILCA 7 / Laser",
+   "handicap": 1104
+ },
+ {
+   "id": "Phantom",
+   "name": "Phantom",
+   "handicap": 998
+ },
+ {
+   "id": "ROOSTER 8.1",
+   "name": "ROOSTER 8.1",
+   "handicap": 1021
+ },
+ {
+   "id": "Aero 5",
+   "name": "Aero 5",
+   "handicap": 1139
+ },
+ {
+   "id": "Aero 6",
+   "name": "Aero 6",
+   "handicap": 1099
+ },
+ {
+   "id": "Aero 7",
+   "name": "Aero 7",
+   "handicap": 1063
+ },
+ {
+   "id": "Aero 9",
+   "name": "Aero 9",
+   "handicap": 1005
+ },
+ {
+   "id": "RS Feva",
+   "name": "RS Feva",
+   "handicap": 1280
+ },
+ {
+   "id": "RS Feva XL",
+   "name": "RS Feva XL",
+   "handicap": 1244
+ },
+ {
+   "id": "RS VAREO",
+   "name": "RS VAREO",
+   "handicap": 1095
+ },
+ {
+   "id": "RS Vareo",
+   "name": "RS Vareo",
+   "handicap": 1095
+ },
+ {
+   "id": "RS200",
+   "name": "RS200",
+   "handicap": 1050
+ },
+ {
+   "id": "RS300",
+   "name": "RS300",
+   "handicap": 965
+ },
+ {
+   "id": "RS400",
+   "name": "RS400",
+   "handicap": 942
+ },
+ {
+   "id": "RS600",
+   "name": "RS600",
+   "handicap": 921
+ },
+ {
+   "id": "Rooster 8.1",
+   "name": "Rooster 8.1",
+   "handicap": 1021
+ },
+ {
+   "id": "Solo",
+   "name": "Solo",
+   "handicap": 1139
+ },
+ {
+   "id": "Streaker",
+   "name": "Streaker",
+   "handicap": 1124
+ },
+ {
+   "id": "Topper",
+   "name": "Topper",
+   "handicap": 1363
+ },
+ {
+   "id": "Topper 4.2",
+   "name": "Topper 4.2",
+   "handicap": 1440
+ }
+]

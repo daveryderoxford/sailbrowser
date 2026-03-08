@@ -32,4 +32,4 @@ export function nameColumnWidth(names: HelmCrew[]) {
    return `${maxLenPixels}px`;
 }
 
-export const competitorColumns = ['rank', 'name', 'boat', 'club', 'handicap'] as const;
+export const competitorColumns = ['rank', 'name', 'boat', 'handicap'] as const;

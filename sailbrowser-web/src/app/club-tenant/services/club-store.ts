@@ -2,7 +2,7 @@
 import { Injectable, Signal, computed, inject, signal } from '@angular/core';
 import { rxResource } from '@angular/core/rxjs-interop';
 import { FirebaseApp } from '@angular/fire/app';
-import { arrayRemove, arrayUnion, doc, docData, getFirestore, updateDoc, } from '@angular/fire/firestore';
+import { arrayRemove, arrayUnion, doc, docData, getFirestore, setDoc, updateDoc, } from '@angular/fire/firestore';
 import { firstValueFrom, filter, Observable } from 'rxjs';
 import { Club } from '../model/club';
 import { Fleet } from '../model/fleet';
@@ -13,14 +13,14 @@ import { dataObjectConverter } from 'app/shared/firebase/firestore-helper';
 @Injectable({
   providedIn: 'root',
 })
-export class ClubService {
+export class ClubStore {
   private readonly firestore = getFirestore(inject(FirebaseApp));
 
   private _confirmedId = signal<string | undefined>(undefined);
 
   clubDoc = computed(() => {
     if (this._confirmedId()) {
-      return doc(this.firestore, 'tenants', this._confirmedId()!)
+      return doc(this.firestore, 'clubs', this._confirmedId()!)
         .withConverter(dataObjectConverter<Club>());
     } else
       return undefined;
@@ -45,14 +45,18 @@ export class ClubService {
    * start monitoring for changed to the club's data 
    */
   async initialize(id: string): Promise<Club | undefined> {
-    const clubDocRef = doc(this.firestore, 'tenants', id).withConverter(dataObjectConverter<Club>());
+    const clubDocRef = doc(this.firestore, 'clubs', id).withConverter(dataObjectConverter<Club>());
 
-    const club = await firstValueFrom(docData(clubDocRef));    
+    const club = await firstValueFrom(docData(clubDocRef));
 
     // Start monitoring for edit to club's data 
     this._confirmedId.set(id);
 
     return club;
+  }
+
+  async update(update: Partial<Club>) {
+    return await setDoc(this.clubDoc()!, update);
   }
 
   async addFleet(fleet: Fleet) {

@@ -1,7 +1,7 @@
 <app-toolbar title="Results Entry">
 
   <button matButton (click)="publish()">  
-    Publish results
+    Publish race
   </button>
   <mat-form-field appearance="outline" class="race-selector dense-form-field" subscriptSizing="dynamic">
     <mat-select [formControl]="raceFilterControl" placeholder="Select Race">
@@ -100,7 +100,7 @@
 
       <div class="actions">
         <button mat-button type="button" (click)="resetForm()">Clear</button>
-        <button mat-flat-button color="primary" type="submit" [disabled]="form.invalid">Record</button>
+        <button mat-flat-button color="primary" type="submit">Record</button>
       </div>
     </form>
   </div>

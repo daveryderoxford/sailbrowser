@@ -1,5 +1,5 @@
 import { Injectable, inject } from '@angular/core';
-import { ClubService } from '../../club-tenant';
+import { ClubStore } from '../../club-tenant';
 import { Race } from '../../race-calender/model/race';
 import { RaceCompetitor } from '../../results-input/model/race-competitor';
 import { RaceCompetitorStore } from '../../results-input/services/race-competitor-store';
@@ -18,7 +18,7 @@ export interface EntryDetails {
   providedIn: 'root'
 })
 export class EntryService {
-  private clubService = inject(ClubService);
+  private clubStore = inject(ClubStore);
   private raceResultsService = inject(RaceCompetitorStore);
 
   /** Enter a race 
@@ -36,7 +36,7 @@ export class EntryService {
 
     // Populate handicap based on the classes handicap if not provided
     if (handicap === undefined || handicap === null) {
-      const boatClass = this.clubService.club().classes.find(c => c.name === details.boatClass);
+      const boatClass = this.clubStore.club().classes.find(c => c.name === details.boatClass);
       handicap = boatClass?.handicap ?? 0;
     }
 
@@ -55,10 +55,7 @@ export class EntryService {
       console.log("Adding competitor");
 
 
-      return this.raceResultsService.addResult({
-        seriesId: race.seriesId,
-        raceId: race.id,
-      }, competitor);
+      return this.raceResultsService.addResult(competitor);
     });
 
     await Promise.all(promises);

@@ -14,6 +14,7 @@ import { DialogsService } from 'app/shared/dialogs/dialogs.service';
 import { RaceCompetitor } from '../../results-input/model/race-competitor';
 import { CurrentRaces } from '../../results-input/services/current-races-store';
 import { RaceCompetitorStore } from '../../results-input/services/race-competitor-store';
+import { CenteredText } from "app/shared/components/centered-text";
 
 @Component({
   selector: 'app-entries-list-page',
@@ -26,14 +27,15 @@ import { RaceCompetitorStore } from '../../results-input/services/race-competito
     LoadingCentered,
     RouterLink,
     MatButtonModule,
-    MatIconModule
-  ],
+    MatIconModule,
+    CenteredText
+],
   template: `
     <app-toolbar title="Entries">
       <button matButton [routerLink]="['/entry', 'enter']">Enter</button>
     </app-toolbar>
     <div class="content">
-      <mat-form-field appearance="outline">
+      <mat-form-field appearance="outline" class="search">
         <mat-label>Select Race</mat-label>
         <mat-select [formControl]="raceSelector">
           <mat-option [value]="'all'">All Races</mat-option>
@@ -48,7 +50,7 @@ import { RaceCompetitorStore } from '../../results-input/services/race-competito
       @if (competitorStore.loading()) {
         <app-loading-centered/>
       } @else if (filtered().length === 0) {
-          <p class="placeholder">No entries for this selection</p>
+          <app-centered-text>No entries for this selection</app-centered-text>
       } @else {
           <mat-list>
             @for (comp of filtered(); track comp.id) {
@@ -66,6 +68,7 @@ import { RaceCompetitorStore } from '../../results-input/services/race-competito
                     <mat-icon class="warning">delete</mat-icon>
                   </button>
                 </span>
+                <mat-divider />
               </mat-list-item>
             }
           </mat-list>
@@ -91,10 +94,10 @@ import { RaceCompetitorStore } from '../../results-input/services/race-competito
       color: var(--mat-sys-error);
     }
 
-    .placeholder {
-      padding: 15px;
-      text-align: center;
-      font: var(--mat-sys-body-large);
+    .search {
+      margin-top: 10px;
+      margin-left: 15px;
+      width: 300px;
     }
 
     .gap {
@@ -127,7 +130,7 @@ export class EntriesListPage {
     const ok = await this.ds.confirm("Delete competitor", "Delete competitor");
     if (ok) {
       try {
-        await this.competitorStore.deleteResult(comp);
+        await this.competitorStore.deleteResult(comp.id);
       } catch (error: any) {
         this.snackbar.open("Error encountered deleting task", "Dismiss", { duration: 3000 });
         console.log('UpdateTask. Error deleting task: ' + error.toString());

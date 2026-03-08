@@ -13,7 +13,7 @@ import { Router } from "@angular/router";
 import { FlexModule } from "@ngbracket/ngx-layout/flex";
 import { UserData } from '../model/user';
 import { UserDataService } from "../services/user-data.service";
-import { Toolbar } from "../../shared/components/toolbar";
+import { Toolbar } from "app/shared/components/toolbar";
 import { AuthService } from 'app/auth/auth.service';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { SubmitButton } from "app/shared/components/submit-button";

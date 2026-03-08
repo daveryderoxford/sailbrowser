@@ -1,10 +1,8 @@
 import { inject, Injectable } from '@angular/core';
-import { FirebaseApp } from '@angular/fire/app';
-import { addDoc, deleteDoc, getDocs, getFirestore, setDoc, writeBatch } from '@angular/fire/firestore';
-import { createClubSubCollectionRef } from 'app/club-tenant';
-import { clubDocRef } from 'app/club-tenant/services/firestore-tenant';
+import { addDoc, deleteDoc, getDocs, getFirestore, query, setDoc, where, writeBatch, Firestore } from '@angular/fire/firestore';
 import { Race } from '../model/race';
 import { Series } from '../model/series';
+import { FirestoreTenantService } from 'app/club-tenant';
 
 export interface RaceSeriesDetails {
   id: string;
@@ -16,13 +14,14 @@ export interface RaceSeriesDetails {
   providedIn: 'root',
 })
 export class RaceCalendarStoreBase {
-  protected readonly firestore = getFirestore(inject(FirebaseApp));  
+  protected readonly firestore = inject(Firestore);
+  private readonly tenant = inject(FirestoreTenantService);
 
-  protected ref = (id: string) => clubDocRef<Series>('series', id);
-  protected seriesCollection = createClubSubCollectionRef<Series>('series');
+  protected ref = (id: string) => this.tenant.docRef<Series>('series', id);
+  protected seriesCollection = this.tenant.collectionRef<Series>('series');
 
-  protected raceRef = (seriesId: string, id: string) => clubDocRef<Race>('series/' + seriesId+ '/races/', id);
-  protected racesCollection = (seriesId: string) => createClubSubCollectionRef<Race>('series', seriesId, 'races');
+  protected raceRef = (id: string) => this.tenant.docRef<Race>('races', id);
+  protected racesCollection = this.tenant.collectionRef<Race>('races');
 
   /** Add a series retruning a document Id */
   async addSeries(series: Partial<Series>): Promise<string> {
@@ -37,7 +36,7 @@ export class RaceCalendarStoreBase {
 
   async deleteSeries(id: string) {
     // Delete races for the series. 
-    const racesSnapshot = await getDocs(this.racesCollection(id));
+    const racesSnapshot = await getDocs(query(this.racesCollection, where('seriesId', '==', id)));
 
     const batch = writeBatch(this.firestore);
     racesSnapshot.forEach(doc => batch.delete(doc.ref));
@@ -52,15 +51,15 @@ export class RaceCalendarStoreBase {
     race.seriesName = seriesDetails.name;
     race.fleetId = seriesDetails.fleetId;
     race.status = 'Future';
-    await addDoc(this.racesCollection(race.seriesId),race);
+    await addDoc(this.racesCollection, race);
   }
 
-  async updateRace(seriesId: string, raceId: string, data: Partial<Race>): Promise<void> {
-    await setDoc(this.raceRef(seriesId, raceId), data, { merge: true });
+  async updateRace(raceId: string, data: Partial<Race>): Promise<void> {
+    await setDoc(this.raceRef(raceId), data, { merge: true });
   }
 
-  async deleteRace(seriesId: string, race: Race): Promise<void> {
-    await deleteDoc(this.raceRef(seriesId, race.id));
+  async deleteRace(race: Race): Promise<void> {
+    await deleteDoc(this.raceRef(race.id));
   }
 }
 

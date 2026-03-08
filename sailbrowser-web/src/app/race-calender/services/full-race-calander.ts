@@ -2,8 +2,7 @@ import { computed, Injectable, Signal } from '@angular/core';
 import { rxResource } from '@angular/core/rxjs-interop';
 import { Series } from '../model/series';
 import { Race } from '../model/race';
-import { dataObjectConverter } from 'app/shared/firebase/firestore-helper';
-import { collectionData, query, where, collectionGroup, writeBatch, doc } from '@angular/fire/firestore';
+import { collectionData, query, where, writeBatch, doc } from '@angular/fire/firestore';
 import { Observable, map, tap } from 'rxjs';
 import { isSameDay } from 'date-fns';
 import { RaceCalendarStoreBase, RaceSeriesDetails, seriesSort, sortRaces } from './race-calendar-store-base';
@@ -30,20 +29,19 @@ export class RaceCalendarStore extends RaceCalendarStoreBase {
    });
 
    private readonly racesResource = rxResource({
-      stream: (): Observable<Race[]> => {
-         const racesQuery = query(
-            collectionGroup(this.firestore, 'races'),
-         ).withConverter(dataObjectConverter<Race>());
-         return collectionData(racesQuery).pipe(
-            map( races => races.sort(sortRaces)),
-            tap( races => console.log(`FullRaceCalander. Loaded ${races.length} races`))
-         );
-      },
+      stream: (): Observable<Race[]> =>
+         collectionData(
+            query(this.racesCollection, where('status', '!=', 'Archived')),
+            { idField: 'id' }
+         ).pipe(
+            map(races => races.sort(sortRaces)),
+            tap(races => console.log(`FullRaceCalander. Loaded ${races.length} races`))
+         ),
       defaultValue: []
    });
 
    readonly allSeries = this.seriesResource.value.asReadonly();
-   readonly isLoading =  this.seriesResource.isLoading;
+   readonly isLoading = this.seriesResource.isLoading;
    readonly error = this.seriesResource.error;
 
    readonly allRaces = this.racesResource.value.asReadonly();
@@ -65,9 +63,9 @@ export class RaceCalendarStore extends RaceCalendarStoreBase {
    /** Adds races to a specified series 
     *  Race indices and race-of-day are set based on date. 
    */
-    async addRaces(seriesDetails: RaceSeriesDetails, races: Partial<Race>[]): Promise<void> {
+   async addRaces(seriesDetails: RaceSeriesDetails, races: Partial<Race>[]): Promise<void> {
       const existingRaces = this.allRaces().filter(r => r.seriesId === seriesDetails.id);
-      
+
       // Create temporary IDs for sorting purposes for new races
       const newRacesWithIds = races.map((race, i) => ({ ...race, id: `new-${i}` })) as Race[];
 
@@ -94,7 +92,7 @@ export class RaceCalendarStore extends RaceCalendarStoreBase {
 
          if (race.id.startsWith('new-')) {
             // This is a new race, add it to the batch
-            const newRaceRef = doc(this.racesCollection(seriesDetails.id));
+            const newRaceRef = doc(this.racesCollection);
             // Exclude the temporary id from the data being set
             const { id, ...raceData } = updatedRace;
 
@@ -107,7 +105,7 @@ export class RaceCalendarStore extends RaceCalendarStoreBase {
             } as Partial<Race>);
          } else {
             // This is an existing race, update it in the batch
-            const raceRef = this.raceRef(seriesDetails.id, race.id);
+            const raceRef = this.raceRef(race.id);
             batch.update(raceRef, { index: updatedRace.index, raceOfDay: updatedRace.raceOfDay });
          }
       });
@@ -116,15 +114,15 @@ export class RaceCalendarStore extends RaceCalendarStoreBase {
    }
 
    /** Delete a race from a series, renumnbering the races are requied */
-   override async deleteRace(seriesId: string, raceToDelete: Race): Promise<void> {
+   override async deleteRace(raceToDelete: Race): Promise<void> {
       const remainingRaces = this.allRaces()
-         .filter(r => r.seriesId === seriesId && r.id !== raceToDelete.id)
+         .filter(r => r.seriesId === raceToDelete.seriesId && r.id !== raceToDelete.id)
          .sort(sortRaces);
 
       const batch = writeBatch(this.firestore);
 
       // First, delete the race
-      batch.delete(this.raceRef(seriesId, raceToDelete.id));
+      batch.delete(this.raceRef(raceToDelete.id));
 
       // Then, update the indexes of the remaining races
       let dayCounter = 0;
@@ -132,7 +130,7 @@ export class RaceCalendarStore extends RaceCalendarStoreBase {
       remainingRaces.forEach((race, i) => {
          if (lastDate && isSameDay(race.scheduledStart, lastDate)) { dayCounter++; } else { dayCounter = 1; }
          lastDate = race.scheduledStart;
-         const raceRef = this.raceRef(seriesId, race.id);
+         const raceRef = this.raceRef(race.id);
          batch.update(raceRef, { index: i + 1, raceOfDay: dayCounter });
       });
 

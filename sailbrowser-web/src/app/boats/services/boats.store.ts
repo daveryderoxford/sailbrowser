@@ -1,19 +1,19 @@
-import { Injectable } from '@angular/core';
+import { inject, Injectable } from '@angular/core';
 import { rxResource } from '@angular/core/rxjs-interop';
 import { addDoc, collectionData, deleteDoc, updateDoc } from '@angular/fire/firestore';
-import { createClubSubCollectionRef } from 'app/club-tenant';
-import { clubDocRef } from 'app/club-tenant/services/firestore-tenant';
 import { normaliseString } from 'app/shared/utils/string-utils';
 import { map, Observable } from 'rxjs';
 import { Boat } from '../model/boat';
+import { FirestoreTenantService } from 'app/club-tenant';
 
 @Injectable({
   providedIn: 'root',
 })
 export class BoatsStore {
+  private readonly tenant = inject(FirestoreTenantService);
 
-  private ref = (id:string) => clubDocRef( 'boats', id);
-  private boatsCollection = createClubSubCollectionRef<Boat>('boats');
+  private ref = (id:string) => this.tenant.docRef<Boat>( 'boats', id);
+  private boatsCollection = this.tenant.collectionRef<Boat>('boats');
 
   private readonly boatsResource = rxResource({
     stream: (): Observable<Boat[]> =>

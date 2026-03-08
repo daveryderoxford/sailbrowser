@@ -1,30 +1,28 @@
 import { inject, Injectable } from '@angular/core';
-import { FirebaseApp } from '@angular/fire/app';
-import { collection, doc, getDocs, getFirestore, query, runTransaction, Transaction, where } from '@angular/fire/firestore';
+import { doc, getDocs, getFirestore, query, runTransaction, Transaction, where, Firestore } from '@angular/fire/firestore';
 import { PublishedRace } from '../model/published-race';
 import { PublishedSeason, SeriesInfo } from '../model/published-season';
 import { PublishedSeries } from '../model/published-series';
 import { CurrentRaces, RaceCompetitorStore } from 'app/results-input';
-import { dataObjectConverter } from 'app/shared/firebase/firestore-helper';
 import { score } from 'app/scoring';
 import { PUBLISHED_RACES_PATH, PUBLISHED_SEASONS_PATH, PUBLISHED_SERIES_PATH } from './published-results-store';
-import { ClubService, createClubSubCollectionRef } from 'app/club-tenant';
+import { ClubStore, FirestoreTenantService } from 'app/club-tenant/index';
 import { Race, RaceCalendarStore, Series } from 'app/race-calender';
+import { FirebaseApp } from '@angular/fire/app';
 
 @Injectable({ providedIn: 'root' })
 export class ScoringEngine {
    private readonly firestore = getFirestore(inject(FirebaseApp));
-   private cs = inject(ClubService);
+   private cs = inject(ClubStore);
    private rcs = inject(RaceCompetitorStore);
    private currentRaces = inject(CurrentRaces);
    private calander = inject(RaceCalendarStore);
+   private tenant = inject(FirestoreTenantService);
 
-     private seasonsCollection = createClubSubCollectionRef<PublishedSeason>(PUBLISHED_SEASONS_PATH);
-   
-     private seriesCollection = createClubSubCollectionRef<PublishedSeries>(PUBLISHED_SERIES_PATH);
-   
-     private racesCollection = createClubSubCollectionRef<PublishedRace>(PUBLISHED_RACES_PATH);
-   
+   private seasonsCollection = this.tenant.collectionRef<PublishedSeason>(PUBLISHED_SEASONS_PATH);
+   private seriesCollection = this.tenant.collectionRef<PublishedSeries>(PUBLISHED_SERIES_PATH);
+   private racesCollection = this.tenant.collectionRef<PublishedRace>(PUBLISHED_RACES_PATH);
+
    /** Publishes the results of a race */
    async publishRace(race: Race): Promise<void> {
       const series = this.currentRaces.selectedSeries().find(s => s.id === race.seriesId)!;
@@ -50,6 +48,11 @@ export class ScoringEngine {
 
       await runTransaction(this.firestore, async (transaction) => {
 
+         // Update published season  
+         var { seasonData, seasonDocRef } = await this.readOrCreatePublishedSeason(series, transaction);
+         this.updatePublishedSeason(series, scoredRaces, seasonData);
+         transaction.set(seasonDocRef, seasonData);
+
          // Update published races
          for (const r of scoredRaces) {
             const raceRef = doc(this.racesCollection, r.id);
@@ -60,15 +63,10 @@ export class ScoringEngine {
          const seriesResultsDocRef = doc(this.seriesCollection, series.id);
          transaction.set(seriesResultsDocRef, scoredSeries);
 
-         // Update published season  
-         var { seasonData, seasonDocRef } = await this.readOrCreatePublishedSeason(series, transaction);
-         this.updatePublishedSeason(series, scoredRaces, seasonData);
-         transaction.set(seasonDocRef, seasonData);
-
       });
 
-      // 8. Update the status race to published
-      this.calander.updateRace(series.id, race.id, { status: 'Published' });
+      // Update the status race to published
+      this.calander.updateRace(race.id, { status: 'Published' });
    }
 
    private updatePublishedSeason(series: Series, scoredRaces: PublishedRace[], seasonData: PublishedSeason) {
@@ -89,6 +87,7 @@ export class ScoringEngine {
       }
    }
 
+   /** If published sean exist use it, otherwise create a new one. */
    private async readOrCreatePublishedSeason(series: Series, transaction: Transaction) {
       const seasonDocRef = doc(this.seasonsCollection, series.seasonId);
       const seasonDoc = await transaction.get(seasonDocRef);
@@ -97,7 +96,7 @@ export class ScoringEngine {
       if (seasonDoc.exists()) {
          seasonData = seasonDoc.data();
       } else {
-         const s = this.cs.findSeason(series.id)()!;
+         const s = this.cs.findSeason(series.seasonId)()!;
          seasonData = {
             id: s.id,
             name: s.name,

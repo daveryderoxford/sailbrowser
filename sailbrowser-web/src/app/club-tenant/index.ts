@@ -3,6 +3,6 @@ export type { BoatClass } from './model/boat-class';
 export type { Club } from './model/club';
 export type { Fleet } from './model/fleet';
 
-export { ClubService } from './services/club.service';
+export { ClubStore } from './services/club-store';
 
-export { createClubSubCollectionRef, createClubOjectCollectionRef } from './services/firestore-tenant';
+export { FirestoreTenantService} from './services/firestore-tenant';

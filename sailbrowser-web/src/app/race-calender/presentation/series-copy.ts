@@ -10,7 +10,7 @@ import { Router } from '@angular/router';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { RaceCalendarStore } from '../services/full-race-calander';
 import { Series } from '../model/series';
-import { ClubService } from '../../club-tenant';
+import { ClubStore } from 'app/club-tenant';
 
 @Component({
   selector: 'app-series-copy',
@@ -61,7 +61,7 @@ import { ClubService } from '../../club-tenant';
 export class SeriesCopy {
 
   private rcs = inject(RaceCalendarStore);
-  protected cs = inject(ClubService);
+  protected cs = inject(ClubStore);
   private router = inject(Router);
   private snackbar = inject(MatSnackBar);
 
