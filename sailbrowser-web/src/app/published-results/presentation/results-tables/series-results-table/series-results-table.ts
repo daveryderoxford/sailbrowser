@@ -13,7 +13,6 @@ export type SeriesColumn = typeof seriesColumns[number];
   templateUrl: './series-results-table.html',
   styleUrls: ['../results-table-shared.scss', './series-results-table.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [CdkTableModule, HighlightPosition]
 })
 export class SeriesResultsTable {

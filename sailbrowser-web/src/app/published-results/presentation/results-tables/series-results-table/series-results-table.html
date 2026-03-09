@@ -1,79 +1,76 @@
 <div class="container">
-   <table cdk-table class="table" [dataSource]="tableData()" [trackBy]="trackByKey" [style.font-size]="fontSize()">
+  <table cdk-table class="table" [dataSource]="tableData()" [trackBy]="trackByKey" [style.font-size]="fontSize()">
 
-      <!-- Initial columns -->
-      <ng-container cdkColumnDef="rank" sticky>
-         <th cdk-header-cell class="rank-col" *cdkHeaderCellDef>Rank</th>
-         <td cdk-cell class="rank-col" *cdkCellDef="let competitor">
-            <div class="rank-oval" [class.rank-1]="competitor.rank === 1" [class.rank-2]="competitor.rank === 2"
-               [class.rank-3]="competitor.rank === 3">
-               {{competitor.rank}}
-            </div>
-         </td>
-      </ng-container>
+    <!-- Initial columns -->
+    <ng-container cdkColumnDef="rank" sticky>
+      <th cdk-header-cell *cdkHeaderCellDef>Rank</th>
+      <td cdk-cell *cdkCellDef="let competitor">
+        {{competitor.rank}}
+      </td>
+    </ng-container>
 
-      <ng-container cdkColumnDef="name" sticky>
-         <th cdk-header-cell *cdkHeaderCellDef [style.width]="nameColumnWidth()">Helm/Crew</th>
-         <td cdk-cell *cdkCellDef="let competitor" [style.width]="nameColumnWidth()">
-            {{competitor.helm}}
-            @if (competitor.crew) {
-            <br> {{ competitor.crew}}
-            }
-         </td>
-      </ng-container>
+    <ng-container cdkColumnDef="name" sticky>
+      <th cdk-header-cell *cdkHeaderCellDef [style.width]="nameColumnWidth()">Helm/Crew</th>
+      <td cdk-cell *cdkCellDef="let competitor" [style.width]="nameColumnWidth()">
+        {{competitor.helm}}
+        @if (competitor.crew) {
+        <br> {{ competitor.crew}}
+        }
+      </td>
+    </ng-container>
 
-      <ng-container cdkColumnDef="boat">
-         <th cdk-header-cell *cdkHeaderCellDef>Boat</th>
-         <td cdk-cell *cdkCellDef="let competitor">
-            @if (showBoatClass()) {
-            {{ competitor.boatClass }} <br>
-            }
-            {{ competitor.sailNumber }}
-         </td>
-      </ng-container>
+    <ng-container cdkColumnDef="boat">
+      <th cdk-header-cell *cdkHeaderCellDef>Boat</th>
+      <td cdk-cell *cdkCellDef="let competitor">
+        @if (showBoatClass()) {
+        {{ competitor.boatClass }} <br>
+        }
+        {{ competitor.sailNumber }}
+      </td>
+    </ng-container>
 
-      <ng-container cdkColumnDef="club">
-         <th cdk-header-cell *cdkHeaderCellDef>Club</th>
-         <td cdk-cell *cdkCellDef="let competitor"> {{ competitor.club }} </td>
-      </ng-container>
+    <ng-container cdkColumnDef="club">
+      <th cdk-header-cell *cdkHeaderCellDef>Club</th>
+      <td cdk-cell *cdkCellDef="let competitor"> {{ competitor.club }} </td>
+    </ng-container>
 
-      <ng-container cdkColumnDef="handicap">
-         <th cdk-header-cell *cdkHeaderCellDef>Rating</th>
-         <td cdk-cell *cdkCellDef="let competitor"> {{ competitor.handicap }} </td>
-      </ng-container>
+    <ng-container cdkColumnDef="handicap">
+      <th cdk-header-cell *cdkHeaderCellDef>Rating</th>
+      <td cdk-cell *cdkCellDef="let competitor"> {{ competitor.handicap }} </td>
+    </ng-container>
 
-      <ng-container cdkColumnDef="total">
-         <th cdk-header-cell class="points-col" *cdkHeaderCellDef>Total</th>
-         <td cdk-cell *cdkCellDef="let competitor"> {{ competitor.totalPoints }} </td>
-      </ng-container>
+    <ng-container cdkColumnDef="total">
+      <th cdk-header-cell *cdkHeaderCellDef>Total</th>
+      <td cdk-cell *cdkCellDef="let competitor"> {{ competitor.totalPoints }} </td>
+    </ng-container>
 
-      <ng-container cdkColumnDef="net">
-         <th cdk-header-cell *cdkHeaderCellDef>Net</th>
-         <td cdk-cell *cdkCellDef="let competitor"> {{ competitor.netPoints }} </td>
-      </ng-container>
+    <ng-container cdkColumnDef="net">
+      <th cdk-header-cell *cdkHeaderCellDef>Net</th>
+      <td cdk-cell *cdkCellDef="let competitor"> {{ competitor.netPoints }} </td>
+    </ng-container>
 
-      <!-- Splits times columns -->
-      @for (raceCol of raceColumns(); track raceCol; let i = $index) {
-      <ng-container [cdkColumnDef]="raceCol">
-         <th cdk-header-cell class="race-col pointer" *cdkHeaderCellDef (click)="onRaceHeaderClick(i)">
-            <div [innerHTML]="raceTitle(i)"></div>
-         </th>
-         <td cdk-cell class="race-col" *cdkCellDef="let comp">
-            @if (comp.raceScores[i]; as score) {
-            <span>
-               <app-highlight-position [position]=score.points [isDiscard]="score.isDiscard"/>
-               @if (score.resultCode !== 'OK') {
-                  <br> {{score.resultCode}}
-               }
-            </span>
-            }
-         </td>
-      </ng-container>
-      }
+    <!-- Splits times columns -->
+    @for (raceCol of raceColumns(); track raceCol; let i = $index) {
+    <ng-container [cdkColumnDef]="raceCol">
+      <th cdk-header-cell class="race-col link pointer" *cdkHeaderCellDef (click)="onRaceHeaderClick(i)">
+        <div [innerHTML]="raceTitle(i)"></div>
+      </th>
+      <td cdk-cell class="race-col" *cdkCellDef="let comp">
+        @if (comp.raceScores[i]; as score) {
+        <span>
+          <app-highlight-position [position]=score.points [isDiscard]="score.isDiscard" />
+          @if (score.resultCode !== 'OK') {
+          <br> {{score.resultCode}}
+          }
+        </span>
+        }
+      </td>
+    </ng-container>
+    }
 
-      <tr cdk-header-row class="header" *cdkHeaderRowDef="displayedColumns(); sticky: true"></tr>
-      <tr cdk-row class="row" *cdkRowDef="let competitor; columns: displayedColumns(); let even = $even"
-         [class.selected]="isCompetitorSelected(competitor)">
-      </tr>
-   </table>
+    <tr cdk-header-row class="header" *cdkHeaderRowDef="displayedColumns(); sticky: true"></tr>
+    <tr cdk-row class="row" *cdkRowDef="let competitor; columns: displayedColumns(); let even = $even"
+      [class.selected]="isCompetitorSelected(competitor)">
+    </tr>
+  </table>
 </div>

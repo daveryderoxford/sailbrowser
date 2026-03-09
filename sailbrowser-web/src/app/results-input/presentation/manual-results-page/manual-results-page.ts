@@ -267,7 +267,7 @@ export function manualRaceEntrySort(a: RaceCompetitor, b: RaceCompetitor): numbe
    if (aFinished && bFinished && a.elapsedTime && b.elapsedTime) {
       // This is a simplified sort. A full corrected time calculation would be needed here for handicap races.
       // For now, sorting by elapsed time is a reasonable default for the manual entry view.
-      return a.elapsedTime - b.elapsedTime;
+     return a.elapsedTime - b.elapsedTime;
    }
 
    // If both unfinished, standard sort (Class/SailNo)

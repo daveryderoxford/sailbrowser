@@ -5,10 +5,7 @@
       <ng-container cdkColumnDef="rank">
          <th cdk-header-cell class="rank-col" *cdkHeaderCellDef>Rank</th>
          <td cdk-cell class="rank-col" *cdkCellDef="let competitor">
-            <div class="rank-oval" [class.rank-1]="competitor.rank === 1" [class.rank-2]="competitor.rank === 2"
-               [class.rank-3]="competitor.rank === 3">
-               {{competitor.rank}}
-            </div>
+            {{competitor.rank}}
          </td>
       </ng-container>
 

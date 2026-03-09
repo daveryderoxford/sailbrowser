@@ -19,11 +19,14 @@ those in results-table-shared */
    text-align: center;
 }
 
+.link {
+   color: var(--mat-sys-primary);
+}
+
 .race-col {
    text-align: center;
    min-width: 60px;
    width: 60px;
-   color: var(--mat-sys-primary);
 }
 
 // Addiitonal styling
