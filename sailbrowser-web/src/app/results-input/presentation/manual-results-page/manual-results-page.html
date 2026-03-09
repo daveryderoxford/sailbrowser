@@ -51,7 +51,7 @@
 
       <mat-form-field appearance="outline">
         <mat-label>Competitor</mat-label>
-        <input matInput [formControl]="searchControl" [matAutocomplete]="auto" placeholder="Class or Sail No">
+        <input #searchInput matInput [formControl]="searchControl" [matAutocomplete]="auto" placeholder="Class or Sail No">
         <mat-autocomplete #auto="matAutocomplete" [displayWith]="displayFn"
           (optionSelected)="onCompetitorSelected($event)">
           @for (comp of autoCompleteCompetitors(); track comp.id) {
@@ -99,7 +99,7 @@
       </mat-form-field>
 
       <div class="actions">
-        <button mat-button type="button" (click)="resetForm()">Clear</button>
+        <button mat-button type="button" (click)="this.selectedCompetitor.set(undefined)">Clear</button>
         <button mat-flat-button color="primary" type="submit">Record</button>
       </div>
     </form>

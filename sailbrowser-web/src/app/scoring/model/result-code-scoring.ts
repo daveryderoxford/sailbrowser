@@ -46,6 +46,8 @@ export const isFinishedComp = (code: ResultCode) => !NO_LEGAL_FINISH.includes(co
 export const isRedress = (code: ResultCode) => REDRESS.includes(code);
 export const isDiscardable = (code: ResultCode) => !NON_DISCARDABLE.includes(code);
 
+export const requiresTime = (code: ResultCode) => FINISHED_AND_SCORED.includes(code);
+
 /**
  * 4. ALGORITHM RESOLVERS (Public API)
  */
