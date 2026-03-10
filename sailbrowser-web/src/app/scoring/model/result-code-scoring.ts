@@ -24,19 +24,22 @@ export enum ResultCodeAlgorithm {
  * Code Groups
  */
 const NOT_IN_START_AREA: ResultCode[] = ['DNC', 'OOD', 'NOT FINISHED'];
+
 const NO_LEGAL_FINISH: ResultCode[] = [
   'DNC', 'DNS', 'DNF', 'RET', 'OCS',
-  'BFD', 'UFD', 'DSQ', 'DNE', 'NOT FINISHED',
+  'BFD', 'UFD', 'DSQ', 'DNE', 'NSC','NOT FINISHED',
 ];
 const REDRESS: ResultCode[] = [
   'RDG', 'RDGA', 'RDGB', 'OOD'
 ];
-const NON_DISCARDABLE: ResultCode[] = ['DGM', 'DNE'];
 
-// Whan calculating averages, excluded all codes that dont 
+// When calculating averages, excluded all codes that dont 
 // reflect the competitors performance. Per RRS A9, this should be
 // scores from races the boat started and finished.
 const FINISHED_AND_SCORED: ResultCode[] = ['OK', 'SCP', 'DPI'];
+
+/** Results codes that are not discardable */
+const NON_DISCARDABLE: ResultCode[] = ['DGM', 'DNE'];
 
 /**
  * 3. PREDICATES (Public API)
@@ -71,7 +74,9 @@ export const getLongAlgorithm = (code: ResultCode): ResultCodeAlgorithm => {
   return short;
 };
 
-/** Include result in average pool if RRS Appendix A9 (a) and (b) */
+/** Include result in average pool if RRS Appendix A9 (a) and (b) 
+ * includes any codes for finishers and averge result codes RDGA/RDGB 
+*/
 export function includeInAveragePool(code: ResultCode): boolean {
   const algo = getShortAlgorithm(code);
   const isAvgType = [ResultCodeAlgorithm.avgAll, ResultCodeAlgorithm.avgBefore].includes(algo);

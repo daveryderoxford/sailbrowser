@@ -1,6 +1,9 @@
 import { computed, inject, Injectable, signal, effect } from '@angular/core';
 import { RaceCalendarStore } from '../../race-calender/services/full-race-calander';
 
+/** Manages a list of 'currect races'
+ * All information for currect races is held in memory
+ */
 @Injectable({
    providedIn: 'root',
 })

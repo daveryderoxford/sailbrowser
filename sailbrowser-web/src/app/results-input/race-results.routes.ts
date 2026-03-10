@@ -1,7 +1,12 @@
 import { Routes } from '@angular/router';
 import { authGuard } from 'app/auth/guards/auth-guard';
 import { ManualResultsPage } from './presentation/manual-results-page/manual-results-page';
+import { dirtyRaceGuard } from './services/dirty-race.guard';
 
 export const RESULTS_ENTRY_ROUTES: Routes = [
-   { path: 'manual', component: ManualResultsPage, canActivate: [authGuard] },
+   { path: 'manual', 
+      component: ManualResultsPage, 
+      canActivate: [authGuard], 
+      canDeactivate: [dirtyRaceGuard]
+  },
 ];

@@ -6,11 +6,12 @@ import { MAT_DIALOG_DATA, MatDialogModule, MatDialogRef } from '@angular/materia
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatRadioModule } from '@angular/material/radio';
-import { Race } from '../../race-calender/model/race';
 import { format } from 'date-fns';
+import { TimeRecordingMode } from '../services/manual-results.service';
+import { Race } from 'app/race-calender';
 
 export interface RaceStartTimeResult {
-  mode: 'tod' | 'elapsed';
+  mode: TimeRecordingMode;
   startTime: Date;
 }
 
@@ -46,7 +47,7 @@ export interface RaceStartTimeResult {
 })
 export class RaceStartTimeDialog {
   private dialogRef = inject(MatDialogRef<RaceStartTimeDialog>);
-  private data = inject<{ race: Race }>(MAT_DIALOG_DATA);
+  private data = inject<{ race: Race; }>(MAT_DIALOG_DATA);
 
   readonly form = new FormGroup({
     mode: new FormControl<'tod' | 'elapsed'>(this.data.race.timeInputMode || 'tod', { nonNullable: true }),
@@ -71,7 +72,7 @@ export class RaceStartTimeDialog {
   save() {
     if (this.form.valid) {
       const { mode, time } = this.form.getRawValue();
-      
+
       // For both 'tod' and 'elapsed', the start time is stored as a Date on the day of the race.
       // For 'elapsed', the time part represents the duration from midnight.
       const dateStr = new Date(this.data.race.scheduledStart).toDateString();

@@ -23,4 +23,5 @@ export interface Race {
   status: RaceStatus;
   isDiscardable: boolean;
   isAverageLap: boolean;
+  dirty: boolean;
 }

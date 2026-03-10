@@ -6,7 +6,7 @@ export const RACE_STATUSES = [
   'Completed',
   'Published',  // Results have been published. 
   'Verified',   // Results have been verified.
-  'Archived',   // Archived - no longer included 
+  'Archived',   // Archived - no longer included in searches
 ] as const;
 
 export type RaceStatus = typeof RACE_STATUSES[number];

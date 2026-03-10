@@ -3,12 +3,8 @@ import { DatePipe } from '@angular/common';
 import { MatTableModule } from '@angular/material/table';
 import { RaceCompetitor } from '../model/race-competitor';
 import { DurationPipe } from './duration.pipe';
-import { sortEntries } from '../services/race-competitor-store';
-import { Sort, MatSortModule, SortDirection } from '@angular/material/sort';
-
-class TableData extends RaceCompetitor {
-  correctedTime?: number;
-}
+import { Sort, MatSortModule } from '@angular/material/sort';
+import { ExtendedRaceCompetitor, manualRaceTableSort } from '../services/manual-results.service';
 
 @Component({
   selector: 'app-manual-results-table',
@@ -18,13 +14,16 @@ class TableData extends RaceCompetitor {
     (matSortChange)="this.sortState.set($event)" class="mat-elevation-z0">
       
       <ng-container matColumnDef="boatClass">
-        <th mat-header-cell mat-sort-header *matHeaderCellDef>Class</th>
-        <td mat-cell *matCellDef="let element"> {{element.boatClass}} </td>
+        <th mat-header-cell mat-sort-header *matHeaderCellDef>Class<br>H'Cap</th>
+        <td mat-cell *matCellDef="let element">
+          {{element.boatClass}}<br>
+          {{element.handicap}}
+        </td>
       </ng-container>
 
       <ng-container matColumnDef="sailNumber">
         <th mat-header-cell mat-sort-header *matHeaderCellDef>Sail No</th>
-        <td mat-cell *matCellDef="let element"> {{element.sailNumber}} </td>
+        <td mat-cell *matCellDef="let element"> <b>{{element.sailNumber}} </b></td>
       </ng-container>
 
       <ng-container matColumnDef="helm">
@@ -41,6 +40,9 @@ class TableData extends RaceCompetitor {
         <th mat-header-cell mat-sort-header *matHeaderCellDef>Elapsed</th>
         <td mat-cell *matCellDef="let element"> 
           {{element.elapsedTime | duration}}
+          @if (element.resultCode !== 'OK' && element.resultCode !== 'NOT FINISHED') {
+            <br>{{ element.resultCode }}
+          }
         </td>
       </ng-container>
 
@@ -63,7 +65,7 @@ class TableData extends RaceCompetitor {
 
       <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
       <tr mat-row *matRowDef="let row; columns: displayedColumns;" 
-          [class.processed]="!!row.manualFinishTime"
+          [class.processed]="!(row.resultCode === 'NOT FINISHED')"
           (click)="onRowClick(row)">
       </tr>
     </table>
@@ -122,53 +124,11 @@ export class ManualResultsTable {
     const sort = this.sortState();
 
     return this.competitors().map(c => {
-      const data = new TableData(c);
-      data.correctedTime =  this.corrected(c, maxLaps);
+      const data = new ExtendedRaceCompetitor(c);
+      data.correctedTime = this.corrected(c, maxLaps);
       return data;
-    }).sort((a, b) => {
-      return manualRaceTableSort(a, b, sort.active as keyof TableData, sort.direction);
-    });
+    }).sort((a, b) =>
+      manualRaceTableSort(a, b, sort.active as keyof ExtendedRaceCompetitor, sort.direction));
   });
-}
 
-/** Sorts partially completed results
- * Unfinished competitors are placed at the top sorted by class/sail number
- * followed by finished competitirs sorted by 
- */
-function manualRaceTableSort(
-  a: TableData,
-  b: TableData,
-  finishedOrder: keyof TableData,
-  dir: SortDirection
-): number {
-  // A competitor is considered 'finished' for sorting if 
-  // they have a finish time and an 'OK' result code.
-  const aFinished = !!a.finishTime && a.resultCode === 'OK';
-  const bFinished = !!b.finishTime && b.resultCode === 'OK';
-
-  // If one is finished and the other isn't, unfinished goes first
-  if (aFinished !== bFinished) {
-    return aFinished ? 1 : -1;
-  }
-
-  // If both finished, sort by finishedOrder property
-  if (aFinished && bFinished && a.elapsedTime && b.elapsedTime) {
-    const valueA = a[finishedOrder];
-    const valueB = b[finishedOrder];
-    let ret = 0;
-    if (valueA instanceof Date && valueB instanceof Date) {
-      ret = valueA.getTime() - valueB.getTime();
-    } else if (typeof valueA === 'number') {
-      ret = (valueA as number) - (valueB as number);
-    } else if (typeof valueA === 'string') {
-      ret = valueA.localeCompare(valueB as string)
-    } else {
-      console.error('ManualResultsPage: Unexpected sort order' + finishedOrder);
-      ret = 0;
-    }
-    return (dir === 'asc') ? ret : -ret;
-  }
-
-  // If both unfinished, standard sort (Class/SailNo)
-  return sortEntries(a, b);
 }

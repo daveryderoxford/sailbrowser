@@ -65,8 +65,8 @@ export class ScoringEngine {
 
       });
 
-      // Update the status race to published
-      this.calander.updateRace(race.id, { status: 'Published' });
+      // Update the race to clear the dirtyn flag and set its status to published
+      this.calander.updateRace(race.id, { status: 'Published', dirty: false});
    }
 
    private updatePublishedSeason(series: Series, scoredRaces: PublishedRace[], seasonData: PublishedSeason) {
