@@ -14,8 +14,9 @@ export enum ResultCodeAlgorithm {
   na = 'na',
   compInSeries = 'compInSeries',      // N + 1 (Total Entries in Series)
   compInStartArea = 'compInStartArea', // N + 1 (Boats that came to the start area)
-  avgAll = 'avgAll',                  // Average of all races in series
-  avgBefore = 'avgBefore',            // Average of races prior to this one
+  isafAvgAll = 'isafAvgAll',          // Average of all races in series (ISAF)
+  isafAvgBefore = 'isafAvgBefore',    // Average of races prior to this one (ISAF)
+  clubOodAverage = 'clubOodAverage',  // Average of specific races for OOD (Club)
   scoringPenalty = 'scoringPenalty',  // Numerical finish + % of fleet (RRS 44.3)
   setByHand = 'setByHand'             // Manual point override
 }
@@ -55,8 +56,9 @@ export const requiresTime = (code: ResultCode) => FINISHED_AND_SCORED.includes(c
  * 4. ALGORITHM RESOLVERS (Public API)
  */
 export const getShortAlgorithm = (code: ResultCode): ResultCodeAlgorithm => {
-  if ((['RDGA', 'OOD'] as ResultCode[]).includes(code)) return ResultCodeAlgorithm.avgAll;
-  if (code === 'RDGB') return ResultCodeAlgorithm.avgBefore;
+  if (code === 'OOD') return ResultCodeAlgorithm.clubOodAverage;
+  if (code === 'RDGA') return ResultCodeAlgorithm.isafAvgAll;
+  if (code === 'RDGB') return ResultCodeAlgorithm.isafAvgBefore;
   if ((['ZFP', 'SCP', 'XPA'] as ResultCode[]).includes(code)) return ResultCodeAlgorithm.scoringPenalty;
   if ((['DPI', 'RDG', 'RDGC'] as ResultCode[]).includes(code)) return ResultCodeAlgorithm.setByHand;
   if (code === 'OK') return ResultCodeAlgorithm.na;
@@ -79,6 +81,7 @@ export const getLongAlgorithm = (code: ResultCode): ResultCodeAlgorithm => {
 */
 export function includeInAveragePool(code: ResultCode): boolean {
   const algo = getShortAlgorithm(code);
-  const isAvgType = [ResultCodeAlgorithm.avgAll, ResultCodeAlgorithm.avgBefore].includes(algo);
-  return FINISHED_AND_SCORED.includes(code) && !isAvgType;
+  const isAvgType = [ResultCodeAlgorithm.isafAvgAll, ResultCodeAlgorithm.isafAvgBefore, ResultCodeAlgorithm.clubOodAverage].includes(algo);
+  // Per RRS A9, average points are calculated from ALL races in the series except the race in question
+  return !isAvgType;
 }

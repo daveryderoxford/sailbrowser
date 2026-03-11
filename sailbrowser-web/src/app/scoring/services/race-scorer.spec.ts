@@ -45,6 +45,7 @@ describe('RaceScorer', () => {
     status: 'Completed',
     isDiscardable: true,
     isAverageLap: false,
+    dirty: false,
   };
 
   it('should score a level rating race with 3 competitors', () => {

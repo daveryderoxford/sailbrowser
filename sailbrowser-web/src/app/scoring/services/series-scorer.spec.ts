@@ -153,7 +153,7 @@ describe('scoreSeries', () => {
     expect(final101.rank).toBe(2);
   });
 
-  describe('RDG Scoring (applyRDGAveragePoints)', () => {
+  describe('RDG Scoring (applyIsafRedress)', () => {
     const rdgCompetitorKeys = new Set(['Helm 101-101-TestClass', 'Helm 102-102-TestClass']);
     const races: PublishedRace[] = [
       // Race 0: Helm 101 gets 2 points. This will be included in average.
@@ -199,11 +199,11 @@ describe('scoreSeries', () => {
     });
 
     it('should calculate RDGA points based on the average of all included races', () => {
-      // RDGA is in race 5. Average is from races 0, 2, 4.
-      // DNF (race 3) is excluded. RDGA/RDGB scores themselves are excluded.
-      // (2 + 10 + 4) / 3 = 5.333...
+      // RDGA is in race 5. Average is from races 0, 2, 3, 4.
+      // DNF (race 3) IS included per RRS A9. RDGA/RDGB scores themselves are excluded.
+      // (2 + 10 + 3 + 4) / 4 = 19 / 4 = 4.75 -> 4.8
       const rdgaScore = helm101.raceScores.find(rs => rs.resultCode === 'RDGA')!;
-      expect(rdgaScore.points).toBeCloseTo(5.33, 2);
+      expect(rdgaScore.points).toBe(4.8);
     });
 
     it('should include scores that will be discarded in the average calculation', () => {
@@ -220,6 +220,58 @@ describe('scoreSeries', () => {
       const results = scoreSeries(raceWithOnlyRdg, new Set(['Helm 101-101-TestClass']), { seriesType: 'short', discards: 0 });
       const dncPoints = 1 + 1; // 1 competitor in series + 1
       expect(results[0].raceScores[0].points).toBe(dncPoints);
+    });
+  });
+
+  describe('OOD Scoring (applyClubOod)', () => {
+    const oodCompetitorKeys = new Set(['Helm 101-101-TestClass', 'Helm 102-102-TestClass']);
+    const races: PublishedRace[] = [
+      // Race 0: Helm 101 gets 2 points (OK).
+      createMockRace(0, [{ helm: 'Helm 101', sailNumber: 101, points: 2 }, { helm: 'Helm 102', sailNumber: 102, points: 1 }]),
+      // Race 1: Helm 101 gets OOD (Duty 1).
+      createMockRace(1, [{ helm: 'Helm 101', sailNumber: 101, points: 99, resultCode: 'OOD' }, { helm: 'Helm 102', sailNumber: 102, points: 1 }]),
+      // Race 2: Helm 101 gets DNC (Did not compete). Points = 3.
+      createMockRace(2, [{ helm: 'Helm 102', sailNumber: 102, points: 1 }]),
+      // Race 3: Helm 101 gets OOD (Duty 2).
+      createMockRace(3, [{ helm: 'Helm 101', sailNumber: 101, points: 99, resultCode: 'OOD' }, { helm: 'Helm 102', sailNumber: 102, points: 1 }]),
+      // Race 4: Helm 101 gets 4 points (OK).
+      createMockRace(4, [{ helm: 'Helm 101', sailNumber: 101, points: 4 }, { helm: 'Helm 102', sailNumber: 102, points: 1 }]),
+      // Race 5: Helm 101 gets OOD (Duty 3).
+      createMockRace(5, [{ helm: 'Helm 101', sailNumber: 101, points: 99, resultCode: 'OOD' }, { helm: 'Helm 102', sailNumber: 102, points: 1 }]),
+    ];
+
+    it('should calculate OOD points based on the finished pool and cap at maxOodPerSeries', () => {
+      const config: ScoringConfig = { seriesType: 'short', discards: 0, maxOodPerSeries: 2, oodAveragePool: 'finished' };
+      const seriesResults = scoreSeries(races, oodCompetitorKeys, config);
+      const helm101 = seriesResults.find(r => r.sailNumber === 101)!;
+
+      // OOD Pool (finished): Race 0 (2 points) and Race 4 (4 points). DNC (Race 2) is excluded.
+      // Average = (2 + 4) / 2 = 3.
+      const oodScores = helm101.raceScores.filter(rs => rs.resultCode === 'OOD');
+      
+      // Duty 1 (Race 1): Should get average (3)
+      expect(oodScores[0].points).toBe(3);
+      
+      // Duty 2 (Race 3): Should get average (3)
+      expect(oodScores[1].points).toBe(3);
+      
+      // Duty 3 (Race 5): Cap is 2. Should get DNC points (3 competitors = 3 points, wait, 2 competitors = 3 points).
+      expect(oodScores[2].points).toBe(3); // DNC points for 2 competitors is 3.
+    });
+
+    it('should calculate OOD points based on the started pool if configured', () => {
+      // Add a DNF race to test 'started' pool
+      const racesWithDnf = [...races, createMockRace(6, [{ helm: 'Helm 101', sailNumber: 101, points: 3, resultCode: 'DNF' }])];
+      
+      const configFinished: ScoringConfig = { seriesType: 'short', discards: 0, maxOodPerSeries: 2, oodAveragePool: 'finished' };
+      const resultsFinished = scoreSeries(racesWithDnf, oodCompetitorKeys, configFinished).find(r => r.sailNumber === 101)!;
+      // Finished pool: 2, 4. Avg = 3.
+      expect(resultsFinished.raceScores.find(rs => rs.resultCode === 'OOD')!.points).toBe(3);
+
+      const configStarted: ScoringConfig = { seriesType: 'short', discards: 0, maxOodPerSeries: 2, oodAveragePool: 'started' };
+      const resultsStarted = scoreSeries(racesWithDnf, oodCompetitorKeys, configStarted).find(r => r.sailNumber === 101)!;
+      // Started pool: 2, 4, 3 (DNF). Avg = (2+4+3)/3 = 3.
+      expect(resultsStarted.raceScores.find(rs => rs.resultCode === 'OOD')!.points).toBe(3);
     });
   });
 });

@@ -18,6 +18,7 @@ function createMockRace(id: string, index: number): Race {
     isDiscardable: true,
     status: 'Completed',
     isAverageLap: false,
+    dirty: false,
   };
 }
 

@@ -1,11 +1,13 @@
 import { PublishedSeriesResult } from 'app/published-results';
 import { SeriesScoringScheme } from '../model/scoring-algotirhm';
 import { PublishedRace } from 'app/published-results/model/published-race';
-import { getShortAlgorithm, includeInAveragePool, isDiscardable as isResultCodeDiscardable, ResultCodeAlgorithm } from '../model/result-code-scoring';
+import { getShortAlgorithm, includeInAveragePool, isDiscardable as isResultCodeDiscardable, ResultCodeAlgorithm, isStartAreaComp, isFinishedComp } from '../model/result-code-scoring';
 
 export interface ScoringConfig {
   seriesType: SeriesScoringScheme;
   discards: number;
+  maxOodPerSeries?: number;
+  oodAveragePool?: 'finished' | 'started';
 }
 
 /**
@@ -48,7 +50,7 @@ function aggregateCompetitorResults(races: PublishedRace[], allCompetitorKeys: S
     });
   });
 
-  races.forEach((race, raceIndex) => {
+  races.forEach((race, _arrayIndex) => {
     const resultsByKey = new Map(race.results.map(r => [`${r.helm}-${r.sailNumber}-${r.boatClass}`, r]));
     competitorMap.forEach((seriesResult, key) => {
       const raceResult = resultsByKey.get(key);
@@ -60,7 +62,7 @@ function aggregateCompetitorResults(races: PublishedRace[], allCompetitorKeys: S
       }
       if (raceResult) {
         seriesResult.raceScores.push({ 
-          raceIndex, 
+          raceIndex: race.index, 
           points: raceResult.points, 
           resultCode: raceResult.resultCode, 
           isDiscard: false, 
@@ -68,7 +70,7 @@ function aggregateCompetitorResults(races: PublishedRace[], allCompetitorKeys: S
       } else {
         // Competitor did not compete in this race (DNC)
         seriesResult.raceScores.push({
-          raceIndex: raceIndex,
+          raceIndex: race.index,
           points: dncPoints,
           resultCode: 'DNC',
           isDiscard: false,
@@ -90,7 +92,7 @@ function calculateTotalsAndDiscards(
   for (const result of results) {
 
     // Apply RDG scores directly. This must be done before discards are calculated.
-    applyRDGAveragePoints(result, dncPoints);
+    applyRDGAveragePoints(result, dncPoints, config);
     
     // Identify discardable scores and sort them descending to find the worst ones.
     const scoresToDiscard = result.raceScores
@@ -109,24 +111,51 @@ function calculateTotalsAndDiscards(
   return results;
 }
 
-/** Sets the points for RBGa and RGB OOD*/
-function applyRDGAveragePoints(result: IntermediateSeriesResult, dncPoints: number) {
+/** Sets the points for RDGA, RDGB, and OOD */
+function applyRDGAveragePoints(result: IntermediateSeriesResult, dncPoints: number, config: ScoringConfig) {
+  const maxOod = config.maxOodPerSeries ?? 999;
+  const oodPoolType = config.oodAveragePool ?? 'finished';
 
-  const scoresForAvg = result.raceScores.filter(s => includeInAveragePool(s.resultCode));
-  const avgTotal = scoresForAvg.reduce((acc, s) => acc + s.points, 0);
-  const averageAllRaces = scoresForAvg.length > 0 ? avgTotal / scoresForAvg.length : dncPoints;
+  // ISAF Pool: All races except average codes (RDGA, RDGB, OOD)
+  const isafPool = result.raceScores.filter(s => includeInAveragePool(s.resultCode));
+  
+  // OOD Pool: 'finished' (FINISHED_AND_SCORED) or 'started' (isStartAreaComp)
+  const oodPool = isafPool.filter(s => {
+    if (oodPoolType === 'finished') return isFinishedComp(s.resultCode) && s.resultCode !== 'DNC';
+    if (oodPoolType === 'started') return isStartAreaComp(s.resultCode);
+    return false;
+  });
 
-  for (const score of result.raceScores) {
+  const isafAvgTotal = isafPool.reduce((acc, s) => acc + s.points, 0);
+  const isafAvgAll = isafPool.length > 0 ? Math.round((isafAvgTotal / isafPool.length) * 10) / 10 : dncPoints;
+
+  const oodAvgTotal = oodPool.reduce((acc, s) => acc + s.points, 0);
+  const oodAvg = oodPool.length > 0 ? Math.round((oodAvgTotal / oodPool.length) * 10) / 10 : dncPoints;
+
+  let oodCount = 0;
+
+  // Process chronologically to correctly apply maxOodPerSeries cap
+  const chronologicalScores = [...result.raceScores].sort((a, b) => a.raceIndex - b.raceIndex);
+
+  for (const score of chronologicalScores) {
     const algorithm = getShortAlgorithm(score.resultCode);
-    if (algorithm === ResultCodeAlgorithm.avgAll) {
-      score.points = averageAllRaces;
-    } else if (algorithm === ResultCodeAlgorithm.avgBefore) {
-      const scoresBefore = scoresForAvg.filter(s => s.raceIndex < score.raceIndex);
+    
+    if (algorithm === ResultCodeAlgorithm.isafAvgAll) {
+      score.points = isafAvgAll;
+    } else if (algorithm === ResultCodeAlgorithm.isafAvgBefore) {
+      const scoresBefore = isafPool.filter(s => s.raceIndex < score.raceIndex);
       if (scoresBefore.length > 0) {
         const totalBefore = scoresBefore.reduce((acc, s) => acc + s.points, 0);
-        score.points = totalBefore / scoresBefore.length;
+        score.points = Math.round((totalBefore / scoresBefore.length) * 10) / 10;
       } else {
         score.points = dncPoints;
+      }
+    } else if (algorithm === ResultCodeAlgorithm.clubOodAverage) {
+      if (oodCount < maxOod) {
+        score.points = oodAvg;
+        oodCount++;
+      } else {
+        score.points = dncPoints; // Cap reached
       }
     }
   }

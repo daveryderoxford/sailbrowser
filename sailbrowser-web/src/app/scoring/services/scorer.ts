@@ -59,7 +59,7 @@ export function score(
   const finalSeriesResults = scoreSeries(scoringGrid, allSeriesCompetitorKeys, config);
 
   // 6. Update the scoring grid with points calculated during series scoring (e.g., RDG).
-/*  finalSeriesResults.forEach(seriesResult => {
+  finalSeriesResults.forEach(seriesResult => {
     const competitorKey = `${seriesResult.helm}-${seriesResult.sailNumber}-${seriesResult.boatClass}`;
     seriesResult.raceScores.forEach(raceScore => {
       const race = scoringGrid.find(r => r.index === raceScore.raceIndex);
@@ -68,7 +68,7 @@ export function score(
         if (raceResult) raceResult.points = raceScore.points;
       }
     });
-  }); */
+  });
 
   scoringGrid.sort((a, b) => a.index - b.index);
 
