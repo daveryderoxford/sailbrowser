@@ -58,7 +58,10 @@
       <td cdk-cell class="race-col" *cdkCellDef="let comp">
         @if (comp.raceScores[i]; as score) {
         <span>
-          <app-highlight-position [position]=score.points [isDiscard]="score.isDiscard" />
+          <app-highlight-position 
+            [position]=score.points 
+            [isDiscard]="score.isDiscard" 
+            [resultCode]="score.resultCode"/>
           @if (score.resultCode !== 'OK') {
           <br> {{score.resultCode}}
           }

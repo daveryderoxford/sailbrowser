@@ -5,7 +5,7 @@ import { ChangeDetectionStrategy, Component, input } from '@angular/core';
    selector: 'app-highlight-position',
    changeDetection: ChangeDetectionStrategy.OnPush,
    template: `
-    <div class="rank-oval" [class]="'rank-' + position()">
+    <div class="rank-oval" [class]="highlightStyle()">
       @if (isDiscard()) {
        ({{ position() }})
       } @else {
@@ -51,4 +51,11 @@ import { ChangeDetectionStrategy, Component, input } from '@angular/core';
 export class HighlightPosition {
    position = input.required<number | string>();
    isDiscard = input(false);
+   resultCode = input('OK');
+
+  highlightStyle(): string {
+  // Do not highligh OOD poisitons
+  if (this.resultCode() === 'OOD') return '';
+    return 'rank-' + this.position();
+   }
 }
