@@ -5,6 +5,7 @@ import { Pipe, PipeTransform } from "@angular/core";
 */
 @Pipe({
    name: 'bracketed',
+   pure: true,
 })
 export class BracketedPipe implements PipeTransform {
    transform(pos: number | string): string {

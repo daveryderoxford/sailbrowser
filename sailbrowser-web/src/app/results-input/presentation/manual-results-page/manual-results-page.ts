@@ -16,12 +16,12 @@ import { RESULT_CODE_DEFINITIONS, ResultCode, getResultCodeDefinition } from 'ap
 import { Toolbar } from 'app/shared/components/toolbar';
 import { normaliseString } from 'app/shared/utils/string-utils';
 import { firstValueFrom, map, startWith } from 'rxjs';
-import { DurationPipe } from '../duration.pipe';
 import { ManualResultsTable } from '../manual-results-table';
 import { RaceStartTimeDialog, type RaceStartTimeResult } from '../race-start-time-dialog';
 import { RaceTimeInput } from '../race-time-input';
 import { requiresTime } from 'app/scoring/model/result-code-scoring';
 import { manualRaceTableSort, ManualResultsService } from '../../services/manual-results.service';
+import { DurationPipe } from 'app/shared/pipes/duration.pipe';
 
 @Component({
   selector: 'app-manual-results-page',

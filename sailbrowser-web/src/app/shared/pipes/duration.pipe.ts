@@ -1,8 +1,8 @@
 import { Pipe, PipeTransform } from '@angular/core';
 
+/** Pipe to format durations in seconds to hh:mm;ss string */
 @Pipe({
   name: 'duration',
-  standalone: true,
   pure: true,
 })
 export class DurationPipe implements PipeTransform {

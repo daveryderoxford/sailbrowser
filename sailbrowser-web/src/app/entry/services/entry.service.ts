@@ -4,6 +4,7 @@ import { Race } from '../../race-calender/model/race';
 import { RaceCompetitor } from '../../results-input/model/race-competitor';
 import { RaceCompetitorStore } from '../../results-input/services/race-competitor-store';
 import { SailbrowserError } from 'app/shared/utils/sailbrowser-error';
+import { SeriesEntryStore } from 'app/results-input/services/series-entry-store';
 
 export interface EntryDetails {
   races: Race[];
@@ -19,7 +20,8 @@ export interface EntryDetails {
 })
 export class EntryService {
   private clubStore = inject(ClubStore);
-  private raceResultsService = inject(RaceCompetitorStore);
+  private raceResultsStore = inject(RaceCompetitorStore);
+  private seriesEntryStore = inject(SeriesEntryStore);
 
   /** Enter a race 
    * throws a *** exception if the entry is a duplicate. 
@@ -55,7 +57,7 @@ export class EntryService {
       console.log("Adding competitor");
 
 
-      return this.raceResultsService.addResult(competitor);
+      return this.raceResultsStore.addResult(competitor);
     });
 
     await Promise.all(promises);
@@ -68,7 +70,7 @@ export class EntryService {
  */
   isDuplicateEntry(details: EntryDetails): boolean {
     for (const race of details.races) {
-      const dup = this.raceResultsService.selectedCompetitors().find(comp =>
+      const dup = this.raceResultsStore.selectedCompetitors().find(comp =>
         comp.boatClass === details.boatClass &&
         comp.raceId === race.id &&
         comp.sailNumber == details.sailNumber);

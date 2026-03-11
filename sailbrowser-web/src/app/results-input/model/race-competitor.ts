@@ -7,6 +7,7 @@ export const RESULTS_TIME_ERROR = -9999;
 
 export class RaceCompetitor {
   id: string;
+  seriesEntryId: string; 
   raceId: string;
   seriesId: string;
   helm: string;
@@ -50,6 +51,7 @@ export class RaceCompetitor {
   constructor(data: Partial<RaceCompetitor>) {
     console.log("RaceCompetitor: Constructor called for " + data.id);
     this.id = data.id || '';
+    this.seriesEntryId = data.seriesEntryId || ''; 
     this.raceId = data.raceId || '';
     this.seriesId = data.seriesId || '';
     this.helm = data.helm || '';

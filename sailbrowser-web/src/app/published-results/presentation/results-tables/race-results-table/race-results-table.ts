@@ -2,7 +2,7 @@ import { CdkTableModule } from '@angular/cdk/table';
 import { ChangeDetectionStrategy, Component, computed, input } from '@angular/core';
 import { RaceResult } from 'app/published-results/model/published-race';
 import { competitorColumns, nameColumnWidth } from '../results-table-shared';
-import { DurationPipe } from 'app/results-input';
+import { DurationPipe } from 'app/shared/pipes/duration.pipe';
 
 export const raceColumns = [...competitorColumns, 'elapsed', 'corrected','points'] as const;
 export type RaceColumn = typeof raceColumns[number];

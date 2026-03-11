@@ -2,9 +2,9 @@ import { ChangeDetectionStrategy, Component, computed, input, output, signal } f
 import { DatePipe } from '@angular/common';
 import { MatTableModule } from '@angular/material/table';
 import { RaceCompetitor } from '../model/race-competitor';
-import { DurationPipe } from './duration.pipe';
 import { Sort, MatSortModule } from '@angular/material/sort';
 import { ExtendedRaceCompetitor, manualRaceTableSort } from '../services/manual-results.service';
+import { DurationPipe } from 'app/shared/pipes/duration.pipe';
 
 @Component({
   selector: 'app-manual-results-table',
