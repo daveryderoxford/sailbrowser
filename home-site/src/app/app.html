@@ -1,0 +1,70 @@
+<div class="min-h-screen flex flex-col bg-slate-950">
+  <!-- Navbar -->
+  <nav class="sticky top-0 z-50 glass border-b border-white/5">
+    <div class="max-w-7xl mx-auto px-6 h-20 flex items-center justify-between">
+      <a routerLink="/" class="flex items-center gap-3 group">
+        <div class="w-10 h-10 bg-primary-600 rounded-xl flex items-center justify-center text-white group-hover:rotate-12 transition-all duration-300 shadow-[0_0_20px_rgba(37,99,235,0.3)]">
+          <mat-icon>sailing</mat-icon>
+        </div>
+        <span class="text-2xl font-display font-extrabold tracking-tighter text-white">Splits<span class="text-primary-500">browser</span></span>
+      </a>
+
+      <div class="hidden md:flex items-center gap-10">
+        <a routerLink="/" routerLinkActive="text-primary-400" [routerLinkActiveOptions]="{exact: true}" class="text-sm font-bold uppercase tracking-widest text-slate-400 hover:text-white transition-colors">Home</a>
+        <a routerLink="/marketing" routerLinkActive="text-primary-400" class="text-sm font-bold uppercase tracking-widest text-slate-400 hover:text-white transition-colors">Features</a>
+        <a routerLink="/clubs" routerLinkActive="text-primary-400" class="text-sm font-bold uppercase tracking-widest text-slate-400 hover:text-white transition-colors">Clubs</a>
+      </div>
+
+      <div class="flex items-center gap-4">
+        <button class="btn-primary !py-2 !px-6 text-xs uppercase tracking-widest">Get Started</button>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Main Content -->
+  <main class="flex-grow">
+    <router-outlet />
+  </main>
+
+  <!-- Footer -->
+  <footer class="bg-slate-950 border-t border-white/5 py-24 mt-20">
+    <div class="max-w-7xl mx-auto px-6">
+      <div class="grid md:grid-cols-4 gap-16 mb-20">
+        <div class="col-span-2">
+          <a routerLink="/" class="flex items-center gap-3 text-white mb-8">
+            <div class="w-8 h-8 bg-primary-600 rounded-lg flex items-center justify-center">
+              <mat-icon class="!text-sm">sailing</mat-icon>
+            </div>
+            <span class="text-2xl font-display font-bold tracking-tighter">Splitsbrowser</span>
+          </a>
+          <p class="max-w-sm text-slate-400 leading-relaxed text-lg">
+            The professional choice for sailing club race management. Multi-tenanted, real-time, and built for the community.
+          </p>
+        </div>
+        <div>
+          <h4 class="text-white font-bold uppercase tracking-widest text-sm mb-8">Platform</h4>
+          <ul class="space-y-4">
+            <li><a routerLink="/marketing" class="text-slate-400 hover:text-white transition-colors">Features</a></li>
+            <li><a routerLink="/clubs" class="text-slate-400 hover:text-white transition-colors">Active Clubs</a></li>
+            <li><a href="#" class="text-slate-400 hover:text-white transition-colors">Pricing</a></li>
+          </ul>
+        </div>
+        <div>
+          <h4 class="text-white font-bold uppercase tracking-widest text-sm mb-8">Connect</h4>
+          <ul class="space-y-4">
+            <li><a href="https://github.com/daveryderoxford/sailbrowser/wiki" target="_blank" class="text-slate-400 hover:text-white transition-colors">Documentation</a></li>
+            <li><a href="#" class="text-slate-400 hover:text-white transition-colors">Support</a></li>
+            <li><a href="#" class="text-slate-400 hover:text-white transition-colors">Twitter</a></li>
+          </ul>
+        </div>
+      </div>
+      <div class="pt-12 border-t border-white/5 flex flex-col md:flex-row justify-between items-center gap-6 text-sm text-slate-500">
+        <p>© 2026 Splitsbrowser. All rights reserved.</p>
+        <div class="flex gap-10">
+          <a href="#" class="hover:text-white transition-colors">Privacy Policy</a>
+          <a href="#" class="hover:text-white transition-colors">Terms of Service</a>
+        </div>
+      </div>
+    </div>
+  </footer>
+</div>
