@@ -1,14 +1,21 @@
 <div class="container">
-  <mat-form-field appearance="outline" class="w-full">
-    <mat-label>Filter by Fleet</mat-label>
-    <input matInput type="text" [ngModel]="fleetFilter()" (ngModelChange)="fleetFilter.set($event)"
-      placeholder="e.g., Laser" />
-    @if (fleetFilter()) {
-    <button matSuffix matIconButton aria-label="Clear" (click)="fleetFilter.set('')">
-      <mat-icon>close</mat-icon>
-    </button>
+  <div class="filter-container">
+    <mat-form-field class="filter" appearance="outline">
+      <mat-label>Filter by Fleet</mat-label>
+      <input matInput type="text" [ngModel]="fleetFilter()" (ngModelChange)="fleetFilter.set($event)"
+        placeholder="e.g., Laser" />
+      @if (fleetFilter()) {
+      <button matSuffix matIconButton aria-label="Clear" (click)="fleetFilter.set('')">
+        <mat-icon>close</mat-icon>
+      </button>
+      }
+    </mat-form-field>
+    @if (!breakpoints.isMobile()) {
+      <button class="align-right" mat-icon-button (click)="this.hide.emit()" title="Hide panel">
+        <mat-icon>close</mat-icon>
+      </button>
     }
-  </mat-form-field>
+  </div>
 
   <mat-accordion multi>
     @for (season of expansionPanels(); track season.title; let isFirst = $first) {

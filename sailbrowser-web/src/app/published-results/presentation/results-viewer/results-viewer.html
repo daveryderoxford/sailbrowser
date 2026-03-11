@@ -1,6 +1,6 @@
 <div class="page-container" [class.mobile-mode]="isMobile()" [class.panel-collapsed]="isPanelCollapsed()">
    <app-toolbar title="Results" class="toolbar-area">
-      @if (!isMobile()) {
+      @if (isMobile()) {
          <button matButton [routerLink]="['/results/mobile-results-list']">
             <mat-icon>back</mat-icon>Select series
          </button>
@@ -11,15 +11,15 @@
      on mobile, navgate via a full screen list page -->
    @if (!isMobile()) {
    <aside class="sidebar">
-      <app-season-list [seasons]="reader.seasons()" />
+      <app-season-list [seasons]="reader.seasons()" (hide)="togglePanel()" />
    </aside>
    }
 
    <main class="content-area">
-      @if (!isMobile()) {
+      @if (!isMobile() && isPanelCollapsed()) {
       <button mat-icon-button (click)="togglePanel()" class="panel-toggle-button"
-         [title]="isPanelCollapsed() ? 'Show panel' : 'Hide panel'">
-         <mat-icon>{{ isPanelCollapsed() ? 'keyboard_double_arrow_right' : 'keyboard_double_arrow_left' }}</mat-icon>
+         title="Show panel">
+         <mat-icon>keyboard_double_arrow_right</mat-icon>
       </button>
       }
 

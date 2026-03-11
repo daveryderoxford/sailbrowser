@@ -3,6 +3,7 @@ import { CanDeactivateFn } from '@angular/router';
 import { RaceCalendarStore } from 'app/race-calender';
 import { ScoringEngine } from 'app/published-results';
 import { ManualResultsPage } from '../presentation/manual-results-page/manual-results-page';
+import { MatSnackBar } from '@angular/material/snack-bar';
 
 /**
  * A route guard that checks for "dirty" races before deactivating the route.
@@ -10,6 +11,7 @@ import { ManualResultsPage } from '../presentation/manual-results-page/manual-re
  */
 export const dirtyRaceGuard: CanDeactivateFn<ManualResultsPage> = async (component, currentRoute, currentState, nextState) => {
   const raceStore = inject(RaceCalendarStore);
+  const snackbar = inject(MatSnackBar);
 
   const scoringEngine = inject(ScoringEngine);
 
@@ -20,13 +22,17 @@ export const dirtyRaceGuard: CanDeactivateFn<ManualResultsPage> = async (compone
     return true; // No dirty races, allow navigation immediately.
   }
 
-  console.log(`Found ${dirtyRaces.length} dirty race(s) to publish...`);
+  console.log(`ManualResultsInput:  Found ${dirtyRaces.length} race(s) to publish...`);
+
+  snackbar.open('Scoring races', 'Cancel');
 
   // Create an array of promises for publishing each dirty race.
   const publishPromises = dirtyRaces.map(race => scoringEngine.publishRace(race));
 
   // Wait for all publishing operations to complete.
   await Promise.all(publishPromises);  
+
+  snackbar.dismiss();
 
   return true; // Allow navigation to proceed.
 };

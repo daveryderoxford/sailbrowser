@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, computed, input, output, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, inject, input, output, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { MatIconButton } from '@angular/material/button';
 import { MatExpansionModule } from '@angular/material/expansion';
@@ -8,6 +8,7 @@ import { MatInputModule } from '@angular/material/input';
 import { MatListModule } from '@angular/material/list';
 import { RouterLink } from '@angular/router';
 import { PublishedSeason } from 'app/published-results';
+import { AppBreakpoints } from 'app/shared/services/breakpoints';
 import { normaliseString } from 'app/shared/utils/string-utils';
 import { endOfDay, isWithinInterval } from 'date-fns';
 
@@ -34,12 +35,27 @@ import { endOfDay, isWithinInterval } from 'date-fns';
       background: var(--mat-sys-surface-variant);
       padding: 15px;
    }
+   .filter-container {
+    display: flex;
+    width: 100%;
+   }
+
+   .filter {
+    width: 200px;
+   }
+
+   .align-right {
+    margin-left: auto;
+   }
   `,
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class SeasonList {
+  protected breakpoints = inject(AppBreakpoints);
+
   /** Input for the seasons and their series to be displayed. */
   seasons = input.required<PublishedSeason[]>();
+  hide = output();
 
   /** Signal to hold the current filter text for fleets. */
   protected fleetFilter = signal('');

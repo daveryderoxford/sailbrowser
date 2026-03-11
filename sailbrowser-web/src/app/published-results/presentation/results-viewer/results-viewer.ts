@@ -13,6 +13,7 @@ import { SeriesResultsTable } from "../results-tables/series-results-table/serie
 import { SeasonList } from "../season-list/season-list";
 import { CenteredText } from 'app/shared/components/centered-text';
 import { ClubStore, Fleet } from 'app/club-tenant';
+import { AppBreakpoints } from 'app/shared/services/breakpoints';
 
 @Component({
   selector: 'app-results-viewer',
@@ -24,14 +25,14 @@ export class ResultsViewer {
 
   protected store = inject(PublishedResultsReader);
   protected cs = inject(ClubStore);
-  private breakpoint = toSignal(inject(BreakpointObserver).observe([Breakpoints.Handset]));
   protected reader = inject(PublishedResultsReader);
   protected isPanelCollapsed = signal(false);
   private elementRef = inject(ElementRef);
+  protected breakpoints = inject(AppBreakpoints)
 
   id = input<string>('');  // Route parameter
 
-  isMobile = computed(() => this.breakpoint()?.matches );
+  isMobile = this.breakpoints.isMobile;
 
   series = this.store.series;
   races = this.store.races;

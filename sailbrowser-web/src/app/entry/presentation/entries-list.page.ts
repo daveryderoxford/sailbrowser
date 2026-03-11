@@ -15,6 +15,7 @@ import { RaceCompetitor } from '../../results-input/model/race-competitor';
 import { CurrentRaces } from '../../results-input/services/current-races-store';
 import { RaceCompetitorStore } from '../../results-input/services/race-competitor-store';
 import { CenteredText } from "app/shared/components/centered-text";
+import { BoatEntrySummaryComponent } from "./entry-summary";
 
 @Component({
   selector: 'app-entries-list-page',
@@ -28,8 +29,9 @@ import { CenteredText } from "app/shared/components/centered-text";
     RouterLink,
     MatButtonModule,
     MatIconModule,
-    CenteredText
-],
+    CenteredText,
+    BoatEntrySummaryComponent
+  ],
   template: `
     <app-toolbar title="Entries">
       <button matButton [routerLink]="['/entry', 'enter']">Enter</button>
@@ -52,6 +54,9 @@ import { CenteredText } from "app/shared/components/centered-text";
       } @else if (filtered().length === 0) {
           <app-centered-text>No entries for this selection</app-centered-text>
       } @else {
+        @if (raceFilter() === 'all') {
+      <app-boat-entry-summary [competitors]="competitorStore.selectedCompetitors()" [races]="currentRaces.selectedRaces()"/>
+    } @else {
           <mat-list>
             @for (comp of filtered(); track comp.id) {
               <mat-list-item>
@@ -73,6 +78,7 @@ import { CenteredText } from "app/shared/components/centered-text";
             }
           </mat-list>
         }
+      }
     </div>
   `,
   styles: [`
@@ -125,7 +131,7 @@ export class EntriesListPage {
   async delete(comp: RaceCompetitor) {
     if (comp.manualFinishTime || comp.recordedFinishTime) {
       this.snackbar.open("Can not delete an entry who has finished", "Dismiss", { duration: 3000 });
-      return
+      return;
     }
     const ok = await this.ds.confirm("Delete competitor", "Delete competitor");
     if (ok) {
