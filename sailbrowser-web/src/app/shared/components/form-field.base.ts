@@ -35,8 +35,8 @@ export abstract class FormFieldBase<T> implements MatFormFieldControl<T>, Contro
   }
 
   private _required = false;
-  get valueRequired(): boolean { return this._required; }
-  set valueRequired(value: boolean) {
+  get required(): boolean { return this._required; }
+  set required(value: boolean) {
     this._required = coerceBooleanProperty(value);
     this.stateChanges.next();
   }

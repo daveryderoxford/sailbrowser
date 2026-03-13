@@ -16,6 +16,7 @@ export interface PublishedRace {
 }
 
 export interface RaceResult {
+   seriesEntryId: string;
    rank: number;
    club?: string;
    boatClass: string;
