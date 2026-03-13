@@ -12,8 +12,8 @@
 
   <mat-form-field>
     <mat-label>Handicap System</mat-label>
-    <mat-select formControlName="handicapSystems" multiple>
-      @for (h of handicapSystems; track h) {
+    <mat-select formControlName="handicapSchemes" multiple>
+      @for (h of handicapSchemes; track h) {
       <mat-option [value]="h">{{h}}</mat-option>
       }
     </mat-select>

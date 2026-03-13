@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, computed, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, effect, inject } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatDividerModule } from '@angular/material/divider';
 import { MatIconModule } from '@angular/material/icon';
@@ -12,30 +12,36 @@ import { MatInputModule } from '@angular/material/input';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { debounceTime, distinctUntilChanged, startWith } from 'rxjs';
 import { Toolbar } from 'app/shared/components/toolbar';
-import { boatFilter, BoatsStore } from '../../services/boats.store';
+import { ClubStore } from '../../services/club-store';
 import { LoadingCentered } from "app/shared/components/loading-centered";
 import { DialogsService } from 'app/shared/dialogs/dialogs.service';
 import { MatSnackBar } from '@angular/material/snack-bar';
-import { Boat } from 'app/boats';
+import { Fleet } from '../../model/fleet';
 
 @Component({
-  selector: 'app-boat-page',
+  selector: 'app-fleet-page',
   imports: [Toolbar, MatListModule, MatMenuModule,
     MatButtonModule, MatIconModule, RouterModule, MatDividerModule,
     MatTooltipModule, ReactiveFormsModule, MatFormFieldModule, MatInputModule, LoadingCentered,
     MatDividerModule],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  templateUrl: './boat-page.html',
+  templateUrl: './fleet-page.html',
   styles: `
     @use "mixins" as mix;
 
-    @include mix.centered-column-page(".content", 600px)
+    @include mix.centered-column-page(".content", 600px);
   `
 })
-export class BoatsPage {
-  bs = inject(BoatsStore);
+export class FleetPage {
+  cs = inject(ClubStore);
   private ds = inject(DialogsService);
   private snackbar = inject(MatSnackBar);
+
+  debugEffect = effect( () =>{
+    console.log(JSON.stringify(this.filteredFleets()));
+    console.log('\n')
+
+  });
 
   searchControl = new FormControl('');
   searchTerm = toSignal(
@@ -46,21 +52,23 @@ export class BoatsPage {
     ), { initialValue: '' }
   );
 
-  filteredBoats = computed(() => {
-    const filter = this.searchTerm();
-    return this.bs.boats().filter((boat: Boat) => boatFilter(boat, filter));
+  filteredFleets = computed(() => {
+    const filter = this.searchTerm()?.toLowerCase() || '';
+    return this.cs.club().fleets.filter((fleet: Fleet) => 
+      fleet.name.toLowerCase().includes(filter) || 
+      fleet.shortName.toLowerCase().includes(filter)
+    ).sort((a, b) => a.name.localeCompare(b.name));
   });
 
-  async deleteBoat(boat: Boat) {
-    if (await this.ds.confirm('Delete Boat', `Are you sure you want to delete ${boat.boatClass} ${boat.sailNumber}?`)) {
+  async deleteFleet(fleet: Fleet) {
+    if (await this.ds.confirm('Delete Fleet', `Are you sure you want to delete ${fleet.name}?`)) {
       try {
-        await this.bs.delete(boat.id);
-        this.snackbar.open("Boat deleted", "Dismiss", { duration: 3000 });
+        await this.cs.removeFleet(fleet);
+        this.snackbar.open("Fleet deleted", "Dismiss", { duration: 3000 });
       } catch (error: any) {
-        this.snackbar.open("Error deleting boat", "Dismiss", { duration: 3000 });
-        console.error('Error deleting boat:', error);
+        this.snackbar.open("Error deleting fleet", "Dismiss", { duration: 3000 });
+        console.error('Error deleting fleet:', error);
       }
     }
   }
 }
-

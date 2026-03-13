@@ -1,7 +1,7 @@
 import { inject, Injectable } from '@angular/core';
-import { collection, CollectionReference, doc, DocumentData, DocumentReference, Firestore } from '@angular/fire/firestore';
-import { ClubContextService } from './club-tenant';
+import { collection, CollectionReference, doc, DocumentReference, Firestore } from '@angular/fire/firestore';
 import { classInstanceConverter, dataObjectConverter } from '../../shared/firebase/firestore-helper';
+import { ClubContextService } from './club-tenant';
 
 @Injectable({
   providedIn: 'root'

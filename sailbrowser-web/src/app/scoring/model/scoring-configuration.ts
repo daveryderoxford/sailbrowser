@@ -1,10 +1,10 @@
 import { SeriesEntryMatchingStrategy } from '../../entry/model/entry-grouping';
-import { HandicapSystem } from './handicap-system';
+import { HandicapScheme } from './handicap-scheme';
 import { SeriesScoringScheme } from './scoring-algotirhm';
 
 /** Configuration for scoring series and race */
 export interface ScoringConfiguration {
-  handicapSystem: HandicapSystem;
+  handicapScheme: HandicapScheme;
   scheme: SeriesScoringScheme;
   initialDiscardAfter: number;
   subsequentDiscardsEveryN: number;
@@ -12,7 +12,7 @@ export interface ScoringConfiguration {
 }
 
 export const defaultSeriesScoringData: ScoringConfiguration = {
-  handicapSystem: 'PY',
+  handicapScheme: 'PY',
   scheme: 'long',
   initialDiscardAfter: 3,
   subsequentDiscardsEveryN: 2,

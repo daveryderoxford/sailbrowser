@@ -4,7 +4,6 @@ import { Router } from '@angular/router';
 import { FleetForm } from './fleet-form/fleet-form';
 import { Toolbar } from 'app/shared/components/toolbar';
 import { Fleet } from '../model/fleet';
-import { DialogsService } from 'app/shared/dialogs/dialogs.service';
 import { ClubStore } from '../services/club-store';
 
 @Component({
@@ -23,7 +22,6 @@ export class FleetEdit {
   private store = inject(ClubStore);
   private router = inject(Router);
   private snackbar = inject(MatSnackBar);
-  private ds = inject(DialogsService);
 
   id = input.required<string>();
 
@@ -36,8 +34,20 @@ export class FleetEdit {
   async submitted(data: Partial<Fleet>) {
     try {
       this.busy.set(true);
-      // TO do update the complete fleet array and update the fleets array
-      await this.store.update(data);
+      const currentFleet = this.fleet();
+      if (!currentFleet) return;
+
+      const newId = data.shortName!.trim();
+      
+      // Check if ID is being changed and if the new ID already exists
+      if (newId !== currentFleet.id && this.store.club().fleets.some(f => f.id === newId)) {
+        this.snackbar.open(`Fleet with short name '${newId}' already exists`, "Dismiss", { duration: 3000 });
+        return;
+      }
+
+      const newFleet = { ...currentFleet, ...data, id: newId } as Fleet;
+      await this.store.updateFleet(currentFleet, newFleet);
+      
       this.router.navigate(["/club/fleets"]);
     } catch (error: any) {
       this.snackbar.open("Error encountered updating fleet details", "Dismiss", { duration: 3000 });

@@ -7,7 +7,6 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
 import { SubmitButton } from 'app/shared/components/submit-button';
-import { DeleteButton } from 'app/shared/components/delete-button';
 import { Boat } from 'app/boats';
 import { ClubStore } from 'app/club-tenant';
 
@@ -17,7 +16,7 @@ import { ClubStore } from 'app/club-tenant';
   styleUrl: 'boat-form.scss',
   standalone: true,
   imports: [ReactiveFormsModule, MatFormFieldModule, MatInputModule,
-    MatSelectModule, MatButtonModule, MatCheckboxModule, SubmitButton, DeleteButton],
+    MatSelectModule, MatButtonModule, MatCheckboxModule, SubmitButton],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class BoatForm {
@@ -27,7 +26,6 @@ export class BoatForm {
   boat = input<Boat | undefined>();
   busy = input<boolean>(false);
   submitted = output<Partial<Boat>>();
-  deleted = output<Boat>();
 
   form = new FormGroup({
     boatClass: new FormControl('', { validators: [Validators.required] }),

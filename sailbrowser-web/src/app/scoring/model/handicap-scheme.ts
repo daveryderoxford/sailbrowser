@@ -1,5 +1,5 @@
 
-export const HANDICAP_SYSTEMS = [
+export const HANDICAP_SCHEMES = [
   "Level Rating", 
   "PY",
   'IRC',
@@ -7,4 +7,4 @@ export const HANDICAP_SYSTEMS = [
  ] as const;
 
  /** Handicap system used to hamdicap between different boat types */
-export type HandicapSystem = typeof HANDICAP_SYSTEMS[number];
+export type HandicapScheme = typeof HANDICAP_SCHEMES[number];

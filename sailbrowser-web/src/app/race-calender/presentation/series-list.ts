@@ -25,22 +25,24 @@ import { normaliseString } from 'app/shared/utils/string-utils';
     MatInputModule, DatePipe, LoadingCentered, MatDividerModule],
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
-    <app-toolbar title="Series">
-      <a mat-icon-button matTooltip="New series" [routerLink]="['/race-calender/add']">
-          <mat-icon>add</mat-icon>
-      </a>
-    </app-toolbar>
+    <app-toolbar title="Series"></app-toolbar>
 
     <div class="content">
-      <mat-form-field appearance="outline" class="search">
-          <mat-label>Search</mat-label>
-          <input matInput [formControl]="searchControl" placeholder="Search">
-          @if(searchControl.value) {
-          <button mat-icon-button matSuffix (click)="searchControl.setValue('')" aria-label="Clear search">
-            <mat-icon>close</mat-icon>
-          </button>
-          }
-      </mat-form-field>
+      <div class="search-bar">
+        <mat-form-field appearance="outline" class="search">
+            <mat-label>Search</mat-label>
+            <input matInput [formControl]="searchControl" placeholder="Search">
+            @if(searchControl.value) {
+            <button mat-icon-button matSuffix (click)="searchControl.setValue('')" aria-label="Clear search">
+              <mat-icon>close</mat-icon>
+            </button>
+            }
+        </mat-form-field>
+
+        <a matButton="tonal" class="right-justify" [routerLink]="['/race-calender/add']">
+          New
+        </a>
+      </div>
 
       <mat-divider />
 
@@ -75,12 +77,6 @@ import { normaliseString } from 'app/shared/utils/string-utils';
     @use "mixins" as mix;
 
     @include mix.centered-column-page(".content", 500px);
-
-    .search {
-      margin-top: 10px;
-      margin-left: 15px;
-      width: 300px;
-    }
   `
 })
 export class SeriesList {

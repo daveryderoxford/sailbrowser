@@ -39,12 +39,6 @@
     <app-submit-button [disabled]="form.invalid || !form.dirty" [busy]="busy()">
       Save
     </app-submit-button>
-    
-    @if (boat()) {
-    <app-delete-button (click)="deleted.emit(boat()!)" [busy]="busy()">
-      Delete
-    </app-delete-button>
-    }
   </div>
 
 </form>

@@ -31,7 +31,6 @@ export class EntryService {
    * @
   */
   async enterRaces(details: EntryDetails): Promise<void> {
-    let handicap = details.handicap;
 
     console.log("Calling enter races");
 
@@ -40,9 +39,10 @@ export class EntryService {
     }
 
     // Populate handicap based on the classes handicap if not provided
-    if (handicap === undefined || handicap === null) {
+    let handicap = details.handicap;
+    if (!handicap) {
       const boatClass = this.clubStore.club().classes.find(c => c.name === details.boatClass);
-      handicap = boatClass?.handicap ?? 0;
+      handicap = boatClass?.handicap ?? 1;
     }
 
     for (const race of details.races) {

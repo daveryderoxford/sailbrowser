@@ -13,42 +13,52 @@
       {
         "id": "fhc",
         "name": "Fast handicap",
-        "shortname": "Fast Hcap",
+        "shortName": "Fast Hcap",
         "startOrder": 1,
         "classFlag": "H",
-        "handicapSchemes": "[PY]"
+        "handicapSchemes": [
+          "PY"
+        ]
       },
       {
         "id": "shc",
         "name": "Slow handicap",
-        "shortname": "Slow Hcap",
+        "shortName": "Slow Hcap",
         "startOrder": 2,
         "classFlag": "H",
-        "handicapSchemes": "[PY]"
+        "handicapSchemes": [
+          "PY"
+        ]
       },
       {
         "id": "ghc",
         "name": "General handicap",
-        "shortname": "handicap",
+        "shortName": "handicap",
         "startOrder": 1,
         "classFlag": "H",
-        "handicapSchemes": "[PY]"
+        "handicapSchemes": [
+          "PY"
+        ]
       },
       {
         "id": "topper",
         "name": "Topper",
-        "shortname": "Topper",
+        "shortName": "Topper",
         "startOrder": 1,
         "classFlag": "H",
-        "handicapSchemes": "[Level Rating]"
+        "handicapSchemes": [
+          "Level Rating"
+        ]
       },
       {
         "id": "Laser",
         "name": "Laser",
-        "shortname": "Laser",
+        "shortName": "Laser",
         "startOrder": 1,
         "classFlag": "H",
-        "handicapSchemes": "[Level Rating]"
+        "handicapSchemes": [
+          "Level Rating"
+        ]
       }
     ],
     "classes": [
@@ -73,18 +83,18 @@
         "handicap": 1250
       },
       {
-        "id": "ILCA 4 / Laser 4.7",
-        "name": "ILCA 4 / Laser 4.7",
+        "id": "ILCA 4",
+        "name": "ILCA 4",
         "handicap": 1216
       },
       {
-        "id": "ILCA 6 / Laser Radial",
-        "name": "ILCA 6 / Laser Radial",
+        "id": "ILCA 6",
+        "name": "ILCA 6",
         "handicap": 1154
       },
       {
-        "id": "ILCA 7 / Laser",
-        "name": "ILCA 7 / Laser",
+        "id": "ILCA 7",
+        "name": "ILCA 7",
         "handicap": 1104
       },
       {
@@ -128,8 +138,8 @@
         "handicap": 1244
       },
       {
-        "id": "RS Vareo",
-        "name": "RS Vareo",
+        "id": "RS Vaero",
+        "name": "RS Vaero",
         "handicap": 1095
       },
       {
@@ -137,11 +147,11 @@
         "name": "RS300",
         "handicap": 965
       },
-        {
-          "id": "RS200",
-          "name": "RS200",
-          "handicap": 1050
-        },
+      {
+        "id": "RS200",
+        "name": "RS200",
+        "handicap": 1050
+      },
       {
         "id": "RS400",
         "name": "RS400",
@@ -193,120 +203,370 @@
       {
         "id": "fhc",
         "name": "Fast handicap",
-        "shortname": "Fast Hcap",
+        "shortName": "Fast Hcap",
         "startOrder": 1,
         "classFlag": "H",
-        "handicapSchemes": "[PY]"
+        "handicapSchemes": [
+          "PY"
+        ]
       },
       {
         "id": "shc",
         "name": "Slow handicap",
-        "shortname": "Slow Hcap",
+        "shortName": "Slow Hcap",
         "startOrder": 2,
         "classFlag": "H",
-        "handicapSchemes": "[PY]"
+        "handicapSchemes": [
+          "PY"
+        ]
       },
       {
         "id": "ghc",
         "name": "General handicap",
-        "shortname": "handicap",
+        "shortName": "handicap",
         "startOrder": 1,
         "classFlag": "H",
-        "handicapSchemes": "[PY]"
+        "handicapSchemes": [
+          "PY"
+        ]
       },
       {
         "id": "topper",
         "name": "Topper",
-        "shortname": "Topper",
+        "shortName": "Topper",
         "startOrder": 1,
         "classFlag": "H",
-        "handicapSchemes": "[Level Rating]"
+        "handicapSchemes": [
+          "Level Rating"
+        ]
       },
       {
         "id": "Laser",
         "name": "Laser",
-        "shortname": "Laser",
+        "shortName": "Laser",
         "startOrder": 1,
         "classFlag": "H",
-        "handicapSchemes": "[Level Rating]"
+        "handicapSchemes": [
+          "Level Rating"
+        ]
       }
     ],
     "classes": [
       {
+        "id": "29er",
         "name": "29er",
         "handicap": 900
       },
       {
-        "name": "Aero 6",
-        "handicap": 1099
-      },
-      {
-        "name": "Aero 9",
-        "handicap": 1005
-      },
-      {
-        "name": "Areo 5",
-        "handicap": 1139
-      },
-      {
-        "name": "Areo 7",
-        "handicap": 1063
-      },
-      {
+        "id": "Blaze",
         "name": "Blaze",
         "handicap": 1030
       },
       {
-        "name": "Blaze Fire",
-        "handicap": 1050
+        "id": "Enterprise",
+        "name": "Enterprise",
+        "handicap": 1137
       },
       {
+        "id": "Hartley 12",
+        "name": "Hartley 12",
+        "handicap": 1250
+      },
+      {
+        "id": "ILCA 4",
         "name": "ILCA 4",
         "handicap": 1216
       },
       {
+        "id": "ILCA 6",
         "name": "ILCA 6",
         "handicap": 1154
       },
       {
+        "id": "ILCA 7",
         "name": "ILCA 7",
         "handicap": 1104
       },
       {
-        "name": "Mirror",
-        "handicap": 1368
+        "id": "Phantom",
+        "name": "Phantom",
+        "handicap": 998
       },
       {
-        "name": "Optimist",
-        "handicap": 1631
+        "id": "ROOSTER 8.1",
+        "name": "ROOSTER 8.1",
+        "handicap": 1021
       },
       {
+        "id": "Aero 5",
+        "name": "Aero 5",
+        "handicap": 1139
+      },
+      {
+        "id": "Aero 6",
+        "name": "Aero 6",
+        "handicap": 1099
+      },
+      {
+        "id": "Aero 7",
+        "name": "Aero 7",
+        "handicap": 1063
+      },
+      {
+        "id": "Aero 9",
+        "name": "Aero 9",
+        "handicap": 1005
+      },
+      {
+        "id": "RS Feva",
+        "name": "RS Feva",
+        "handicap": 1280
+      },
+      {
+        "id": "RS Feva XL",
+        "name": "RS Feva XL",
+        "handicap": 1244
+      },
+      {
+        "id": "RS Vaero",
+        "name": "RS Vaero",
+        "handicap": 1095
+      },
+      {
+        "id": "RS300",
+        "name": "RS300",
+        "handicap": 965
+      },
+      {
+        "id": "RS200",
+        "name": "RS200",
+        "handicap": 1050
+      },
+      {
+        "id": "RS400",
         "name": "RS400",
         "handicap": 942
       },
       {
+        "id": "RS600",
         "name": "RS600",
         "handicap": 921
       },
       {
-        "name": "Topper ",
+        "id": "Rooster 8.1",
+        "name": "Rooster 8.1",
+        "handicap": 1021
+      },
+      {
+        "id": "Solo",
+        "name": "Solo",
+        "handicap": 1139
+      },
+      {
+        "id": "Streaker",
+        "name": "Streaker",
+        "handicap": 1124
+      },
+      {
+        "id": "Topper",
+        "name": "Topper",
         "handicap": 1363
       },
       {
+        "id": "Topper 4.2",
         "name": "Topper 4.2",
         "handicap": 1440
-      },
-      {
-        "name": "Vision",
-        "handicap": 1145
       }
     ]
   },
   {
     "id": "test",
     "name": "Test Club",
-    "seasons": [],
-    "fleets": [],
-    "classes": []
+    "seasons": [
+      {
+        "id": "2526",
+        "name": "2025-26",
+        "status": "current"
+      }
+    ],
+    "fleets": [
+      {
+        "id": "fhc",
+        "name": "Fast handicap",
+        "shortName": "Fast Hcap",
+        "startOrder": 1,
+        "classFlag": "H",
+        "handicapSchemes": [
+          "PY"
+        ]
+      },
+      {
+        "id": "shc",
+        "name": "Slow handicap",
+        "shortName": "Slow Hcap",
+        "startOrder": 2,
+        "classFlag": "H",
+        "handicapSchemes": [
+          "PY"
+        ]
+      },
+      {
+        "id": "ghc",
+        "name": "General handicap",
+        "shortName": "handicap",
+        "startOrder": 1,
+        "classFlag": "H",
+        "handicapSchemes": [
+          "PY"
+        ]
+      },
+      {
+        "id": "topper",
+        "name": "Topper",
+        "shortName": "Topper",
+        "startOrder": 1,
+        "classFlag": "H",
+        "handicapSchemes": [
+          "Level Rating"
+        ]
+      },
+      {
+        "id": "Laser",
+        "name": "Laser",
+        "shortName": "Laser",
+        "startOrder": 1,
+        "classFlag": "H",
+        "handicapSchemes": [
+          "Level Rating"
+        ]
+      }
+    ],
+    "classes": [
+      {
+        "id": "29er",
+        "name": "29er",
+        "handicap": 900
+      },
+      {
+        "id": "Blaze",
+        "name": "Blaze",
+        "handicap": 1030
+      },
+      {
+        "id": "Enterprise",
+        "name": "Enterprise",
+        "handicap": 1137
+      },
+      {
+        "id": "Hartley 12",
+        "name": "Hartley 12",
+        "handicap": 1250
+      },
+      {
+        "id": "ILCA 4",
+        "name": "ILCA 4",
+        "handicap": 1216
+      },
+      {
+        "id": "ILCA 6",
+        "name": "ILCA 6",
+        "handicap": 1154
+      },
+      {
+        "id": "ILCA 7",
+        "name": "ILCA 7",
+        "handicap": 1104
+      },
+      {
+        "id": "Phantom",
+        "name": "Phantom",
+        "handicap": 998
+      },
+      {
+        "id": "ROOSTER 8.1",
+        "name": "ROOSTER 8.1",
+        "handicap": 1021
+      },
+      {
+        "id": "Aero 5",
+        "name": "Aero 5",
+        "handicap": 1139
+      },
+      {
+        "id": "Aero 6",
+        "name": "Aero 6",
+        "handicap": 1099
+      },
+      {
+        "id": "Aero 7",
+        "name": "Aero 7",
+        "handicap": 1063
+      },
+      {
+        "id": "Aero 9",
+        "name": "Aero 9",
+        "handicap": 1005
+      },
+      {
+        "id": "RS Feva",
+        "name": "RS Feva",
+        "handicap": 1280
+      },
+      {
+        "id": "RS Feva XL",
+        "name": "RS Feva XL",
+        "handicap": 1244
+      },
+      {
+        "id": "RS Vaero",
+        "name": "RS Vaero",
+        "handicap": 1095
+      },
+      {
+        "id": "RS300",
+        "name": "RS300",
+        "handicap": 965
+      },
+      {
+        "id": "RS200",
+        "name": "RS200",
+        "handicap": 1050
+      },
+      {
+        "id": "RS400",
+        "name": "RS400",
+        "handicap": 942
+      },
+      {
+        "id": "RS600",
+        "name": "RS600",
+        "handicap": 921
+      },
+      {
+        "id": "Rooster 8.1",
+        "name": "Rooster 8.1",
+        "handicap": 1021
+      },
+      {
+        "id": "Solo",
+        "name": "Solo",
+        "handicap": 1139
+      },
+      {
+        "id": "Streaker",
+        "name": "Streaker",
+        "handicap": 1124
+      },
+      {
+        "id": "Topper",
+        "name": "Topper",
+        "handicap": 1363
+      },
+      {
+        "id": "Topper 4.2",
+        "name": "Topper 4.2",
+        "handicap": 1440
+      }
+    ]
   }
 ]

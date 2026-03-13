@@ -1,8 +1,8 @@
 export type { SeriesEntryMatchingStrategy as SeriesEntryGrouping } from '../entry/model/entry-grouping';
 export { SERIES_ENTRY_GROUPING, seriesEntryMatchingStrategys as seriesEntryGroupingDetails } from '../entry/model/entry-grouping';
 
-export type { HandicapSystem } from './model/handicap-system';
-export { HANDICAP_SYSTEMS } from './model/handicap-system';
+export type { HandicapScheme as HandicapSystem } from './model/handicap-scheme';
+export { HANDICAP_SCHEMES as HANDICAP_SYSTEMS } from './model/handicap-scheme';
 
 export type { ResultCode, ResultCodeDefinition } from './model/result-code';
 export { RESULT_CODES, ResultCodeGroup, RESULT_CODE_DEFINITIONS, getResultCodeDefinition } from './model/result-code';

@@ -9,7 +9,7 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
 import { defaultSeriesScoringData, seriesEntryGroupingDetails, seriesScoringSchemeDetails } from 'app/scoring';
-import { HANDICAP_SYSTEMS } from 'app/scoring/model/handicap-system';
+import { HANDICAP_SCHEMES } from '../../scoring/model/handicap-scheme';
 import { SubmitButton } from "app/shared/components/submit-button";
 import { Series } from '../model/series';
 import { ClubStore } from 'app/club-tenant';
@@ -78,9 +78,9 @@ import { ClubStore } from 'app/club-tenant';
         </mat-form-field>
 
         <mat-form-field>
-          <mat-label>Handicap System</mat-label>
-          <mat-select formControlName="handicapSystem">
-            @for (h of handicapSystems; track h) {
+          <mat-label>Handicap Schemes</mat-label>
+          <mat-select formControlName="handicapScheme">
+            @for (h of handicapSchemes; track h) {
               <mat-option [value]="h">{{h}}</mat-option>
             }
           </mat-select>
@@ -130,7 +130,7 @@ export class SeriesForm {
 
   seriesScoringSchemes = seriesScoringSchemeDetails;
   seriesEntryAlgorithms = seriesEntryGroupingDetails;
-  handicapSystems = HANDICAP_SYSTEMS;
+  handicapSchemes = HANDICAP_SCHEMES;
 
   series = input<Series | undefined>();
   busy = input(false);
@@ -144,7 +144,7 @@ export class SeriesForm {
     endDate: new FormControl<Date | null>(null),
     scoringScheme: new FormGroup({
       scheme: new FormControl(defaultSeriesScoringData.scheme, { nonNullable: true, validators: [Validators.required] }),
-      handicapSystem: new FormControl(defaultSeriesScoringData.handicapSystem, { nonNullable: true, validators: [Validators.required] }),
+      handicapScheme: new FormControl(defaultSeriesScoringData.handicapScheme, { nonNullable: true, validators: [Validators.required] }),
       entryAlgorithm: new FormControl(defaultSeriesScoringData.entryAlgorithm, { nonNullable: true, validators: [Validators.required] }),
       initialDiscardAfter: new FormControl(defaultSeriesScoringData.initialDiscardAfter, { nonNullable: true, validators: [Validators.required, Validators.min(0)] }),
       subsequentDiscardsEveryN: new FormControl(defaultSeriesScoringData.subsequentDiscardsEveryN, { nonNullable: true, validators: [Validators.required, Validators.min(0)] }),

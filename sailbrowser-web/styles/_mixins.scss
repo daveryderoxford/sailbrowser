@@ -23,6 +23,23 @@
       display: flex;
       flex-direction: column;
    }
+
+   .search-bar {
+      display: flex;
+      align-items: center;
+   }
+
+   .right-justify {
+      margin-left: auto;
+      margin-right: 15px;
+   }
+
+   .search {
+      margin-top: 10px;
+      margin-left: 15px;
+      margin-right: 12px;
+      width: 300px;
+   }
 }
 
 @mixin form-page($form-element, $maxwidth) {
@@ -35,7 +52,7 @@
       grid-template-rows: auto auto 1fr;
       grid-template-areas:
          "toolbar toolbar toolbar"
-         "  ...   content    ... " 
+         "  ...   content    ... "
          " ...       ...    ...  ";
       background-color: var(--mat-sys-surface-container-high);
    }

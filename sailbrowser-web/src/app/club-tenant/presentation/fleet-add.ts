@@ -27,7 +27,16 @@ export class FleetAdd {
   async submitted(fleet: Partial<Fleet>) {
     try {
       this.busy.set(true);
-      await this.store.addFleet({...fleet, id: fleet.shortName!} as Fleet);
+      const id = fleet.shortName!.trim();
+      
+      // Check if ID already exists
+      if (this.store.club().fleets.some(f => f.id === id)) {
+        this.snackbar.open(`Fleet with short name '${id}' already exists`, "Dismiss", { duration: 3000 });
+        return;
+      }
+
+      const newFleet = { ...fleet, id } as Fleet;
+      await this.store.addFleet(newFleet);
       this.router.navigate(["/club/fleets"]); 
     } catch (error: any) {
       this.snackbar.open("Error encountered adding Fleet", "Dismiss", { duration: 3000 });

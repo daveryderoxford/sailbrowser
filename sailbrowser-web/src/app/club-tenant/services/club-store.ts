@@ -63,6 +63,15 @@ export class ClubStore {
     await updateDoc(this.clubDoc()!, { fleets: arrayUnion(fleet) });
   }
 
+  async updateFleet(oldFleet: Fleet, newFleet: Fleet) {
+    // We can't use arrayRemove and arrayUnion in the same updateDoc call easily if they might conflict,
+    // but since they are different objects, we can do it in two steps or by reading and writing the array.
+    // Actually, reading the current array, mapping the updated one, and writing it back is safer.
+    const currentFleets = this.club().fleets;
+    const updatedFleets = currentFleets.map(f => f.id === oldFleet.id ? newFleet : f);
+    await updateDoc(this.clubDoc()!, { fleets: updatedFleets });
+  }
+
   async removeFleet(fleet: Fleet) {
     await updateDoc(this.clubDoc()!, { fleets: arrayRemove(fleet) });
   }
@@ -71,12 +80,24 @@ export class ClubStore {
     await updateDoc(this.clubDoc()!, { classes: arrayUnion(boatClass) });
   }
 
+  async updateClass(oldClass: BoatClass, newClass: BoatClass) {
+    const currentClasses = this.club().classes;
+    const updatedClasses = currentClasses.map(c => c.id === oldClass.id ? newClass : c);
+    await updateDoc(this.clubDoc()!, { classes: updatedClasses });
+  }
+
   async removeClass(boatClass: BoatClass) {
     await updateDoc(this.clubDoc()!, { classes: arrayRemove(boatClass) });
   }
 
   async addSeason(season: Season) {
     await updateDoc(this.clubDoc()!, { seasons: arrayUnion(season) });
+  }
+
+  async updateSeason(oldSeason: Season, newSeason: Season) {
+    const currentSeasons = this.club().seasons;
+    const updatedSeasons = currentSeasons.map(s => s.id === oldSeason.id ? newSeason : s);
+    await updateDoc(this.clubDoc()!, { seasons: updatedSeasons });
   }
 
   async removeSeason(season: Season) {

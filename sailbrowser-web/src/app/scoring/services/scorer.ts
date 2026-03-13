@@ -40,7 +40,7 @@ export function score(
   const seriesCompetitorCount = seriesEntries.length;
 
   // 3. Score the current race and update it in the grid.
-  const newScoredRaceResults = scoreRace(raceToScore, competitorsInRace, seriesEntries, series.scoringScheme.handicapSystem, config.seriesType, seriesCompetitorCount);
+  const newScoredRaceResults = scoreRace(raceToScore, competitorsInRace, seriesEntries, series.scoringScheme.handicapScheme, config.seriesType, seriesCompetitorCount);
   const raceToUpdate = scoringGrid.find(r => r.id === raceToScore.id)!;
   raceToUpdate.results = newScoredRaceResults;
 

@@ -6,7 +6,6 @@ import { Toolbar } from 'app/shared/components/toolbar';
 import { BoatsStore } from '../services/boats.store';
 import { DuplicateBoatCheck } from './duplicate-boat-check/duplicate-check-service';
 import { Boat } from '../model/boat';
-import { DialogsService } from 'app/shared/dialogs/dialogs.service';
 
 @Component({
   selector: 'app-boat-edit',
@@ -15,7 +14,7 @@ import { DialogsService } from 'app/shared/dialogs/dialogs.service';
   template: `
    <app-toolbar [title]="'Edit Boat - ' + boat().boatClass + '  ' + boat().sailNumber" showBack/>
 
-    <app-boat-form [boat]="boat()" (submitted)="submitted($event)" (deleted)="deleted($event)"></app-boat-form>
+    <app-boat-form [boat]="boat()" (submitted)="submitted($event)"></app-boat-form>
   `,
   styles: [],
 })
@@ -23,7 +22,6 @@ export class BoatEdit {
   private bs = inject(BoatsStore);
   private router = inject(Router);
   private snackbar = inject(MatSnackBar);
-  private ds = inject(DialogsService);
   private dupCheck = inject(DuplicateBoatCheck);
 
   id = input.required<string>();   // Route parameter
@@ -47,23 +45,6 @@ export class BoatEdit {
       console.log('UpdateBoat. Error updating boat details: ' + error.toString());
     } finally {
       this.busy.set(false);
-    }
-  }
-
-  async deleted(boat: Boat) {
-    const ok = await this.ds.confirm("Delete boat", "Delete boat");
-    if (ok) {
-      try {
-        this.busy.set(true);
-
-        await this.bs.delete(boat.id);
-        this.router.navigate(["/boats"]);
-      } catch (error: any) {
-        this.snackbar.open("Error encountered deleting task", "Error encountered deleting task", { duration: 3000 });
-        console.log('UpdateTask. Error deleting task: ' + error.toString());
-      } finally {
-        this.busy.set(false);
-      }
     }
   }
 

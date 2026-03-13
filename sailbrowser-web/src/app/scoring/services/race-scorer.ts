@@ -1,7 +1,7 @@
 import { PublishedRace, RaceResult } from 'app/published-results/model/published-race';
 import { Race, RaceType } from 'app/race-calender';
 import { RaceCompetitor, SeriesEntry } from 'app/results-input';
-import { HandicapSystem } from 'app/scoring/model/handicap-system';
+import { HandicapScheme } from '../model/handicap-scheme';
 import { getLongAlgorithm, getShortAlgorithm, isFinishedComp, isRedress, isStartAreaComp, ResultCodeAlgorithm } from 'app/scoring/model/result-code-scoring';
 import { SailbrowserError } from 'app/shared/utils/sailbrowser-error';
 import { differenceInSeconds } from 'date-fns';
@@ -18,7 +18,7 @@ export function scoreRace(
   race: Race,
   competitors: RaceCompetitor[],
   seriesEntries: SeriesEntry[],
-  scheme: HandicapSystem,
+  scheme: HandicapScheme,
   seriesType: SeriesScoringScheme,
   seriesCompetitorCount: number,
 ): RaceResult[] {
@@ -75,7 +75,7 @@ export function calculateRanks(results: RaceResult[]) {
  * 2. If Level Rating -> if manualPositions -> position, else elapsedTime.
  * 3. Handicap -> correctedTime.
  */
-function determineOrdering(raceType: RaceType, scheme: HandicapSystem, results: RaceResult[]): keyof RaceResult {
+function determineOrdering(raceType: RaceType, scheme: HandicapScheme, results: RaceResult[]): keyof RaceResult {
   let orderingProperty: keyof RaceResult;
   const finishers = results.filter(res => isFinishedComp(res.resultCode));
 
@@ -177,7 +177,7 @@ function buildRaceResults(
  * Calculates elapsed and corrected times for each result.
  * from competitor timings
  */
-function calculateTimes(results: RaceResult[], competitors: RaceCompetitor[], isAverageLap: boolean, scheme: HandicapSystem) {
+function calculateTimes(results: RaceResult[], competitors: RaceCompetitor[], isAverageLap: boolean, scheme: HandicapScheme) {
   const maxLaps = competitors.reduce((max, comp) => (comp.numLaps > max) ? comp.numLaps : max, 0);
 
   for (let i = 0; i < results.length; i++) {
@@ -219,7 +219,7 @@ function getElapsedTime(comp: RaceCompetitor, isAverageLap: boolean, maxLaps: nu
   return 0;
 }
 
-function calculateCorrectedTime(elapsedTime: number, handicap: number, scheme: HandicapSystem): number {
+function calculateCorrectedTime(elapsedTime: number, handicap: number, scheme: HandicapScheme): number {
   if (elapsedTime === 0) {
     return 0;
   }

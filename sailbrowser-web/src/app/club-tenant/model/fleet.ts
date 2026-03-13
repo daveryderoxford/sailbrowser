@@ -1,8 +1,8 @@
-import { HandicapSystem } from 'app/scoring/model/handicap-system';
+import { HandicapScheme } from '../../scoring/model/handicap-scheme';
 
 export interface Fleet {
    id: string;
    name: string;
    shortName: string;
-   handicapSystems: HandicapSystem[];
+   handicapSchemes: HandicapScheme[];
 }

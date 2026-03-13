@@ -6,10 +6,10 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
 import { SubmitButton } from 'app/shared/components/submit-button';
-import { DeleteButton } from 'app/shared/components/delete-button';
 import { Fleet } from 'app/club-tenant/model/fleet';
 import { ClubStore } from 'app/club-tenant';
 import { HANDICAP_SYSTEMS, HandicapSystem } from 'app/scoring';
+import { HandicapScheme } from 'app/scoring/model/handicap-scheme';
 
 @Component({
   selector: 'app-fleet-form',
@@ -33,7 +33,7 @@ export class FleetForm {
 
   fleet = input<Fleet | undefined>();
 
-  handicapSystems = HANDICAP_SYSTEMS;
+  handicapSchemes = HANDICAP_SYSTEMS;
 
   busy = input<boolean>(false);
   submitted = output<Partial<Fleet>>();
@@ -41,7 +41,7 @@ export class FleetForm {
   form = new FormGroup({
     shortName: new FormControl('', { validators: [Validators.required] }),
     name: new FormControl('', { validators: [Validators.required] }),
-    handicapSystems: new FormControl<HandicapSystem[]>([]),
+    handicapSchemes: new FormControl<HandicapScheme[]>([]),
   });
 
   constructor() {

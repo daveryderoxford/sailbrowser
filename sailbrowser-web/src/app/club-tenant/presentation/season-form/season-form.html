@@ -1,0 +1,15 @@
+<form (ngSubmit)="submit()" [formGroup]="form" novalidate>
+
+  <mat-form-field>
+    <mat-label>Name</mat-label>
+    <input matInput formControlName="name">
+    <mat-error>Season name is required</mat-error>
+  </mat-form-field>
+
+  <div class="button-row">
+    <app-submit-button [disabled]="form.invalid || !form.dirty" [busy]="busy()">
+      Save
+    </app-submit-button>
+  </div>
+
+</form>

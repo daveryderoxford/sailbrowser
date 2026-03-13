@@ -3,8 +3,6 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatDividerModule } from '@angular/material/divider';
 import { MatIconModule } from '@angular/material/icon';
 import { MatListModule } from '@angular/material/list';
-import { MatMenuModule } from '@angular/material/menu';
-import { MatTooltipModule } from '@angular/material/tooltip';
 import { RouterModule } from '@angular/router';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import { MatFormFieldModule } from '@angular/material/form-field';
@@ -12,28 +10,29 @@ import { MatInputModule } from '@angular/material/input';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { debounceTime, distinctUntilChanged, startWith } from 'rxjs';
 import { Toolbar } from 'app/shared/components/toolbar';
-import { boatFilter, BoatsStore } from '../../services/boats.store';
+import { ClubStore } from '../../services/club-store';
 import { LoadingCentered } from "app/shared/components/loading-centered";
 import { DialogsService } from 'app/shared/dialogs/dialogs.service';
 import { MatSnackBar } from '@angular/material/snack-bar';
-import { Boat } from 'app/boats';
+import { Season } from 'app/race-calender/model/season';
 
 @Component({
-  selector: 'app-boat-page',
-  imports: [Toolbar, MatListModule, MatMenuModule,
+  selector: 'app-season-page',
+  imports: [Toolbar, MatListModule,
     MatButtonModule, MatIconModule, RouterModule, MatDividerModule,
-    MatTooltipModule, ReactiveFormsModule, MatFormFieldModule, MatInputModule, LoadingCentered,
+    ReactiveFormsModule, MatFormFieldModule, MatInputModule, LoadingCentered,
     MatDividerModule],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  templateUrl: './boat-page.html',
+  templateUrl: './season-page.html',
   styles: `
     @use "mixins" as mix;
 
-    @include mix.centered-column-page(".content", 600px)
+    @include mix.centered-column-page(".content", 600px);
+
   `
 })
-export class BoatsPage {
-  bs = inject(BoatsStore);
+export class SeasonPage {
+  cs = inject(ClubStore);
   private ds = inject(DialogsService);
   private snackbar = inject(MatSnackBar);
 
@@ -46,21 +45,22 @@ export class BoatsPage {
     ), { initialValue: '' }
   );
 
-  filteredBoats = computed(() => {
-    const filter = this.searchTerm();
-    return this.bs.boats().filter((boat: Boat) => boatFilter(boat, filter));
+  filteredSeasons = computed(() => {
+    const filter = this.searchTerm()?.toLowerCase() || '';
+    return this.cs.club().seasons.filter((season: Season) => 
+      season.name.toLowerCase().includes(filter)
+    ).sort((a, b) => a.name.localeCompare(b.name));
   });
 
-  async deleteBoat(boat: Boat) {
-    if (await this.ds.confirm('Delete Boat', `Are you sure you want to delete ${boat.boatClass} ${boat.sailNumber}?`)) {
+  async deleteSeason(season: Season) {
+    if (await this.ds.confirm('Delete Season', `Are you sure you want to delete ${season.name}?`)) {
       try {
-        await this.bs.delete(boat.id);
-        this.snackbar.open("Boat deleted", "Dismiss", { duration: 3000 });
+        await this.cs.removeSeason(season);
+        this.snackbar.open("Season deleted", "Dismiss", { duration: 3000 });
       } catch (error: any) {
-        this.snackbar.open("Error deleting boat", "Dismiss", { duration: 3000 });
-        console.error('Error deleting boat:', error);
+        this.snackbar.open("Error deleting season", "Dismiss", { duration: 3000 });
+        console.error('Error deleting season:', error);
       }
     }
   }
 }
-

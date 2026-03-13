@@ -31,7 +31,7 @@ function createMockSeries(): Series {
     name: 'Test Series',
     fleetId: 'fleet1',
     scoringScheme: {
-      handicapSystem: 'PY',
+      handicapScheme: 'PY',
       initialDiscardAfter: 3,
       subsequentDiscardsEveryN: 2,
       entryAlgorithm: 'classSailNumber',
