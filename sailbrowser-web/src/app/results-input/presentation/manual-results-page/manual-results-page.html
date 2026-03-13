@@ -51,13 +51,17 @@
 
       <mat-form-field appearance="outline">
         <mat-label>Competitor</mat-label>
-        <input #searchInput matInput [formControl]="searchControl" [matAutocomplete]="auto" placeholder="Class or Sail No">
+        <input #searchInput matInput [formControl]="searchControl" [matAutocomplete]="auto" placeholder="Class, Sail No or Helm">
         <mat-autocomplete #auto="matAutocomplete" [displayWith]="displayFn"
           (optionSelected)="onCompetitorSelected($event)">
-          @for (comp of autoCompleteCompetitors(); track comp.id) {
-          <mat-option [value]="comp">
-            {{comp.boatClass}} {{comp.sailNumber}} - {{comp.helm}}
-          </mat-option>
+          @for (group of autoCompleteGroups(); track group.name) {
+            <mat-optgroup [label]="group.name">
+              @for (comp of group.competitors; track comp.id) {
+                <mat-option [value]="comp">
+                  {{comp.boatClass}} {{comp.sailNumber}} - {{comp.helm}}
+                </mat-option>
+              }
+            </mat-optgroup>
           }
         </mat-autocomplete>
         @if(searchControl.value) {

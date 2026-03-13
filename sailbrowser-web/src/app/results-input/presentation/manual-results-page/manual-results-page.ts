@@ -132,14 +132,32 @@ export class ManualResultsPage {
     return [...comps].sort((a, b) => manualRaceTableSort(a, b, 'elapsedTime', 'asc'));
   });
 
-  // Filtered competitors for autocomplete
-  readonly autoCompleteCompetitors = computed(() => {
+  // Filtered competitors for autocomplete, grouped by finished status
+  readonly autoCompleteGroups = computed(() => {
     const term = normaliseString(this.searchTerm());
+    if (term.length === 0) {
+      return [];
+    }
 
-    return this.sortedCompetitors().filter(c => {
+    const filtered = this.sortedCompetitors().filter(c => {
       const searchStr = normaliseString(`${c.boatClass} ${c.sailNumber} ${c.helm}`);
       return searchStr.includes(term);
     });
+
+    const toFinish = filtered.filter(c => c.resultCode === 'NOT FINISHED');
+    const finished = filtered.filter(c => c.resultCode !== 'NOT FINISHED');
+
+    const groups: {name: string, competitors: RaceCompetitor[]}[] = [];
+
+    if (toFinish.length > 0) {
+      groups.push({ name: 'To Finish', competitors: toFinish });
+    }
+
+    if (finished.length > 0) {
+      groups.push({ name: 'Finished', competitors: finished });
+    }
+
+    return groups;
   });
 
   constructor() {

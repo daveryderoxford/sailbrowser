@@ -33,21 +33,25 @@ import { BoatEntrySummaryComponent } from "./entry-summary";
     BoatEntrySummaryComponent
   ],
   template: `
-    <app-toolbar title="Entries">
-      <button matButton [routerLink]="['/entry', 'enter']">Enter</button>
-    </app-toolbar>
+    <app-toolbar title="Entries"></app-toolbar>
     <div class="content">
-      <mat-form-field appearance="outline" class="search">
-        <mat-label>Select Race</mat-label>
-        <mat-select [formControl]="raceSelector">
-          <mat-option [value]="'all'">All Races</mat-option>
-          @for (race of currentRaces.selectedRaces(); track race.id) {
-            <mat-option [value]="race.id">
-              {{ race.seriesName }} - Race {{ race.raceOfDay }}
-            </mat-option>
-          }
-        </mat-select>
-      </mat-form-field>
+      <div class="search-bar">
+        <mat-form-field appearance="outline" class="search">
+          <mat-label>Select Race</mat-label>
+          <mat-select [formControl]="raceSelector">
+            <mat-option [value]="'all'">All Races</mat-option>
+            @for (race of currentRaces.selectedRaces(); track race.id) {
+              <mat-option [value]="race.id">
+                {{ race.seriesName }} - Race {{ race.raceOfDay }}
+              </mat-option>
+            }
+          </mat-select>
+        </mat-form-field>
+
+        <a matButton="tonal" class="right-justify"  [routerLink]="['/entry', 'enter']">
+          Enter
+        </a>
+      </div>
 
       @if (competitorStore.loading()) {
         <app-loading-centered/>
@@ -55,15 +59,15 @@ import { BoatEntrySummaryComponent } from "./entry-summary";
           <app-centered-text>No entries for this selection</app-centered-text>
       } @else {
         @if (raceFilter() === 'all') {
-      <app-boat-entry-summary [competitors]="competitorStore.selectedCompetitors()" [races]="currentRaces.selectedRaces()"/>
-    } @else {
+          <app-boat-entry-summary [competitors]="competitorStore.selectedCompetitors()" [races]="currentRaces.selectedRaces()"/>
+        } @else {
           <mat-list>
             @for (comp of filtered(); track comp.id) {
               <mat-list-item>
                 <span matListItemTitle>{{ comp.boatClass }} {{ comp.sailNumber }}</span>
                 <span matListItemLine>
                   <span class=gap>{{ comp.helmCrew }}</span>
-                  Handicap: {{comp.handicap.toString()}}
+                    Handicap: {{comp.handicap.toString()}}
                 </span>
                 <span matListItemLine>
                   @if (comp.resultCode !== 'NOT FINISHED') { Finished }
@@ -98,12 +102,6 @@ import { BoatEntrySummaryComponent } from "./entry-summary";
 
     .warning {
       color: var(--mat-sys-error);
-    }
-
-    .search {
-      margin-top: 10px;
-      margin-left: 15px;
-      width: 300px;
     }
 
     .gap {
