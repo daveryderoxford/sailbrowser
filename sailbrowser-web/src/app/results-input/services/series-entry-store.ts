@@ -23,7 +23,7 @@ export class SeriesEntryStore {
 
   private readonly selectedSeriesIds = computed(() => this.currentRaces.selectedSeries().map(s => s.id));
 
-  /** Series entries in selected series */
+  /** Series entries in selected races */
   private readonly selectedEntriesResource = rxResource({
     params: () => this.selectedSeriesIds(),
     stream: (data) => {
@@ -85,5 +85,5 @@ export function sortEntries(a: SeriesEntry, b: SeriesEntry): number {
   if (classCompare !== 0) {
     return classCompare;
   }
-  return a.sailNumber.localeCompare(b.sailNumber);
+  return a.sailNumber - b.sailNumber;
 }

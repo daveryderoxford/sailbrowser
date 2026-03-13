@@ -8,4 +8,5 @@ export interface Club {
    fleets: Fleet[];
    classes: BoatClass[];
    seasons: Season[];
+   logoUrl?: string;
 }

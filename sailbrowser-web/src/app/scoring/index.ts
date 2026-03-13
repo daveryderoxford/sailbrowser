@@ -1,5 +1,5 @@
-export type { SeriesEntryGrouping } from './model/entry-grouping';
-export { SERIES_ENTRY_GROUPING, seriesEntryGroupingDetails } from './model/entry-grouping';
+export type { SeriesEntryMatchingStrategy as SeriesEntryGrouping } from '../entry/model/entry-grouping';
+export { SERIES_ENTRY_GROUPING, seriesEntryMatchingStrategys as seriesEntryGroupingDetails } from '../entry/model/entry-grouping';
 
 export type { HandicapSystem } from './model/handicap-system';
 export { HANDICAP_SYSTEMS } from './model/handicap-system';

@@ -16,7 +16,7 @@ import { RaceCalendarStoreBase, RaceSeriesDetails, seriesSort, sortRaces } from 
 export class RaceCalendarStore extends RaceCalendarStoreBase {
 
    // Fetch only active series (not archived)
-   private readonly seriesResource = rxResource({
+   private readonly seriesResource = rxResource<Series[], unknown>({
       stream: (): Observable<Series[]> =>
          collectionData(
             query(this.seriesCollection, where('archived', '==', false)),
@@ -28,7 +28,7 @@ export class RaceCalendarStore extends RaceCalendarStoreBase {
       defaultValue: [],
    });
 
-   private readonly racesResource = rxResource({
+   private readonly racesResource = rxResource<Race[], unknown>({
       stream: (): Observable<Race[]> =>
          collectionData(
             query(this.racesCollection, where('status', '!=', 'Archived')),

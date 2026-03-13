@@ -2,7 +2,7 @@
 import { Injectable, Signal, computed, inject, signal } from '@angular/core';
 import { rxResource } from '@angular/core/rxjs-interop';
 import { FirebaseApp } from '@angular/fire/app';
-import { arrayRemove, arrayUnion, doc, docData, getFirestore, setDoc, updateDoc, } from '@angular/fire/firestore';
+import { arrayRemove, arrayUnion, doc, docData, DocumentReference, getFirestore, setDoc, updateDoc, } from '@angular/fire/firestore';
 import { firstValueFrom, filter, Observable } from 'rxjs';
 import { Club } from '../model/club';
 import { Fleet } from '../model/fleet';
@@ -26,7 +26,7 @@ export class ClubStore {
       return undefined;
   });
 
-  private _clubResource = rxResource({
+  private _clubResource = rxResource<Club, DocumentReference<Club> | undefined>({
     params: () => this.clubDoc(),
     stream: () => {
       return docData(this.clubDoc()!).pipe(

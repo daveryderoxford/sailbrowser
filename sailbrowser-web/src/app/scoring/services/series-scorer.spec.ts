@@ -1,6 +1,7 @@
 import { PublishedRace, RaceResult } from 'app/published-results/model/published-race';
 import { scoreSeries, ScoringConfig } from './series-scorer';
 import { SeriesScoringScheme } from '../model/scoring-algotirhm';
+import { SeriesEntry } from 'app/results-input';
 
 /** Helper to create a mock PublishedRace */
 function createMockRace(raceIndex: number, results: Partial<RaceResult>[]): PublishedRace {
@@ -15,6 +16,7 @@ function createMockRace(raceIndex: number, results: Partial<RaceResult>[]): Publ
     type: 'Conventional',
     isDiscardable: true, // This property on the RACE is correct
     results: results.map((res, i) => ({
+      seriesEntryId: res.seriesEntryId || `entry${101 + i}`,
       rank: i + 1,
       boatClass: 'TestClass',
       sailNumber: 101 + i,
@@ -33,27 +35,42 @@ function createMockRace(raceIndex: number, results: Partial<RaceResult>[]): Publ
   };
 }
 
+function createMockEntries(keys: string[]): SeriesEntry[] {
+  return keys.map((key, i) => {
+    const [helm, sailNumber, boatClass] = key.split('-');
+    return {
+      id: `entry${parseInt(sailNumber, 10)}`,
+      seriesId: 'series1',
+      helm,
+      boatClass,
+      sailNumber,
+      handicap: 1000,
+    };
+  });
+}
+
 describe('scoreSeries', () => {
-  const allCompetitorKeys = new Set(['Helm 101-101-TestClass', 'Helm 102-102-TestClass']);
+  const allCompetitorKeys = ['Helm 101-101-TestClass', 'Helm 102-102-TestClass'];
+  const allEntries = createMockEntries(allCompetitorKeys);
 
   it('should calculate net points correctly with one discard', () => {
     const races: PublishedRace[] = [
       createMockRace(0, [
-        { helm: 'Helm 101', sailNumber: 101, points: 1 },
-        { helm: 'Helm 102', sailNumber: 102, points: 2 },
+        { seriesEntryId: 'entry101', helm: 'Helm 101', sailNumber: 101, points: 1 },
+        { seriesEntryId: 'entry102', helm: 'Helm 102', sailNumber: 102, points: 2 },
       ]),
       createMockRace(1, [
-        { helm: 'Helm 101', sailNumber: 101, points: 3 }, // This should be discarded for Helm 101
-        { helm: 'Helm 102', sailNumber: 102, points: 1 },
+        { seriesEntryId: 'entry101', helm: 'Helm 101', sailNumber: 101, points: 3 }, // This should be discarded for Helm 101
+        { seriesEntryId: 'entry102', helm: 'Helm 102', sailNumber: 102, points: 1 },
       ]),
       createMockRace(2, [
-        { helm: 'Helm 101', sailNumber: 101, points: 1 },
-        { helm: 'Helm 102', sailNumber: 102, points: 2 },
+        { seriesEntryId: 'entry101', helm: 'Helm 101', sailNumber: 101, points: 1 },
+        { seriesEntryId: 'entry102', helm: 'Helm 102', sailNumber: 102, points: 2 },
       ]),
     ];
 
     const config: ScoringConfig = { seriesType: 'short', discards: 1 };
-    const seriesResults = scoreSeries(races, allCompetitorKeys, config);
+    const seriesResults = scoreSeries(races, allEntries, config);
 
     const helm101 = seriesResults.find(r => r.sailNumber === 101)!;
     const helm102 = seriesResults.find(r => r.sailNumber === 102)!;
@@ -74,23 +91,23 @@ describe('scoreSeries', () => {
   it('should not discard a non-discardable result (e.g., DGM)', () => {
     const races: PublishedRace[] = [ // Race itself is discardable
       createMockRace(0, [
-        { helm: 'Helm 101', sailNumber: 101, points: 1 },
-        { helm: 'Helm 102', sailNumber: 102, points: 2 },
+        { seriesEntryId: 'entry101', helm: 'Helm 101', sailNumber: 101, points: 1 },
+        { seriesEntryId: 'entry102', helm: 'Helm 102', sailNumber: 102, points: 2 },
       ]),
       createMockRace(1, [
         // Helm 101 gets a DGM (10 points), which has a non-discardable RESULT CODE.
-        { helm: 'Helm 101', sailNumber: 101, points: 10, resultCode: 'DGM'},
-        { helm: 'Helm 102', sailNumber: 102, points: 1 },
+        { seriesEntryId: 'entry101', helm: 'Helm 101', sailNumber: 101, points: 10, resultCode: 'DGM'},
+        { seriesEntryId: 'entry102', helm: 'Helm 102', sailNumber: 102, points: 1 },
       ]),
       createMockRace(2, [
         // Helm 101 gets 3 points. This should be discarded instead of the DGM.
-        { helm: 'Helm 101', sailNumber: 101, points: 3 },
-        { helm: 'Helm 102', sailNumber: 102, points: 2 },
+        { seriesEntryId: 'entry101', helm: 'Helm 101', sailNumber: 101, points: 3 },
+        { seriesEntryId: 'entry102', helm: 'Helm 102', sailNumber: 102, points: 2 },
       ]),
     ];
 
     const config: ScoringConfig = { seriesType: 'short', discards: 1 };
-    const seriesResults = scoreSeries(races, allCompetitorKeys, config);
+    const seriesResults = scoreSeries(races, allEntries, config);
 
     const helm101 = seriesResults.find(r => r.sailNumber === 101)!;
 
@@ -106,20 +123,21 @@ describe('scoreSeries', () => {
   });
 
   it('should correctly rank competitors with a tie, using RRS A8.1 and A8.2', () => {
-    const tieBreakKeys = new Set(['Helm 101-101-TestClass', 'Helm 102-102-TestClass', 'Helm 103-103-TestClass']);
+    const tieBreakKeys = ['Helm 101-101-TestClass', 'Helm 102-102-TestClass', 'Helm 103-103-TestClass'];
+    const tieBreakEntries = createMockEntries(tieBreakKeys);
     const races: PublishedRace[] = [
       // Race 1: 101 -> 1, 102 -> 2
-      createMockRace(0, [{ helm: 'Helm 101', sailNumber: 101, points: 1 }, { helm: 'Helm 102', sailNumber: 102, points: 2 }]),
+      createMockRace(0, [{ seriesEntryId: 'entry101', helm: 'Helm 101', sailNumber: 101, points: 1 }, { seriesEntryId: 'entry102', helm: 'Helm 102', sailNumber: 102, points: 2 }]),
       // Race 2: 101 -> 2, 102 -> 1
-      createMockRace(1, [{ helm: 'Helm 101', sailNumber: 101, points: 2 }, { helm: 'Helm 102', sailNumber: 102, points: 1 }]),
+      createMockRace(1, [{ seriesEntryId: 'entry101', helm: 'Helm 101', sailNumber: 101, points: 2 }, { seriesEntryId: 'entry102', helm: 'Helm 102', sailNumber: 102, points: 1 }]),
       // Race 3: 101 -> 3, 102 -> 3
-      createMockRace(2, [{ helm: 'Helm 101', sailNumber: 101, points: 3 }, { helm: 'Helm 102', sailNumber: 102, points: 3 }]),
+      createMockRace(2, [{ seriesEntryId: 'entry101', helm: 'Helm 101', sailNumber: 101, points: 3 }, { seriesEntryId: 'entry102', helm: 'Helm 102', sailNumber: 102, points: 3 }]),
       // Race 4 (last race): 101 -> 2, 102 -> 1. This breaks the tie.
-      createMockRace(3, [{ helm: 'Helm 101', sailNumber: 101, points: 2 }, { helm: 'Helm 102', sailNumber: 102, points: 1 }]),
+      createMockRace(3, [{ seriesEntryId: 'entry101', helm: 'Helm 101', sailNumber: 101, points: 2 }, { seriesEntryId: 'entry102', helm: 'Helm 102', sailNumber: 102, points: 1 }]),
     ];
 
     const config: ScoringConfig = { seriesType: 'short', discards: 1 };
-    const seriesResults = scoreSeries(races, tieBreakKeys, config);
+    const seriesResults = scoreSeries(races, tieBreakEntries, config);
 
     const helm101 = seriesResults.find(r => r.sailNumber === 101)!;
     const helm102 = seriesResults.find(r => r.sailNumber === 102)!;
@@ -143,7 +161,7 @@ describe('scoreSeries', () => {
 
     const tiedResults = [helm101, helm102];
     // Re-run just the ranking part
-    const finalRanked = scoreSeries(races, tieBreakKeys, config);
+    const finalRanked = scoreSeries(races, tieBreakEntries, config);
     const final101 = finalRanked.find(r => r.sailNumber === 101)!;
     const final102 = finalRanked.find(r => r.sailNumber === 102)!;
 
@@ -154,42 +172,43 @@ describe('scoreSeries', () => {
   });
 
   describe('RDG Scoring (applyIsafRedress)', () => {
-    const rdgCompetitorKeys = new Set(['Helm 101-101-TestClass', 'Helm 102-102-TestClass']);
+    const rdgCompetitorKeys = ['Helm 101-101-TestClass', 'Helm 102-102-TestClass'];
+    const rdgEntries = createMockEntries(rdgCompetitorKeys);
     const races: PublishedRace[] = [
       // Race 0: Helm 101 gets 2 points. This will be included in average.
       createMockRace(0, [
-        { helm: 'Helm 101', sailNumber: 101, points: 2 },
-        { helm: 'Helm 102', sailNumber: 102, points: 1 },
+        { seriesEntryId: 'entry101', helm: 'Helm 101', sailNumber: 101, points: 2 },
+        { seriesEntryId: 'entry102', helm: 'Helm 102', sailNumber: 102, points: 1 },
       ]),
       // Race 1: Helm 101 gets RDGB. Should be based on Race 0. Points = 2.
       createMockRace(1, [
-        { helm: 'Helm 101', sailNumber: 101, points: 99, resultCode: 'RDGB' },
-        { helm: 'Helm 102', sailNumber: 102, points: 1 },
+        { seriesEntryId: 'entry101', helm: 'Helm 101', sailNumber: 101, points: 99, resultCode: 'RDGB' },
+        { seriesEntryId: 'entry102', helm: 'Helm 102', sailNumber: 102, points: 1 },
       ]),
       // Race 2: Helm 101 gets 10 points (OK). This will be discarded. Included in average.
       createMockRace(2, [
-        { helm: 'Helm 101', sailNumber: 101, points: 10 },
-        { helm: 'Helm 102', sailNumber: 102, points: 1 },
+        { seriesEntryId: 'entry101', helm: 'Helm 101', sailNumber: 101, points: 10 },
+        { seriesEntryId: 'entry102', helm: 'Helm 102', sailNumber: 102, points: 1 },
       ]),
       // Race 3: Helm 101 gets DNF. Not included in average.
       createMockRace(3, [
-        { helm: 'Helm 101', sailNumber: 101, points: 3, resultCode: 'DNF' },
-        { helm: 'Helm 102', sailNumber: 102, points: 1 },
+        { seriesEntryId: 'entry101', helm: 'Helm 101', sailNumber: 101, points: 3, resultCode: 'DNF' },
+        { seriesEntryId: 'entry102', helm: 'Helm 102', sailNumber: 102, points: 1 },
       ]),
        // Race 4: Helm 101 gets SCP with 4 points. This is included in average.
        createMockRace(4, [
-        { helm: 'Helm 101', sailNumber: 101, points: 4, resultCode: 'SCP' },
-        { helm: 'Helm 102', sailNumber: 102, points: 1 },
+        { seriesEntryId: 'entry101', helm: 'Helm 101', sailNumber: 101, points: 4, resultCode: 'SCP' },
+        { seriesEntryId: 'entry102', helm: 'Helm 102', sailNumber: 102, points: 1 },
       ]),
       // Race 5: Helm 101 gets RDGA. Should be avg of races 0, 2, 4. (2+10+4)/3 = 5.33 -> 5.3
       createMockRace(5, [
-        { helm: 'Helm 101', sailNumber: 101, points: 99, resultCode: 'RDGA' },
-        { helm: 'Helm 102', sailNumber: 102, points: 1 },
+        { seriesEntryId: 'entry101', helm: 'Helm 101', sailNumber: 101, points: 99, resultCode: 'RDGA' },
+        { seriesEntryId: 'entry102', helm: 'Helm 102', sailNumber: 102, points: 1 },
       ]),
     ];
 
     const config: ScoringConfig = { seriesType: 'short', discards: 1 };
-    const seriesResults = scoreSeries(races, rdgCompetitorKeys, config);
+    const seriesResults = scoreSeries(races, rdgEntries, config);
     const helm101 = seriesResults.find(r => r.sailNumber === 101)!;
 
     it('should calculate RDGB points based on the average of prior races', () => {
@@ -215,34 +234,35 @@ describe('scoreSeries', () => {
 
     it('should assign DNC points if no prior results exist for RDG calculation', () => {
       const raceWithOnlyRdg: PublishedRace[] = [
-        createMockRace(0, [{ helm: 'Helm 101', sailNumber: 101, points: 99, resultCode: 'RDGB' }]),
+        createMockRace(0, [{ seriesEntryId: 'entry101', helm: 'Helm 101', sailNumber: 101, points: 99, resultCode: 'RDGB' }]),
       ];
-      const results = scoreSeries(raceWithOnlyRdg, new Set(['Helm 101-101-TestClass']), { seriesType: 'short', discards: 0 });
+      const results = scoreSeries(raceWithOnlyRdg, createMockEntries(['Helm 101-101-TestClass']), { seriesType: 'short', discards: 0 });
       const dncPoints = 1 + 1; // 1 competitor in series + 1
       expect(results[0].raceScores[0].points).toBe(dncPoints);
     });
   });
 
   describe('OOD Scoring (applyClubOod)', () => {
-    const oodCompetitorKeys = new Set(['Helm 101-101-TestClass', 'Helm 102-102-TestClass']);
+    const oodCompetitorKeys = ['Helm 101-101-TestClass', 'Helm 102-102-TestClass'];
+    const oodEntries = createMockEntries(oodCompetitorKeys);
     const races: PublishedRace[] = [
       // Race 0: Helm 101 gets 2 points (OK).
-      createMockRace(0, [{ helm: 'Helm 101', sailNumber: 101, points: 2 }, { helm: 'Helm 102', sailNumber: 102, points: 1 }]),
+      createMockRace(0, [{ seriesEntryId: 'entry101', helm: 'Helm 101', sailNumber: 101, points: 2 }, { seriesEntryId: 'entry102', helm: 'Helm 102', sailNumber: 102, points: 1 }]),
       // Race 1: Helm 101 gets OOD (Duty 1).
-      createMockRace(1, [{ helm: 'Helm 101', sailNumber: 101, points: 99, resultCode: 'OOD' }, { helm: 'Helm 102', sailNumber: 102, points: 1 }]),
+      createMockRace(1, [{ seriesEntryId: 'entry101', helm: 'Helm 101', sailNumber: 101, points: 99, resultCode: 'OOD' }, { seriesEntryId: 'entry102', helm: 'Helm 102', sailNumber: 102, points: 1 }]),
       // Race 2: Helm 101 gets DNC (Did not compete). Points = 3.
-      createMockRace(2, [{ helm: 'Helm 102', sailNumber: 102, points: 1 }]),
+      createMockRace(2, [{ seriesEntryId: 'entry102', helm: 'Helm 102', sailNumber: 102, points: 1 }]),
       // Race 3: Helm 101 gets OOD (Duty 2).
-      createMockRace(3, [{ helm: 'Helm 101', sailNumber: 101, points: 99, resultCode: 'OOD' }, { helm: 'Helm 102', sailNumber: 102, points: 1 }]),
+      createMockRace(3, [{ seriesEntryId: 'entry101', helm: 'Helm 101', sailNumber: 101, points: 99, resultCode: 'OOD' }, { seriesEntryId: 'entry102', helm: 'Helm 102', sailNumber: 102, points: 1 }]),
       // Race 4: Helm 101 gets 4 points (OK).
-      createMockRace(4, [{ helm: 'Helm 101', sailNumber: 101, points: 4 }, { helm: 'Helm 102', sailNumber: 102, points: 1 }]),
+      createMockRace(4, [{ seriesEntryId: 'entry101', helm: 'Helm 101', sailNumber: 101, points: 4 }, { seriesEntryId: 'entry102', helm: 'Helm 102', sailNumber: 102, points: 1 }]),
       // Race 5: Helm 101 gets OOD (Duty 3).
-      createMockRace(5, [{ helm: 'Helm 101', sailNumber: 101, points: 99, resultCode: 'OOD' }, { helm: 'Helm 102', sailNumber: 102, points: 1 }]),
+      createMockRace(5, [{ seriesEntryId: 'entry101', helm: 'Helm 101', sailNumber: 101, points: 99, resultCode: 'OOD' }, { seriesEntryId: 'entry102', helm: 'Helm 102', sailNumber: 102, points: 1 }]),
     ];
 
     it('should calculate OOD points based on the finished pool and cap at maxOodPerSeries', () => {
       const config: ScoringConfig = { seriesType: 'short', discards: 0, maxOodPerSeries: 2, oodAveragePool: 'finished' };
-      const seriesResults = scoreSeries(races, oodCompetitorKeys, config);
+      const seriesResults = scoreSeries(races, oodEntries, config);
       const helm101 = seriesResults.find(r => r.sailNumber === 101)!;
 
       // OOD Pool (finished): Race 0 (2 points) and Race 4 (4 points). DNC (Race 2) is excluded.
@@ -261,15 +281,15 @@ describe('scoreSeries', () => {
 
     it('should calculate OOD points based on the started pool if configured', () => {
       // Add a DNF race to test 'started' pool
-      const racesWithDnf = [...races, createMockRace(6, [{ helm: 'Helm 101', sailNumber: 101, points: 3, resultCode: 'DNF' }])];
+      const racesWithDnf = [...races, createMockRace(6, [{ seriesEntryId: 'entry101', helm: 'Helm 101', sailNumber: 101, points: 3, resultCode: 'DNF' }])];
       
       const configFinished: ScoringConfig = { seriesType: 'short', discards: 0, maxOodPerSeries: 2, oodAveragePool: 'finished' };
-      const resultsFinished = scoreSeries(racesWithDnf, oodCompetitorKeys, configFinished).find(r => r.sailNumber === 101)!;
+      const resultsFinished = scoreSeries(racesWithDnf, oodEntries, configFinished).find(r => r.sailNumber === 101)!;
       // Finished pool: 2, 4. Avg = 3.
       expect(resultsFinished.raceScores.find(rs => rs.resultCode === 'OOD')!.points).toBe(3);
 
       const configStarted: ScoringConfig = { seriesType: 'short', discards: 0, maxOodPerSeries: 2, oodAveragePool: 'started' };
-      const resultsStarted = scoreSeries(racesWithDnf, oodCompetitorKeys, configStarted).find(r => r.sailNumber === 101)!;
+      const resultsStarted = scoreSeries(racesWithDnf, oodEntries, configStarted).find(r => r.sailNumber === 101)!;
       // Started pool: 2, 4, 3 (DNF). Avg = (2+4+3)/3 = 3.
       expect(resultsStarted.raceScores.find(rs => rs.resultCode === 'OOD')!.points).toBe(3);
     });

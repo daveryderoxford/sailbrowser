@@ -2,10 +2,10 @@ import { PublishedRace } from 'app/published-results/model/published-race';
 import { IntermediateSeriesResult } from './series-scorer';
 import { Race } from '../../race-calender/model/race';
 import { RaceCompetitor } from '../../results-input/model/race-competitor';
-import { getAllCompetitorKeys, getAllCompetitorKeysFromPublished } from './competitor-aggregator';
 import { scoreRace, rescoreRacePoints } from './race-scorer';
 import { scoreSeries, ScoringConfig } from './series-scorer';
 import { Series } from 'app/race-calender';
+import { SeriesEntry } from 'app/results-input';
 
 /**
  * Orchestrates the entire scoring process for a series as a pure function.
@@ -24,6 +24,7 @@ export function score(
   raceToScore: Race,
   competitorsInRace: RaceCompetitor[],
   existingScoredRaces: PublishedRace[],
+  seriesEntries: SeriesEntry[],
   config: ScoringConfig
 ): { scoredRaces: PublishedRace[], seriesResults: IntermediateSeriesResult[]; } {
 
@@ -36,14 +37,10 @@ export function score(
     scoringGrid.push({ ...raceToScore, results: [] });
   }
 
-  // 2. Determine all unique competitors for point calculation.
-  const keysFromCurrentRace = getAllCompetitorKeys(competitorsInRace);
-  const keysFromExistingRaces = getAllCompetitorKeysFromPublished(scoringGrid);
-  const allSeriesCompetitorKeys = new Set([...keysFromCurrentRace, ...keysFromExistingRaces]);
-  const seriesCompetitorCount = allSeriesCompetitorKeys.size;
+  const seriesCompetitorCount = seriesEntries.length;
 
   // 3. Score the current race and update it in the grid.
-  const newScoredRaceResults = scoreRace(raceToScore, competitorsInRace, series.scoringScheme.handicapSystem, config.seriesType, seriesCompetitorCount);
+  const newScoredRaceResults = scoreRace(raceToScore, competitorsInRace, seriesEntries, series.scoringScheme.handicapSystem, config.seriesType, seriesCompetitorCount);
   const raceToUpdate = scoringGrid.find(r => r.id === raceToScore.id)!;
   raceToUpdate.results = newScoredRaceResults;
 
@@ -56,15 +53,14 @@ export function score(
 
   // 5. Final series scoring with the fully updated grid.
   // This now handles RDG scores internally.
-  const finalSeriesResults = scoreSeries(scoringGrid, allSeriesCompetitorKeys, config);
+  const finalSeriesResults = scoreSeries(scoringGrid, seriesEntries, config);
 
   // 6. Update the scoring grid with points calculated during series scoring (e.g., RDG).
   finalSeriesResults.forEach(seriesResult => {
-    const competitorKey = `${seriesResult.helm}-${seriesResult.sailNumber}-${seriesResult.boatClass}`;
     seriesResult.raceScores.forEach(raceScore => {
       const race = scoringGrid.find(r => r.index === raceScore.raceIndex);
       if (race) {
-        const raceResult = race.results.find(res => `${res.helm}-${res.sailNumber}-${res.boatClass}` === competitorKey);
+        const raceResult = race.results.find(res => res.seriesEntryId === seriesResult.seriesEntryId);
         if (raceResult) raceResult.points = raceScore.points;
       }
     });

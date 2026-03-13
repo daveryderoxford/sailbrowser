@@ -13,15 +13,48 @@
   box-sizing: border-box;
 }
 
+.home-card {
+  border-radius: 16px;
+  padding: 16px 8px;
+}
+
+.club-header {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 32px;
+  margin-top: 16px;
+  text-align: center;
+  gap: 16px;
+}
+
+.club-logo {
+  width: 96px;
+  height: 96px;
+  border-radius: 50%;
+  object-fit: cover;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+}
+
+.club-title {
+  font: var(--mat-sys-headline-medium);
+  color: var(--mat-sys-on-surface);
+  margin: 0;
+  white-space: normal;
+  text-align: center;
+}
+
 .actions {
   display: flex;
   gap: 16px;
   justify-content: center;
-  margin-bottom: 24px;
+  margin-bottom: 32px;
   flex-wrap: wrap;
 
   a {
     text-decoration: none;
+    border-radius: 20px;
   }
 
   span {
@@ -29,12 +62,20 @@
   }
 }
 
-h2 {
+.races-section {
+  margin-top: 16px;
+}
+
+.races-title {
   text-align: center;
+  font: var(--mat-sys-title-large);
+  color: var(--mat-sys-on-surface-variant);
+  margin-bottom: 16px;
 }
 
 .placeholder {
   padding: 15px;
   text-align: center;
   font: var(--mat-sys-body-large);
+  color: var(--mat-sys-on-surface-variant);
 }

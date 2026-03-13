@@ -1,14 +1,14 @@
 import { inject, Injectable } from '@angular/core';
-import { doc, getDocs, getFirestore, query, runTransaction, Transaction, where, Firestore } from '@angular/fire/firestore';
+import { FirebaseApp } from '@angular/fire/app';
+import { doc, getDocs, getFirestore, query, runTransaction, Transaction, where } from '@angular/fire/firestore';
+import { ClubStore, FirestoreTenantService } from 'app/club-tenant/index';
+import { Race, RaceCalendarStore, Series } from 'app/race-calender';
+import { CurrentRaces, RaceCompetitorStore, SeriesEntryStore } from 'app/results-input';
+import { score } from 'app/scoring';
 import { PublishedRace } from '../model/published-race';
 import { PublishedSeason, SeriesInfo } from '../model/published-season';
 import { PublishedSeries } from '../model/published-series';
-import { CurrentRaces, RaceCompetitorStore } from 'app/results-input';
-import { score } from 'app/scoring';
 import { PUBLISHED_RACES_PATH, PUBLISHED_SEASONS_PATH, PUBLISHED_SERIES_PATH } from './published-results-store';
-import { ClubStore, FirestoreTenantService } from 'app/club-tenant/index';
-import { Race, RaceCalendarStore, Series } from 'app/race-calender';
-import { FirebaseApp } from '@angular/fire/app';
 
 @Injectable({ providedIn: 'root' })
 export class ScoringEngine {
@@ -18,6 +18,7 @@ export class ScoringEngine {
    private currentRaces = inject(CurrentRaces);
    private calander = inject(RaceCalendarStore);
    private tenant = inject(FirestoreTenantService);
+   private seriesEntryStore = inject(SeriesEntryStore);
 
    private seasonsCollection = this.tenant.collectionRef<PublishedSeason>(PUBLISHED_SEASONS_PATH);
    private seriesCollection = this.tenant.collectionRef<PublishedSeries>(PUBLISHED_SERIES_PATH);
@@ -27,13 +28,14 @@ export class ScoringEngine {
    async publishRace(race: Race): Promise<void> {
       const series = this.currentRaces.selectedSeries().find(s => s.id === race.seriesId)!;
       const competitors = this.rcs.selectedCompetitors().filter(c => c.raceId === race.id);
+      const seriesEntries = this.seriesEntryStore.selectedEntries().filter( s => s.seriesId === race.seriesId)
 
       // 1. Fetch all existing data required for scoring.
       const existingRaces = await this.readPublishedRaces(series);
       const raceCount = existingRaces.filter(r => r.id !== race.id).length + 1;
 
       // 2. Call the pure scoring orchestrator to perform all calculations.
-      const { scoredRaces, seriesResults } = score(series, race, competitors, existingRaces, {
+      const { scoredRaces, seriesResults } = score(series, race, competitors, existingRaces, seriesEntries, {
          seriesType: series.scoringScheme.scheme,
          discards: this.calculateDiscards(series, raceCount),
       });
@@ -87,7 +89,7 @@ export class ScoringEngine {
       }
    }
 
-   /** If published sean exist use it, otherwise create a new one. */
+   /** If published season exist use it, otherwise create a new one. */
    private async readOrCreatePublishedSeason(series: Series, transaction: Transaction) {
       const seasonDocRef = doc(this.seasonsCollection, series.seasonId);
       const seasonDoc = await transaction.get(seasonDocRef);

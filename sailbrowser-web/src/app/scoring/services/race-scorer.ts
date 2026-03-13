@@ -1,6 +1,6 @@
 import { PublishedRace, RaceResult } from 'app/published-results/model/published-race';
 import { Race, RaceType } from 'app/race-calender';
-import { RaceCompetitor } from 'app/results-input';
+import { RaceCompetitor, SeriesEntry } from 'app/results-input';
 import { HandicapSystem } from 'app/scoring/model/handicap-system';
 import { getLongAlgorithm, getShortAlgorithm, isFinishedComp, isRedress, isStartAreaComp, ResultCodeAlgorithm } from 'app/scoring/model/result-code-scoring';
 import { SailbrowserError } from 'app/shared/utils/sailbrowser-error';
@@ -17,13 +17,14 @@ import { SeriesScoringScheme } from '../model/scoring-algotirhm';
 export function scoreRace(
   race: Race,
   competitors: RaceCompetitor[],
+  seriesEntries: SeriesEntry[],
   scheme: HandicapSystem,
   seriesType: SeriesScoringScheme,
   seriesCompetitorCount: number,
 ): RaceResult[] {
 
   // Build initial results from competitors.
-  const results = buildRaceResults(competitors);
+  const results = buildRaceResults(competitors, seriesEntries);
 
   // Calculate elapsed and corrected times for all competitors.
   calculateTimes(results, competitors, race.isAverageLap, scheme);
@@ -141,17 +142,27 @@ export function rescoreRacePoints(
 }
 
 function buildRaceResults(
-  competitors: RaceCompetitor[]
+  competitors: RaceCompetitor[],
+  seriesEntries: SeriesEntry[]
 ): RaceResult[] {
+  const entryMap = new Map(seriesEntries.map(e => [e.id, e]));
+
   return competitors.map((comp) => {
+    const entry = entryMap.get(comp.seriesEntryId);
+    if (!entry) {
+      throw new SailbrowserError(`Series entry not found for competitor ${comp.id}`);
+    }
+
     return {
+      seriesEntryId: comp.seriesEntryId,
       rank: comp.manualPosition || 0,
-      boatClass: comp.boatClass,
-      sailNumber: comp.sailNumber,
-      helm: comp.helm,
-      crew: comp.crew,
+      boatClass: comp.boatClass || entry.boatClass,
+      sailNumber: comp.sailNumber || 0,
+      helm: comp.helm || entry.helm,
+      crew: comp.crew || entry.crew,
+      club: entry.club,
       laps: 0, // Will be set in calculateTimes
-      handicap: comp.handicap,
+      handicap: comp.handicap || entry.handicap,
       startTime: comp.startTime!,
       finishTime: comp.finishTime!,
       elapsedTime: 0,

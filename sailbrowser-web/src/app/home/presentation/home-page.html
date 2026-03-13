@@ -1,31 +1,44 @@
 <app-toolbar title="Sail browser"></app-toolbar>
 <div class="content">
-  <div class="actions">
-    <a matButton="outlined" routerLink="/entry/enter">
-      <mat-icon>assignment</mat-icon>
-      <span>Enter a Race</span>
-    </a>
-    <a matButton="outlined" routerLink="/entry/entries">
-      <mat-icon>list_alt</mat-icon>
-      <span>View Entries</span>
-    </a>
-    <a matButton="outlined" routerLink="/results/viewer">
-      <mat-icon>emoji_events</mat-icon>
-      <span>View Results</span>
-    </a>
-  </div>
-
-  @if (currentRacesStore.selectedRaces().length > 0) {
-    <h2>Races Today</h2>
-    <mat-list>
-      @for (race of currentRacesStore.selectedRaces(); track race.id) {
-        <mat-list-item>
-          <span matListItemTitle>{{ race.seriesName }} - Race {{ race.raceOfDay }}</span>
-          <span matListItemLine>{{ race.scheduledStart | date:'shortTime' }}</span>
-        </mat-list-item>
+  <mat-card class="home-card">
+    <div class="club-header">
+      @if (clubStore.club().logoUrl) {
+        <img [src]="clubStore.club().logoUrl" alt="Club Logo" class="club-logo" referrerpolicy="no-referrer">
       }
-    </mat-list>
-  } @else {
-    <p class="placeholder">No races scheduled for today.</p>
-  }
+      <h1 class="club-title">{{ clubStore.club().name }}</h1>
+    </div>
+    
+    <mat-card-content>
+      <div class="actions">
+        <a matButton="tonal" routerLink="/entry/enter">
+          <mat-icon>assignment</mat-icon>
+          <span>Enter a Race</span>
+        </a>
+        <a matButton="tonal" routerLink="/entry/entries">
+          <mat-icon>list_alt</mat-icon>
+          <span>View Entries</span>
+        </a>
+        <a matButton="tonal" routerLink="/results/viewer">
+          <mat-icon>emoji_events</mat-icon>
+          <span>View Results</span>
+        </a>
+      </div>
+
+      <div class="races-section">
+        @if (currentRacesStore.selectedRaces().length > 0) {
+          <h2 class="races-title">Races Today</h2>
+          <mat-list>
+            @for (race of currentRacesStore.selectedRaces(); track race.id) {
+              <mat-list-item>
+                <span matListItemTitle>{{ race.seriesName }} - Race {{ race.raceOfDay }}</span>
+                <span matListItemLine>{{ race.scheduledStart | date:'shortTime' }}</span>
+              </mat-list-item>
+            }
+          </mat-list>
+        } @else {
+          <p class="placeholder">No races scheduled for today.</p>
+        }
+      </div>
+    </mat-card-content>
+  </mat-card>
 </div>

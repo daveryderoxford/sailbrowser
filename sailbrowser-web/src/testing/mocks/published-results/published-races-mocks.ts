@@ -30,6 +30,7 @@ function createRawRaceResult(index: number, baseStartTime: Date): RaceResult {
   const correctedTime = (elapsedTime * handicap) / 1000;
 
   return {
+    seriesEntryId: `entry-${index}`,
     rank: 0,   // Placeholder, will be set after sorting
     club,
     boatClass,

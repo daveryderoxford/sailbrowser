@@ -27,7 +27,7 @@ export class ClubContextService {
       this._clubId = host.split('.')[0];
     } */
     console.log('Club tenant:  Hard coding club to ibrsc');
-    this._clubId = 'ibrsc'
+    this._clubId = 'demo';
 
     // Read club data and verify that the clubid corresponds
     // If read fails redirect to 'all clubs' page TODO

@@ -4,6 +4,7 @@ import { RaceCalendarStore } from 'app/race-calender';
 import { ScoringEngine } from 'app/published-results';
 import { ManualResultsPage } from '../presentation/manual-results-page/manual-results-page';
 import { MatSnackBar } from '@angular/material/snack-bar';
+import { DialogsService } from 'app/shared/dialogs/dialogs.service';
 
 /**
  * A route guard that checks for "dirty" races before deactivating the route.
@@ -12,6 +13,7 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 export const dirtyRaceGuard: CanDeactivateFn<ManualResultsPage> = async (component, currentRoute, currentState, nextState) => {
   const raceStore = inject(RaceCalendarStore);
   const snackbar = inject(MatSnackBar);
+  const dialog = inject(DialogsService);
 
   const scoringEngine = inject(ScoringEngine);
 
@@ -26,12 +28,22 @@ export const dirtyRaceGuard: CanDeactivateFn<ManualResultsPage> = async (compone
 
   snackbar.open('Scoring races', 'Cancel');
 
+  try {
   // Create an array of promises for publishing each dirty race.
   const publishPromises = dirtyRaces.map(race => scoringEngine.publishRace(race));
 
-  // Wait for all publishing operations to complete.
-  await Promise.all(publishPromises);  
-
+ 
+    // Wait for all publishing operations to complete.
+    await Promise.all(publishPromises);  
+  } catch (e: unknown) {
+    console.error(`DirtyRaceGuard:  Error encountered publishing race results
+      ${dirtyRaces.map( race => race.id + '  ')}
+      ${e}
+      `);
+    snackbar.dismiss();
+    const ret = await dialog.confirm('Error processing results', 'Press OK to exit or cancel to remain on page');
+     return ret;
+    }
   snackbar.dismiss();
 
   return true; // Allow navigation to proceed.

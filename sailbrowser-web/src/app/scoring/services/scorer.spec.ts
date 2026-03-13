@@ -1,5 +1,5 @@
 import { Race, Series } from 'app/race-calender';
-import { RaceCompetitor } from 'app/results-input';
+import { RaceCompetitor, SeriesEntry } from 'app/results-input';
 import { score } from './scorer';
 import { PublishedRace } from 'app/published-results/model/published-race';
 import { ScoringConfig } from './series-scorer';
@@ -46,6 +46,7 @@ function createMockCompetitors(raceId: string, competitors: Partial<RaceCompetit
     return new RaceCompetitor({
       id: 'testid',
       raceId,
+      seriesEntryId: `entry-${c.sailNumber}`,
       boatClass: 'TestClass',
       sailNumber: c.sailNumber,
       helm: c.helm,
@@ -56,6 +57,24 @@ function createMockCompetitors(raceId: string, competitors: Partial<RaceCompetit
       resultCode: 'OK',
       ...c,
     });
+  });
+}
+
+function generateMockSeriesEntries(competitors: RaceCompetitor[], existingRaces: PublishedRace[]): SeriesEntry[] {
+  const keysFromCurrentRace = getAllCompetitorKeys(competitors);
+  const keysFromExistingRaces = getAllCompetitorKeysFromPublished(existingRaces);
+  const allSeriesCompetitorKeys = new Set([...keysFromCurrentRace, ...keysFromExistingRaces]);
+  
+  return Array.from(allSeriesCompetitorKeys).map(key => {
+    const [helm, sailNumber, boatClass] = key.split('-');
+    return {
+      id: `entry-${sailNumber}`,
+      seriesId: 'series1',
+      helm,
+      boatClass,
+      sailNumber,
+      handicap: 1000,
+    };
   });
 }
 
@@ -75,7 +94,8 @@ describe('score (Orchestrator)', () => {
     let seriesResults;
 
     // Score Race 1
-    ({ scoredRaces, seriesResults } = score(series, race1, competitors1, scoredRaces, config));
+    let seriesEntries = generateMockSeriesEntries(competitors1, scoredRaces);
+    ({ scoredRaces, seriesResults } = score(series, race1, competitors1, scoredRaces, seriesEntries, config));
 
     let race1Result = scoredRaces.find(r => r.id === 'race1')!;
     expect(race1Result.results.find(r => r.sailNumber === 101)?.points).toBe(1);
@@ -91,7 +111,8 @@ describe('score (Orchestrator)', () => {
     ]);
 
     // Score Race 2, passing in the results from the first run
-    ({ scoredRaces, seriesResults } = score(series, race2, competitors2, scoredRaces, config));
+    seriesEntries = generateMockSeriesEntries(competitors2, scoredRaces);
+    ({ scoredRaces, seriesResults } = score(series, race2, competitors2, scoredRaces, seriesEntries, config));
 
     // Now there are 3 competitors in the series. DNC = 3 + 1 = 4 points.
     const dncPoints = 3 + 1;
@@ -118,7 +139,8 @@ describe('score (Orchestrator)', () => {
     ]);
 
     // Score Race 1
-    let { scoredRaces } = score(series, race1, competitors1, [], config);
+    let seriesEntries = generateMockSeriesEntries(competitors1, []);
+    let { scoredRaces } = score(series, race1, competitors1, [], seriesEntries, config);
 
     // With 2 competitors, DNF points = 2 + 1 = 3. Penalty = 20% of 3 = 0.6.
     // Helm 2 gets 2 points for position + 0.6 penalty = 2.6
@@ -132,7 +154,8 @@ describe('score (Orchestrator)', () => {
     ]);
 
     // Score Race 2
-    ({ scoredRaces } = score(series, race2, competitors2, scoredRaces, config));
+    seriesEntries = generateMockSeriesEntries(competitors2, scoredRaces);
+    ({ scoredRaces } = score(series, race2, competitors2, scoredRaces, seriesEntries, config));
 
     // With 3 competitors, DNF points = 3 + 1 = 4. Penalty = 20% of 4 = 0.8.
     // Helm 2's score in Race 1 should be re-scored to 2 points + 0.8 penalty = 2.8
@@ -147,7 +170,8 @@ describe('score (Orchestrator)', () => {
       { helm: 'Helm 1', sailNumber: 101, finishTime: new Date(new Date().getTime() + 11 * 60 * 1000) }, // 2nd -> 2 points
       { helm: 'Helm 2', sailNumber: 102, finishTime: new Date(new Date().getTime() + 10 * 60 * 1000) }, // 1st -> 1 point
     ]);
-    let { scoredRaces } = score(series, race1, competitors1, [], config);
+    let seriesEntries = generateMockSeriesEntries(competitors1, []);
+    let { scoredRaces } = score(series, race1, competitors1, [], seriesEntries, config);
 
     // === Race 2: Helm 101 gets RDGA ===
     const race2 = createMockRace('race2', 1);
@@ -159,7 +183,8 @@ describe('score (Orchestrator)', () => {
     ]);
 
     // Score race 2, passing in the results from race 1
-    ({ scoredRaces } = score(series, race2, competitors2, scoredRaces, config));
+    seriesEntries = generateMockSeriesEntries(competitors2, scoredRaces);
+    ({ scoredRaces } = score(series, race2, competitors2, scoredRaces, seriesEntries, config));
 
     // The RDGA points are calculated in the series scoring pass.
     // This test verifies that the points in the individual race result are updated.

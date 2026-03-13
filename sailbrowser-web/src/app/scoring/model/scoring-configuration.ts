@@ -1,4 +1,4 @@
-import { SeriesEntryGrouping } from './entry-grouping';
+import { SeriesEntryMatchingStrategy } from '../../entry/model/entry-grouping';
 import { HandicapSystem } from './handicap-system';
 import { SeriesScoringScheme } from './scoring-algotirhm';
 
@@ -8,7 +8,7 @@ export interface ScoringConfiguration {
   scheme: SeriesScoringScheme;
   initialDiscardAfter: number;
   subsequentDiscardsEveryN: number;
-  entryAlgorithm: SeriesEntryGrouping;
+  entryAlgorithm: SeriesEntryMatchingStrategy;
 }
 
 export const defaultSeriesScoringData: ScoringConfiguration = {

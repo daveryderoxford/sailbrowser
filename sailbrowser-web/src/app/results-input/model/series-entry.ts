@@ -2,11 +2,16 @@ export interface SeriesEntry {
    id: string;
    seriesId: string;
 
+   // Core Identity
    helm: string;
    crew?: string;
    club?: string;
 
+   // Default Boat Details
    boatClass: string;
-   sailNumber: string;
+   sailNumber: number;
    handicap: number;
+
+   // For subset scoring
+   tags?: string[];
 }

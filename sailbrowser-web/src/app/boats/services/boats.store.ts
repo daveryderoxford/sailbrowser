@@ -15,7 +15,7 @@ export class BoatsStore {
   private ref = (id:string) => this.tenant.docRef<Boat>( 'boats', id);
   private boatsCollection = this.tenant.collectionRef<Boat>('boats');
 
-  private readonly boatsResource = rxResource({
+  private readonly boatsResource = rxResource<Boat[], null>({
     stream: (): Observable<Boat[]> =>
       collectionData(this.boatsCollection, { idField: 'id' }).pipe(
         map(boats => boats.sort(boatsSort)),

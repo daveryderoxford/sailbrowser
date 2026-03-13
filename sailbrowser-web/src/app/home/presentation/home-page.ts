@@ -3,8 +3,10 @@ import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatListModule } from '@angular/material/list';
+import { MatCardModule } from '@angular/material/card';
 import { RouterLink } from '@angular/router';
 import { CurrentRaces } from '../../results-input/services/current-races-store';
+import { ClubStore } from 'app/club-tenant';
 import { Toolbar } from 'app/shared/components/toolbar';
 
 @Component({
@@ -18,9 +20,11 @@ import { Toolbar } from 'app/shared/components/toolbar';
     MatListModule,
     DatePipe,
     MatIconModule,
+    MatCardModule,
   ],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class HomePage {
   protected readonly currentRacesStore = inject(CurrentRaces);
+  protected readonly clubStore = inject(ClubStore);
 }

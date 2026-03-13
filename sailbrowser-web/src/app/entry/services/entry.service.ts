@@ -5,6 +5,8 @@ import { RaceCompetitor } from '../../results-input/model/race-competitor';
 import { RaceCompetitorStore } from '../../results-input/services/race-competitor-store';
 import { SailbrowserError } from 'app/shared/utils/sailbrowser-error';
 import { SeriesEntryStore } from 'app/results-input/services/series-entry-store';
+import { SeriesEntry } from 'app/results-input';
+import { RaceCalendarStore } from 'app/race-calender';
 
 export interface EntryDetails {
   races: Race[];
@@ -22,9 +24,10 @@ export class EntryService {
   private clubStore = inject(ClubStore);
   private raceResultsStore = inject(RaceCompetitorStore);
   private seriesEntryStore = inject(SeriesEntryStore);
+  private raceCalanderStore = inject(RaceCalendarStore);
 
   /** Enter a race 
-   * throws a *** exception if the entry is a duplicate. 
+   * throws a SailbrowserError exception if the entry is a duplicate. 
    * @
   */
   async enterRaces(details: EntryDetails): Promise<void> {
@@ -42,10 +45,15 @@ export class EntryService {
       handicap = boatClass?.handicap ?? 0;
     }
 
-    const promises = details.races.map(race => {
+    for (const race of details.races) {
+
+      const seriesEntryId = 
+        await this.createSeriesEntryIfRequired(race, details, handicap);
+
       const competitor: Partial<RaceCompetitor> = {
         raceId: race.id,
         seriesId: race.seriesId,
+        seriesEntryId: seriesEntryId,
         helm: details.helm,
         crew: details.crew,
         boatClass: details.boatClass,
@@ -56,11 +64,9 @@ export class EntryService {
 
       console.log("Adding competitor");
 
+     await this.raceResultsStore.addResult(competitor);
 
-      return this.raceResultsStore.addResult(competitor);
-    });
-
-    await Promise.all(promises);
+    }
   }
 
   /** 
@@ -82,4 +88,53 @@ export class EntryService {
     return false;
   }
 
+  /** Finds a series entry if it exists or not 
+   */
+  async createSeriesEntryIfRequired(race: Race, details: EntryDetails, handicap: number): Promise<string> {
+    const seriesEntries = this.seriesEntryStore.selectedEntries()
+      .filter(seriesEntry => seriesEntry.seriesId = race.seriesId);
+
+    const series = this.raceCalanderStore.allSeries().find(s => s.id = race.seriesId);
+    if (!series) {
+      const msg = 'EntryService:  Series not found for race: ' + race.toString();
+      console.error(msg);
+      throw new SailbrowserError(msg);
+    }
+
+    let entry;
+    switch (series.scoringScheme.entryAlgorithm) {
+      case 'classSailNumberHelm':
+        entry = seriesEntries.find(e =>
+          e.boatClass === details.boatClass &&
+          e.sailNumber === details.sailNumber &&
+          e.helm == details.helm);
+        break;
+      case 'classSailNumber':
+        entry = seriesEntries.find(e =>
+          e.boatClass === details.boatClass &&
+          e.sailNumber === details.sailNumber);
+        break;
+      case 'helm':
+        entry = seriesEntries.find(e => e.helm === details.helm);
+        break;
+    }
+    if (entry) {
+      return entry.id;
+    }
+
+    console.log(`EntryService: Adding series entry${race.seriesName} index:  ${race.index}`);
+    
+    const entryId = await this.seriesEntryStore.addEntry({
+      seriesId: race.seriesId,
+      helm: details.helm,
+      crew: details.crew,
+      boatClass: details.boatClass,
+      sailNumber: details.sailNumber,
+      handicap: handicap,
+      tags: [],
+    });
+
+    return entryId;
+
+  }
 }

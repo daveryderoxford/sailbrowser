@@ -7,6 +7,7 @@ export const PUBLIC_SERIES_MOCK : PublishedSeries = {
    fleetId: 'laser',
    competitors: [
       {
+         seriesEntryId: 'entry-1',
          rank: 1,
          helm: 'John Doe',
          boatClass: 'Laser',
@@ -26,6 +27,7 @@ export const PUBLIC_SERIES_MOCK : PublishedSeries = {
          scoresForTiebreak: [],
       },
       {
+         seriesEntryId: 'entry-2',
          rank: 2,
          helm: 'Jane Smith',
          crew: 'Jim Crew',

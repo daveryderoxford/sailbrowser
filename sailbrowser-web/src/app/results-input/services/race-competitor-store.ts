@@ -22,7 +22,7 @@ export class RaceCompetitorStore {
   private ref = (id: string) => doc(this.collection, id);
 
   /** Race competitors in selected races */
-  private readonly selectedCompResource = rxResource({
+  private readonly selectedCompResource = rxResource<RaceCompetitor[], string[]>({
     params: () => this.selectedRaces.selectedRaceIds(),
     stream: (data) => {
       const selectedIds = data.params;
