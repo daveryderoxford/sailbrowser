@@ -124,9 +124,10 @@ export function rescoreRacePoints(
   newSeriesCompetitorCount: number,
   seriesType: SeriesScoringScheme
 ): void {
-  // Determine the original ordering property. This assumes the race was scored correctly before.
-  // We need to find the original handicap scheme from the series, which isn't passed in.
-  // For now, we assume PY for handicap if not Level Rating.
+  // Determine the original ordering property. 
+  // TODO Ordering depen ds on if the race is level rating, pursult or handicap
+  // Wew should make this explict rahter than having to infer from elapsd/corretced times 
+  // Could be simplified just to update scores for updated resullts codes
   const results = race.results;
   const scheme = results.some(r => r.correctedTime !== r.elapsedTime) ? 'PY' : 'Level Rating';
   const orderingProperty = determineOrdering(race.type, scheme, results);

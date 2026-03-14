@@ -1,12 +1,11 @@
 import { Injectable, inject } from '@angular/core';
+import { RaceCalendarStore } from 'app/race-calender';
+import { SeriesEntryStore } from 'app/results-input/services/series-entry-store';
+import { SailbrowserError } from 'app/shared/utils/sailbrowser-error';
 import { ClubStore } from '../../club-tenant';
 import { Race } from '../../race-calender/model/race';
 import { RaceCompetitor } from '../../results-input/model/race-competitor';
 import { RaceCompetitorStore } from '../../results-input/services/race-competitor-store';
-import { SailbrowserError } from 'app/shared/utils/sailbrowser-error';
-import { SeriesEntryStore } from 'app/results-input/services/series-entry-store';
-import { SeriesEntry } from 'app/results-input';
-import { RaceCalendarStore } from 'app/race-calender';
 
 export interface EntryDetails {
   races: Race[];

@@ -24,6 +24,4 @@ export class EntryEdit {
     crew: new FormControl(''),
     isClub: new FormControl<boolean>(false),
   });
-
-
 }
