@@ -6,20 +6,20 @@
       <p class="text-xl text-slate-400">Discover the clubs that power their racing with ScoreSmarter.</p>
     </div>
 
-    @if (loading()) {
+    @if (clubs.isLoading()) {
     <div class="flex justify-center py-20">
       <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-primary-500"></div>
     </div>
-    } @else if (error()) {
+    } @else if (clubs.error()) {
     <div class="glass p-12 rounded-[2.5rem] text-center max-w-xl mx-auto border-red-500/20">
       <mat-icon class="text-red-500 !text-5xl mb-6">error_outline</mat-icon>
       <h3 class="text-2xl font-light text-white mb-2">Connection Issue</h3>
-      <p class="text-slate-400 mb-8">{{ error() }}</p>
-      <button (click)="loadClubs()" class="btn-primary mx-auto">Try Again</button>
+      <p class="text-slate-400 mb-8">{{ clubs.error() }}</p>
+      <button (click)="clubs.reload()" class="btn-primary mx-auto">Try Again</button>
     </div>
     } @else {
     <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
-      @for (club of clubs(); track club.id) {
+      @for (club of clubs.value(); track club.id) {
       <a [href]="getClubPath(club.id)" target="_blank"
         class="group relative p-8 glass rounded-[2rem] hover:bg-slate-900/60 transition-all duration-500 card-glow">
         <div class="flex flex-col gap-6">

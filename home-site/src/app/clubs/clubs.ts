@@ -1,15 +1,16 @@
-import { Component, inject, signal, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { ReactiveFormsModule, FormBuilder, Validators } from '@angular/forms';
-import { MatIconModule } from '@angular/material/icon';
-import { collection, collectionData, getFirestore } from '@angular/fire/firestore';
-import { of } from 'rxjs';
-import { catchError } from 'rxjs/operators';
+import { Component, inject, signal } from '@angular/core';
+import { rxResource } from '@angular/core/rxjs-interop';
 import { FirebaseApp } from '@angular/fire/app';
+import { collection, collectionData, CollectionReference, getFirestore } from '@angular/fire/firestore';
+import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
+import { MatIconModule } from '@angular/material/icon';
 
 export interface Club {
   id: string;
   name: string;
+  email: string;
+  contact: string;
   logoUrl?: string;
 }
 
@@ -18,13 +19,17 @@ export interface Club {
   imports: [CommonModule, MatIconModule, ReactiveFormsModule],
   templateUrl: './clubs.html'
 })
-export class Clubs implements OnInit {
+export class Clubs {
   private firestore = getFirestore(inject(FirebaseApp));
   private fb = inject(FormBuilder);
   
-  clubs = signal<Club[]>([]);
-  loading = signal(true);
-  error = signal<string | null>(null);
+  clubs = rxResource<Club[], null>( {
+    stream: () => {
+    const clubsCollection = collection(this.firestore, 'clubs') as CollectionReference<Club>;
+    return collectionData(clubsCollection, { idField: 'id' })
+    },
+    defaultValue: [],
+  });
   
   isSubmitting = signal(false);
   submitted = signal(false);
@@ -35,14 +40,10 @@ export class Clubs implements OnInit {
     burgeeUrl: ['', [Validators.pattern(/https?:\/\/.+/)]]
   });
 
-  ngOnInit() {
-    this.loadClubs();
-  }
-
   getClubPath(clubId: string): string {
     const host = window.location.hostname;
     const port = window.location.port;
-    const clubDomain = port ? `${clubId}.${host}` : `${clubId}.${host}:${port}`;
+    const clubDomain = port ? `${clubId}.${host}:${port}` : `${clubId}.${host}`;
 
     console.log("Club: Navigating to domain " + clubDomain);
     return clubDomain;
@@ -54,33 +55,16 @@ export class Clubs implements OnInit {
     this.isSubmitting.set(true);
     
     try {
-      console.log('Calling Cloud Function to register club:', this.clubForm.value);
+      console.log('Clubs:  Calling Cloud Function to register club:', this.clubForm.value);
+      // TODO actually call cloud function
       await new Promise(resolve => setTimeout(resolve, 2000));
       this.submitted.set(true);
       this.clubForm.reset();
     } catch (err) {
-      console.error('Registration failed:', err);
-      alert('Failed to register club. Please try again later.');
+      console.error('Clubs:  Registration failed:', err);
+      alert('Clubs:  Failed to register club. Please try again later.');
     } finally {
       this.isSubmitting.set(false);
     }
-  }
-
-  loadClubs() {
-    this.loading.set(true);
-    this.error.set(null);
-
-    const clubsCollection = collection(this.firestore, 'clubs');
-    collectionData(clubsCollection, { idField: 'id' })
-      .pipe(
-        catchError(() => {
-          this.error.set('Failed to load clubs from Firestore. Please ensure your Firebase configuration is correct.');
-          return of([]);
-        })
-      )
-      .subscribe(data => {
-        this.clubs.set(data as Club[]);
-        this.loading.set(false);
-      });
   }
 }
