@@ -1,14 +1,18 @@
 {
+  "projects": {
+    "default": "sailbrowser-efef0"
+  },
   "targets": {
-    "sailbrowser": {
+    "sailbrowser-efef0": {
       "hosting": {
-        "app": [
-          "sailbrowser"
+        "home-site": [
+          "sailbrowser-efef0"
+        ],
+        "tenant-apps": [
+          "tenant-apps"
         ]
       }
     }
   },
-  "projects": {
-    "default": "sailbrowser-efef0"
-  }
+  "etags": {}
 }

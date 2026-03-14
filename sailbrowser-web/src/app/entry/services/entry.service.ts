@@ -1,7 +1,7 @@
 import { Injectable, inject } from '@angular/core';
 import { RaceCalendarStore } from 'app/race-calender';
 import { SeriesEntryStore } from 'app/results-input/services/series-entry-store';
-import { SailbrowserError } from 'app/shared/utils/sailbrowser-error';
+import { ScoreSmarterError } from '../../shared/utils/scoresmarter-error';
 import { ClubStore } from '../../club-tenant';
 import { Race } from '../../race-calender/model/race';
 import { RaceCompetitor } from '../../results-input/model/race-competitor';
@@ -34,7 +34,7 @@ export class EntryService {
     console.log("Calling enter races");
 
     if (this.isDuplicateEntry(details)) {
-      throw new SailbrowserError("Duplicate entry");
+      throw new ScoreSmarterError("Duplicate entry");
     }
 
     // Populate handicap based on the classes handicap if not provided
@@ -97,7 +97,7 @@ export class EntryService {
     if (!series) {
       const msg = 'EntryService:  Series not found for race: ' + race.toString();
       console.error(msg);
-      throw new SailbrowserError(msg);
+      throw new ScoreSmarterError(msg);
     }
 
     let entry;

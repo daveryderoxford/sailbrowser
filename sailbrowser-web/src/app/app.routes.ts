@@ -12,5 +12,5 @@ export const APP_ROUTES: Routes = [
    { path: "club", loadChildren: () => import('./club-tenant/club.routes').then(r => r.CLUB_ROUTES) },
    { path: "auth", loadChildren: () => import('./auth/auth.routes').then(r => r.AUTH_ROUTES) },
    { path: "user", loadChildren: () => import('./user/user.routes').then(r => r.USER_ROUTES) },
-   { path: "about", title: 'About Sailbrowser', loadComponent: () => import('./about').then(c => c.AboutComponent) },
+   { path: "about", title: 'About ScoreSmarter', loadComponent: () => import('./about').then(c => c.AboutComponent) },
 ];

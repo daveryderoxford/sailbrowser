@@ -3,7 +3,7 @@ import { Race, RaceType } from 'app/race-calender';
 import { RaceCompetitor, SeriesEntry } from 'app/results-input';
 import { HandicapScheme } from '../model/handicap-scheme';
 import { getLongAlgorithm, getShortAlgorithm, isFinishedComp, isRedress, isStartAreaComp, ResultCodeAlgorithm } from 'app/scoring/model/result-code-scoring';
-import { SailbrowserError } from 'app/shared/utils/sailbrowser-error';
+import { ScoreSmarterError } from '../../shared/utils/scoresmarter-error';
 import { differenceInSeconds } from 'date-fns';
 import { SeriesScoringScheme } from '../model/scoring-algotirhm';
 
@@ -110,7 +110,7 @@ function validateFinishersHaveData(finishers: RaceResult[], property: keyof Race
     .find(f => !((f[property] as number) > 0));
   if (missingData) {
     const propertyName = property === 'rank' ? 'position' : 'finish time';
-    throw new SailbrowserError(`Inconsistent ordering data: ${context}, but finisher with sail number ${missingData.sailNumber} is missing a ${propertyName}.`);
+    throw new ScoreSmarterError(`Inconsistent ordering data: ${context}, but finisher with sail number ${missingData.sailNumber} is missing a ${propertyName}.`);
   }
 }
 
@@ -151,7 +151,7 @@ function buildRaceResults(
   return competitors.map((comp) => {
     const entry = entryMap.get(comp.seriesEntryId);
     if (!entry) {
-      throw new SailbrowserError(`Series entry not found for competitor ${comp.id}`);
+      throw new ScoreSmarterError(`Series entry not found for competitor ${comp.id}`);
     }
 
     return {
@@ -231,7 +231,7 @@ function calculateCorrectedTime(elapsedTime: number, handicap: number, scheme: H
       return elapsedTime; // No handicap correction
     case 'IRC':
     case 'Personal':
-      throw new SailbrowserError(`${scheme} Not implemented`);
+      throw new ScoreSmarterError(`${scheme} Not implemented`);
   }
 }
 

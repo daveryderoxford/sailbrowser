@@ -6,7 +6,7 @@
     },
     {
       "name": "Mobile: Dart/Flutter",
-      "path": "race_officer"
+      "path": "mobile-recorder"
     },
     {
       "name": "Firebase: Functions & Rules",
@@ -20,7 +20,7 @@
   "settings": {
     "files.exclude": {
       "sailbrowser-web/**": true,
-      "race_officer/**": true,
+      "mobile-recorder/**": true,
       "firebase/**": true,
       "**/node_modules": true,
       "**/.dart_tool": true,

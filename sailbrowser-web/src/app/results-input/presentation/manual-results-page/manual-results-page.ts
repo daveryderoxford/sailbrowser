@@ -62,7 +62,7 @@ export class ManualResultsPage {
   // Form for data entry
   readonly form = this.fb.group({
     finishTime: this.fb.control<Date | null>(null, { updateOn: 'blur' }),
-    laps: this.fb.nonNullable.control(1, Validators.required),
+    laps: this.fb.nonNullable.control(1, [Validators.required, Validators.min(1)]),
     resultCode: this.fb.nonNullable.control<ResultCode>('OK'),
   });
 
