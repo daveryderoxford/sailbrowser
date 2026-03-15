@@ -31,9 +31,18 @@ export class ClubStore {
     stream: () => {
       return docData(this.clubDoc()!).pipe(
         filter(data => !!data) // Ensure nulls are not emitted
-      ) as Observable<Club>;
+      );
     },
-    defaultValue: { id: '', name: '', fleets: [], classes: [], seasons: [] }
+    defaultValue: { 
+      id: '', 
+      name: '', 
+      shortName: '', 
+      contactEmail: '', 
+      contactName: '', 
+      fleets: [], 
+      classes: [], 
+      seasons: [] 
+    }
   });
 
   public club = this._clubResource.value.asReadonly();

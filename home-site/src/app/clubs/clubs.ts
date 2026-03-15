@@ -40,13 +40,9 @@ export class Clubs {
     burgeeUrl: ['', [Validators.pattern(/https?:\/\/.+/)]]
   });
 
-  getClubPath(clubId: string): string {
-    const host = window.location.hostname;
-    const port = window.location.port;
-    const clubDomain = port ? `${clubId}.${host}:${port}` : `${clubId}.${host}`;
-
-    console.log("Club: Navigating to domain " + clubDomain);
-    return clubDomain;
+  /**  */
+  clubResultsUrl(clubId: string): string {
+    return `https://${clubId}.ro.scoresmarter.app/results/viewer`;
   }
 
   async onSubmit() {

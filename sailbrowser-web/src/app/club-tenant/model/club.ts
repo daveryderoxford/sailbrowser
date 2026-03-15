@@ -5,6 +5,9 @@ import { Fleet } from './fleet';
 export interface Club {
    id: string;
    name: string;
+   shortName?: string;
+   contactEmail: string;
+   contactName: string;
    fleets: Fleet[];
    classes: BoatClass[];
    seasons: Season[];

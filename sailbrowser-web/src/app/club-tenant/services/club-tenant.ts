@@ -20,17 +20,18 @@ export class ClubContextService {
   async initialize(): Promise<void> {
 
     // Resolve ClubId from subdomain
-  /*  const host = window.location.hostname;
-    if (host.endsWith('.localhost')) {
-      this._clubId = host.replace('.localhost', '');
-    } else {
-      this._clubId = host.split('.')[0];
-    } */
-    console.log('Club tenant:  Hard coding club to ibrsc');
-    this._clubId = 'demo';
+    const host = window.location.hostname;
+
+    const parts = host.split('.');
+
+    // Default club to 'test' if no domain is specified during local testing 
+    this._clubId = (parts.length > 1 && parts[0] !== 'localhost') ? 
+      parts[0] : 'test';
+
+    console.log(`ClubTenant: Club domain: ${this._clubId}`);
 
     // Read club data and verify that the clubid corresponds
-    // If read fails redirect to 'all clubs' page TODO
+    // If read fails redirect to home site
     try {
       const club = await this.clubStore.initialize(this._clubId);
 
@@ -47,7 +48,7 @@ export class ClubContextService {
         originalError: e,
         clubId: this._clubId
       });
-      window.location.href = 'https://sailbrowser.com/clublist.html';
+      window.location.href = 'https://scoresmarter.app/clubs';
     }
   }
 }

@@ -20,7 +20,7 @@
     } @else {
     <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
       @for (club of clubs.value(); track club.id) {
-      <a [href]="getClubPath(club.id)" target="_blank"
+      <a [href]="clubResultsUrl(club.id)" target="_blank"
         class="group relative p-8 glass rounded-[2rem] hover:bg-slate-900/60 transition-all duration-500 card-glow">
         <div class="flex flex-col gap-6">
           <div
